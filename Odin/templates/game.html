@@ -9,6 +9,29 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+        <script>
+			$(document).ready(function() {
+				// SocketIO
+				socket = io.connect(document.domain, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
+				socket.on('connect', function() {
+					socket.emit("waiting room", "{{ game.get_id() }}")
+				});
+				socket.on('message for player', function(message) {
+					$("#message-from-server").html(message)
+					$('.modal').modal("show");
+
+				});
+				socket.on('user joined', function(name) {
+				    var name_node = document.createElement("LI");
+				    var text_node = document.createTextNode(name);
+				    name_node.appendChild(text_node);
+					document.getElementById("list-of-players").appendChild(name_node);
+				});
+			});
+        </script>
+
         <title>Waiting room</title>
         <style>
             body {
@@ -23,7 +46,25 @@
         </style>
     </head>
     <body>
-    <canvas width="800" height="600">
+    <div class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Message From Server</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <div class="modal-body">
+                        <p id="message-from-server">Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <canvas id="canvas" width="800" height="600">
         <script src="{{ url_for('static', filename='src/game.js')}}" type="module"></script>
     </canvas>
   </body>
