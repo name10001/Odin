@@ -19,12 +19,13 @@ class Game:
 
     def __init__(self, game_id, players):
         self.game_id = game_id
+        self.deck = cards.Deck()
         for player in players:
             self._players[player] = Player(self, players[player], player)
         self.turn = random.choice(list(self._players.values()))
-        self.played_cards = [cards.pickup_from_deck()(self)]
+        self.played_cards = [self.deck.pickup()(self)]
 
-    def get_card(self, card_id):
+    def find_card(self, card_id):
         """
         checks to see if a card exists in this came
         :param card_id: id of card to look for

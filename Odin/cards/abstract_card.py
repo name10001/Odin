@@ -3,19 +3,21 @@ from flask import *
 
 class AbstractCard:
     CARD_IMAGE_URL = 'cards/generic.png'
-    CARD_CATEGORIES = []
+    CARD_CATEGORIES = []  # will be removed soon
     DESCRIPTION = 'This is a abstract card and should only be used to inherit from. This should never be seen in a game'
     NUMBER_IN_DECK = 0
     NAME = "Abstract card"
     CARD_COLOR = "Abstract"
     CARD_TYPE = "Abstract"
     CARD_IS_PICKUP = False
+    PICK_PLAYER = False
+    PICK_TYPE = False
 
     def __init__(self, game):
         self.game = game
         self.id = self._make_id()
 
-    def play_card(self, player):
+    def play_card(self, player, pick_player=None, picked_type=None):
         """
 
         :return: None
@@ -58,9 +60,9 @@ class AbstractCard:
                 id_safe += character
 
         # if its ID is already in use, add a number to it
-        if self.game.get_card(id_safe) is not None:
+        if self.game.find_card(id_safe) is not None:
             num = 2
-            while self.game.get_card(id_safe + "_" + str(num)) is not None:
+            while self.game.find_card(id_safe + "_" + str(num)) is not None:
                 num += 1
             id_safe += "_" + str(num)
 

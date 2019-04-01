@@ -1,5 +1,6 @@
 from random import randint
 from cards.the_boring_cards import *
+from cards.deck import Deck
 
 all_cards = [
     BlueZero, GreenZero, PurpleZero, RedZero, YellowZero, 
@@ -15,21 +16,6 @@ all_cards = [
     BlueSixtyNine, GreenSixtyNine, PurpleSixtyNine, RedSixtyNine, YellowSixtyNine, 
 ]
 
-_size_of_deck = 0
+size_of_deck = 0
 for card in all_cards:
-    _size_of_deck += card.NUMBER_IN_DECK
-
-
-def pickup_from_deck():
-    """
-    gets a new random card from the deck and returns it
-    :return: a card
-    """
-    place_in_deck = randint(0, _size_of_deck)
-    up_to = 0
-    for card in all_cards:
-        if place_in_deck in range(up_to, up_to + card.NUMBER_IN_DECK):
-            return card
-        else:
-            up_to += card.NUMBER_IN_DECK
-    raise RuntimeError("no card found.")
+    size_of_deck += card.NUMBER_IN_DECK

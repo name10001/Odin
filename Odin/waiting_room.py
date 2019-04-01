@@ -8,14 +8,12 @@ class WaitingRoom:
     """
     This stores information about a waiting room
     """
-    # "player_id": "player_name"
-    _players = {}
-    running = False
-    game = None
-
     def __init__(self, game_id):
-        self.game_id = game_id
+        # "player_id": "player_name"
         self._players = {}
+        self.running = False
+        self.game = None
+        self.game_id = game_id
 
     def get_player(self, player_id):
         """

@@ -60,7 +60,7 @@ def render_game(game_id):
 
 @fs.socket_io.on('connect')
 def user_connected():
-    print("connected:", session)
+    pass
 
 
 @fs.socket_io.on('waiting room')

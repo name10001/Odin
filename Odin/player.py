@@ -3,19 +3,18 @@ import flask_server as fs
 
 
 class Player:
-    cards = []
-    name = ''
-    sid = None
-
     def __init__(self, game, name, player_id):
         self.name = name
         self.game = game
         self.player_id = player_id
+        self.cards = []
+        self.name = ''
+        self.sid = None
         self.pickup(game.starting_number_of_cards)
 
     def pickup(self, number):
         for i in range(0, number):
-            self.cards.append(cards.pickup_from_deck()(self.game))
+            self.cards.append(self.game.deck.pickup()(self.game))
 
     def card_update(self):
         """

@@ -26,12 +26,19 @@
 
 				});
 
-				function playCard(cardId){
-					socket.emit("play card", "{{ game.get_id() }}", cardId);
+				function playCard(cardId, picked_player, pick_type){
+				    // leave picked_player and pick_type as null unless needed
+				    // not currently working!
+					socket.emit("play card", "{{ game.get_id() }}", cardId, picked_player, pick_type);
 				}
 
-				function sayUno(cardId){
+				function sayUno(){
 					socket.emit("game message", "{{ game.get_id() }}", "Uno");
+				}
+
+				function nextTurn(){
+				    // not currently working!
+					socket.emit("game message", "{{ game.get_id() }}", "Next Turn");
 				}
 
 				socket.on('card update', function(cards) {
@@ -71,6 +78,7 @@
 
 				});
 				socket.on('player update', function(players) {
+				    // not currently working!
                     // players example:
                     // {
                     //   "Players":
