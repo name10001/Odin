@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import uno_config
 from player import Player
 from random import randint
