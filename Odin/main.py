@@ -24,8 +24,8 @@ def make_unique_game_id():
     """
     # I wish python had a do while loop
     def generate():
-        new_game_id = '{:06d}'
-        return new_game_id.format(randint(0, 1000000))
+        new_game_id = '{:03d}-{:03d}'
+        return new_game_id.format(randint(0, 1000), randint(0, 1000))
 
     # generates an ID if its not unique, generate another
     game_id = generate()
@@ -74,7 +74,21 @@ def waiting_room(game_id):
 @fs.socket_io.on('start game')
 def waiting_room(game_id):
     if game_id in games:
-        return games[game_id].start()
+        games[game_id].start()
+
+
+@fs.socket_io.on('initial game connection')
+def initial_game_connection(game_id):
+    if game_id in games:
+        if games[game_id].is_running():
+            games[game_id].get_game().initial_connection()
+
+
+@fs.socket_io.on('game message')
+def game_message(game_id, message):
+    if game_id in games:
+        if games[game_id].is_running():
+            games[game_id].get_game().message(message)
 
 
 def clear_old_games():

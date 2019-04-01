@@ -56,6 +56,23 @@ class Game:
         """
         return render_template("game.html", game=self)
 
+    def message(self, message):
+        if message == "Uno":
+            player = self.get_player(session['player_id'])
+            print("message for player", player.get_name() + " is on Uno!")
+            print(self.game_id)
+            with fs.app.app_context():
+                fs.socket_io.emit(
+                    "message for player",
+                    player.get_name() + " is on Uno!",
+                    room=self.game_id + "_game",
+                    include_self=False
+                )
+        else:
+            print("got unknown message from player:", message)
+
+    def initial_connection(self):
+        join_room(self.game_id + "_game")
+
     def get_id(self):
         return self.game_id
-

@@ -103,3 +103,9 @@ class WaitingRoom:
     def get_id(self):
         return self.game_id
 
+    def get_game(self):
+        return self.game
+
+    def is_running(self):
+        return self.running
+

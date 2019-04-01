@@ -15,17 +15,25 @@
 			$(document).ready(function() {
 				// SocketIO
 				socket = io.connect(document.domain, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
+
+				socket.on('connect', function() {
+					socket.emit("initial game connection", "{{ game.get_id() }}");
+				});
+
 				socket.on('message for player', function(message) {
-					$("#message-from-server").html(message)
+					$("#message-from-server").html(message);
 					$('.modal').modal("show");
 
 				});
+
 				function playCard(cardId){
-					socket.emit("play card", cardId)
-				};
+					socket.emit("play card", cardId);
+				}
+
 				function sayUno(cardId){
-					socket.emit("game message", "Uno")
-				};
+					socket.emit("game message", "{{ game.get_id() }}", "Uno");
+				}
+
 				socket.on('card update', function(cards) {
 				    // cards example:
                     // {
