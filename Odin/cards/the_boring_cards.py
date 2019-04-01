@@ -10,35 +10,35 @@ class BlueZero(AbstractCard):
     NAME = "Blue Zero"
     NUMBER_IN_DECK = 1
     CARD_CATEGORIES = ['0', 'blue']
-    CARD_IMAGE_URL = url_for('static', filename='cards/0_blue.png')
+    CARD_IMAGE_URL = 'cards/0_blue.png'
 
 
 class GreenZero(AbstractCard):
     NAME = "Green Zero"
     NUMBER_IN_DECK = 1
     CARD_CATEGORIES = ['0', 'green']
-    CARD_IMAGE_URL = url_for('static', filename='cards/0_green.png')
+    CARD_IMAGE_URL = 'cards/0_green.png'
 
 
 class PurpleZero(AbstractCard):
     NAME = "Purple Zero"
     NUMBER_IN_DECK = 1
     CARD_CATEGORIES = ['0', 'purple']
-    CARD_IMAGE_URL = url_for('static', filename='cards/0_purple.png')
+    CARD_IMAGE_URL = 'cards/0_purple.png'
 
 
 class RedZero(AbstractCard):
     NAME = "Red Zero"
     NUMBER_IN_DECK = 1
     CARD_CATEGORIES = ['0', 'red']
-    CARD_IMAGE_URL = url_for('static', filename='cards/0_red.png')
+    CARD_IMAGE_URL = 'cards/0_red.png'
 
 
 class YellowZero(AbstractCard):
     NAME = "Yellow Zero"
     NUMBER_IN_DECK = 1
     CARD_CATEGORIES = ['0', 'yellow']
-    CARD_IMAGE_URL = url_for('static', filename='cards/0_yellow.png')
+    CARD_IMAGE_URL = 'cards/0_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -50,35 +50,35 @@ class BlueOne(AbstractCard):
     NAME = "Blue One"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['1', 'blue']
-    CARD_IMAGE_URL = url_for('static', filename='cards/1_blue.png')
+    CARD_IMAGE_URL = 'cards/1_blue.png'
 
 
 class GreenOne(AbstractCard):
     NAME = "Green One"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['1', 'green']
-    CARD_IMAGE_URL = url_for('static', filename='cards/1_green.png')
+    CARD_IMAGE_URL = 'cards/1_green.png'
 
 
 class PurpleOne(AbstractCard):
     NAME = "Purple One"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['1', 'purple']
-    CARD_IMAGE_URL = url_for('static', filename='cards/1_purple.png')
+    CARD_IMAGE_URL = 'cards/1_purple.png'
 
 
 class RedOne(AbstractCard):
     NAME = "Red One"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['1', 'red']
-    CARD_IMAGE_URL = url_for('static', filename='cards/1_red.png')
+    CARD_IMAGE_URL = 'cards/1_red.png'
 
 
 class YellowOne(AbstractCard):
     NAME = "Yellow One"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['1', 'yellow']
-    CARD_IMAGE_URL = url_for('static', filename='cards/1_yellow.png')
+    CARD_IMAGE_URL = 'cards/1_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -90,35 +90,35 @@ class BlueTwo(AbstractCard):
     NAME = "Blue Two"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['2', 'blue']
-    CARD_IMAGE_URL = url_for('static', filename='cards/2_blue.png')
+    CARD_IMAGE_URL = 'cards/2_blue.png'
 
 
 class GreenTwo(AbstractCard):
     NAME = "Green Two"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['2', 'green']
-    CARD_IMAGE_URL = url_for('static', filename='cards/2_green.png')
+    CARD_IMAGE_URL = 'cards/2_green.png'
 
 
 class PurpleTwo(AbstractCard):
     NAME = "Purple Two"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['2', 'purple']
-    CARD_IMAGE_URL = url_for('static', filename='cards/2_purple.png')
+    CARD_IMAGE_URL = 'cards/2_purple.png'
 
 
 class RedTwo(AbstractCard):
     NAME = "Red Two"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['2', 'red']
-    CARD_IMAGE_URL = url_for('static', filename='cards/2_red.png')
+    CARD_IMAGE_URL = 'cards/2_red.png'
 
 
 class YellowTwo(AbstractCard):
     NAME = "Yellow Two"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['2', 'yellow']
-    CARD_IMAGE_URL = url_for('static', filename='cards/2_yellow.png')
+    CARD_IMAGE_URL = 'cards/2_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -130,35 +130,35 @@ class BlueThree(AbstractCard):
     NAME = "Blue Three"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['3', 'blue']
-    CARD_IMAGE_URL = url_for('static', filename='cards/3_blue.png')
+    CARD_IMAGE_URL = 'cards/3_blue.png'
 
 
 class GreenThree(AbstractCard):
     NAME = "Green Three"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['3', 'green']
-    CARD_IMAGE_URL = url_for('static', filename='cards/3_green.png')
+    CARD_IMAGE_URL = 'cards/3_green.png'
 
 
 class PurpleThree(AbstractCard):
     NAME = "Purple Three"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['3', 'purple']
-    CARD_IMAGE_URL = url_for('static', filename='cards/3_purple.png')
+    CARD_IMAGE_URL = 'cards/3_purple.png'
 
 
 class RedThree(AbstractCard):
     NAME = "Red Three"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['3', 'red']
-    CARD_IMAGE_URL = url_for('static', filename='cards/3_red.png')
+    CARD_IMAGE_URL = 'cards/3_red.png'
 
 
 class YellowThree(AbstractCard):
     NAME = "Yellow Three"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['3', 'yellow']
-    CARD_IMAGE_URL = url_for('static', filename='cards/3_yellow.png')
+    CARD_IMAGE_URL = 'cards/3_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -170,35 +170,35 @@ class BlueFour(AbstractCard):
     NAME = "Blue Four"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['4', 'blue']
-    CARD_IMAGE_URL = url_for('static', filename='cards/4_blue.png')
+    CARD_IMAGE_URL = 'cards/4_blue.png'
 
 
 class GreenFour(AbstractCard):
     NAME = "Green Four"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['4', 'green']
-    CARD_IMAGE_URL = url_for('static', filename='cards/4_green.png')
+    CARD_IMAGE_URL = 'cards/4_green.png'
 
 
 class PurpleFour(AbstractCard):
     NAME = "Purple Four"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['4', 'purple']
-    CARD_IMAGE_URL = url_for('static', filename='cards/4_purple.png')
+    CARD_IMAGE_URL = 'cards/4_purple.png'
 
 
 class RedFour(AbstractCard):
     NAME = "Red Four"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['4', 'red']
-    CARD_IMAGE_URL = url_for('static', filename='cards/4_red.png')
+    CARD_IMAGE_URL = 'cards/4_red.png'
 
 
 class YellowFour(AbstractCard):
     NAME = "Yellow Four"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['4', 'yellow']
-    CARD_IMAGE_URL = url_for('static', filename='cards/4_yellow.png')
+    CARD_IMAGE_URL = 'cards/4_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -210,35 +210,35 @@ class BlueFive(AbstractCard):
     NAME = "Blue Five"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['5', 'blue']
-    CARD_IMAGE_URL = url_for('static', filename='cards/5_blue.png')
+    CARD_IMAGE_URL = 'cards/5_blue.png'
 
 
 class GreenFive(AbstractCard):
     NAME = "Green Five"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['5', 'green']
-    CARD_IMAGE_URL = url_for('static', filename='cards/5_green.png')
+    CARD_IMAGE_URL = 'cards/5_green.png'
 
 
 class PurpleFive(AbstractCard):
     NAME = "Purple Five"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['5', 'purple']
-    CARD_IMAGE_URL = url_for('static', filename='cards/5_purple.png')
+    CARD_IMAGE_URL = 'cards/5_purple.png'
 
 
 class RedFive(AbstractCard):
     NAME = "Red Five"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['5', 'red']
-    CARD_IMAGE_URL = url_for('static', filename='cards/5_red.png')
+    CARD_IMAGE_URL = 'cards/5_red.png'
 
 
 class YellowFive(AbstractCard):
     NAME = "Yellow Five"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['5', 'yellow']
-    CARD_IMAGE_URL = url_for('static', filename='cards/5_yellow.png')
+    CARD_IMAGE_URL = 'cards/5_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -250,35 +250,35 @@ class BlueSix(AbstractCard):
     NAME = "Blue Six"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['6', 'blue']
-    CARD_IMAGE_URL = url_for('static', filename='cards/6_blue.png')
+    CARD_IMAGE_URL = 'cards/6_blue.png'
 
 
 class GreenSix(AbstractCard):
     NAME = "Green Six"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['6', 'green']
-    CARD_IMAGE_URL = url_for('static', filename='cards/6_green.png')
+    CARD_IMAGE_URL = 'cards/6_green.png'
 
 
 class PurpleSix(AbstractCard):
     NAME = "Purple Six"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['6', 'purple']
-    CARD_IMAGE_URL = url_for('static', filename='cards/6_purple.png')
+    CARD_IMAGE_URL = 'cards/6_purple.png'
 
 
 class RedSix(AbstractCard):
     NAME = "Red Six"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['6', 'red']
-    CARD_IMAGE_URL = url_for('static', filename='cards/6_red.png')
+    CARD_IMAGE_URL = 'cards/6_red.png'
 
 
 class YellowSix(AbstractCard):
     NAME = "Yellow Six"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['6', 'yellow']
-    CARD_IMAGE_URL = url_for('static', filename='cards/6_yellow.png')
+    CARD_IMAGE_URL = 'cards/6_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -290,35 +290,35 @@ class BlueSeven(AbstractCard):
     NAME = "Blue Seven"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['7', 'blue']
-    CARD_IMAGE_URL = url_for('static', filename='cards/7_blue.png')
+    CARD_IMAGE_URL = 'cards/7_blue.png'
 
 
 class GreenSeven(AbstractCard):
     NAME = "Green Seven"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['7', 'green']
-    CARD_IMAGE_URL = url_for('static', filename='cards/7_green.png')
+    CARD_IMAGE_URL = 'cards/7_green.png'
 
 
 class PurpleSeven(AbstractCard):
     NAME = "Purple Seven"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['7', 'purple']
-    CARD_IMAGE_URL = url_for('static', filename='cards/7_purple.png')
+    CARD_IMAGE_URL = 'cards/7_purple.png'
 
 
 class RedSeven(AbstractCard):
     NAME = "Red Seven"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['7', 'red']
-    CARD_IMAGE_URL = url_for('static', filename='cards/7_red.png')
+    CARD_IMAGE_URL = 'cards/7_red.png'
 
 
 class YellowSeven(AbstractCard):
     NAME = "Yellow Seven"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['7', 'yellow']
-    CARD_IMAGE_URL = url_for('static', filename='cards/7_yellow.png')
+    CARD_IMAGE_URL = 'cards/7_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -330,35 +330,35 @@ class BlueEight(AbstractCard):
     NAME = "Blue Eight"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['8', 'blue']
-    CARD_IMAGE_URL = url_for('static', filename='cards/8_blue.png')
+    CARD_IMAGE_URL = 'cards/8_blue.png'
 
 
 class GreenEight(AbstractCard):
     NAME = "Green Eight"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['8', 'green']
-    CARD_IMAGE_URL = url_for('static', filename='cards/8_green.png')
+    CARD_IMAGE_URL = 'cards/8_green.png'
 
 
 class PurpleEight(AbstractCard):
     NAME = "Purple Eight"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['8', 'purple']
-    CARD_IMAGE_URL = url_for('static', filename='cards/8_purple.png')
+    CARD_IMAGE_URL = 'cards/8_purple.png'
 
 
 class RedEight(AbstractCard):
     NAME = "Red Eight"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['8', 'red']
-    CARD_IMAGE_URL = url_for('static', filename='cards/8_red.png')
+    CARD_IMAGE_URL = 'cards/8_red.png'
 
 
 class YellowEight(AbstractCard):
     NAME = "Yellow Eight"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['8', 'yellow']
-    CARD_IMAGE_URL = url_for('static', filename='cards/8_yellow.png')
+    CARD_IMAGE_URL = 'cards/8_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -370,35 +370,35 @@ class BlueNine(AbstractCard):
     NAME = "Blue Nine"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['9', 'blue']
-    CARD_IMAGE_URL = url_for('static', filename='cards/9_blue.png')
+    CARD_IMAGE_URL = 'cards/9_blue.png'
 
 
 class GreenNine(AbstractCard):
     NAME = "Green Nine"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['9', 'green']
-    CARD_IMAGE_URL = url_for('static', filename='cards/9_green.png')
+    CARD_IMAGE_URL = 'cards/9_green.png'
 
 
 class PurpleNine(AbstractCard):
     NAME = "Purple Nine"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['9', 'purple']
-    CARD_IMAGE_URL = url_for('static', filename='cards/9_purple.png')
+    CARD_IMAGE_URL = 'cards/9_purple.png'
 
 
 class RedNine(AbstractCard):
     NAME = "Red Nine"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['9', 'red']
-    CARD_IMAGE_URL = url_for('static', filename='cards/9_red.png')
+    CARD_IMAGE_URL = 'cards/9_red.png'
 
 
 class YellowNine(AbstractCard):
     NAME = "Yellow Nine"
     NUMBER_IN_DECK = 2
     CARD_CATEGORIES = ['9', 'yellow']
-    CARD_IMAGE_URL = url_for('static', filename='cards/9_yellow.png')
+    CARD_IMAGE_URL = 'cards/9_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -410,32 +410,32 @@ class BlueSixtyNine(AbstractCard):
     NAME = "Blue SixtyNine"
     NUMBER_IN_DECK = 1
     CARD_CATEGORIES = ['69', 'blue']
-    CARD_IMAGE_URL = url_for('static', filename='cards/69_blue.png')
+    CARD_IMAGE_URL = 'cards/69_blue.png'
 
 
 class GreenSixtyNine(AbstractCard):
     NAME = "Green SixtyNine"
     NUMBER_IN_DECK = 1
     CARD_CATEGORIES = ['69', 'green']
-    CARD_IMAGE_URL = url_for('static', filename='cards/69_green.png')
+    CARD_IMAGE_URL = 'cards/69_green.png'
 
 
 class PurpleSixtyNine(AbstractCard):
     NAME = "Purple SixtyNine"
     NUMBER_IN_DECK = 1
     CARD_CATEGORIES = ['69', 'purple']
-    CARD_IMAGE_URL = url_for('static', filename='cards/69_purple.png')
+    CARD_IMAGE_URL = 'cards/69_purple.png'
 
 
 class RedSixtyNine(AbstractCard):
     NAME = "Red SixtyNine"
     NUMBER_IN_DECK = 1
     CARD_CATEGORIES = ['69', 'red']
-    CARD_IMAGE_URL = url_for('static', filename='cards/69_red.png')
+    CARD_IMAGE_URL = 'cards/69_red.png'
 
 
 class YellowSixtyNine(AbstractCard):
     NAME = "Yellow SixtyNine"
     NUMBER_IN_DECK = 1
     CARD_CATEGORIES = ['69', 'yellow']
-    CARD_IMAGE_URL = url_for('static', filename='cards/69_yellow.png')
+    CARD_IMAGE_URL = 'cards/69_yellow.png'

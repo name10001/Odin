@@ -5,11 +5,9 @@ from random import randint
 import flask_server as fs
 import schedule
 from flask import *
+from waiting_room import WaitingRoom
 
 games = {}
-
-with fs.app.test_request_context():
-    from game import Game
 
 
 @fs.app.route('/')
@@ -24,8 +22,8 @@ def make_unique_game_id():
     """
     # I wish python had a do while loop
     def generate():
-        new_game_id = '{:06d}'
-        return new_game_id.format(randint(0, 1000000))
+        new_game_id = '{:03d}-{:03d}'
+        return new_game_id.format(randint(0, 1000), randint(0, 1000))
 
     # generates an ID if its not unique, generate another
     game_id = generate()
@@ -42,7 +40,7 @@ def new_game():
     :return: None
     """
     game_id = make_unique_game_id()
-    games[game_id] = Game(game_id)
+    games[game_id] = WaitingRoom(game_id)
     return redirect('/games/' + game_id)
 
 
@@ -55,14 +53,14 @@ def render_game(game_id):
     :return:
     """
     if game_id in games:
-        return games[game_id].render_game()
+        return games[game_id].render()
     else:
         return "<h1>Game not found<h1>"
 
 
 @fs.socket_io.on('connect')
 def user_connected():
-    print("connected:", session)
+    pass
 
 
 @fs.socket_io.on('waiting room')
@@ -74,7 +72,21 @@ def waiting_room(game_id):
 @fs.socket_io.on('start game')
 def waiting_room(game_id):
     if game_id in games:
-        return games[game_id].start()
+        games[game_id].start()
+
+
+@fs.socket_io.on('initial game connection')
+def initial_game_connection(game_id):
+    if game_id in games:
+        if games[game_id].is_running():
+            games[game_id].get_game().initial_connection()
+
+
+@fs.socket_io.on('game message')
+def game_message(game_id, message):
+    if game_id in games:
+        if games[game_id].is_running():
+            games[game_id].get_game().message(message)
 
 
 def clear_old_games():

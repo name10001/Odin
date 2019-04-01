@@ -16,7 +16,8 @@
 				// SocketIO
 				socket = io.connect(document.domain, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
 				socket.on('connect', function() {
-					socket.emit("waiting room", "{{ game.get_id() }}")
+				    $("list-of-players").html("");
+					socket.emit("waiting room", "{{ game.get_id() }}");
 				});
 				socket.on('message', function(data) {
 					console.log(data);
