@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="da4260c2-fd75-4f70-9e78-7868884ccc5b" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Odin.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Odin.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Odin/templates/waiting room.html" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/templates/waiting room.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cards/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/cards/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cards/abstract_card.py" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/cards/abstract_card.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cards/the_boring_cards.py" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/cards/the_boring_cards.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flask_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/flask_server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/banner.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/banner.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/0_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/0_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/0_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/0_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/0_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/0_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/0_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/0_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/0_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/0_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/1_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/1_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/1_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/1_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/1_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/1_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/1_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/1_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/1_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/1_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/2_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/2_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/2_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/2_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/2_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/2_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/2_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/2_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/2_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/2_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/3_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/3_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/3_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/3_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/3_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/3_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/3_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/3_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/3_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/3_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/4_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/4_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/4_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/4_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/4_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/4_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/4_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/4_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/4_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/4_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/5_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/5_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/5_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/5_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/5_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/5_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/5_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/5_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/5_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/5_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/69_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/69_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/69_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/69_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/69_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/69_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/69_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/69_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/69_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/69_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/6_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/6_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/6_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/6_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/6_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/6_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/6_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/6_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/6_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/6_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/7_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/7_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/7_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/7_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/7_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/7_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/7_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/7_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/7_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/7_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/8_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/8_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/8_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/8_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/8_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/8_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/8_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/8_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/8_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/8_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/9_11.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/9_11.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/9_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/9_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/9_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/9_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/9_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/9_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/9_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/9_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/9_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/9_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/anne_frank.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/anne_frank.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/back.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/back.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/black.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/black.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/black_white.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/black_white.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/blue_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/blue_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/capitalist.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/capitalist.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/color_swapper.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/color_swapper.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/communist.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/communist.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/copy_cat.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/copy_cat.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/creeper.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/creeper.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/dislexia.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/dislexia.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/do_justly_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/do_justly_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/do_justly_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/do_justly_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/ea_15.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/ea_15.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/ea_20.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/ea_20.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/ea_30.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/ea_30.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/elevator.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/elevator.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/explosion.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/explosion.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/feeling_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/feeling_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/filthy_sharon.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/filthy_sharon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/free_turn.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/free_turn.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/fuck_black.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/fuck_black.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/fuck_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/fuck_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/fuck_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/fuck_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/fuck_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/fuck_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/fuck_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/fuck_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/fuck_you.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/fuck_you.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/genocide.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/genocide.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/green_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/green_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/green_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/green_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/green_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/green_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/jesus.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/jesus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/jew.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/jew.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/lady_of_the_night.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/lady_of_the_night.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/man_of_the_day.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/man_of_the_day.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/multiply2_wild.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/multiply2_wild.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/nazi.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/nazi.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/no_u.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/no_u.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/pawn.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/pawn.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/pickup10_wild.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/pickup10_wild.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/pickup2_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/pickup2_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/pickup2_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/pickup2_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/pickup2_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/pickup2_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/pickup2_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/pickup2_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/pickup2_white.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/pickup2_white.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/pickup2_wild.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/pickup2_wild.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/pickup2_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/pickup2_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/pickup4_wild.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/pickup4_wild.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/plus_wild.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/plus_wild.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/red_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/red_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/reverse_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/reverse_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/reverse_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/reverse_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/reverse_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/reverse_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/reverse_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/reverse_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/reverse_white.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/reverse_white.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/reverse_wild.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/reverse_wild.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/reverse_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/reverse_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/skip_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/skip_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/skip_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/skip_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/skip_purple.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/skip_purple.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/skip_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/skip_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/skip_white.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/skip_white.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/skip_wild.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/skip_wild.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/skip_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/skip_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/slavery.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/slavery.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/smurf.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/smurf.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/spy.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/spy.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/swap_card.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/swap_card.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/swap_hand.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/swap_hand.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/thanos.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/thanos.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/trash_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/trash_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/trash_green.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/trash_green.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/trash_red.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/trash_red.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/trash_wild.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/trash_wild.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/trash_yellow.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/trash_yellow.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/white.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/white.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/cards/yellow_blue.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/cards/yellow_blue.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/lobby.mp3" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/lobby.mp3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/src/game.js" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/src/game.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/transparent.png" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/static/transparent.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/game.html" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/templates/game.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/waiting room.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/uno_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/Odin/uno_config.py" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Odin/templates/waiting room.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="297">
+              <caret line="37" column="43" lean-forward="true" selection-start-line="37" selection-start-column="43" selection-end-line="37" selection-end-column="43" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/templates/game.html" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/Odin/templates/waiting room.html" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/Odin.iml" />
+        <option value="$PROJECT_DIR$/.idea/misc.xml" />
+        <option value="$PROJECT_DIR$/.idea/modules.xml" />
+        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="67" />
+    <option name="y" value="25" />
+    <option name="width" value="1853" />
+    <option name="height" value="1055" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Odin" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Odin" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Odin" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Odin" type="462c0819:PsiDirectoryNode" />
+              <item name="Odin" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Odin" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Odin" type="462c0819:PsiDirectoryNode" />
+              <item name="Odin" type="462c0819:PsiDirectoryNode" />
+              <item name="static" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Odin" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Odin" type="462c0819:PsiDirectoryNode" />
+              <item name="Odin" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\dev\Odin\Odin\static" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="da4260c2-fd75-4f70-9e78-7868884ccc5b" name="Default Changelist" comment="" />
+      <created>1554085545809</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1554085545809</updated>
+      <workItem from="1554101068757" duration="77000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="77000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18976545" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Database Changes" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="right" id="Database" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/templates/index.html" />
+    <entry file="file://$PROJECT_DIR$/templates/game.html" />
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="5" lean-forward="true" selection-start-line="3" selection-start-column="5" selection-end-line="3" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Odin/templates/waiting room.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="37" column="43" lean-forward="true" selection-start-line="37" selection-start-column="43" selection-end-line="37" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
