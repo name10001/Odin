@@ -21,6 +21,9 @@
 				socket.on('message', function(data) {
 					console.log(data);
 				});
+				socket.on('refresh', function(data) {
+					location.reload(true);
+				});
 				socket.on('user joined', function(name) {
 				    var name_node = document.createElement("LI");
 				    var text_node = document.createTextNode(name);

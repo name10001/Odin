@@ -56,7 +56,7 @@ class Game:
         if request.method == 'GET':
             if "player_id" in session and session["player_id"] in self._players:
                 if self.running:
-                    return "this is the game"
+                    return render_template("game.html", game=self)
                 else:
                     return render_template("waiting room.html", game=self)
             else:
@@ -82,6 +82,11 @@ class Game:
         join_room(self.game_id)
         for player in self._players:
             emit("user joined", self._players[player].get_name())
+
+    def start(self):
+        self.running = True
+        with fs.app.app_context():
+            fs.socket_io.emit("refresh", room=self.game_id)
 
     def get_id(self):
         return self.game_id
