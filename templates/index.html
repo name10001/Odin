@@ -30,6 +30,12 @@
             </div>
             <div class="panel-body">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                <br />
+                <div class="input-group">
+                    <span class="input-group-addon">Join Game</span>
+                    <input id="game-id" type="text" class="form-control" placeholder="Game id e.g. '123456'">
+                </div>
+                <button type="button" class="btn btn-default" onclick="window.location.href = '/game/' + document.getElementById('game-id').value">Join</button>
             </div>
             <div class="panel-footer">
                 <a href="\new_game" class="btn btn-primary">Make New Game</a>
