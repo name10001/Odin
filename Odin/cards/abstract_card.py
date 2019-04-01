@@ -2,7 +2,7 @@ from flask import *
 
 
 class AbstractCard:
-    CARD_IMAGE_URL = url_for('static', filename='cards/generic.png')
+    CARD_IMAGE_URL = 'cards/generic.png'
     CARD_CATEGORIES = []
     DESCRIPTION = 'This is a abstract card and should only be used to inherit from. This should never be seen in a game'
     NUMBER_IN_DECK = 0
@@ -30,7 +30,7 @@ class AbstractCard:
         """
         return not set(card.CARD_CATEGORIES).isdisjoint(set(self.CARD_CATEGORIES))
 
-    def can_this_be_played_on(self, card):
+    def can_be_played_on(self, card):
         """
         Can this card be played on the given card
         :param card: 
@@ -62,3 +62,9 @@ class AbstractCard:
             id_safe += "_" + str(num)
 
         return id_safe
+
+    def get_url(self):
+        return url_for('static', filename=self.CARD_IMAGE_URL)
+
+    def get_id(self):
+        return self.id

@@ -27,7 +27,7 @@
 				});
 
 				function playCard(cardId){
-					socket.emit("play card", cardId);
+					socket.emit("play card", "{{ game.get_id() }}", cardId);
 				}
 
 				function sayUno(cardId){
@@ -35,32 +35,39 @@
 				}
 
 				socket.on('card update', function(cards) {
-				    // cards example:
-                    // {
-                    //   "your cards":
-                    //     [
-                    //       {
-                    //         "card id": "blue_zero_card_124",
-                    //         "card image url": "/static/cards/0_blue.png",
-                    //         "can be played": true,
-                    //         "pick a player": false,
-                    //         "pick a card type": false
-                    //       },
-                    //       {
-                    //         "card id": "fuck_you_card_8",
-                    //         "card image url": "/static/cards/fuck_you.png",
-                    //         "can be played": true,
-                    //         "pick a player": true,
-                    //         "pick a card type": false
-                    //       }
-                    //     ],
-                    //   "cards on deck":
-                    //     [
-                    //       "card image url": "/static/cards/0_green.png",
-                    //       "card image url": "/static/cards/1_green.png",
-                    //       "card image url": "/static/cards/1_blue.png",
-                    //     ]
-                    // }
+                    console.log(cards);
+                    //cards example:
+                    //{
+                    //    "your cards":
+                    //        [
+                    //            {
+                    //                "card id": "blue_zero_card_124",
+                    //                "card image url": "/static/cards/0_blue.png",
+                    //                "can be played": true,
+                    //                "pick a player": false,
+                    //                "pick a card type": false
+                    //            },
+                    //            {
+                    //                "card id": "fuck_you_card_8",
+                    //                "card image url": "/static/cards/fuck_you.png",
+                    //                "can be played": true,
+                    //                "pick a player": true,
+                    //                "pick a card type": false
+                    //            }
+                    //        ]
+                    //    "cards on deck":
+                    //        [
+                    //            {
+                    //                "card image url": "/static/cards/0_green.png"
+                    //            },
+                    //            {
+                    //                "card image url": "/static/cards/1_green.png"
+                    //            },
+                    //            {
+                    //                "card image url": "/static/cards/1_blue.png"
+                    //            },
+                    //        ]
+                    //}
 
 				});
 				socket.on('player update', function(players) {
@@ -85,7 +92,7 @@
 			});
         </script>
 
-        <title>Waiting room</title>
+        <title>Game</title>
         <style>
             body {
                 background-image: url("{{ url_for('static', filename='banner.jpg') }}");

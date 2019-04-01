@@ -5,9 +5,7 @@ from random import randint
 import flask_server as fs
 import schedule
 from flask import *
-with fs.app.test_request_context():
-    from waiting_room import WaitingRoom
-    from game import Game
+from waiting_room import WaitingRoom
 
 games = {}
 

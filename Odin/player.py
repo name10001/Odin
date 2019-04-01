@@ -1,3 +1,4 @@
+import cards
 
 
 class Player:
@@ -8,6 +9,11 @@ class Player:
         self.name = name
         self.game = game
         self.player_id = player_id
+        self.pickup(game.starting_number_of_cards)
+
+    def pickup(self, number):
+        for i in range(0, number):
+            self.cards.append(cards.pickup_from_deck()(self.game))
 
     def get_cards(self):
         return self.cards
