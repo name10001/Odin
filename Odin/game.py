@@ -11,7 +11,7 @@ class Game:
     This stores information about a game
     """
     _pickup = 0
-    _played_cards = []
+    played_cards = []
     _players = {}
     _direction = 1  # 1 or -1
     running = False
@@ -22,7 +22,7 @@ class Game:
         for player in players:
             self._players[player] = Player(self, players[player], player)
         self.turn = random.choice(list(self._players.values()))
-        self._played_cards = [cards.pickup_from_deck()(self)]
+        self.played_cards = [cards.pickup_from_deck()(self)]
 
     def get_card(self, card_id):
         """
@@ -30,7 +30,7 @@ class Game:
         :param card_id: id of card to look for
         :return: returns the card if found, else None
         """
-        for card in self._played_cards:
+        for card in self.played_cards:
             if card.id == card_id:
                 return card
         for player in self._players:
@@ -77,80 +77,11 @@ class Game:
                 )
         else:
             print("got unknown message from player:", message)
-            
-    def _card_update(self):
-        """
-        sends all cards to client in json from
-        cards example:
-        {
-            "your cards":
-                [
-                    {
-                        "card id": "blue_zero_card_124",
-                        "card image url": "/static/cards/0_blue.png",
-                        "can be played": true,
-                        "pick a player": false,
-                        "pick a card type": false
-                    },
-                    {
-                        "card id": "fuck_you_card_8",
-                        "card image url": "/static/cards/fuck_you.png",
-                        "can be played": true,
-                        "pick a player": true,
-                        "pick a card type": false
-                    }
-                ]
-            "cards on deck":
-                [
-                    {
-                        "card image url": "/static/cards/0_green.png"
-                    },
-                    {
-                        "card image url": "/static/cards/1_green.png"
-                    },
-                    {
-                        "card image url": "/static/cards/1_blue.png"
-                    },
-                ]
-        }
-        :return: 
-        """
-        json_to_send = {
-            "cards on deck": [],
-            "your cards": []
-        }
-        # get first 3 cards from deck
-        lim = 3
-        for card in self._played_cards:
-            json_to_send["cards on deck"].append(
-                {
-                    "card image url": card.get_url()
-                }
-            )
-            if lim == 0:
-                break
-            lim -= 1
-
-        # get player cards
-        player = self.get_player(session['player_id'])
-        for card in player.get_cards():
-            json_to_send["your cards"].append(
-                {
-                    "card id": card.get_id(),
-                    "card image url": card.get_url(),
-                    "can be played": card.can_be_played_on(self._played_cards[-1], player == self.turn),
-                    "pick a player": False,
-                    "pick a card type": False
-                }
-            )
-
-        # send
-        with fs.app.app_context():
-            fs.socket_io.emit("card update", json_to_send)
 
     def initial_connection(self):
+        self.get_player(session['player_id']).set_sid(request.sid)
         join_room(self.game_id + "_game")
-        self._card_update()
+        self.get_player(session['player_id']).card_update()
 
     def get_id(self):
         return self.game_id
