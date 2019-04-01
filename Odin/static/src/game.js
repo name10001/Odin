@@ -9,6 +9,18 @@ class Player {
 }
 
 /**
+ * Draws the cards in your hand
+ */
+function drawCards() {
+    let player = players[id];
+    let beginOffset = (CARD_WIDTH + 20)*player.nCards/2-10;
+    let offset = CARD_WIDTH + 20;
+    for(let i = 0; i<player.nCards;i++) {
+        ctx.drawImage(testImage,canvas.width/2-beginOffset+i*offset,canvas.height-50-CARD_HEIGHT,CARD_WIDTH,CARD_HEIGHT);
+    }
+}
+
+/**
  * Main game loop, updates the screen constantly.
  * @param timestamp current timestamp to calculate how much time has passed
  */
@@ -17,6 +29,14 @@ function gameLoop(timestamp) {
     lastTime = timestamp;
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    ctx.fillStyle = "#222";
+    ctx.globalAlpha = 0.6;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.globalAlpha = 1;
+
+    drawCards();
+
 
     requestAnimationFrame(gameLoop);
 }
@@ -33,6 +53,10 @@ function gameLoop(timestamp) {
 
 
  */
+
+const CARD_WIDTH = 134;
+const CARD_HEIGHT = 209;
+
 
 let mousePosition = {
     x:0,y:0
@@ -73,11 +97,14 @@ window.addEventListener('resize',function() {
 },false);
 
 //TEST CODE - ASSUME THE SERVER SENDS YOU THIS PLAYER INFO
-players.push([new Player("me",10), new Player("daddy",10), new Player("Mummy",10)]);
+players.push(new Player("me",10));
 
 //This is your player id - so you know who is next
 let id = 0;
 
+let testImage = new Image;
+testImage.src = '/static/cards/back.png';
+testImage.addEventListener('load',function() {
+    gameLoop(0);
+},false);
 
-//run gameloop
-gameLoop(0);
