@@ -5,11 +5,11 @@ from random import randint
 import flask_server as fs
 import schedule
 from flask import *
+with fs.app.test_request_context():
+    from waiting_room import WaitingRoom
+    from game import Game
 
 games = {}
-
-with fs.app.test_request_context():
-    from game import Game
 
 
 @fs.app.route('/')
@@ -42,7 +42,7 @@ def new_game():
     :return: None
     """
     game_id = make_unique_game_id()
-    games[game_id] = Game(game_id)
+    games[game_id] = WaitingRoom(game_id)
     return redirect('/games/' + game_id)
 
 
@@ -55,7 +55,7 @@ def render_game(game_id):
     :return:
     """
     if game_id in games:
-        return games[game_id].render_game()
+        return games[game_id].render()
     else:
         return "<h1>Game not found<h1>"
 

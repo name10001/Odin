@@ -15,9 +15,10 @@ class Game:
     _direction = 1  # 1 or -1
     running = False
 
-    def __init__(self, game_id):
+    def __init__(self, game_id, players):
         self.game_id = game_id
-        self._players = {}
+        for player in players:
+            self._players[player] = Player(self, players[player], player)
         self._played_cards = [cards.pickup_from_deck()(self)]
 
     def get_card(self, card_id):
@@ -53,40 +54,7 @@ class Game:
         render the HTML needed to display the game
         :return:
         """
-        if request.method == 'GET':
-            if "player_id" in session and session["player_id"] in self._players:
-                if self.running:
-                    return render_template("game.html", game=self)
-                else:
-                    return render_template("waiting room.html", game=self)
-            else:
-                if self.running:
-                    return "Sorry, game has already started"
-                else:
-                    return render_template("login.html")
-        elif request.method == 'POST':
-            new_player = Player(self, escape(request.form['player_name']))
-            self._players[new_player.get_id()] = new_player
-            session['player_id'] = new_player.get_id()
-            with fs.app.app_context():
-                fs.socket_io.emit("user joined", new_player.get_name(), room=self.game_id)
-            return redirect("/games/" + self.game_id)
-        else:
-            return "What the Fuck Did You Just Bring Upon This Cursed Land!"
-
-    def joined_waiting_room(self):
-        """
-        Sends then all the joined players. If new players join latter it will also send them
-        :return: None
-        """
-        join_room(self.game_id)
-        for player in self._players:
-            emit("user joined", self._players[player].get_name())
-
-    def start(self):
-        self.running = True
-        with fs.app.app_context():
-            fs.socket_io.emit("refresh", room=self.game_id)
+        return render_template("game.html", game=self)
 
     def get_id(self):
         return self.game_id
