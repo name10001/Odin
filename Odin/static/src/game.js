@@ -18,7 +18,6 @@ function gameLoop(timestamp) {
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    console.log(canvas.width + "," + canvas.height);
     requestAnimationFrame(gameLoop);
 }
 
@@ -68,7 +67,7 @@ canvas.addEventListener('mouseup', (event) => {
     }
 });
 //update size
-canvas.addEventListener('resize',function() {
+window.addEventListener('resize',function() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 },false);
@@ -78,6 +77,7 @@ players.push([new Player("me",10), new Player("daddy",10), new Player("Mummy",10
 
 //This is your player id - so you know who is next
 let id = 0;
+
 
 //run gameloop
 gameLoop(0);
