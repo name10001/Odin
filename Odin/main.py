@@ -70,6 +70,12 @@ def waiting_room(game_id):
         return games[game_id].joined_waiting_room()
 
 
+@fs.socket_io.on('start game')
+def waiting_room(game_id):
+    if game_id in games:
+        return games[game_id].start()
+
+
 def clear_old_games():
     """
     removes all the games that have not been modified in over an hour

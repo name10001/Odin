@@ -23,11 +23,53 @@
 					$('.modal').modal("show");
 
 				});
-				socket.on('user joined', function(name) {
-				    var name_node = document.createElement("LI");
-				    var text_node = document.createTextNode(name);
-				    name_node.appendChild(text_node);
-					document.getElementById("list-of-players").appendChild(name_node);
+				socket.on('card update', function(cards) {
+				    // cards example:
+                    // {
+                    //   "your cards":
+                    //     [
+                    //       {
+                    //         "card id": "blue_zero_card_124",
+                    //         "card image url": "/static/cards/0_blue.png",
+                    //         "can be played": true,
+                    //         "pick a player": false,
+                    //         "pick a card type": false
+                    //       },
+                    //       {
+                    //         "card id": "fuck_you_card_8",
+                    //         "card image url": "/static/cards/fuck_you.png",
+                    //         "can be played": true,
+                    //         "pick a player": true,
+                    //         "pick a card type": false
+                    //       }
+                    //     ],
+                    //   "cards on deck":
+                    //     [
+                    //       "card image url": "/static/cards/0_green.png",
+                    //       "card image url": "/static/cards/1_green.png",
+                    //       "card image url": "/static/cards/1_blue.png",
+                    //     ]
+                    // }
+
+				});
+				socket.on('player update', function(players) {
+                    // players example:
+                    // {
+                    //   "Players":
+                    //     [
+                    //       {
+                    //         "current turn": false,
+                    //         "number of cards": 15,
+                    //         "name": "Jeff"
+                    //       },
+                    //       {
+                    //         "current turn": true,
+                    //         "number of cards": 5,
+                    //         "name": "Bob"
+                    //       }
+                    //     ],
+                    //   "direction": "Left"
+                    // }
 				});
 			});
         </script>
@@ -64,8 +106,8 @@
             </div>
         </div>
     </div>
-    <canvas id="canvas" width="800" height="600">
-        <script src="{{ url_for('static', filename='src/game.js')}}" type="module"></script>
+    <canvas id="canvas">
+        <script src="{{ url_for('static', filename='src/game.js')}}"></script>
     </canvas>
   </body>
 </html>

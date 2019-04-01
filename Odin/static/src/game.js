@@ -18,6 +18,7 @@ function gameLoop(timestamp) {
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
+    console.log(canvas.width + "," + canvas.height);
     requestAnimationFrame(gameLoop);
 }
 
@@ -48,6 +49,8 @@ let lastTime = 0;
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 //Listeners
 canvas.addEventListener('mousedown', (event) => {
     if(event.button==0) {
@@ -64,6 +67,11 @@ canvas.addEventListener('mouseup', (event) => {
         mousePressed = false;
     }
 });
+//update size
+canvas.addEventListener('resize',function() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+},false);
 
 //TEST CODE - ASSUME THE SERVER SENDS YOU THIS PLAYER INFO
 players.push([new Player("me",10), new Player("daddy",10), new Player("Mummy",10)]);
