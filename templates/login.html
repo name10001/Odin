@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+         <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+        <title>Waiting room</title>
+        <style>
+            body {
+                background-image: url("{{ url_for('static', filename='banner.jpg') }}");
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+                height: 100vh;
+            }
+            #loginPanel {
+                top: 20vh;
+            }
+        </style>
+    </head>
+    <body>
+    <div class="col-sm-6 col-sm-offset-3" id="loginPanel">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Pick a user name
+            </div>
+            <div class="panel-body">
+                <form method="post">
+                    <div class="form-group">
+                        <label for="InputName">User name</label>
+                        <input type="text" class="form-control" id="InputName" name="player_name" placeholder="Enter a name">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>

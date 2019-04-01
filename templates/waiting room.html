@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+         <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+        <script>
+			$(document).ready(function() {
+				// SocketIO
+				socket = io.connect(document.domain, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
+				socket.on('connect', function() {
+					socket.emit("waiting room", "{{ game.get_id() }}")
+				});
+				socket.on('message', function(data) {
+					console.log(data);
+				});
+				socket.on('user joined', function(name) {
+				    var name_node = document.createElement("LI");
+				    var text_node = document.createTextNode(name);
+				    name_node.appendChild(text_node);
+					document.getElementById("list-of-players").appendChild(name_node);
+				});
+			});
+        </script>
+
+        <title>Waiting room</title>
+        <style>
+            body {
+                background-image: url("{{ url_for('static', filename='banner.jpg') }}");
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+                height: 100vh;
+            }
+            #loginPanel {
+                top: 20vh;
+            }
+        </style>
+    </head>
+    <body>
+    <div class="col-sm-6 col-sm-offset-3" id="loginPanel">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Waiting for players...
+            </div>
+            <div class="panel-body">
+                <ul id="list-of-players">
+
+                </ul>
+            </div>
+            <div class="panel-footer">
+                <button type="button" class="btn btn-primary" onclick="socket.emit('start game', '{{ game.get_id() }}')">
+                    Start Game
+                </button>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>
