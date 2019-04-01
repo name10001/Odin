@@ -9,7 +9,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
-        <title>Waiting room</title>
+        <title>один</title>
         <style>
             body {
                 background-image: url("{{ url_for('static', filename='banner.jpg') }}");
@@ -20,24 +20,26 @@
             #loginPanel {
                 top: 20vh;
             }
+            .input-group button,input{
+                display: inline-block;
+            }
+
         </style>
     </head>
     <body>
     <div class="col-sm-6 col-sm-offset-3" id="loginPanel">
         <div class="panel panel-default">
             <div class="panel-heading">
-                Uno++
+                один
             </div>
             <div class="panel-body">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                <br />
+                <p>Join a game by entering the game ID below, or by creating a new game.</p>
                 <br />
                 <div class="input-group">
-                    <span class="input-group-addon">Join Game</span>
-                    <input id="game-id" type="text" class="form-control" placeholder="Game id e.g. '123-456'">
-                </div>
-                <div class="text-right">
-                    <button type="button" class="btn btn-default" onclick="window.location.href = '/games/' + document.getElementById('game-id').value">Join</button>
+                    <input id="game-id" type="text" class="form-control" placeholder="Game id e.g. '12345'">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary" onclick="window.location.href = '/' + document.getElementById('game-id').value">Join</button>
+                    </span>
                 </div>
             </div>
             <div class="panel-footer">

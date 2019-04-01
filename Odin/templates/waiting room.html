@@ -34,7 +34,7 @@
 			});
         </script>
 
-        <title>Waiting room</title>
+        <title>один</title>
         <style>
             body {
                 background-image: url("{{ url_for('static', filename='banner.jpg') }}");
@@ -49,10 +49,17 @@
     </head>
     <body>
 	<audio src="{{ url_for('static', filename='lobby.mp3') }}" autoplay loop>Your browser does not support audio</audio>
+
     <div class="col-sm-6 col-sm-offset-3" id="loginPanel">
         <div class="panel panel-default">
+
             <div class="panel-heading">
-                Waiting for players...
+                <h1 style="text-align:center;">ID: <strong>{{game.get_id()}}</strong></h1>
+                <h3 style="text-align:center;"><input type="text" name="game-link" value="odin.bestialmania.com/{{ game.get_id() }}"
+                             style="width: 330px; text-align: center;"
+                             onclick="this.select(); document.execCommand('copy');"
+                             readonly></h3>
+
             </div>
             <div class="panel-body">
                 <ul id="list-of-players">

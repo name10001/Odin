@@ -22,8 +22,8 @@ def make_unique_game_id():
     """
     # I wish python had a do while loop
     def generate():
-        new_game_id = '{:03d}-{:03d}'
-        return new_game_id.format(randint(0, 1000), randint(0, 1000))
+        new_game_id = '{:05d}'
+        return new_game_id.format(randint(0, 100000))
 
     # generates an ID if its not unique, generate another
     game_id = generate()
@@ -41,11 +41,11 @@ def new_game():
     """
     game_id = make_unique_game_id()
     games[game_id] = WaitingRoom(game_id)
-    return redirect('/games/' + game_id)
+    return redirect('/' + game_id)
 
 
-@fs.app.route('/games/<game_id>', methods=['GET', 'POST'])
-@fs.app.route('/games/<game_id>/', methods=['GET', 'POST'])
+@fs.app.route('/<game_id>', methods=['GET', 'POST'])
+@fs.app.route('/<game_id>/', methods=['GET', 'POST'])
 def render_game(game_id):
     """
     renders the given game

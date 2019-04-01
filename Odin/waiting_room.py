@@ -50,7 +50,7 @@ class WaitingRoom:
             session['player_id'] = player_id
             with fs.app.app_context():
                 fs.socket_io.emit("user joined", name, room=self.game_id)
-            return redirect("/games/" + self.game_id)
+            return redirect("/" + self.game_id)
         else:
             return "What the Fuck Did You Just Bring Upon This Cursed Land!"
 
