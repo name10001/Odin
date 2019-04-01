@@ -30,12 +30,15 @@ class AbstractCard:
         """
         return not set(card.CARD_CATEGORIES).isdisjoint(set(self.CARD_CATEGORIES))
 
-    def can_be_played_on(self, card):
+    def can_be_played_on(self, card, is_players_turn):
         """
         Can this card be played on the given card
-        :param card: 
+        :param card:
+        :param is_players_turn: is it the players turn of not
         :return: True or False
         """
+        if is_players_turn is False:
+            return False
         return card.can_be_played_on_this(self)
 
     def _make_id(self):

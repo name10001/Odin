@@ -3,6 +3,7 @@ from player import Player
 from flask import *
 from flask_socketio import *
 import flask_server as fs
+import random
 
 
 class Game:
@@ -14,12 +15,13 @@ class Game:
     _players = {}
     _direction = 1  # 1 or -1
     running = False
-    starting_number_of_cards = 10;
+    starting_number_of_cards = 10
 
     def __init__(self, game_id, players):
         self.game_id = game_id
         for player in players:
             self._players[player] = Player(self, players[player], player)
+        self.turn = random.choice(list(self._players.values()))
         self._played_cards = [cards.pickup_from_deck()(self)]
 
     def get_card(self, card_id):
@@ -31,7 +33,6 @@ class Game:
         for card in self._played_cards:
             if card.id == card_id:
                 return card
-        print(self._players)
         for player in self._players:
             for card in self._players[player].get_cards():
                 if card.id == card_id:
@@ -137,7 +138,7 @@ class Game:
                 {
                     "card id": card.get_id(),
                     "card image url": card.get_url(),
-                    "can be played": card.can_be_played_on(self._played_cards[-1]),
+                    "can be played": card.can_be_played_on(self._played_cards[-1], player == self.turn),
                     "pick a player": False,
                     "pick a card type": False
                 }
