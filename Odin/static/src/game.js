@@ -148,7 +148,110 @@ let players = [];
 let currentPlayer = 0;
 let direction = 'Right';
 
+let socket;
+
 $(document).ready(function() {
+    /*
+
+    SOCKET STUFF
+
+
+     */
+    // SocketIO
+    socket = io.connect(document.domain, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
+
+    socket.on('connect', function() {
+        socket.emit("initial game connection", "{{ game.get_id() }}");
+    });
+
+    socket.on('message for player', function(message) {
+        $("#message-from-server").html(message);
+        $('.modal').modal("show");
+
+    });
+
+    function playCard(cardId, picked_player, pick_type){
+        // leave picked_player and pick_type as null unless needed
+        // not currently working!
+        socket.emit("play card", "{{ game.get_id() }}", cardId, picked_player, pick_type);
+    }
+
+    function sayUno(){
+        socket.emit("game message", "{{ game.get_id() }}", "Uno");
+    }
+
+    function nextTurn(){
+        // not currently working!
+        socket.emit("game message", "{{ game.get_id() }}", "Next Turn");
+    }
+
+    socket.on('card update', function(cards) {
+        console.log(cards);
+        //cards example:
+        //{
+        //    "your cards":
+        //        [
+        //            {
+        //                "card id": "blue_zero_card_124",
+        //                "card image url": "/static/cards/0_blue.png",
+        //                "can be played": true,
+        //                "pick a player": false,
+        //                "pick a card type": false
+        //            },
+        //            {
+        //                "card id": "fuck_you_card_8",
+        //                "card image url": "/static/cards/fuck_you.png",
+        //                "can be played": true,
+        //                "pick a player": true,
+        //                "pick a card type": false
+        //            }
+        //        ]
+        //    "cards on deck":
+        //        [
+        //            {
+        //                "card image url": "/static/cards/0_green.png"
+        //            },
+        //            {
+        //                "card image url": "/static/cards/1_green.png"
+        //            },
+        //            {
+        //                "card image url": "/static/cards/1_blue.png"
+        //            },
+        //        ]
+        //}
+
+    });
+    socket.on('player update', function(players) {
+        // not currently working!
+        // players example:
+        // {
+        //   "Players":
+        //     [
+        //       {
+        //         "current turn": false,
+        //         "number of cards": 15,
+        //         "name": "Jeff"
+        //       },
+        //       {
+        //         "current turn": true,
+        //         "number of cards": 5,
+        //         "name": "Bob"
+        //       }
+        //     ],
+        //   "direction": "Left"
+        // }
+    });
+
+
+
+    /*
+
+
+    UI STUFF
+
+
+     */
+
     //Canvas load
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
