@@ -12,7 +12,7 @@ class Game:
     """
     _pickup = 0
     played_cards = []
-    _players = {}
+    players = {}
     _direction = 1  # 1 or -1
     running = False
     starting_number_of_cards = 10
@@ -21,8 +21,8 @@ class Game:
         self.game_id = game_id
         self.deck = cards.Deck()
         for player in players:
-            self._players[player] = Player(self, players[player], player)
-        self.turn = random.choice(list(self._players.values()))
+            self.players[player] = Player(self, players[player], player)
+        self.turn = random.choice(list(self.players.values()))
         self.played_cards = [self.deck.pickup()(self)]
 
     def find_card(self, card_id):
@@ -34,8 +34,8 @@ class Game:
         for card in self.played_cards:
             if card.id == card_id:
                 return card
-        for player in self._players:
-            for card in self._players[player].get_cards():
+        for player in self.players:
+            for card in self.players[player].get_cards():
                 if card.id == card_id:
                     return card
         return None
@@ -47,8 +47,8 @@ class Game:
         :return: returns the player if found, else None
         :return:
         """
-        if player_id in self._players:
-            return self._players[player_id]
+        if player_id in self.players:
+            return self.players[player_id]
         else:
             return None
 
