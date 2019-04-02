@@ -54,14 +54,35 @@
         <div class="panel panel-default">
 
             <div class="panel-heading">
-                <h1 style="text-align:center;">ID: <strong>{{game.get_id()}}</strong></h1>
-                <h3 style="text-align:center;"><input type="text" name="game-link" value="odin.bestialmania.com/{{ game.get_id() }}"
-                             style="width: 330px; text-align: center;"
-                             onclick="this.select(); document.execCommand('copy');"
-                             readonly></h3>
-
+                <h2 style="text-align:center;">
+                    ID: <strong>{{ game.get_id() }}</strong>
+                </h2>
+                <h3 style="text-align:center;">
+                    <div class="input-group">
+                        <input
+                                type="text"
+                                class="form-control input-lg"
+                                name="game-link"
+                                id="game-url"
+                                value="{{ request.url }}"
+                                readonly
+                        >
+                        <span class="input-group-btn">
+                            <button
+                                    type="submit"
+                                    class="btn btn-primary  input-lg"
+                                    onclick="document.getElementById('game-url').select(); document.execCommand('copy');"
+                            >
+                                copy
+                            </button>
+                        </span>
+                    </div>
+                </h3>
             </div>
             <div class="panel-body">
+                <h4>
+                    Waiting players:
+                </h4>
                 <ul id="list-of-players">
 
                 </ul>
