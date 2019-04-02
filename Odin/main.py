@@ -23,7 +23,7 @@ def make_unique_game_id():
     # I wish python had a do while loop
     def generate():
         new_game_id = '{:05d}'
-        return new_game_id.format(randint(0, 100000))
+        return new_game_id.format(randint(10000, 100000))
 
     # generates an ID if its not unique, generate another
     game_id = generate()

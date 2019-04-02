@@ -57,27 +57,25 @@
                 <h2 style="text-align:center;">
                     ID: <strong>{{ game.get_id() }}</strong>
                 </h2>
-                <h3 style="text-align:center;">
-                    <div class="input-group">
-                        <input
-                                type="text"
-                                class="form-control input-lg"
-                                name="game-link"
-                                id="game-url"
-                                value="{{ request.url }}"
-                                readonly
+                <div class="input-group">
+                    <input
+                            type="text"
+                            class="form-control input-lg"
+                            name="game-link"
+                            id="game-url"
+                            value="{{ request.url }}"
+                            readonly
+                    >
+                    <span class="input-group-btn">
+                        <button
+                                type="submit"
+                                class="btn btn-primary  input-lg"
+                                onclick="document.getElementById('game-url').select(); document.execCommand('copy');"
                         >
-                        <span class="input-group-btn">
-                            <button
-                                    type="submit"
-                                    class="btn btn-primary  input-lg"
-                                    onclick="document.getElementById('game-url').select(); document.execCommand('copy');"
-                            >
-                                copy
-                            </button>
-                        </span>
-                    </div>
-                </h3>
+                            copy
+                        </button>
+                    </span>
+                </div>
             </div>
             <div class="panel-body">
                 <h4>
