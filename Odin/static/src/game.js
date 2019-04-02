@@ -9,14 +9,36 @@ class Player {
 }
 
 /**
+ * Function for updating your scroll speed through the list of cards
+ */
+function scroll(dt) {
+    //accelerate based on your dragging speed
+    if(scrollSpeed > 0) {
+        scrollSpeed-=dt;
+        if(scrollSpeed<0) scrollSpeed = 0;
+    }
+    else if(scrollSpeed < 0) {
+        scrollSpeed+=dt;
+        if(scrollSpeed>0) scrollSpeed = 0;
+    }
+
+    scrollOffset+=scrollSpeed;
+    if(scrollOffset < -nCards*(CARD_WIDTH+20)-canvas.width/4) {
+        scrollOffset = -nCards*(CARD_WIDTH+20)-canvas.width/4;
+    }
+    else if(scrollOffset > canvas.width/4+20) {
+        scrollOffset = canvas.width/4+20;
+    }
+
+}
+
+/**
  * Draws the cards in your hand
  */
 function drawCards() {
-    let player = players[id];
-    let beginOffset = (CARD_WIDTH + 20)*player.nCards/2-10;
     let offset = CARD_WIDTH + 20;
-    for(let i = 0; i<player.nCards;i++) {
-        ctx.drawImage(testImage,canvas.width/2-beginOffset+i*offset,canvas.height-50-CARD_HEIGHT,CARD_WIDTH,CARD_HEIGHT);
+    for(let i = 0; i<nCards;i++) {
+        ctx.drawImage(testImage,canvas.width/2+scrollOffset+i*offset,canvas.height-50-CARD_HEIGHT,CARD_WIDTH,CARD_HEIGHT);
     }
 }
 
@@ -35,10 +57,46 @@ function gameLoop(timestamp) {
     ctx.fillRect(0,0,canvas.width,canvas.height);
     ctx.globalAlpha = 1;
 
+    scroll(dt);
     drawCards();
 
 
     requestAnimationFrame(gameLoop);
+}
+
+function click(x,y) {
+    console.log("click" + x + "," + y);
+    mousePressed = true;
+    mousePosition.x = x;
+    mousePosition.y = y;
+    if(mousePosition.y > canvas.height-100-CARD_HEIGHT) {
+        //Clicked in card area
+        clickPosition.x = mousePosition.x-scrollOffset;
+        clickPosition.y = mousePosition.y;
+        dragType = 1;
+    }
+}
+function release() {
+    mousePressed = false;
+    dragType = 0;
+}
+function drag() {
+    if(dragType==2) {
+        scrollOffset = mousePosition.x-clickPosition.x;
+    }
+    else if(dragType==3) {
+        //TODO move the card around
+    }
+    //determine if you are dragging the mouse horizontally or vertically
+    else {
+        if(Math.abs(mousePosition.x-scrollOffset-clickPosition.x)>20) {
+
+            dragType = 2;
+        }
+        else if(Math.abs(mousePosition.y-clickPosition.y)>20) {
+            dragType = 3;
+        }
+    }
 }
 
 
@@ -53,58 +111,101 @@ function gameLoop(timestamp) {
 
 
  */
-
 const CARD_WIDTH = 134;
 const CARD_HEIGHT = 209;
 
 
-let mousePosition = {
+let mousePosition = {//mouse position
     x:0,y:0
 }
-let mousePressed = false;
-let players = [];
-let currentPlayer = 0;
-let direction = 'Right';
+let mouseMove = {//change in mouse position
+    x:0,y:0
+}
+let mousePressed = false;//if the mouse is pressed
+
+//DRAGGING - 0 = none, 1 = "click" or undetermined, 2 = scroll, 3 = move card
+let dragType = 0;
+let clickPosition = {
+    x:0,y:0
+}
+
+//scrolling
+let scrollOffset = -CARD_WIDTH/2;
+let scrollSpeed = 0;
+
+//time keeping
 let lastTime = 0;
 
 
-//Canvas load
-let canvas = document.getElementById('canvas');
-let ctx = canvas.getContext('2d');
+//canvas objects
+let canvas, ctx, testImage;
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-//Listeners
-canvas.addEventListener('mousedown', (event) => {
-    if(event.button==0) {
-        mousePressed = true;
-    }
-});
-//update mouse pos
-canvas.addEventListener('mousemove',(event) => {
-    mousePosition.x = event.offsetX;
-    mousePosition.y = event.offsetY;
-});
-canvas.addEventListener('mouseup', (event) => {
-    if(event.button==0) {
-        mousePressed = false;
-    }
-});
-//update size
-window.addEventListener('resize',function() {
+
+//gameplay (from server)
+let nCards = 10;
+let id = 0;
+let players = [];
+let currentPlayer = 0;
+let direction = 'Right';
+
+$(document).ready(function() {
+    //Canvas load
+    canvas = document.getElementById('canvas');
+    ctx = canvas.getContext('2d');
+
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-},false);
+    //Click listener
+    canvas.addEventListener('mousedown', (event) => {
+        if(event.button==0) {
+            click(event.offsetX,event.offsetY);
+        }
+    },false);
+    canvas.addEventListener('touchstart', (event) => {
+        click(event.touches[0].clientX,event.touches[0].clientY);
+    },false);
 
-//TEST CODE - ASSUME THE SERVER SENDS YOU THIS PLAYER INFO
-players.push(new Player("me",10));
+    canvas.addEventListener('mouseup', (event) => {
+        if(event.button==0) {
+            release();
+        }
+    },false);
+    canvas.addEventListener('touchend', () => {
+        release();
+    },false);
 
-//This is your player id - so you know who is next
-let id = 0;
+    canvas.addEventListener('mouseleave', () => {
+        if(mousePressed) release();
+    },false);
+    //Mouse wheel listener
+    canvas.addEventListener('wheel',(event) => {
+        scrollSpeed = -100*Math.sign(event.deltaY);
+    },false);
+    //update mouse pos
+    canvas.addEventListener('mousemove',(event) => {
+        mouseMove.x = event.offsetX-mousePosition.x;
+        mouseMove.y = event.offsetY-mousePosition.y;
+        mousePosition.x = event.offsetX;
+        mousePosition.y = event.offsetY;
+        if(mousePressed) drag();
+    },false);
+    canvas.addEventListener('touchmove',(event) => {
+        mouseMove.x = event.touches[0].clientX-mousePosition.x;
+        mouseMove.y = event.touches[0].clientY-mousePosition.y;
+        mousePosition.x = event.touches[0].clientX;
+        mousePosition.y = event.touches[0].clientY;
+        if(mousePressed) drag();
 
-let testImage = new Image;
-testImage.src = '/static/cards/back.png';
-testImage.addEventListener('load',function() {
-    gameLoop(0);
-},false);
+    },false);
+    //update size
+    window.addEventListener('resize',() => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    },false);
 
+    testImage = new Image;
+    testImage.src = '/static/cards/back.png';
+    testImage.addEventListener('load',() => {
+        gameLoop(0);
+    },false);
+});
