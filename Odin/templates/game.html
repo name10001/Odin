@@ -14,6 +14,7 @@
         <script src="{{ url_for('static', filename='src/game.js') }}"></script>
         <script>
             var GAME_ID = "{{ game.get_id() }}";
+            var ALL_URLS = {{ game.deck.get_all_urls() | safe }};
         </script>
 
 

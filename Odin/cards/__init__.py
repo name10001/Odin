@@ -21,8 +21,10 @@ all_cards = [
 all_types = []
 all_colours = []
 size_of_deck = 0
+all_urls = []
 for card in all_cards:
     size_of_deck += card.NUMBER_IN_DECK
+    all_urls.append(card.CARD_IMAGE_URL)
     if card.CARD_TYPE not in all_types:
         all_types.append(card.CARD_TYPE)
     if card.CARD_COLOUR not in all_colours:

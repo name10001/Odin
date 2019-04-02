@@ -1,5 +1,6 @@
 import cards
 from random import randint
+from flask import url_for
 
 
 class Deck:
@@ -53,3 +54,14 @@ class Deck:
             if card.CARD_TYPE == card_type:
                 self.cards.remove(card)
                 self.number_of_cards -= card.NUMBER_IN_DECK
+
+    @staticmethod
+    def get_all_urls():
+        """
+        gets all the complete card urls
+        :return: List of strings containing urls
+        """
+        all_urls = []
+        for url in cards.all_urls:
+            all_urls.append(url_for('static', filename=url))
+        return cards.all_urls
