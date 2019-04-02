@@ -11,95 +11,38 @@
 
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 
+        <script src="{{ url_for('static', filename='src/game.js') }}"></script>
         <script>
-			$(document).ready(function() {
-				// SocketIO
-				socket = io.connect(document.domain, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
+            $(document).ready(function() {
+                /*
 
-				socket.on('connect', function() {
-					socket.emit("initial game connection", "{{ game.get_id() }}");
-				});
+                SOCKET STUFF
 
-				socket.on('message for player', function(message) {
-					$("#message-from-server").html(message);
-					$('.modal').modal("show");
 
-				});
+                 */
+                // SocketIO
+                socket = io.connect(document.domain, {
+                    'reconnection': true,
+                    'reconnectionDelay': 500,
+                    'maxReconnectionAttempts': Infinity
+                });
 
-				function playCard(cardId, picked_player, pick_type){
-				    // leave picked_player and pick_type as null unless needed
-				    // not currently working!
-					socket.emit("play card", "{{ game.get_id() }}", cardId, picked_player, pick_type);
-				}
+                socket.on('connect', function () {
+                    socket.emit("initial game connection", "{{ game.get_id() }}");
+                    console.log('test');
+                });
 
-				function sayUno(){
-					socket.emit("game message", "{{ game.get_id() }}", "Uno");
-				}
+                socket.on('message for player', function (message) {
+                    $("#message-from-server").html(message);
+                    $('.modal').modal("show");
 
-				function nextTurn(){
-				    // not currently working!
-					socket.emit("game message", "{{ game.get_id() }}", "Next Turn");
-				}
+                });
 
-				socket.on('card update', function(cards) {
-                    console.log(cards);
-                    //cards example:
-                    //{
-                    //    "your cards":
-                    //        [
-                    //            {
-                    //                "card id": "blue_zero_card_124",
-                    //                "card image url": "/static/cards/0_blue.png",
-                    //                "can be played": true,
-                    //                "pick a player": false,
-                    //                "pick a card type": false
-                    //            },
-                    //            {
-                    //                "card id": "fuck_you_card_8",
-                    //                "card image url": "/static/cards/fuck_you.png",
-                    //                "can be played": true,
-                    //                "pick a player": true,
-                    //                "pick a card type": false
-                    //            }
-                    //        ]
-                    //    "cards on deck":
-                    //        [
-                    //            {
-                    //                "card image url": "/static/cards/0_green.png"
-                    //            },
-                    //            {
-                    //                "card image url": "/static/cards/1_green.png"
-                    //            },
-                    //            {
-                    //                "card image url": "/static/cards/1_blue.png"
-                    //            },
-                    //        ]
-                    //}
-
-				});
-				socket.on('player update', function(players) {
-				    // not currently working!
-                    // players example:
-                    // {
-                    //   "Players":
-                    //     [
-                    //       {
-                    //         "current turn": false,
-                    //         "number of cards": 15,
-                    //         "name": "Jeff"
-                    //       },
-                    //       {
-                    //         "current turn": true,
-                    //         "number of cards": 5,
-                    //         "name": "Bob"
-                    //       }
-                    //     ],
-                    //   "direction": "Left"
-                    // }
-				});
-			});
+                socket.on('card update', cardUpdate);
+                socket.on('player update', playerUpdate);
+            });
         </script>
-        <script src="{{ url_for('static', filename='src/game.js')}}"></script>
+
 
         <title>Game</title>
         <style>

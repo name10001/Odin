@@ -1,3 +1,50 @@
+/*
+
+
+
+
+        VARIABLES
+
+
+
+ */
+const CARD_WIDTH = 134;
+const CARD_HEIGHT = 209;
+
+
+let mousePosition = {//mouse position
+    x:0,y:0
+}
+let mouseMove = {//change in mouse position
+    x:0,y:0
+}
+let mousePressed = false;//if the mouse is pressed
+
+//DRAGGING - 0 = none, 1 = "click" or undetermined, 2 = scroll, 3 = move card
+let dragType = 0;
+let clickPosition = {
+    x:0,y:0
+}
+
+//scrolling
+let scrollOffset = -CARD_WIDTH/2;
+let scrollSpeed = 0;
+
+//time keeping
+let lastTime = 0;
+
+
+//canvas objects
+let canvas, ctx, testImage;
+
+
+//gameplay (from server)
+let nCards = 10;
+let id = 0;
+let players = [];
+let currentPlayer = 0;
+let direction = 'Right';
+
 /**
  * Player represents each of your opponents and how many cards they have
  */
@@ -65,7 +112,6 @@ function gameLoop(timestamp) {
 }
 
 function click(x,y) {
-    console.log("click" + x + "," + y);
     mousePressed = true;
     mousePosition.x = x;
     mousePosition.y = y;
@@ -99,155 +145,143 @@ function drag() {
     }
 }
 
+/*
 
+
+
+            SOCKET FUNCTIONS
+
+
+
+ */
+
+/**
+ * Is called when the server sends you a list of cards
+ * @param cards
+ */
+function cardUpdate(cards) {
+    console.log("card update");
+    console.log(cards);
+    //cards example:
+    //{
+    //    "your cards":
+    //        [
+    //            {
+    //                "card id": "blue_zero_card_124",
+    //                "card image url": "/static/cards/0_blue.png",
+    //                "can be played": true,
+    //                "pick a player": false,
+    //                "pick a card type": false
+    //            },
+    //            {
+    //                "card id": "fuck_you_card_8",
+    //                "card image url": "/static/cards/fuck_you.png",
+    //                "can be played": true,
+    //                "pick a player": true,
+    //                "pick a card type": false
+    //            }
+    //        ]
+    //    "cards on deck":
+    //        [
+    //            {
+    //                "card image url": "/static/cards/0_green.png"
+    //            },
+    //            {
+    //                "card image url": "/static/cards/1_green.png"
+    //            },
+    //            {
+    //                "card image url": "/static/cards/1_blue.png"
+    //            },
+    //        ]
+    //}
+}
+
+/**
+ * Is called to update the player on how many cards each person now has
+ * @param players
+ */
+function playerUpdate(players) {
+    console.log("player update");
+    console.log(players);
+    // not currently working!
+    // players example:
+    // {
+    //   "Players":
+    //     [
+    //       {
+    //         "current turn": false,
+    //         "number of cards": 15,
+    //         "name": "Jeff"
+    //       },
+    //       {
+    //         "current turn": true,
+    //         "number of cards": 5,
+    //         "name": "Bob"
+    //       }
+    //     ],
+    //   "direction": "Left"
+    // }
+}
+
+
+function playCard(cardId, picked_player, pick_type){
+    // leave picked_player and pick_type as null unless needed
+    // not currently working!
+    socket.emit("play card", "{{ game.get_id() }}", cardId, picked_player, pick_type);
+}
+
+function sayUno(){
+    socket.emit("game message", "{{ game.get_id() }}", "Uno");
+}
+
+function nextTurn(){
+    // not currently working!
+    socket.emit("game message", "{{ game.get_id() }}", "Next Turn");
+}
 
 /*
 
 
 
 
-        *****  Setup code below  *****
+        MAIN FUNCTION
+
 
 
 
  */
-const CARD_WIDTH = 134;
-const CARD_HEIGHT = 209;
-
-
-let mousePosition = {//mouse position
-    x:0,y:0
-}
-let mouseMove = {//change in mouse position
-    x:0,y:0
-}
-let mousePressed = false;//if the mouse is pressed
-
-//DRAGGING - 0 = none, 1 = "click" or undetermined, 2 = scroll, 3 = move card
-let dragType = 0;
-let clickPosition = {
-    x:0,y:0
-}
-
-//scrolling
-let scrollOffset = -CARD_WIDTH/2;
-let scrollSpeed = 0;
-
-//time keeping
-let lastTime = 0;
-
-
-//canvas objects
-let canvas, ctx, testImage;
-
-
-//gameplay (from server)
-let nCards = 10;
-let id = 0;
-let players = [];
-let currentPlayer = 0;
-let direction = 'Right';
-
-let socket;
-
 $(document).ready(function() {
-    /*
-
-    SOCKET STUFF
-
-
-     */
     // SocketIO
     socket = io.connect(document.domain, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
-
     socket.on('connect', function() {
         socket.emit("initial game connection", "{{ game.get_id() }}");
     });
-
     socket.on('message for player', function(message) {
         $("#message-from-server").html(message);
         $('.modal').modal("show");
-
     });
-
     function playCard(cardId, picked_player, pick_type){
         // leave picked_player and pick_type as null unless needed
         // not currently working!
         socket.emit("play card", "{{ game.get_id() }}", cardId, picked_player, pick_type);
     }
-
     function sayUno(){
         socket.emit("game message", "{{ game.get_id() }}", "Uno");
     }
-
     function nextTurn(){
         // not currently working!
         socket.emit("game message", "{{ game.get_id() }}", "Next Turn");
     }
-
-    socket.on('card update', function(cards) {
-        console.log(cards);
-        //cards example:
-        //{
-        //    "your cards":
-        //        [
-        //            {
-        //                "card id": "blue_zero_card_124",
-        //                "card image url": "/static/cards/0_blue.png",
-        //                "can be played": true,
-        //                "pick a player": false,
-        //                "pick a card type": false
-        //            },
-        //            {
-        //                "card id": "fuck_you_card_8",
-        //                "card image url": "/static/cards/fuck_you.png",
-        //                "can be played": true,
-        //                "pick a player": true,
-        //                "pick a card type": false
-        //            }
-        //        ]
-        //    "cards on deck":
-        //        [
-        //            {
-        //                "card image url": "/static/cards/0_green.png"
-        //            },
-        //            {
-        //                "card image url": "/static/cards/1_green.png"
-        //            },
-        //            {
-        //                "card image url": "/static/cards/1_blue.png"
-        //            },
-        //        ]
-        //}
-
-    });
-    socket.on('player update', function(players) {
-        // not currently working!
-        // players example:
-        // {
-        //   "Players":
-        //     [
-        //       {
-        //         "current turn": false,
-        //         "number of cards": 15,
-        //         "name": "Jeff"
-        //       },
-        //       {
-        //         "current turn": true,
-        //         "number of cards": 5,
-        //         "name": "Bob"
-        //       }
-        //     ],
-        //   "direction": "Left"
-        // }
-    });
-
+    socket.on('card update', cardUpdate);
+    socket.on('player update', playerUpdate);
 
 
     /*
 
 
+
     UI STUFF
+
 
 
      */
