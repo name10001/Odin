@@ -13,34 +13,7 @@
 
         <script src="{{ url_for('static', filename='src/game.js') }}"></script>
         <script>
-            $(document).ready(function() {
-                /*
-
-                SOCKET STUFF
-
-
-                 */
-                // SocketIO
-                socket = io.connect(document.domain, {
-                    'reconnection': true,
-                    'reconnectionDelay': 500,
-                    'maxReconnectionAttempts': Infinity
-                });
-
-                socket.on('connect', function () {
-                    socket.emit("initial game connection", "{{ game.get_id() }}");
-                    console.log('test');
-                });
-
-                socket.on('message for player', function (message) {
-                    $("#message-from-server").html(message);
-                    $('.modal').modal("show");
-
-                });
-
-                socket.on('card update', cardUpdate);
-                socket.on('player update', playerUpdate);
-            });
+            var GAME_ID = "{{ game.get_id() }}";
         </script>
 
 

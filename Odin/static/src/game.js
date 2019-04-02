@@ -1,3 +1,34 @@
+$(document).ready(function() {
+                /*
+
+                SOCKET STUFF
+
+
+                 */
+                // SocketIO
+                socket = io.connect(document.domain, {
+                    'reconnection': true,
+                    'reconnectionDelay': 500,
+                    'maxReconnectionAttempts': Infinity
+                });
+
+                socket.on('connect', function () {
+                    socket.emit("initial game connection", GAME_ID);
+                    console.log('test');
+                });
+
+                socket.on('message for player', function (message) {
+                    $("#message-from-server").html(message);
+                    $('.modal').modal("show");
+
+                });
+
+                socket.on('card update', cardUpdate);
+                socket.on('player update', playerUpdate);
+});
+
+
+
 /*
 
 
@@ -227,16 +258,16 @@ function playerUpdate(players) {
 function playCard(cardId, picked_player, pick_type){
     // leave picked_player and pick_type as null unless needed
     // not currently working!
-    socket.emit("play card", "{{ game.get_id() }}", cardId, picked_player, pick_type);
+    socket.emit("play card", GAME_ID, cardId, picked_player, pick_type);
 }
 
 function sayUno(){
-    socket.emit("game message", "{{ game.get_id() }}", "Uno");
+    socket.emit("game message", GAME_ID, "Uno");
 }
 
 function nextTurn(){
     // not currently working!
-    socket.emit("game message", "{{ game.get_id() }}", "Next Turn");
+    socket.emit("game message", GAME_ID, "Next Turn");
 }
 
 /*
@@ -254,7 +285,7 @@ $(document).ready(function() {
     // SocketIO
     socket = io.connect(document.domain, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
     socket.on('connect', function() {
-        socket.emit("initial game connection", "{{ game.get_id() }}");
+        socket.emit("initial game connection", GAME_ID);
     });
     socket.on('message for player', function(message) {
         $("#message-from-server").html(message);
@@ -263,14 +294,14 @@ $(document).ready(function() {
     function playCard(cardId, picked_player, pick_type){
         // leave picked_player and pick_type as null unless needed
         // not currently working!
-        socket.emit("play card", "{{ game.get_id() }}", cardId, picked_player, pick_type);
+        socket.emit("play card", GAME_ID, cardId, picked_player, pick_type);
     }
     function sayUno(){
-        socket.emit("game message", "{{ game.get_id() }}", "Uno");
+        socket.emit("game message", GAME_ID, "Uno");
     }
     function nextTurn(){
         // not currently working!
-        socket.emit("game message", "{{ game.get_id() }}", "Next Turn");
+        socket.emit("game message", GAME_ID, "Next Turn");
     }
     socket.on('card update', cardUpdate);
     socket.on('player update', playerUpdate);
