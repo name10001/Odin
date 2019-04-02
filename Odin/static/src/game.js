@@ -70,7 +70,7 @@ let canvas, ctx, testImage;
 
 
 //gameplay (from server)
-let nCards = 10;
+let yourCards = [];
 let id = 0;
 let players = [];
 let currentPlayer = 0;
@@ -83,6 +83,15 @@ class Player {
     constructor(name, nCards) {
         this.name = name;
         this.nCards = nCards;
+    }
+}
+
+class Card {
+    constructor(id, url, allowedToPlay) {
+        this.id = id;
+        this.allowedToPlay = allowedToPlay;
+        this.image = new Image;
+        this.image.src = url;
     }
 }
 
@@ -101,8 +110,8 @@ function scroll(dt) {
     }
 
     scrollOffset+=scrollSpeed;
-    if(scrollOffset < -nCards*(CARD_WIDTH+20)-canvas.width/4) {
-        scrollOffset = -nCards*(CARD_WIDTH+20)-canvas.width/4;
+    if(scrollOffset < -yourCards.length*(CARD_WIDTH+20)-canvas.width/4) {
+        scrollOffset = -yourCards.length*(CARD_WIDTH+20)-canvas.width/4;
     }
     else if(scrollOffset > canvas.width/4+20) {
         scrollOffset = canvas.width/4+20;
@@ -115,8 +124,8 @@ function scroll(dt) {
  */
 function drawCards() {
     let offset = CARD_WIDTH + 20;
-    for(let i = 0; i<nCards;i++) {
-        ctx.drawImage(testImage,canvas.width/2+scrollOffset+i*offset,canvas.height-50-CARD_HEIGHT,CARD_WIDTH,CARD_HEIGHT);
+    for(let i = 0; i<yourCards.length;i++) {
+        ctx.drawImage(yourCards[i].image,canvas.width/2+scrollOffset+i*offset,canvas.height-50-CARD_HEIGHT,CARD_WIDTH,CARD_HEIGHT);
     }
 }
 
@@ -154,6 +163,9 @@ function click(x,y) {
     }
 }
 function release() {
+    if(dragType == 2) {
+        scrollSpeed = mouseMove.x*20;
+    }
     mousePressed = false;
     dragType = 0;
 }
@@ -191,40 +203,10 @@ function drag() {
  * @param cards
  */
 function cardUpdate(cards) {
-    console.log("card update");
-    console.log(cards);
-    //cards example:
-    //{
-    //    "your cards":
-    //        [
-    //            {
-    //                "card id": "blue_zero_card_124",
-    //                "card image url": "/static/cards/0_blue.png",
-    //                "can be played": true,
-    //                "pick a player": false,
-    //                "pick a card type": false
-    //            },
-    //            {
-    //                "card id": "fuck_you_card_8",
-    //                "card image url": "/static/cards/fuck_you.png",
-    //                "can be played": true,
-    //                "pick a player": true,
-    //                "pick a card type": false
-    //            }
-    //        ]
-    //    "cards on deck":
-    //        [
-    //            {
-    //                "card image url": "/static/cards/0_green.png"
-    //            },
-    //            {
-    //                "card image url": "/static/cards/1_green.png"
-    //            },
-    //            {
-    //                "card image url": "/static/cards/1_blue.png"
-    //            },
-    //        ]
-    //}
+    yourCards.length = 0;
+    for(let card of cards['your cards']) {
+        yourCards.push(new Card(card['card id'],card['card image url'],card['can be played']));
+    }
 }
 
 /**
