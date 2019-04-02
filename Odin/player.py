@@ -24,8 +24,6 @@ class Player:
         json_to_send = {
             "cards on deck": [],
             "your cards": [],
-            "choosable players": [],
-            "choosable cards": []
         }
         # get first 3 cards from deck
         lim = 3
@@ -46,14 +44,9 @@ class Player:
                     "card id": card.get_id(),
                     "card image url": card.get_url(),
                     "can be played": card.can_be_played_on(self.game.played_cards[-1], self == self.game.turn),
-                    "pick a player": False,
-                    "pick a card type": False
+                    "options": card.get_options()
                 }
             )
-        for player in self.game.players:
-            json_to_send["choosable players"].append(player)
-
-        json_to_send["choosable cards"] = self.game.deck.not_banded_colours + self.game.deck.not_banded_types
 
         # send
         with fs.app.app_context():

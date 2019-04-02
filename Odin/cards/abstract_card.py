@@ -17,7 +17,7 @@ class AbstractCard:
         self.game = game
         self.id = self._make_id()
 
-    def play_card(self, player, pick_player=None, picked_type=None):
+    def play_card(self, player, options):
         """
 
         :return: None
@@ -67,6 +67,16 @@ class AbstractCard:
             id_safe += "_" + str(num)
 
         return id_safe
+
+    def get_options(self):
+        """
+        gets all the options for a card
+        For example, the 'Fuck you' card requires you to pick a player.
+        In that case this function would return a list of players
+        :return: a Dictionary where the key is an ID and the value is what the player should see.
+                 Or None if no options are needed
+        """
+        return None
 
     def get_url(self):
         return url_for('static', filename=self.CARD_IMAGE_URL)
