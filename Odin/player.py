@@ -23,7 +23,9 @@ class Player:
         """
         json_to_send = {
             "cards on deck": [],
-            "your cards": []
+            "your cards": [],
+            "choosable players": [],
+            "choosable cards": []
         }
         # get first 3 cards from deck
         lim = 3
@@ -48,6 +50,10 @@ class Player:
                     "pick a card type": False
                 }
             )
+        for player in self.game.players:
+            json_to_send["choosable players"].append(player)
+
+        json_to_send["choosable cards"] = self.game.deck.not_banded_colours + self.game.deck.not_banded_types
 
         # send
         with fs.app.app_context():

@@ -7,7 +7,7 @@ class AbstractCard:
     DESCRIPTION = 'This is a abstract card and should only be used to inherit from. This should never be seen in a game'
     NUMBER_IN_DECK = 0
     NAME = "Abstract card"
-    CARD_COLOR = "Abstract"
+    CARD_COLOUR = "Abstract"
     CARD_TYPE = "Abstract"
     CARD_IS_PICKUP = False
     PICK_PLAYER = False
