@@ -1,30 +1,30 @@
 $(document).ready(function() {
-                /*
+    /*
 
-                SOCKET STUFF
+    SOCKET STUFF
 
 
-                 */
-                // SocketIO
-                socket = io.connect(document.domain, {
-                    'reconnection': true,
-                    'reconnectionDelay': 500,
-                    'maxReconnectionAttempts': Infinity
-                });
+     */
+    // SocketIO
+    socket = io.connect(document.domain, {
+        'reconnection': true,
+        'reconnectionDelay': 500,
+        'maxReconnectionAttempts': Infinity
+    });
 
-                socket.on('connect', function () {
-                    socket.emit("initial game connection", GAME_ID);
-                    console.log('test');
-                });
+    socket.on('connect', function () {
+        socket.emit("initial game connection", GAME_ID);
+    });
 
-                socket.on('message for player', function (message) {
-                    $("#message-from-server").html(message);
-                    $('.modal').modal("show");
+    socket.on('message for player', function (message) {
+        $("#message-from-server").html(message);
+        $('.modal').modal("show");
 
-                });
+    });
 
-                socket.on('card update', cardUpdate);
-                socket.on('player update', playerUpdate);
+    socket.on('card update', cardUpdate);
+    socket.on('player update', playerUpdate);
+
 });
 
 
@@ -56,6 +56,9 @@ let dragType = 0;
 let clickPosition = {
     x:0,y:0
 }
+let selectOffset = {
+    x:0,y:0
+}
 
 //scrolling
 let scrollOffset = -CARD_WIDTH/2;
@@ -66,15 +69,14 @@ let lastTime = 0;
 
 
 //canvas objects
-let canvas, ctx, testImage;
+let canvas, ctx, backImage, transparentImage;
 
 
 //gameplay (from server)
 let yourCards = [];
-let id = 0;
-let players = [];
-let currentPlayer = 0;
-let direction = 'Right';
+let selectedCards = [];
+let topCards = [];
+let draggedCard = -1;
 
 /**
  * Player represents each of your opponents and how many cards they have
@@ -123,10 +125,39 @@ function scroll(dt) {
  * Draws the cards in your hand
  */
 function drawCards() {
+    //draw deck
+    ctx.drawImage(backImage,canvas.width/2-CARD_WIDTH-10,canvas.height/2-CARD_HEIGHT/2,CARD_WIDTH,CARD_HEIGHT);
+
+    //draw discard pile
+    if(topCards.length>0) {
+        let x = canvas.width / 2 + 10;
+        let y = canvas.height / 2 - CARD_HEIGHT / 2;
+        ctx.drawImage(topCards[topCards.length - 1], x, y, CARD_WIDTH, CARD_HEIGHT);
+        for(let id of selectedCards) {
+            y-=40;
+            ctx.drawImage(yourCards[id].image, x, y, CARD_WIDTH, CARD_HEIGHT);
+        }
+    }
+
+
+    //draw your hand
     let offset = CARD_WIDTH + 20;
     for(let i = 0; i<yourCards.length;i++) {
+        if(i==draggedCard || selectedCards.includes(i)) continue;
         ctx.drawImage(yourCards[i].image,canvas.width/2+scrollOffset+i*offset,canvas.height-50-CARD_HEIGHT,CARD_WIDTH,CARD_HEIGHT);
+        if(!yourCards[i].allowedToPlay) {
+            ctx.drawImage(transparentImage,canvas.width/2+scrollOffset+i*offset,canvas.height-50-CARD_HEIGHT,CARD_WIDTH,CARD_HEIGHT)
+        }
     }
+
+    //draw card you are dragging
+    if(draggedCard>=0) {
+        ctx.drawImage(yourCards[draggedCard].image,mousePosition.x+selectOffset.x,mousePosition.y+selectOffset.y,CARD_WIDTH,CARD_HEIGHT);
+        if(!yourCards[draggedCard].allowedToPlay) {
+            ctx.drawImage(transparentImage,mousePosition.x+selectOffset.x,mousePosition.y+selectOffset.y,CARD_WIDTH,CARD_HEIGHT);
+        }
+    }
+
 }
 
 /**
@@ -145,45 +176,93 @@ function gameLoop(timestamp) {
     ctx.globalAlpha = 1;
 
     scroll(dt);
+
     drawCards();
 
 
     requestAnimationFrame(gameLoop);
 }
 
+/**
+ * Determines if you clicked a card and sets draggedCard to the index of the card you picked.
+ */
+function getClickedCard() {
+    let x = clickPosition.x-canvas.width/2;
+    let r = x % (CARD_WIDTH+20);
+
+    if(r<=CARD_WIDTH) {
+        let i = Math.floor(x/(CARD_WIDTH+20));
+
+        if(i>=0 && i<yourCards.length) {
+            //i is the card id you selected
+            draggedCard = i;
+            selectOffset.x = -r;
+            selectOffset.y = (canvas.height-50-CARD_HEIGHT)-clickPosition.y;
+            return;
+        }
+    }
+
+    draggedCard = -1;
+}
+
+/**
+ * Function for clicking at a designated position on the screen
+ */
 function click(x,y) {
     mousePressed = true;
     mousePosition.x = x;
     mousePosition.y = y;
     if(mousePosition.y > canvas.height-100-CARD_HEIGHT) {
-        //Clicked in card area
+        //Clicked in hand area
         clickPosition.x = mousePosition.x-scrollOffset;
         clickPosition.y = mousePosition.y;
         dragType = 1;
     }
 }
+
+/**
+ * Function for releasing the mouse
+ */
 function release() {
-    if(dragType == 2) {
-        scrollSpeed = mouseMove.x*20;
+
+    //selected a card
+    if(draggedCard>=0) {
+        if(selectedCards.length==0) {//TODO allow multiple cards
+            let card = yourCards[draggedCard];
+            if(card.allowedToPlay) {
+                selectedCards.push(draggedCard);
+                playCard(card.id,0,0);
+            }
+        }
     }
+    draggedCard = -1;
     mousePressed = false;
     dragType = 0;
+    /*if(dragType == 2) {
+        scrollSpeed = mouseMove.x*10;
+    }*/
 }
+
+/**
+ * Function for when you move the mouse while pressing down left click
+ */
 function drag() {
     if(dragType==2) {
         scrollOffset = mousePosition.x-clickPosition.x;
-    }
-    else if(dragType==3) {
-        //TODO move the card around
+        if(mousePosition.y<canvas.height-100-CARD_HEIGHT) {
+            dragType = 3;
+            getClickedCard();
+        }
     }
     //determine if you are dragging the mouse horizontally or vertically
-    else {
+    else if(dragType==1){
         if(Math.abs(mousePosition.x-scrollOffset-clickPosition.x)>20) {
 
             dragType = 2;
         }
         else if(Math.abs(mousePosition.y-clickPosition.y)>20) {
             dragType = 3;
+            getClickedCard();
         }
     }
 }
@@ -206,6 +285,13 @@ function cardUpdate(cards) {
     yourCards.length = 0;
     for(let card of cards['your cards']) {
         yourCards.push(new Card(card['card id'],card['card image url'],card['can be played']));
+    }
+    //update cards at the top
+    topCards.length = 0;
+    for(let card of cards['cards on deck']) {
+        let image = new Image;
+        image.src = card['card image url'];
+        topCards.push(image);
     }
 }
 
@@ -264,41 +350,6 @@ function nextTurn(){
 
  */
 $(document).ready(function() {
-    // SocketIO
-    socket = io.connect(document.domain, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
-    socket.on('connect', function() {
-        socket.emit("initial game connection", GAME_ID);
-    });
-    socket.on('message for player', function(message) {
-        $("#message-from-server").html(message);
-        $('.modal').modal("show");
-    });
-    function playCard(cardId, picked_player, pick_type){
-        // leave picked_player and pick_type as null unless needed
-        // not currently working!
-        socket.emit("play card", GAME_ID, cardId, picked_player, pick_type);
-    }
-    function sayUno(){
-        socket.emit("game message", GAME_ID, "Uno");
-    }
-    function nextTurn(){
-        // not currently working!
-        socket.emit("game message", GAME_ID, "Next Turn");
-    }
-    socket.on('card update', cardUpdate);
-    socket.on('player update', playerUpdate);
-
-
-    /*
-
-
-
-    UI STUFF
-
-
-
-     */
-
     //Canvas load
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
@@ -353,9 +404,10 @@ $(document).ready(function() {
         canvas.height = window.innerHeight;
     },false);
 
-    testImage = new Image;
-    testImage.src = '/static/cards/back.png';
-    testImage.addEventListener('load',() => {
-        gameLoop(0);
-    },false);
+    backImage = new Image;
+    backImage.src = '/static/cards/back.png';
+    transparentImage = new Image;
+    transparentImage.src = '/static/transparent.png';
+
+    gameLoop(0);
 });
