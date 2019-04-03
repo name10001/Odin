@@ -25,6 +25,75 @@ $(document).ready(function() {
     socket.on('card update', cardUpdate);
     socket.on('player update', playerUpdate);
 
+    //Canvas load
+    canvas = document.getElementById('canvas');
+    ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    //Click listener
+    canvas.addEventListener('mousedown', (event) => {
+        if(event.button==0) {
+            click(event.offsetX,event.offsetY);
+        }
+    },false);
+    canvas.addEventListener('touchstart', (event) => {
+        click(event.touches[0].clientX,event.touches[0].clientY);
+    },false);
+
+    canvas.addEventListener('mouseup', (event) => {
+        if(event.button==0) {
+            release();
+        }
+    },false);
+    canvas.addEventListener('touchend', () => {
+        release();
+    },false);
+
+    canvas.addEventListener('mouseleave', () => {
+        if(mousePressed) release();
+    },false);
+    //Mouse wheel listener
+    canvas.addEventListener('wheel',(event) => {
+        scrollSpeed = -100*Math.sign(event.deltaY);
+    },false);
+    //update mouse pos
+    canvas.addEventListener('mousemove',(event) => {
+        mouseMove.x = event.offsetX-mousePosition.x;
+        mouseMove.y = event.offsetY-mousePosition.y;
+        mousePosition.x = event.offsetX;
+        mousePosition.y = event.offsetY;
+        if(mousePressed) drag();
+    },false);
+    canvas.addEventListener('touchmove',(event) => {
+        mouseMove.x = event.touches[0].clientX-mousePosition.x;
+        mouseMove.y = event.touches[0].clientY-mousePosition.y;
+        mousePosition.x = event.touches[0].clientX;
+        mousePosition.y = event.touches[0].clientY;
+        if(mousePressed) drag();
+
+    },false);
+    //update size
+    window.addEventListener('resize',() => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    },false);
+
+    //some assets
+    backImage = new Image;
+    backImage.src = '/static/cards/back.png';
+    transparentImage = new Image;
+    transparentImage.src = '/static/transparent.png';
+
+    //load all card images
+    for(let url of ALL_URLS) {
+        let image = new Image;
+        image.src = '/static/' + url;
+        cardImages['/static/' + url] = image;
+    }
+
+
+    gameLoop(0);
 });
 
 
@@ -70,7 +139,7 @@ let lastTime = 0;
 
 //canvas objects
 let canvas, ctx, backImage, transparentImage;
-
+let cardImages = {};
 
 //gameplay (from server)
 let yourCards = [];
@@ -92,8 +161,7 @@ class Card {
     constructor(id, url, allowedToPlay) {
         this.id = id;
         this.allowedToPlay = allowedToPlay;
-        this.image = new Image;
-        this.image.src = url;
+        this.image = cardImages[url];
     }
 }
 
