@@ -28,6 +28,7 @@ class Deck:
                     return card
                 else:
                     up_to += card.NUMBER_IN_DECK
+        raise RuntimeError("no card found")
 
     def ban_color(self, card_color):
         """

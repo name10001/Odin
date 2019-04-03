@@ -8,8 +8,10 @@ class Player:
         self.game = game
         self.player_id = player_id
         self.hand = []
-        self.name = ''
-        self.said_uno = False
+        self.name = name
+        self.said_uno_previous_turn = False
+        self.said_uno_this_turn = False
+        self.picked_up_this_turn = False
         self.sid = None
         self._add_new_cards(game.starting_number_of_cards)
         self.first_card_of_turn = None
@@ -21,7 +23,7 @@ class Player:
         """
         if self.game.turn != self:
             return
-        self.said_uno = True
+        self.said_uno_this_turn = True
         with fs.app.app_context():
             fs.socket_io.emit(
                 "message for player",
@@ -29,6 +31,13 @@ class Player:
                 room=self.game.game_id + "_game",
                 include_self=False
             )
+
+    def had_won(self):
+        """
+        checks if the player has one, if they have then it returns True.
+        :return:
+        """
+        return len(self.hand) == 0
 
     def find_card(self, card_id):
         """
@@ -79,6 +88,23 @@ class Player:
 
         :return:
         """
+        if self.said_uno_previous_turn is False and self.had_won() is True:
+            self.pickup()
+        self.said_uno_previous_turn = self.said_uno_this_turn
+        self.said_uno_this_turn = False
+        self.picked_up_this_turn = False
+
+        if self.had_won():
+            with fs.app.app_context():
+                fs.socket_io.emit(
+                    "message for player",
+                    self.name + " has won!",
+                    room=self.game.game_id + "_game",
+                    include_self=False
+                )
+
+        if self.first_card_of_turn is None:
+            self._add_new_cards(1)
         self.first_card_of_turn = None
 
     def pickup(self):
@@ -87,6 +113,8 @@ class Player:
         only runs if its the players turn
         :return: None
         """
+        if self.picked_up_this_turn is True:
+            return
         if self.game.turn != self:
             return
 
@@ -96,10 +124,14 @@ class Player:
             self._add_new_cards(self.game.pickup)
             self.game.pickup = 0
         self.card_update()
+        self.picked_up_this_turn = True
 
     def _add_new_cards(self, number):
         """
         gets new cards from deck and adds them to hand
+        Does not update player
+        Does not check for pickup chains of weather its the players turn
+        if you want that, use pickup(self) instead
         :param number: number of cards to add
         :return: None
         """
