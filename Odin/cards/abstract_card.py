@@ -21,29 +21,30 @@ class AbstractCard:
         """
         pass
     
-    def can_be_played_on_this(self, card):
+    def is_compatible_with(self, card):
         """
-        Can the given card be played on this card
+        Can these 2 cards be played together
         :param card: 
         :return: True or False
         """
-        # if same color or type
-        if self.CARD_COLOUR == card.CARD_COLOUR or self.CARD_TYPE == card.CARD_TYPE:
+        if card.CARD_TYPE == self.CARD_TYPE:
             return True
-        # black can go on anything as long as its not white
-        elif card.CARD_COLOUR == "black" and self.CARD_COLOUR != "white":
+        if card.CARD_COLOUR == self.CARD_COLOUR:
             return True
-        # white cards can go on anything as long as its not black
-        elif card.CARD_COLOUR == "white" and self.CARD_COLOUR != "black":
-            return True
-        # if this is black, anything can go on it unless its white
-        elif self.CARD_COLOUR == "black" and card.CARD_COLOUR != "white":
-            return True
-        # if this is white, anything can go on it unless its black
-        elif self.CARD_COLOUR == "white" and card.CARD_COLOUR != "black":
-            return True
+        
+        # white cards can be placed on anything that isn't black
+        if self.CARD_COLOUR == "white":
+            return card.CARD_COLOUR != "black"
+        # black cards can be placed on any colour, but not purple or white.
+        elif self.CARD_COLOUR == "black":
+            return card.CARD_COLOUR != "white" and card.CARD_COLOUR != "purple"
+        # purple cards can only be placed on white cards (if type/colour different)
+        elif self.CARD_COLOUR == "purple":
+            return card.CARD_COLOUR == "white"
+        # coloured cards can be placed on black or white cards
         else:
-            return False
+            return card.CARD_COLOUR == "black" or card.CARD_COLOUR=="white"
+
 
     def can_be_played_on(self, card, is_players_turn):
         """
@@ -56,7 +57,7 @@ class AbstractCard:
             return False
         if is_players_turn is False:
             return False
-        return card.can_be_played_on_this(self)
+        return card.is_compatible_with(self) and self.is_compatible_with(card)
 
     def can_be_played_with(self, card):
         """

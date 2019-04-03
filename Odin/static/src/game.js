@@ -143,7 +143,6 @@ let cardImages = {};
 
 //gameplay (from server)
 let yourCards = [];
-let selectedCards = [];
 let topCards = [];
 let draggedCard = -1;
 
@@ -200,10 +199,9 @@ function drawCards() {
     if(topCards.length>0) {
         let x = canvas.width / 2 + 10;
         let y = canvas.height / 2 - CARD_HEIGHT / 2;
-        ctx.drawImage(topCards[topCards.length - 1], x, y, CARD_WIDTH, CARD_HEIGHT);
-        for(let id of selectedCards) {
+        for(let image of topCards) {
+            ctx.drawImage(image, x, y, CARD_WIDTH, CARD_HEIGHT);
             y-=40;
-            ctx.drawImage(yourCards[id].image, x, y, CARD_WIDTH, CARD_HEIGHT);
         }
     }
 
@@ -211,7 +209,7 @@ function drawCards() {
     //draw your hand
     let offset = CARD_WIDTH + 20;
     for(let i = 0; i<yourCards.length;i++) {
-        if(i==draggedCard || selectedCards.includes(i)) continue;
+        if(i==draggedCard) continue;
         ctx.drawImage(yourCards[i].image,canvas.width/2+scrollOffset+i*offset,canvas.height-50-CARD_HEIGHT,CARD_WIDTH,CARD_HEIGHT);
         if(!yourCards[i].allowedToPlay) {
             ctx.drawImage(transparentImage,canvas.width/2+scrollOffset+i*offset,canvas.height-50-CARD_HEIGHT,CARD_WIDTH,CARD_HEIGHT)
@@ -295,12 +293,9 @@ function release() {
 
     //selected a card
     if(draggedCard>=0) {
-        if(selectedCards.length==0) {//TODO allow multiple cards
-            let card = yourCards[draggedCard];
-            if(card.allowedToPlay) {
-                selectedCards.push(draggedCard);
-                playCard(card.id,0,0);
-            }
+        let card = yourCards[draggedCard];
+        if(card.allowedToPlay) {
+            playCard(card.id,0,0);
         }
     }
     draggedCard = -1;
@@ -358,9 +353,7 @@ function cardUpdate(cards) {
     //update cards at the top
     topCards.length = 0;
     for(let card of cards['cards on deck']) {
-        let image = new Image;
-        image.src = card['card image url'];
-        topCards.push(image);
+        topCards.push(cardImages[card['card image url']]);
     }
 }
 
