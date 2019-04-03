@@ -479,4 +479,3 @@ $(document).ready(function() {
 
     gameLoop(0);
 });
->>>>>>> c4fbe6c3cfbf85bfedfe2e45c8c964880b7e6a72
