@@ -66,7 +66,6 @@ class Game:
         :param data:
         :return: None
         """
-        print(self.played_cards)
         player = self.get_player(session['player_id'])
         if message == "uno":
             player.say_uno()
@@ -76,7 +75,6 @@ class Game:
             pass
         else:
             print("got unknown message from player:", message)
-        print(self.played_cards)
 
     def add_played_card(self, card):
         """
