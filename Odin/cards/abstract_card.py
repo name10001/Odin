@@ -53,6 +53,14 @@ class AbstractCard:
             return False
         return card.can_be_played_on_this(self)
 
+    def can_be_played_with(self, card):
+        """
+        If this card is the first card played in a turn, can the given card be played with it
+        :param card:
+        :return:
+        """
+        return self.CARD_TYPE == card.CARD_TYPE
+
     def _make_id(self):
         """
         makes and ID that is unique to itself and is human readable

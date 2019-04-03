@@ -12,6 +12,7 @@ class Player:
         self.said_uno = False
         self.sid = None
         self.pickup(game.starting_number_of_cards)
+        self.first_card_of_turn = None
 
     def say_uno(self):
         """
@@ -46,10 +47,37 @@ class Player:
         :return:
         """
         card = self.find_card(card_id)
-        if card.can_be_played_on(self.game.played_cards[-1], self == self.game.turn):
+
+        if self._can_be_played(card):
             card.play_card(self, chosen_option)
             self.cards.remove(card)
             self.game.add_played_card(card)
+
+        if self.first_card_of_turn is None:
+            self.first_card_of_turn = card
+
+    def _can_be_played(self, card):
+        """
+        Can the given card be played right now
+        :return:
+        """
+        top_card = self.game.played_cards[-1]
+        is_turn = self == self.game.turn
+        is_first_card = self.first_card_of_turn is None
+
+        if is_turn and not is_first_card:
+            return card.can_be_played_with(self.first_card_of_turn)
+        elif card.can_be_played_on(top_card, is_turn):
+            return True
+        else:
+            return False
+
+    def finish_turn(self):
+        """
+
+        :return:
+        """
+        self.first_card_of_turn = None
 
     def pickup(self, number):
         for i in range(0, number):
@@ -82,7 +110,7 @@ class Player:
                 {
                     "card id": card.get_id(),
                     "card image url": card.get_url(),
-                    "can be played": card.can_be_played_on(self.game.played_cards[-1], self == self.game.turn),
+                    "can be played": self._can_be_played(card),
                     "options": card.get_options()
                 }
             )
