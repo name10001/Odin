@@ -22,8 +22,7 @@ class Game:
 
         for player in players:
             self.players.append(Player(self, players[player], player))
-        self.player_turn_index = random.randint(0, len(self.players))
-        print(self.players, self.player_turn_index)
+        self.player_turn_index = random.randint(0, len(self.players)-1)
         self.turn = self.players[self.player_turn_index]
         self.played_cards = [self.deck.pickup()(self)]
 
