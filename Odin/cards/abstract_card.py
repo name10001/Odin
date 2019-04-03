@@ -53,9 +53,9 @@ class AbstractCard:
         :param is_players_turn: is it the players turn of not
         :return: True or False
         """
-        if self.game.pickup != 0 and self.CAN_BE_ON_PICKUP is False:
-            return False
         if is_players_turn is False:
+            return False
+        if self.game.pickup != 0 and self.CAN_BE_ON_PICKUP is False:
             return False
         return card.is_compatible_with(self) and self.is_compatible_with(card)
 

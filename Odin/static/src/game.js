@@ -217,12 +217,16 @@ function drawCards() {
     }
 
     //draw card you are dragging
-    if(draggedCard>=0) {
-        ctx.drawImage(yourCards[draggedCard].image,mousePosition.x+selectOffset.x,mousePosition.y+selectOffset.y,CARD_WIDTH,CARD_HEIGHT);
-        if(!yourCards[draggedCard].allowedToPlay) {
+    if(draggedCard!=-1) {
+        let image;
+        if(draggedCard>=0) image = yourCards[draggedCard].image;
+        else image = backImage;
+        ctx.drawImage(image,mousePosition.x+selectOffset.x,mousePosition.y+selectOffset.y,CARD_WIDTH,CARD_HEIGHT);
+        if(draggedCard>=0) if(!yourCards[draggedCard].allowedToPlay) {
             ctx.drawImage(transparentImage,mousePosition.x+selectOffset.x,mousePosition.y+selectOffset.y,CARD_WIDTH,CARD_HEIGHT);
         }
     }
+
 
 }
 
@@ -284,19 +288,31 @@ function click(x,y) {
         clickPosition.y = mousePosition.y;
         dragType = 1;
     }
+    //clicking the deck
+    else if(mousePosition.x>canvas.width/2-CARD_WIDTH-10 && mousePosition.x<canvas.width/2-10 &&
+        mousePosition.y>canvas.height/2-CARD_HEIGHT/2 && mousePosition.y<canvas.height/2+CARD_HEIGHT/2) {
+        selectOffset.x = canvas.width/2-CARD_WIDTH-10-mousePosition.x;
+        selectOffset.y = canvas.height/2-CARD_HEIGHT/2-mousePosition.y;
+        draggedCard = -2;
+    }
 }
 
 /**
  * Function for releasing the mouse
  */
 function release() {
-
     //selected a card
-    if(draggedCard>=0) {
+    if(draggedCard>=0 && mousePosition.y<canvas.height-100-CARD_HEIGHT) {
         let card = yourCards[draggedCard];
         if(card.allowedToPlay) {
             playCard(card.id,0,0);
+            finishTurn();//TODO allow you to manually end your turn
         }
+    }
+    //pickup
+    else if(draggedCard==-2 && mousePosition.y>canvas.height-100-CARD_HEIGHT) {
+        pickup();
+        finishTurn();
     }
     draggedCard = -1;
     mousePressed = false;
