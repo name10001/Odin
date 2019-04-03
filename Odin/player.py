@@ -7,11 +7,11 @@ class Player:
         self.name = name
         self.game = game
         self.player_id = player_id
-        self.cards = []
+        self.hand = []
         self.name = ''
         self.said_uno = False
         self.sid = None
-        self.pickup(game.starting_number_of_cards)
+        self._add_new_cards(game.starting_number_of_cards)
         self.first_card_of_turn = None
 
     def say_uno(self):
@@ -19,6 +19,8 @@ class Player:
         Say uno to all the other players and remembers that the player said Uno
         :return:
         """
+        if self.game.turn != self:
+            return
         self.said_uno = True
         with fs.app.app_context():
             fs.socket_io.emit(
@@ -34,7 +36,7 @@ class Player:
         :param card_id:
         :return: Card if a card is found, None if not found
         """
-        for card in self.cards:
+        for card in self.hand:
             if card.get_id() == card_id:
                 return card
 
@@ -50,7 +52,7 @@ class Player:
 
         if self._can_be_played(card):
             card.play_card(self, chosen_option)
-            self.cards.remove(card)
+            self.hand.remove(card)
             self.game.add_played_card(card)
 
         if self.first_card_of_turn is None:
@@ -79,9 +81,30 @@ class Player:
         """
         self.first_card_of_turn = None
 
-    def pickup(self, number):
+    def pickup(self):
+        """
+        If there is a pickup chain this will pick it up, otherwise it will pickup 1
+        only runs if its the players turn
+        :return: None
+        """
+        if self.game.turn != self:
+            return
+
+        if self.game.pickup == 0:
+            self._add_new_cards(1)
+        else:
+            self._add_new_cards(self.game.pickup)
+            self.game.pickup = 0
+        self.card_update()
+
+    def _add_new_cards(self, number):
+        """
+        gets new cards from deck and adds them to hand
+        :param number: number of cards to add
+        :return: None
+        """
         for i in range(0, number):
-            self.cards.append(self.game.deck.pickup()(self.game))
+            self.hand.append(self.game.deck.pickup()(self.game))
 
     def card_update(self):
         """
@@ -126,7 +149,7 @@ class Player:
         return self.sid
 
     def get_cards(self):
-        return self.cards
+        return self.hand
 
     def get_name(self):
         return self.name

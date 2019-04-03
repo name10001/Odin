@@ -90,6 +90,8 @@ class Game:
         elif message == "finished turn":
             if player == self.turn:
                 self.next_turn()
+        elif message == "pickup":
+            player.pickup()
         else:
             print("got unknown message from player:", message)
 
