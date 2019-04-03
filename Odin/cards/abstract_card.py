@@ -27,15 +27,14 @@ class AbstractCard:
         :param card: 
         :return: True or False
         """
+        # if same color or type
         if self.CARD_COLOUR == card.CARD_COLOUR or self.CARD_TYPE == card.CARD_TYPE:
             return True
+        # black can go on anything as long as its not white
         elif card.CARD_COLOUR == "black" and self.CARD_COLOUR != "white":
             return True
+        # white cards can go on anything as long as its not black
         elif card.CARD_COLOUR == "white" and self.CARD_COLOUR != "black":
-            return True
-        elif card.CARD_COLOUR == "purple" and self.CARD_COLOUR == "white":
-            return True
-        elif self.CARD_COLOUR == "black" or self.CARD_COLOUR == "white":
             return True
         else:
             return False
