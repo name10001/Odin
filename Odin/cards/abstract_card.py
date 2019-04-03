@@ -3,15 +3,12 @@ from flask import *
 
 class AbstractCard:
     CARD_IMAGE_URL = 'cards/generic.png'
-    CARD_CATEGORIES = []  # will be removed soon
     DESCRIPTION = 'This is a abstract card and should only be used to inherit from. This should never be seen in a game'
     NUMBER_IN_DECK = 0
     NAME = "Abstract card"
     CARD_COLOUR = "Abstract"
     CARD_TYPE = "Abstract"
     CARD_IS_PICKUP = False
-    PICK_PLAYER = False
-    PICK_TYPE = False
 
     def __init__(self, game):
         self.game = game
@@ -30,7 +27,18 @@ class AbstractCard:
         :param card: 
         :return: True or False
         """
-        return not set(card.CARD_CATEGORIES).isdisjoint(set(self.CARD_CATEGORIES))
+        if self.CARD_COLOUR == card.CARD_COLOUR or self.CARD_TYPE == card.CARD_TYPE:
+            return True
+        elif card.CARD_COLOUR == "black" and self.CARD_COLOUR != "white":
+            return True
+        elif card.CARD_COLOUR == "white" and self.CARD_COLOUR != "black":
+            return True
+        elif card.CARD_COLOUR == "purple" and self.CARD_COLOUR == "white":
+            return True
+        elif self.CARD_COLOUR == "black" or self.CARD_COLOUR == "white":
+            return True
+        else:
+            return False
 
     def can_be_played_on(self, card, is_players_turn):
         """
@@ -39,9 +47,19 @@ class AbstractCard:
         :param is_players_turn: is it the players turn of not
         :return: True or False
         """
+        if self.game.pickup != 0:
+            return False
         if is_players_turn is False:
             return False
         return card.can_be_played_on_this(self)
+
+    def can_be_played_with(self, card):
+        """
+        If this card is the first card played in a turn, can the given card be played with it
+        :param card:
+        :return:
+        """
+        return self.CARD_TYPE == card.CARD_TYPE
 
     def _make_id(self):
         """

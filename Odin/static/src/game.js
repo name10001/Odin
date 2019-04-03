@@ -350,6 +350,7 @@ function drag() {
  * @param cards
  */
 function cardUpdate(cards) {
+    console.log(cards);
     yourCards.length = 0;
     for(let card of cards['your cards']) {
         yourCards.push(new Card(card['card id'],card['card image url'],card['can be played']));
@@ -391,17 +392,91 @@ function playerUpdate(players) {
 }
 
 
-function playCard(cardId, picked_player, pick_type){
-    // leave picked_player and pick_type as null unless needed
-    // not currently working!
-    socket.emit("play card", GAME_ID, cardId, picked_player, pick_type);
+function playCard(cardId, picked_option){
+    // leave picked_option as null unless needed
+    socket.emit("game message", GAME_ID, "play card", [cardId, picked_option]);
 }
 
 function sayUno(){
-    socket.emit("game message", GAME_ID, "Uno");
+    socket.emit("game message", GAME_ID, "uno", null);
 }
 
-function nextTurn(){
+function finishTurn(){
     // not currently working!
-    socket.emit("game message", GAME_ID, "Next Turn");
+    socket.emit("game message", GAME_ID, "finished turn", null);
 }
+
+/*
+
+
+
+
+        MAIN FUNCTION
+
+
+
+
+ */
+$(document).ready(function() {
+    //Canvas load
+    canvas = document.getElementById('canvas');
+    ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    //Click listener
+    canvas.addEventListener('mousedown', (event) => {
+        if(event.button==0) {
+            click(event.offsetX,event.offsetY);
+        }
+    },false);
+    canvas.addEventListener('touchstart', (event) => {
+        click(event.touches[0].clientX,event.touches[0].clientY);
+    },false);
+
+    canvas.addEventListener('mouseup', (event) => {
+        if(event.button==0) {
+            release();
+        }
+    },false);
+    canvas.addEventListener('touchend', () => {
+        release();
+    },false);
+
+    canvas.addEventListener('mouseleave', () => {
+        if(mousePressed) release();
+    },false);
+    //Mouse wheel listener
+    canvas.addEventListener('wheel',(event) => {
+        scrollSpeed = -100*Math.sign(event.deltaY);
+    },false);
+    //update mouse pos
+    canvas.addEventListener('mousemove',(event) => {
+        mouseMove.x = event.offsetX-mousePosition.x;
+        mouseMove.y = event.offsetY-mousePosition.y;
+        mousePosition.x = event.offsetX;
+        mousePosition.y = event.offsetY;
+        if(mousePressed) drag();
+    },false);
+    canvas.addEventListener('touchmove',(event) => {
+        mouseMove.x = event.touches[0].clientX-mousePosition.x;
+        mouseMove.y = event.touches[0].clientY-mousePosition.y;
+        mousePosition.x = event.touches[0].clientX;
+        mousePosition.y = event.touches[0].clientY;
+        if(mousePressed) drag();
+
+    },false);
+    //update size
+    window.addEventListener('resize',() => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    },false);
+
+    backImage = new Image;
+    backImage.src = '/static/cards/back.png';
+    transparentImage = new Image;
+    transparentImage.src = '/static/transparent.png';
+
+    gameLoop(0);
+});
+>>>>>>> c4fbe6c3cfbf85bfedfe2e45c8c964880b7e6a72

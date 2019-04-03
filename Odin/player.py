@@ -9,8 +9,75 @@ class Player:
         self.player_id = player_id
         self.cards = []
         self.name = ''
+        self.said_uno = False
         self.sid = None
         self.pickup(game.starting_number_of_cards)
+        self.first_card_of_turn = None
+
+    def say_uno(self):
+        """
+        Say uno to all the other players and remembers that the player said Uno
+        :return:
+        """
+        self.said_uno = True
+        with fs.app.app_context():
+            fs.socket_io.emit(
+                "message for player",
+                self.name + " is on Uno!",
+                room=self.game.game_id + "_game",
+                include_self=False
+            )
+
+    def find_card(self, card_id):
+        """
+        Finds a card owned by the player
+        :param card_id:
+        :return: Card if a card is found, None if not found
+        """
+        for card in self.cards:
+            if card.get_id() == card_id:
+                return card
+
+    def play_card(self, card_id, chosen_option):
+        """
+        Takes card out of players hand and adds it to the games played cards
+        Also preforms all actions of the card and checks if its aloud to be played
+        :param card_id:
+        :param chosen_option:
+        :return:
+        """
+        card = self.find_card(card_id)
+
+        if self._can_be_played(card):
+            card.play_card(self, chosen_option)
+            self.cards.remove(card)
+            self.game.add_played_card(card)
+
+        if self.first_card_of_turn is None:
+            self.first_card_of_turn = card
+
+    def _can_be_played(self, card):
+        """
+        Can the given card be played right now
+        :return:
+        """
+        top_card = self.game.played_cards[-1]
+        is_turn = self == self.game.turn
+        is_first_card = self.first_card_of_turn is None
+
+        if is_turn and not is_first_card:
+            return card.can_be_played_with(self.first_card_of_turn)
+        elif card.can_be_played_on(top_card, is_turn):
+            return True
+        else:
+            return False
+
+    def finish_turn(self):
+        """
+
+        :return:
+        """
+        self.first_card_of_turn = None
 
     def pickup(self, number):
         for i in range(0, number):
@@ -43,7 +110,7 @@ class Player:
                 {
                     "card id": card.get_id(),
                     "card image url": card.get_url(),
-                    "can be played": card.can_be_played_on(self.game.played_cards[-1], self == self.game.turn),
+                    "can be played": self._can_be_played(card),
                     "options": card.get_options()
                 }
             )
