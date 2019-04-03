@@ -73,12 +73,11 @@ class Player:
         :return:
         """
         top_card = self.game.played_cards[-1]
-        is_turn = self == self.game.turn
         is_first_card = self.first_card_of_turn is None
 
-        if is_turn and not is_first_card:
+        if self.is_turn() and not is_first_card:
             return card.can_be_played_with(self.first_card_of_turn)
-        elif card.can_be_played_on(top_card, is_turn):
+        elif card.can_be_played_on(top_card, self.is_turn()):
             return True
         else:
             return False
@@ -147,6 +146,7 @@ class Player:
         json_to_send = {
             "cards on deck": [],
             "your cards": [],
+            "Your turn": self.is_turn()
         }
         # get first 3 cards from deck
         number_of_cards = len(self.game.played_cards)
@@ -186,3 +186,6 @@ class Player:
 
     def get_id(self):
         return self.player_id
+    
+    def is_turn(self):
+        return self == self.game.turn
