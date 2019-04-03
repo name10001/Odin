@@ -282,6 +282,7 @@ function drag() {
  * @param cards
  */
 function cardUpdate(cards) {
+    console.log(cards);
     yourCards.length = 0;
     for(let card of cards['your cards']) {
         yourCards.push(new Card(card['card id'],card['card image url'],card['can be played']));
@@ -323,19 +324,18 @@ function playerUpdate(players) {
 }
 
 
-function playCard(cardId, picked_player, pick_type){
-    // leave picked_player and pick_type as null unless needed
-    // not currently working!
-    socket.emit("play card", GAME_ID, cardId, picked_player, pick_type);
+function playCard(cardId, picked_option){
+    // leave picked_option as null unless needed
+    socket.emit("game message", GAME_ID, "play card", [cardId, picked_option]);
 }
 
 function sayUno(){
-    socket.emit("game message", GAME_ID, "Uno");
+    socket.emit("game message", GAME_ID, "uno", null);
 }
 
-function nextTurn(){
+function finishTurn(){
     // not currently working!
-    socket.emit("game message", GAME_ID, "Next Turn");
+    socket.emit("game message", GAME_ID, "finished turn", null);
 }
 
 /*

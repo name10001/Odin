@@ -9,8 +9,47 @@ class Player:
         self.player_id = player_id
         self.cards = []
         self.name = ''
+        self.said_uno = False
         self.sid = None
         self.pickup(game.starting_number_of_cards)
+
+    def say_uno(self):
+        """
+        Say uno to all the other players and remembers that the player said Uno
+        :return:
+        """
+        self.said_uno = True
+        with fs.app.app_context():
+            fs.socket_io.emit(
+                "message for player",
+                self.name + " is on Uno!",
+                room=self.game.game_id + "_game",
+                include_self=False
+            )
+
+    def find_card(self, card_id):
+        """
+        Finds a card owned by the player
+        :param card_id:
+        :return: Card if a card is found, None if not found
+        """
+        for card in self.cards:
+            if card.get_id() == card_id:
+                return card
+
+    def play_card(self, card_id, chosen_option):
+        """
+        Takes card out of players hand and adds it to the games played cards
+        Also preforms all actions of the card and checks if its aloud to be played
+        :param card_id:
+        :param chosen_option:
+        :return:
+        """
+        card = self.find_card(card_id)
+        if card.can_be_played_on(self.game.played_cards[-1], self == self.game.turn):
+            card.play_card(self, chosen_option)
+            self.cards.remove(card)
+            self.game.add_played_card(card)
 
     def pickup(self, number):
         for i in range(0, number):

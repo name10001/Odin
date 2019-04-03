@@ -83,10 +83,10 @@ def initial_game_connection(game_id):
 
 
 @fs.socket_io.on('game message')
-def game_message(game_id, message):
+def game_message(game_id, message, data):
     if game_id in games:
         if games[game_id].is_running():
-            games[game_id].get_game().message(message)
+            games[game_id].get_game().message(message, data)
 
 
 def clear_old_games():
