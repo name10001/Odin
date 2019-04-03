@@ -401,6 +401,10 @@ function sayUno(){
     socket.emit("game message", GAME_ID, "uno", null);
 }
 
+function pickup(){
+    socket.emit("game message", GAME_ID, "pickup", null);
+}
+
 function finishTurn(){
     // not currently working!
     socket.emit("game message", GAME_ID, "finished turn", null);

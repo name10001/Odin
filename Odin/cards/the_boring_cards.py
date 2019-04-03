@@ -452,12 +452,12 @@ class YellowNine(AbstractCard):
 
 
 # ~~~~~~~~~~~~~~
-#     SixtyNines
+#   SixtyNines
 # ~~~~~~~~~~~~~~
 
 
 class BlueSixtyNine(AbstractCard):
-    NAME = "Blue SixtyNine"
+    NAME = "Blue Sixty Nine"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "blue"
     CARD_TYPE = "69"
@@ -465,7 +465,7 @@ class BlueSixtyNine(AbstractCard):
 
 
 class GreenSixtyNine(AbstractCard):
-    NAME = "Green SixtyNine"
+    NAME = "Green Sixty Nine"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "green"
     CARD_TYPE = "69"
@@ -473,7 +473,7 @@ class GreenSixtyNine(AbstractCard):
 
 
 class PurpleSixtyNine(AbstractCard):
-    NAME = "Purple SixtyNine"
+    NAME = "Purple Sixty Nine"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "69"
@@ -481,7 +481,7 @@ class PurpleSixtyNine(AbstractCard):
 
 
 class RedSixtyNine(AbstractCard):
-    NAME = "Red SixtyNine"
+    NAME = "Red Sixty Nine"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "red"
     CARD_TYPE = "69"
@@ -489,7 +489,7 @@ class RedSixtyNine(AbstractCard):
 
 
 class YellowSixtyNine(AbstractCard):
-    NAME = "Yellow SixtyNine"
+    NAME = "Yellow Sixty Nine"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "yellow"
     CARD_TYPE = "69"

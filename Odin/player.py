@@ -116,16 +116,13 @@ class Player:
             "your cards": [],
         }
         # get first 3 cards from deck
-        lim = 3
-        for card in self.game.played_cards:
+        number_of_cards = len(self.game.played_cards)
+        for card_index in range(max(number_of_cards - 4, 0), number_of_cards):
             json_to_send["cards on deck"].append(
                 {
-                    "card image url": card.get_url()
+                    "card image url": self.game.played_cards[card_index].get_url()
                 }
             )
-            if lim == 0:
-                break
-            lim -= 1
 
         # get player cards
         for card in self.get_cards():
