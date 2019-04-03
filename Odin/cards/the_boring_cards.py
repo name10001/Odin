@@ -1,5 +1,4 @@
 from cards.abstract_card import AbstractCard
-from flask import url_for
 
 # ~~~~~~~~~~~~~~
 #     Zeros

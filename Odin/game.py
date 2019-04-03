@@ -19,6 +19,7 @@ class Game:
         self.starting_number_of_cards = 10
         self.game_id = game_id
         self.deck = cards.Deck()
+        self.slip_next = False
 
         for player in players:
             self.players.append(Player(self, players[player], player))
@@ -67,13 +68,20 @@ class Game:
         self.turn.finish_turn()
 
         self.player_turn_index += self.direction
+
         if self.player_turn_index == -1:
             self.player_turn_index = len(self.players) - 1
         elif self.player_turn_index == len(self.players):
             self.player_turn_index = 0
+
         self.turn = self.players[self.player_turn_index]
-        for player in self.players:
-            player.card_update()
+
+        if self.slip_next:
+            self.slip_next = False
+            self.next_turn()
+        else:
+            for player in self.players:
+                player.card_update()
 
     def message(self, message, data):
         """

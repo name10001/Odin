@@ -88,6 +88,8 @@ class Player:
 
         :return:
         """
+        if self.game.pickup != 0:
+            self.pickup()
         if self.said_uno_previous_turn is False and self.had_won() is True:
             self.pickup()
         self.said_uno_previous_turn = self.said_uno_this_turn
@@ -117,7 +119,6 @@ class Player:
             return
         if self.game.turn != self:
             return
-
         if self.game.pickup == 0:
             self._add_new_cards(1)
         else:

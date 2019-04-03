@@ -1,5 +1,6 @@
 from random import randint
 from cards.the_boring_cards import *
+from cards.all_other_cards import *
 from cards.deck import Deck
 
 all_cards = [
@@ -14,6 +15,9 @@ all_cards = [
     BlueEight, GreenEight, PurpleEight, RedEight, YellowEight, 
     BlueNine, GreenNine, PurpleNine, RedNine, YellowNine, 
     BlueSixtyNine, GreenSixtyNine, PurpleSixtyNine, RedSixtyNine, YellowSixtyNine, 
+    BlueSkip, GreenSkip, PurpleSkip, RedSkip, YellowSkip, WhiteSkip, BlackSkip,
+    BluePickup2, GreenPickup2, PurplePickup2, RedPickup2, YellowPickup2, WhitePickup2, BlackPickup2,
+    BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
 ]
 
 

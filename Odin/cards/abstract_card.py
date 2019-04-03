@@ -8,7 +8,7 @@ class AbstractCard:
     NAME = "Abstract card"
     CARD_COLOUR = "Abstract"
     CARD_TYPE = "Abstract"
-    CARD_IS_PICKUP = False
+    CAN_BE_ON_PICKUP = False
 
     def __init__(self, game):
         self.game = game
@@ -36,6 +36,12 @@ class AbstractCard:
         # white cards can go on anything as long as its not black
         elif card.CARD_COLOUR == "white" and self.CARD_COLOUR != "black":
             return True
+        # if this is black, anything can go on it unless its white
+        elif self.CARD_COLOUR == "black" and card.CARD_COLOUR != "white":
+            return True
+        # if this is white, anything can go on it unless its black
+        elif self.CARD_COLOUR == "white" and card.CARD_COLOUR != "black":
+            return True
         else:
             return False
 
@@ -46,7 +52,7 @@ class AbstractCard:
         :param is_players_turn: is it the players turn of not
         :return: True or False
         """
-        if self.game.pickup != 0:
+        if self.game.pickup != 0 and self.CAN_BE_ON_PICKUP is False:
             return False
         if is_players_turn is False:
             return False
