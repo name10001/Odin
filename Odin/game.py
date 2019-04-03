@@ -14,15 +14,17 @@ class Game:
     def __init__(self, game_id, players):
         self.pickup = 0
         self.played_cards = []
-        self.players = {}
-        self._direction = 1  # 1 or -1
-        self.running = False
+        self.players = []
+        self.direction = 1  # 1 or -1
         self.starting_number_of_cards = 10
         self.game_id = game_id
         self.deck = cards.Deck()
+
         for player in players:
-            self.players[player] = Player(self, players[player], player)
-        self.turn = random.choice(list(self.players.values()))
+            self.players.append(Player(self, players[player], player))
+        self.player_turn_index = random.randint(0, len(self.players))
+        print(self.players, self.player_turn_index)
+        self.turn = self.players[self.player_turn_index]
         self.played_cards = [self.deck.pickup()(self)]
 
     def find_card(self, card_id):
@@ -35,22 +37,21 @@ class Game:
             if card.id == card_id:
                 return card
         for player in self.players:
-            for card in self.players[player].get_cards():
+            for card in player.get_cards():
                 if card.id == card_id:
                     return card
         return None
 
     def get_player(self, player_id):
         """
-        checks to see if a player exists in this came
+        gets a player from this game with the given id
         :param player_id: id of player to look for
         :return: returns the player if found, else None
         :return:
         """
-        if player_id in self.players:
-            return self.players[player_id]
-        else:
-            return None
+        for player in self.players:
+            if player.get_id() == player_id:
+                return player
 
     def render_game(self):
         """
@@ -58,6 +59,22 @@ class Game:
         :return:
         """
         return render_template("game.html", game=self)
+
+    def next_turn(self):
+        """
+        proceeds to the next player
+        :return: None
+        """
+        self.turn.finish_turn()
+
+        self.player_turn_index += self.direction
+        if self.player_turn_index == -1:
+            self.player_turn_index = len(self.players) - 1
+        elif self.player_turn_index == len(self.players):
+            self.player_turn_index = 0
+        self.turn = self.players[self.player_turn_index]
+        for player in self.players:
+            player.card_update()
 
     def message(self, message, data):
         """
@@ -72,7 +89,8 @@ class Game:
         elif message == "play card":
             player.play_card(data[0], data[1])
         elif message == "finished turn":
-            pass
+            if player == self.turn:
+                self.next_turn()
         else:
             print("got unknown message from player:", message)
 
@@ -83,10 +101,14 @@ class Game:
         :return: None
         """
         self.played_cards.append(card)
-        for player in self.players.values():
+        for player in self.players:
             player.card_update()
 
     def initial_connection(self):
+        """
+
+        :return:
+        """
         self.get_player(session['player_id']).set_sid(request.sid)
         join_room(self.game_id + "_game")
         self.get_player(session['player_id']).card_update()
