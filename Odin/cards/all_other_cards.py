@@ -218,7 +218,7 @@ class Fuck:
     CARD_TYPE = "fuck"
 
     def is_compatible_with(self, card):
-        return card.CARD_COLOUR == self.CARD_COLOUR
+        return card.CARD_COLOUR == self.CARD_COLOUR or card.CARD_TYPE == self.CARD_TYPE
 
 
 class BlueFuck(Fuck, AbstractCard):
@@ -233,28 +233,17 @@ class GreenFuck(Fuck, AbstractCard):
     CARD_IMAGE_URL = 'cards/fuck_green.png'
 
 
-class PurpleFuck(Fuck, AbstractCard):
-    NAME = "Purple Fuck"
-    CARD_COLOUR = "purple"
-    CARD_IMAGE_URL = 'cards/fuck_purple.png'
-
-
 class RedFuck(Fuck, AbstractCard):
     NAME = "Red Fuck"
     CARD_COLOUR = "red"
     CARD_IMAGE_URL = 'cards/fuck_red.png'
 
 
-class WhiteFuck(Fuck, AbstractCard):
-    NAME = "White Fuck"
-    CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'cards/fuck_white.png'
-
 
 class BlackFuck(Fuck, AbstractCard):
     NAME = "Black Fuck"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/fuck_wild.png'
+    CARD_IMAGE_URL = 'cards/fuck_black.png'
 
 
 class YellowFuck(Fuck, AbstractCard):
