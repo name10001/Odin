@@ -153,7 +153,7 @@ class Player:
         json_to_send = {
             "cards on deck": [],
             "your cards": [],
-            "your turn": self.is_turn(),
+            "direction": self.game.direction,
             "pickup size": self.game.pickup,
             "players": []
         }
@@ -178,8 +178,12 @@ class Player:
                 }
             )
 
-        # get other players
-        for player in self.game.players:
+        # get other players I CHANGED THIS SO YOU KNOW WHICH PLAYER YOU ARE
+        for i in range(0,len(self.game.players)):
+            player = self.game.players[i]
+            if player.player_id == self.player_id:
+                json_to_send['your id'] = i
+
             json_to_send["players"].append(
                 {
                     "name": player.get_name(),

@@ -104,11 +104,21 @@ class AbstractCard:
 
     def __gt__(self, other):
         """
-        if this card is grater than the given other card
+        if this card goes after the given other card
         Order is number cards, other cards, black cards, white cards
         Then each is sorted by color then type
         :param other: other card
         :return: True if this card is grater
+        """
+        
+        if self.CARD_TYPE_ID < other.CARD_TYPE_ID:
+            return False
+        elif self.CARD_TYPE_ID > other.CARD_TYPE_ID:
+            return True
+        else:
+            # compare colours
+            return self.CARD_COLOUR > other.CARD_COLOUR
+
         """
         numbers = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '69')
         if self.CARD_TYPE in numbers and other.CARD_TYPE not in numbers:
@@ -126,6 +136,7 @@ class AbstractCard:
             return self.CARD_TYPE > other.CARD_TYPE
         else:
             return self.CARD_COLOUR > other.CARD_COLOUR
+        """
 
     def __lt__(self, other):
         return not self.__gt__(other)

@@ -22,8 +22,7 @@ $(document).ready(function() {
 
     });
 
-    socket.on('card update', cardUpdate);
-    socket.on('player update', playerUpdate);
+    socket.on('card update', update);
 
     //Canvas load
     canvas = document.getElementById('canvas');
@@ -144,6 +143,10 @@ let cardImages = {};
 //gameplay (from server)
 let yourCards = [];
 let topCards = [];
+let yourPlayedCards = [];//TODO implement this
+let yourTurn = false;
+let players = [];
+let pickupAmount = 0;
 let draggedCard = -1;
 
 /**
@@ -326,9 +329,6 @@ function release() {
     draggedCard = -1;
     mousePressed = false;
     dragType = 0;
-    /*if(dragType == 2) {
-        scrollSpeed = mouseMove.x*10;
-    }*/
 }
 
 /**
@@ -369,44 +369,26 @@ function drag() {
  * Is called when the server sends you a list of cards
  * @param cards
  */
-function cardUpdate(cards) {
-    console.log(cards);
+function update(update) {
+    console.log(update);
     yourCards.length = 0;
-    for(let card of cards['your cards']) {
+
+    //update the cards in your hand
+    for(let card of update['your cards']) {
         yourCards.push(new Card(card['card id'],card['card image url'],card['can be played']));
     }
+
     //update cards at the top
     topCards.length = 0;
-    for(let card of cards['cards on deck']) {
+    for(let card of update['cards on deck']) {
         topCards.push(cardImages[card['card image url']]);
     }
-}
+    //update pickup
+    pickupAmount = update['pickup size'];
+    yourTurn = update['your turn'];
 
-/**
- * Is called to update the player on how many cards each person now has
- * @param players
- */
-function playerUpdate(players) {
-    console.log("player update");
-    console.log(players);
-    // not currently working!
-    // players example:
-    // {
-    //   "Players":
-    //     [
-    //       {
-    //         "current turn": false,
-    //         "number of cards": 15,
-    //         "name": "Jeff"
-    //       },
-    //       {
-    //         "current turn": true,
-    //         "number of cards": 5,
-    //         "name": "Bob"
-    //       }
-    //     ],
-    //   "direction": "Left"
-    // }
+    //update players
+    
 }
 
 
