@@ -219,6 +219,8 @@ class YellowSkip(Skip, AbstractCard):
 # ~~~~~~~~~~~~~~
 #    Blank
 # ~~~~~~~~~~~~~~
+
+
 class BlankBro(AbstractCard):
     NAME = "JUST A BLANK BRO"
     NUMBER_IN_DECK = 3
@@ -226,6 +228,7 @@ class BlankBro(AbstractCard):
     CARD_TYPE_ID = 12
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/black.png'
+
 
 class Happiness(AbstractCard):
     NAME = "HAPPINESS"

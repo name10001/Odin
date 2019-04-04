@@ -133,7 +133,6 @@ class Player:
             self.game.pickup = 0
         self.card_update()
         self.picked_up_this_turn = True
-        self.sort_cards()
 
     def add_new_cards(self, number):
         """
@@ -147,13 +146,6 @@ class Player:
         # TODO: this keeps geting errors
         for i in range(0, number):
             self.hand.append(self.game.deck.pickup()(self.game))
-        self.sort_cards()
-
-    def sort_cards(self):
-        """
-        Sorts the player's hand in order by CARD_TYPE_ID
-        """
-        self.hand.sort(key = lambda x: x.CARD_TYPE_ID)
 
     def card_update(self):
         """
@@ -176,6 +168,7 @@ class Player:
             )
 
         # get player cards
+        self.hand.sort()
         for card in self.get_cards():
             json_to_send["your cards"].append(
                 {
