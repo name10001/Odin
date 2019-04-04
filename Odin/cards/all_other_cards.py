@@ -6,7 +6,7 @@ from cards.abstract_card import AbstractCard
 
 
 class Reverse:
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "reverse"
     CAN_BE_ON_PICKUP = True
@@ -49,6 +49,7 @@ class BlackReverse(Reverse, AbstractCard):
     NAME = "Black Reverse"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/reverse_wild.png'
+    NUMBER_IN_DECK = 1
 
 
 class YellowReverse(Reverse, AbstractCard):
@@ -63,7 +64,7 @@ class YellowReverse(Reverse, AbstractCard):
 
 
 class Pickup2:
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 2
     CARD_TYPE = "pickup2"
     CAN_BE_ON_PICKUP = True
 
@@ -105,6 +106,7 @@ class BlackPickup2(Pickup2, AbstractCard):
     NAME = "Black Pickup 2"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pickup2_wild.png'
+    NUMBER_IN_DECK = 3
 
 
 class YellowPickup2(Pickup2, AbstractCard):
@@ -118,7 +120,7 @@ class YellowPickup2(Pickup2, AbstractCard):
 # ~~~~~~~~~~~~~~
 
 class Pickup10(AbstractCard):
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 2
     CARD_TYPE = "pickup10"
     NAME = "Pickup 10"
     CARD_COLOUR = "black"
@@ -130,7 +132,7 @@ class Pickup10(AbstractCard):
 
 
 class Pickup4(AbstractCard):
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 5
     CARD_TYPE = "pickup4"
     NAME = "Pickup 4"
     CARD_COLOUR = "black"
@@ -142,7 +144,7 @@ class Pickup4(AbstractCard):
 
 
 class PickupTimes2(AbstractCard):
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 5
     CARD_TYPE = "pickupTimes2"
     NAME = "Pickup x2"
     CARD_COLOUR = "black"
@@ -158,7 +160,7 @@ class PickupTimes2(AbstractCard):
 
 
 class Skip:
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 2
     CARD_TYPE = "skip"
     CAN_BE_ON_PICKUP = True
     
@@ -200,6 +202,7 @@ class BlackSkip(Skip, AbstractCard):
     NAME = "Black Skip"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/skip_wild.png'
+    NUMBER_IN_DECK = 1
 
 
 class YellowSkip(Skip, AbstractCard):

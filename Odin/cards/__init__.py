@@ -19,7 +19,7 @@ all_cards = [
     BluePickup2, GreenPickup2, PurplePickup2, RedPickup2, YellowPickup2, WhitePickup2, BlackPickup2,
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
     Pickup10, Pickup4, PickupTimes2,
-    BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck,
+    BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck
 ]
 
 

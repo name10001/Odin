@@ -68,7 +68,7 @@ class GreenOne(AbstractCard):
 
 class PurpleOne(AbstractCard):
     NAME = "Purple One"
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "1"
     CARD_IMAGE_URL = 'cards/1_purple.png'
@@ -113,7 +113,7 @@ class GreenTwo(AbstractCard):
 
 class PurpleTwo(AbstractCard):
     NAME = "Purple Two"
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "2"
     CARD_IMAGE_URL = 'cards/2_purple.png'
@@ -158,7 +158,7 @@ class GreenThree(AbstractCard):
 
 class PurpleThree(AbstractCard):
     NAME = "Purple Three"
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "3"
     CARD_IMAGE_URL = 'cards/3_purple.png'
@@ -203,7 +203,7 @@ class GreenFour(AbstractCard):
 
 class PurpleFour(AbstractCard):
     NAME = "Purple Four"
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "4"
     CARD_IMAGE_URL = 'cards/4_purple.png'
@@ -248,7 +248,7 @@ class GreenFive(AbstractCard):
 
 class PurpleFive(AbstractCard):
     NAME = "Purple Five"
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "5"
     CARD_IMAGE_URL = 'cards/5_purple.png'
@@ -293,7 +293,7 @@ class GreenSix(AbstractCard):
 
 class PurpleSix(AbstractCard):
     NAME = "Purple Six"
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "6"
     CARD_IMAGE_URL = 'cards/6_purple.png'
@@ -338,7 +338,7 @@ class GreenSeven(AbstractCard):
 
 class PurpleSeven(AbstractCard):
     NAME = "Purple Seven"
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "7"
     CARD_IMAGE_URL = 'cards/7_purple.png'
@@ -383,7 +383,7 @@ class GreenEight(AbstractCard):
 
 class PurpleEight(AbstractCard):
     NAME = "Purple Eight"
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "8"
     CARD_IMAGE_URL = 'cards/8_purple.png'
@@ -428,7 +428,7 @@ class GreenNine(AbstractCard):
 
 class PurpleNine(AbstractCard):
     NAME = "Purple Nine"
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "9"
     CARD_IMAGE_URL = 'cards/9_purple.png'
