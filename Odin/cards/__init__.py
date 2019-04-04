@@ -18,6 +18,8 @@ all_cards = [
     BlueSkip, GreenSkip, PurpleSkip, RedSkip, YellowSkip, WhiteSkip, BlackSkip,
     BluePickup2, GreenPickup2, PurplePickup2, RedPickup2, YellowPickup2, WhitePickup2, BlackPickup2,
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
+    Pickup10, Pickup4, PickupTimes2,
+    BlueFuck, GreenFuck, PurpleFuck, RedFuck, YellowFuck, WhiteFuck, BlackFuck,
 ]
 
 
@@ -45,7 +47,7 @@ def get_random_card():
     place_in_deck = randint(0, size_of_deck)
     up_to = 0
     for card in all_cards:
-        if place_in_deck in range(up_to, up_to + card.NUMBER_IN_DECK):
+        if place_in_deck in range(up_to, up_to + card.NUMBER_IN_DECK - 1):
             return card
         else:
             up_to += card.NUMBER_IN_DECK

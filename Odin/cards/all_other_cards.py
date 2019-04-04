@@ -9,6 +9,7 @@ class Reverse:
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "blue"
     CARD_TYPE = "reverse"
+    CAN_BE_ON_PICKUP = True
 
     def play_card(self, player, options):
         self.game.direction *= -1
@@ -64,6 +65,7 @@ class YellowReverse(Reverse, AbstractCard):
 class Pickup2:
     NUMBER_IN_DECK = 1
     CARD_TYPE = "pickup2"
+    CAN_BE_ON_PICKUP = True
 
     def play_card(self, player, options):
         self.game.pickup += 2
@@ -115,34 +117,37 @@ class YellowPickup2(Pickup2, AbstractCard):
 # Other pickups
 # ~~~~~~~~~~~~~~
 
-class Pickup10:
+class Pickup10(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_TYPE = "pickup10"
     NAME = "Pickup 10"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pickup10_wild.png'
+    CAN_BE_ON_PICKUP = True
 
     def play_card(self, player, options):
         self.game.pickup += 10
 
 
-class Pickup4:
+class Pickup4(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_TYPE = "pickup4"
     NAME = "Pickup 4"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pickup4_wild.png'
+    CAN_BE_ON_PICKUP = True
 
     def play_card(self, player, options):
         self.game.pickup += 4
 
 
-class PickupTimes2:
+class PickupTimes2(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_TYPE = "pickupTimes2"
     NAME = "Pickup x2"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/multiply2_wild.png'
+    CAN_BE_ON_PICKUP = True
 
     def play_card(self, player, options):
         self.game.pickup *= 2
@@ -155,6 +160,7 @@ class PickupTimes2:
 class Skip:
     NUMBER_IN_DECK = 1
     CARD_TYPE = "skip"
+    CAN_BE_ON_PICKUP = True
     
     def play_card(self, player, options):
         self.game.slip_next = True

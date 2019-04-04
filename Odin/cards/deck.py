@@ -21,13 +21,14 @@ class Deck:
         if len(self.cards) == 0:  # if all cards have been banded
             return cards.get_random_card()
         else:
-            place_in_deck = randint(0, self.number_of_cards)
+            place_in_deck = randint(0, self.number_of_cards - 1)
             up_to = 0
             for card in self.cards:
                 if place_in_deck in range(up_to, up_to + card.NUMBER_IN_DECK):
                     return card
                 else:
                     up_to += card.NUMBER_IN_DECK
+        print(place_in_deck, self.number_of_cards)
         raise RuntimeError("no card found")
 
     def ban_color(self, card_color):

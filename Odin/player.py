@@ -12,8 +12,9 @@ class Player:
         self.said_uno_previous_turn = False
         self.said_uno_this_turn = False
         self.picked_up_this_turn = False
+        self.played_pickup = False
         self.sid = None
-        self._add_new_cards(game.starting_number_of_cards)
+        self.add_new_cards(game.starting_number_of_cards)
         self.first_card_of_turn = None
 
     def say_uno(self):
@@ -63,6 +64,8 @@ class Player:
             card.play_card(self, chosen_option)
             self.hand.remove(card)
             self.game.add_played_card(card)
+            if card.CAN_BE_ON_PICKUP is True:
+                self.played_pickup = True
 
         if self.first_card_of_turn is None:
             self.first_card_of_turn = card
@@ -87,15 +90,19 @@ class Player:
 
         :return:
         """
-        if self.game.pickup != 0:
+        if self.game.pickup != 0 and self.played_pickup is False:
             self.pickup()
+        self.played_pickup = False
+
         if self.said_uno_previous_turn is False and self.had_won() is True:
             self.pickup()
         self.said_uno_previous_turn = self.said_uno_this_turn
         self.said_uno_this_turn = False
+
         if self.first_card_of_turn is None:
             self.pickup()
         self.first_card_of_turn = None
+
         self.picked_up_this_turn = False
 
         if self.had_won():
@@ -118,14 +125,14 @@ class Player:
         if self.game.turn != self:
             return
         if self.game.pickup == 0:
-            self._add_new_cards(1)
+            self.add_new_cards(1)
         else:
-            self._add_new_cards(self.game.pickup)
+            self.add_new_cards(self.game.pickup)
             self.game.pickup = 0
         self.card_update()
         self.picked_up_this_turn = True
 
-    def _add_new_cards(self, number):
+    def add_new_cards(self, number):
         """
         gets new cards from deck and adds them to hand
         Does not update player
@@ -134,6 +141,7 @@ class Player:
         :param number: number of cards to add
         :return: None
         """
+        # TODO: this keeps geting errors
         for i in range(0, number):
             self.hand.append(self.game.deck.pickup()(self.game))
 
@@ -168,6 +176,7 @@ class Player:
                 }
             )
 
+        print(self.get_name(), json_to_send)
         # send
         with fs.app.app_context():
             fs.socket_io.emit("card update", json_to_send, room=self.sid)
