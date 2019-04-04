@@ -9,6 +9,7 @@ class Reverse:
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "reverse"
+    CARD_TYPE_ID = 16
     CAN_BE_ON_PICKUP = True
 
     def play_card(self, player, options):
@@ -67,6 +68,7 @@ class Pickup2:
     NUMBER_IN_DECK = 2
     CARD_TYPE = "pickup2"
     CAN_BE_ON_PICKUP = True
+    CARD_TYPE_ID = 19
 
     def play_card(self, player, options):
         self.game.pickup += 2
@@ -122,6 +124,7 @@ class YellowPickup2(Pickup2, AbstractCard):
 class Pickup10(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_TYPE = "pickup10"
+    CARD_TYPE_ID = 21
     NAME = "Pickup 10"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pickup10_wild.png'
@@ -134,6 +137,7 @@ class Pickup10(AbstractCard):
 class Pickup4(AbstractCard):
     NUMBER_IN_DECK = 5
     CARD_TYPE = "pickup4"
+    CARD_TYPE_ID = 20
     NAME = "Pickup 4"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pickup4_wild.png'
@@ -146,6 +150,7 @@ class Pickup4(AbstractCard):
 class PickupTimes2(AbstractCard):
     NUMBER_IN_DECK = 5
     CARD_TYPE = "pickupTimes2"
+    CARD_TYPE_ID = 22
     NAME = "Pickup x2"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/multiply2_wild.png'
@@ -162,6 +167,7 @@ class PickupTimes2(AbstractCard):
 class Skip:
     NUMBER_IN_DECK = 2
     CARD_TYPE = "skip"
+    CARD_TYPE_ID = 17
     CAN_BE_ON_PICKUP = True
     
     def play_card(self, player, options):
@@ -210,6 +216,25 @@ class YellowSkip(Skip, AbstractCard):
     CARD_COLOUR = "yellow"
     CARD_IMAGE_URL = 'cards/skip_yellow.png'
 
+# ~~~~~~~~~~~~~~
+#    Blank
+# ~~~~~~~~~~~~~~
+class BlankBro(AbstractCard):
+    NAME = "JUST A BLANK BRO"
+    NUMBER_IN_DECK = 3
+    CARD_TYPE = "blankbro"
+    CARD_TYPE_ID = 12
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/black.png'
+
+class Happiness(AbstractCard):
+    NAME = "HAPPINESS"
+    NUMBER_IN_DECK = 3
+    CARD_TYPE = "happiness"
+    CARD_TYPE_ID = 11
+    CARD_COLOUR = "white"
+    CARD_IMAGE_URL = 'cards/white.png'
+
 
 # ~~~~~~~~~~~~~~
 #    Fuck
@@ -218,6 +243,7 @@ class YellowSkip(Skip, AbstractCard):
 
 class Fuck:
     NUMBER_IN_DECK = 1
+    CARD_TYPE_ID = 13
     CARD_TYPE = "fuck"
 
     def is_compatible_with(self, card):

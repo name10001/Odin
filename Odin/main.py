@@ -55,7 +55,7 @@ def render_game(game_id):
     if game_id in games:
         return games[game_id].render()
     else:
-        return "<h1>Game not found<h1>"
+        return redirect('/')
 
 
 @fs.socket_io.on('connect')

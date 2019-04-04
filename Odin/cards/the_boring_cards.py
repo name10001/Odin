@@ -10,6 +10,7 @@ class BlueZero(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "blue"
     CARD_TYPE = "0"
+    CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_blue.png'
 
 
@@ -18,6 +19,7 @@ class GreenZero(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "green"
     CARD_TYPE = "0"
+    CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_green.png'
 
 
@@ -26,6 +28,7 @@ class PurpleZero(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "0"
+    CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_purple.png'
 
 
@@ -34,6 +37,7 @@ class RedZero(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "red"
     CARD_TYPE = "0"
+    CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_red.png'
 
 
@@ -42,6 +46,7 @@ class YellowZero(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "yellow"
     CARD_TYPE = "0"
+    CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_yellow.png'
 
 
@@ -55,6 +60,7 @@ class BlueOne(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "1"
+    CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_blue.png'
 
 
@@ -63,6 +69,7 @@ class GreenOne(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "1"
+    CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_green.png'
 
 
@@ -71,6 +78,7 @@ class PurpleOne(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "1"
+    CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_purple.png'
 
 
@@ -79,6 +87,7 @@ class RedOne(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "1"
+    CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_red.png'
 
 
@@ -87,6 +96,7 @@ class YellowOne(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "1"
+    CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_yellow.png'
 
 
@@ -100,6 +110,7 @@ class BlueTwo(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "2"
+    CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_blue.png'
 
 
@@ -108,6 +119,7 @@ class GreenTwo(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "2"
+    CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_green.png'
 
 
@@ -116,6 +128,7 @@ class PurpleTwo(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "2"
+    CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_purple.png'
 
 
@@ -124,6 +137,7 @@ class RedTwo(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "2"
+    CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_red.png'
 
 
@@ -132,6 +146,7 @@ class YellowTwo(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "2"
+    CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_yellow.png'
 
 
@@ -145,6 +160,7 @@ class BlueThree(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "3"
+    CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_blue.png'
 
 
@@ -153,6 +169,7 @@ class GreenThree(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "3"
+    CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_green.png'
 
 
@@ -161,6 +178,7 @@ class PurpleThree(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "3"
+    CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_purple.png'
 
 
@@ -169,6 +187,7 @@ class RedThree(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "3"
+    CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_red.png'
 
 
@@ -177,6 +196,7 @@ class YellowThree(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "3"
+    CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_yellow.png'
 
 
@@ -190,6 +210,7 @@ class BlueFour(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "4"
+    CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_blue.png'
 
 
@@ -198,6 +219,7 @@ class GreenFour(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "4"
+    CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_green.png'
 
 
@@ -206,6 +228,7 @@ class PurpleFour(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "4"
+    CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_purple.png'
 
 
@@ -214,6 +237,7 @@ class RedFour(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "4"
+    CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_red.png'
 
 
@@ -222,6 +246,7 @@ class YellowFour(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "4"
+    CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_yellow.png'
 
 
@@ -235,6 +260,7 @@ class BlueFive(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "5"
+    CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_blue.png'
 
 
@@ -243,6 +269,7 @@ class GreenFive(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "5"
+    CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_green.png'
 
 
@@ -251,6 +278,7 @@ class PurpleFive(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "5"
+    CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_purple.png'
 
 
@@ -259,6 +287,7 @@ class RedFive(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "5"
+    CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_red.png'
 
 
@@ -267,6 +296,7 @@ class YellowFive(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "5"
+    CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_yellow.png'
 
 
@@ -280,6 +310,7 @@ class BlueSix(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "6"
+    CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_blue.png'
 
 
@@ -288,6 +319,7 @@ class GreenSix(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "6"
+    CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_green.png'
 
 
@@ -296,6 +328,7 @@ class PurpleSix(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "6"
+    CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_purple.png'
 
 
@@ -304,6 +337,7 @@ class RedSix(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "6"
+    CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_red.png'
 
 
@@ -312,6 +346,7 @@ class YellowSix(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "6"
+    CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_yellow.png'
 
 
@@ -325,6 +360,7 @@ class BlueSeven(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "7"
+    CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_blue.png'
 
 
@@ -333,6 +369,7 @@ class GreenSeven(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "7"
+    CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_green.png'
 
 
@@ -341,6 +378,7 @@ class PurpleSeven(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "7"
+    CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_purple.png'
 
 
@@ -349,6 +387,7 @@ class RedSeven(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "7"
+    CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_red.png'
 
 
@@ -357,6 +396,7 @@ class YellowSeven(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "7"
+    CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_yellow.png'
 
 
@@ -370,6 +410,7 @@ class BlueEight(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "8"
+    CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_blue.png'
 
 
@@ -378,6 +419,7 @@ class GreenEight(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "8"
+    CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_green.png'
 
 
@@ -386,6 +428,7 @@ class PurpleEight(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "8"
+    CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_purple.png'
 
 
@@ -394,6 +437,7 @@ class RedEight(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "8"
+    CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_red.png'
 
 
@@ -402,6 +446,7 @@ class YellowEight(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "8"
+    CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_yellow.png'
 
 
@@ -415,6 +460,7 @@ class BlueNine(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "9"
+    CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_blue.png'
 
 
@@ -423,6 +469,7 @@ class GreenNine(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "9"
+    CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_green.png'
 
 
@@ -431,6 +478,7 @@ class PurpleNine(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "9"
+    CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_purple.png'
 
 
@@ -439,6 +487,7 @@ class RedNine(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "9"
+    CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_red.png'
 
 
@@ -447,6 +496,7 @@ class YellowNine(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "9"
+    CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_yellow.png'
 
 
@@ -460,6 +510,7 @@ class BlueSixtyNine(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "blue"
     CARD_TYPE = "69"
+    CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_blue.png'
 
 
@@ -468,6 +519,7 @@ class GreenSixtyNine(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "green"
     CARD_TYPE = "69"
+    CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_green.png'
 
 
@@ -476,6 +528,7 @@ class PurpleSixtyNine(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "69"
+    CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_purple.png'
 
 
@@ -484,6 +537,7 @@ class RedSixtyNine(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "red"
     CARD_TYPE = "69"
+    CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_red.png'
 
 
@@ -492,4 +546,5 @@ class YellowSixtyNine(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "yellow"
     CARD_TYPE = "69"
+    CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_yellow.png'

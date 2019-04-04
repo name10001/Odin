@@ -15,7 +15,7 @@ class Player:
         self.played_pickup = False
         self.sid = None
         self.add_new_cards(game.starting_number_of_cards)
-        self.first_card_of_turn = None
+        self.first_card_of_turn = None # TODO - make it so the player knows what cards they have played so they can edit them
 
     def say_uno(self):
         """
@@ -69,6 +69,8 @@ class Player:
 
         if self.first_card_of_turn is None:
             self.first_card_of_turn = card
+        
+        self.sort_cards()
 
     def _can_be_played(self, card):
         """
@@ -131,6 +133,7 @@ class Player:
             self.game.pickup = 0
         self.card_update()
         self.picked_up_this_turn = True
+        self.sort_cards()
 
     def add_new_cards(self, number):
         """
@@ -144,6 +147,13 @@ class Player:
         # TODO: this keeps geting errors
         for i in range(0, number):
             self.hand.append(self.game.deck.pickup()(self.game))
+        self.sort_cards()
+
+    def sort_cards(self):
+        """
+        Sorts the player's hand in order by CARD_TYPE_ID
+        """
+        self.hand.sort(key = lambda x: x.CARD_TYPE_ID)
 
     def card_update(self):
         """
@@ -156,7 +166,7 @@ class Player:
             "Your turn": self.is_turn(),
             "pickup size": self.game.pickup
         }
-        # get first 3 cards from deck
+        # get first 3 cards from deck TODO - separate this with cards that the player is currently using for their turn
         number_of_cards = len(self.game.played_cards)
         for card_index in range(max(number_of_cards - 4, 0), number_of_cards):
             json_to_send["cards on deck"].append(
