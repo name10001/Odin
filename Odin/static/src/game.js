@@ -205,6 +205,15 @@ function drawCards() {
         }
     }
 
+    //draw the next turn button
+    ctx.fillStyle = "#777";
+    ctx.strokeStyle = "#fff";
+    ctx.fillRect(canvas.width/2+CARD_WIDTH+50,canvas.height/2-30,120,60);
+    ctx.strokeRect(canvas.width/2+CARD_WIDTH+50,canvas.height/2-30,120,60);
+    ctx.fillStyle = "#fff";
+    ctx.textAlign = "center";
+    ctx.font = "bold 16px Courier New";
+    ctx.fillText("FINISHED",canvas.width/2+CARD_WIDTH+110,canvas.height/2+5);
 
     //draw your hand
     let offset = CARD_WIDTH + 20;
