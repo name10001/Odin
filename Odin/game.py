@@ -16,7 +16,7 @@ class Game:
         self.played_cards = []
         self.players = []
         self.direction = 1  # 1 or -1
-        self.starting_number_of_cards = 10
+        self.starting_number_of_cards = 1
         self.game_id = game_id
         self.deck = cards.Deck()
         self.slip_next = False

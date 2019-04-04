@@ -87,13 +87,15 @@ class Player:
 
         :return:
         """
-        print("turn finished")
         if self.game.pickup != 0:
             self.pickup()
         if self.said_uno_previous_turn is False and self.had_won() is True:
             self.pickup()
         self.said_uno_previous_turn = self.said_uno_this_turn
         self.said_uno_this_turn = False
+        if self.first_card_of_turn is None:
+            self.pickup()
+        self.first_card_of_turn = None
         self.picked_up_this_turn = False
 
         if self.had_won():
@@ -104,10 +106,6 @@ class Player:
                     room=self.game.game_id + "_game",
                     include_self=False
                 )
-
-        if self.first_card_of_turn is None:
-            self._add_new_cards(1)
-        self.first_card_of_turn = None
 
     def pickup(self):
         """
