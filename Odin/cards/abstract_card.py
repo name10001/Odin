@@ -43,8 +43,7 @@ class AbstractCard:
             return card.CARD_COLOUR == "white"
         # coloured cards can be placed on black or white cards
         else:
-            return card.CARD_COLOUR == "black" or card.CARD_COLOUR=="white"
-
+            return card.CARD_COLOUR == "black" or card.CARD_COLOUR == "white"
 
     def can_be_played_on(self, card, is_players_turn):
         """

@@ -87,6 +87,7 @@ class Player:
 
         :return:
         """
+        print("turn finished")
         if self.game.pickup != 0:
             self.pickup()
         if self.said_uno_previous_turn is False and self.had_won() is True:
@@ -146,7 +147,8 @@ class Player:
         json_to_send = {
             "cards on deck": [],
             "your cards": [],
-            "Your turn": self.is_turn()
+            "Your turn": self.is_turn(),
+            "pickup size": self.game.pickup
         }
         # get first 3 cards from deck
         number_of_cards = len(self.game.played_cards)
