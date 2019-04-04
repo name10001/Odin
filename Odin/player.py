@@ -69,8 +69,6 @@ class Player:
 
         if self.first_card_of_turn is None:
             self.first_card_of_turn = card
-        
-        self.sort_cards()
 
     def _can_be_played(self, card):
         """
@@ -155,8 +153,9 @@ class Player:
         json_to_send = {
             "cards on deck": [],
             "your cards": [],
-            "Your turn": self.is_turn(),
-            "pickup size": self.game.pickup
+            "your turn": self.is_turn(),
+            "pickup size": self.game.pickup,
+            "players": []
         }
         # get first 3 cards from deck TODO - separate this with cards that the player is currently using for their turn
         number_of_cards = len(self.game.played_cards)
@@ -179,10 +178,27 @@ class Player:
                 }
             )
 
+        # get other players
+        for player in self.game.players:
+            json_to_send["players"].append(
+                {
+                    "name": player.get_name(),
+                    "number of cards": player.size_of_hand(),
+                    "is turn": player.is_turn(),
+                    "is uno": player.is_uno()
+                }
+            )
+
         print(self.get_name(), json_to_send)
         # send
         with fs.app.app_context():
             fs.socket_io.emit("card update", json_to_send, room=self.sid)
+
+    def is_uno(self):
+        return self.said_uno_previous_turn or self.said_uno_this_turn
+
+    def size_of_hand(self):
+        return len(self.hand)
 
     def set_sid(self, sid):
         self.sid = sid
