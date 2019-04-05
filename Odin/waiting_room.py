@@ -2,6 +2,7 @@ from game import Game
 from flask import *
 from flask_socketio import *
 import flask_server as fs
+from time import time
 
 
 class WaitingRoom:
@@ -14,6 +15,7 @@ class WaitingRoom:
         self.running = False
         self.game = None
         self.game_id = game_id
+        self.last_modified = time()
 
     def get_player(self, player_id):
         """
@@ -32,6 +34,7 @@ class WaitingRoom:
         render the HTML needed to display the waiting room
         :return:
         """
+        self.modify()
         if request.method == 'GET':
             if "player_id" in session and session["player_id"] in self._players:
                 if self.running:
@@ -59,6 +62,7 @@ class WaitingRoom:
         Sends then all the joined players. If new players join latter it will also send them
         :return: None
         """
+        self.modify()
         join_room(self.game_id)
         for player in self._players:
             emit("user joined", self._players[player])
@@ -68,8 +72,9 @@ class WaitingRoom:
         starts the a new game and tells everyone to refresh
         :return: None
         """
+        self.modify()
         self.running = True
-        self.game = Game(self.game_id, self._players)
+        self.game = Game(self.game_id, self._players, self)
         with fs.app.app_context():
             fs.socket_io.emit("refresh", room=self.game_id)
 
@@ -98,6 +103,9 @@ class WaitingRoom:
 
         return id_safe
 
+    def modify(self):
+        self.last_modified = time()
+
     def get_id(self):
         return self.game_id
 
@@ -106,4 +114,7 @@ class WaitingRoom:
 
     def is_running(self):
         return self.running
+
+    def get_last_modified(self):
+        return self.last_modified
 

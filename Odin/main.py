@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-import uno_config
-from player import Player
 from random import randint
-import flask_server as fs
 import schedule
+from time import time, sleep
 from flask import *
+from threading import Thread
+
+import flask_server as fs
 from waiting_room import WaitingRoom
+from player import Player
 
 games = {}
 
@@ -84,10 +86,27 @@ def clear_old_games():
     removes all the games that have not been modified in over an hour
     :return: None
     """
-    pass
+    current_time = time()
+    to_remove = []
+    for game_id in games:
+        game = games[game_id]
+        # if game has not be interacted with in 1 hour, delete it
+        if current_time - game.get_last_modified() > 3600:
+            print("REMOVING GAME", game.get_id())
+            to_remove.append(game_id)
+    for game_id in to_remove:
+        games.pop(game_id)
+
+
+def run_schedule():
+    while 1:
+        schedule.run_pending()
+        sleep(1)
 
 
 schedule.every().hour.do(clear_old_games)
 
 if __name__ == '__main__':
+    t = Thread(target=run_schedule)
+    t.start()
     fs.socket_io.run(fs.app, debug=True, host='0.0.0.0', port=80)

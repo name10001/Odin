@@ -171,7 +171,7 @@ class Skip:
     CAN_BE_ON_PICKUP = True
     
     def play_card(self, player, options):
-        self.game.skip_next = True
+        self.game.skip_next_turn = True
 
 
 class BlueSkip(Skip, AbstractCard):
