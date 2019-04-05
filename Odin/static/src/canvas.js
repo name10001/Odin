@@ -83,7 +83,7 @@ class GameCanvas {
         this.CARD_HEIGHT = 209;
         this.GAP_SIZE = 20;
         this.CARD_WIDTH_GAP = this.CARD_WIDTH + this.GAP_SIZE;
-        this.CARD_MAX_SCROLL = this.canvas.width/2;
+        this.CARD_MAX_SCROLL = this.canvas.width/4;
         this.HAND_AREA_BORDER = this.canvas.height-100-this.CARD_HEIGHT;
 
         //initialize some variables
@@ -204,7 +204,7 @@ class GameCanvas {
         let x = this.clickPosition.x-this.canvas.width/2;
         let r = x % (this.CARD_WIDTH+20);
     
-        if(r<=this.CARD_WIDTH) {
+        if(r<=this.CARD_WIDTH && this.clickPosition.y<this.canvas.height-50 && this.clickPosition.y>this.canvas.height-50-this.CARD_HEIGHT) {
             let i = Math.floor(x/(this.CARD_WIDTH+20));
     
             if(i>=0 && i<GAME.yourCards.length) {
@@ -336,7 +336,7 @@ function touchMove(event) {
 function resize() {
     GAME_CANVAS.canvas.width = window.innerWidth;
     GAME_CANVAS.canvas.height = window.innerHeight;
-    GAME_CANVAS.CARD_MAX_SCROLL = GAME_CANVAS.canvas.width/2;
+    GAME_CANVAS.CARD_MAX_SCROLL = GAME_CANVAS.canvas.width/4;
     GAME_CANVAS.HAND_AREA_BORDER = GAME_CANVAS.canvas.height-100-GAME_CANVAS.CARD_HEIGHT;
     GAME_CANVAS.finishButton.updateLocation(GAME_CANVAS.canvas.width/2+GAME_CANVAS.CARD_WIDTH+50,GAME_CANVAS.canvas.height/2-30);
 }
