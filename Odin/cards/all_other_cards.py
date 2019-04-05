@@ -123,7 +123,7 @@ class YellowPickup2(Pickup2, AbstractCard):
 
 class Pickup10(AbstractCard):
     NUMBER_IN_DECK = 2
-    CARD_TYPE = "pickup10"
+    CARD_TYPE = "pickup2"
     CARD_TYPE_ID = 21
     NAME = "Pickup 10"
     CARD_COLOUR = "black"
