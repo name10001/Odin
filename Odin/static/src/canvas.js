@@ -3,24 +3,44 @@ const CARD_WIDTH = 134;
 const CARD_HEIGHT = 209;
 const GAP_SIZE = 20;
 
-/*
-class Bounds {
-    constructor(x,y,width,height) {
+class Button {
+    constructor(x,y,width,height,text) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.text = text;
+        this.canPress = false;
+        this.hover = false;
+    }
+    setCanPress(canPress) {
+        this.canPress = canPress;
+    }
+    setHover(hover) {
+        this.hover = hover;
+    }
+    
+    updateLocation(x,y) {
+        this.x = x;
+        this.y = y;
     }
 
-    drawImage(ctx,image) {
-        ctx.drawImage(image,this.x,this.y,this.width,this.height);
+    draw(ctx) {
+        //draw the next turn button
+        ctx.fillStyle = this.canPress ? "#376" : "#999";
+        ctx.strokeStyle = this.canPress ? (this.hover ? "#ffa" : "#fff") : "#fff";
+        ctx.fillRect(this.x,this.y,this.width,this.height);
+        ctx.strokeRect(this.x,this.y,this.width,this.height);
+        ctx.fillStyle = this.canPress ? (this.hover ? "#ffa" : "#fff") : "#bbb";
+        ctx.textAlign = "center";
+        ctx.font = "bold 16px Courier New";
+        ctx.fillText(this.text,this.x+this.width/2,this.y+this.height/2+5);
     }
 
-    isInbounds(x,y) {
-       return x>this.x && x<this.x+width && y>this.y && y<this.y+height;
+    isClicked(x,y) {
+       return x>this.x && x<this.x+this.width && y>this.y && y<this.y+this.height;
     }
 }
-*/
 
 class GameCanvas {
     /**
@@ -48,7 +68,7 @@ class GameCanvas {
         this.canvas.addEventListener('wheel',mouseWheel);
         this.canvas.addEventListener('mousemove',mouseMove);
         this.canvas.addEventListener('touchmove',touchMove);
-        this.canvas.addEventListener('resize',resize);
+        window.addEventListener('resize',resize);
 
         this.cardImages = [];
         //load all card images
@@ -76,6 +96,11 @@ class GameCanvas {
         this.scrollSpeed = 0;
         this.dragType = 0;
         this.mousePressed = false;
+        
+
+        //some buttons?
+        this.finishButton = new Button(this.canvas.width/2+this.CARD_WIDTH+50,this.canvas.height/2-30,120,60,"FINISHED");
+        this.finishButton.setCanPress(true);
     }
     
     /**
@@ -107,15 +132,9 @@ class GameCanvas {
             }
         }
 
-        //draw the next turn button
-        this.ctx.fillStyle = "#777";
-        this.ctx.strokeStyle = "#fff";
-        this.ctx.fillRect(this.canvas.width/2+this.CARD_WIDTH+50,this.canvas.height/2-30,120,60);
-        this.ctx.strokeRect(this.canvas.width/2+this.CARD_WIDTH+50,this.canvas.height/2-30,120,60);
-        this.ctx.fillStyle = "#fff";
-        this.ctx.textAlign = "center";
-        this.ctx.font = "bold 16px Courier New";
-        this.ctx.fillText("FINISHED",this.canvas.width/2+this.CARD_WIDTH+110,this.canvas.height/2+5);
+        //draw button
+        this.finishButton.draw(this.ctx);
+
 
         //draw your hand
         for(let i = 0; i<GAME.yourCards.length;i++) {
@@ -163,6 +182,10 @@ class GameCanvas {
             this.selectOffset.y = this.canvas.height/2-CARD_HEIGHT/2-this.mousePosition.y;
             this.draggedCard = -2;
         }
+        //clicking on the finish turn button
+        else if(this.finishButton.isClicked(this.mousePosition.x,this.mousePosition.y) && this.finishButton.canPress) {
+            GAME.finishTurn();
+        }
     }
 
     /**
@@ -195,6 +218,8 @@ class GameCanvas {
         this.mouseMove.y = event.offsetY-this.mousePosition.y;
         this.mousePosition.x = event.offsetX;
         this.mousePosition.y = event.offsetY;
+
+        this.finishButton.setHover(this.finishButton.isClicked(this.mousePosition.x,this.mousePosition.y));
         
         if(this.mousePressed) {
             if(this.dragType==2) {
@@ -225,7 +250,6 @@ class GameCanvas {
             let card = GAME.yourCards[this.draggedCard];
             if(card.allowedToPlay) {
                 GAME.playCard(card.id,0,0);
-                GAME.finishTurn();//TODO allow you to manually end your turn
             }
         }
         //pickup
@@ -300,11 +324,12 @@ function mouseMove(event) {
 function touchMove(event) {
     GAME_CANVAS.drag(event.touches[0].clientX, event.clientY);
 }
-function resize(event) {
+function resize() {
     GAME_CANVAS.canvas.width = window.innerWidth;
     GAME_CANVAS.canvas.height = window.innerHeight;
     GAME_CANVAS.CARD_MAX_SCROLL = GAME_CANVAS.canvas.width/2;
     GAME_CANVAS.HAND_AREA_BORDER = GAME_CANVAS.canvas.height-100-GAME_CANVAS.CARD_HEIGHT;
+    GAME_CANVAS.finishButton.updateLocation(GAME_CANVAS.canvas.width/2+GAME_CANVAS.CARD_WIDTH+50);
 }
 
 var lastTime = 0;

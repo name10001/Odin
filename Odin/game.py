@@ -20,6 +20,7 @@ class Game:
         self.game_id = game_id
         self.deck = cards.Deck()
         self.slip_next = False
+        self.say_uno_needed = False
 
         for player in players:
             self.players.append(Player(self, players[player], player))
