@@ -172,7 +172,7 @@ class Skip:
     CAN_BE_ON_PICKUP = True
     
     def play_card(self, player, options, played_on):
-        self.game.skip_next_turn = True
+        self.game.skip_next_turn += 1
 
 
 class BlueSkip(Skip, AbstractCard):
@@ -388,6 +388,7 @@ class FuckYou(AbstractCard):
     CARD_IMAGE_URL = 'cards/fuck_you.png'
     NUMBER_IN_DECK = 2
     CARD_TYPE = "fuck you"
+    CAN_BE_ON_PICKUP = True
 
     def get_options(self, player):
         options = {}
@@ -397,6 +398,9 @@ class FuckYou(AbstractCard):
         return options
 
     def play_card(self, player, options, played_on):
+        if options is 0:
+            print("no option given")
+            return
         other_player = self.game.get_player(options)
         if other_player is None:
             print("no player of that id was found")
@@ -405,3 +409,67 @@ class FuckYou(AbstractCard):
         other_player.add_new_cards(self.game.pickup)
         other_player.card_update()
         self.game.pickup = 0
+
+
+class Genocide(AbstractCard):
+    NAME = "Genocide"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/genocide.png'
+    NUMBER_IN_DECK = 1
+    CARD_TYPE = "Genocide"
+
+    def get_options(self, player):
+        options = {}
+        for card_types in self.game.deck.not_banded_types:
+            options["Type: " + card_types] = "type " + card_types
+        for card_colour in self.game.deck.not_banded_colours:
+            options["Colours: " + card_colour] = "colour " + card_colour
+        return options
+
+    def play_card(self, player, options, played_on):
+        if options is 0:
+            print("no option given")
+            return
+        catagory, to_ban = options.split(' ', 1)
+        if catagory == "type":
+            self.game.deck.ban_type(to_ban)
+            for game_player in self.game.players:
+                deck = game_player.get_deck()
+                for card in deck:
+                    if card.CARD_TYPE == to_ban:
+                        deck.remove(card)
+        elif catagory == "colour":
+            self.game.deck.ban_colour(to_ban)
+            for game_player in self.game.players:
+                deck = game_player.get_deck()
+                for card in deck:
+                    if card.CARD_COLOUR == to_ban:
+                        deck.remove(card)
+
+
+class Jesus(AbstractCard):
+    NAME = "Jesus"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/jesus.png'
+    NUMBER_IN_DECK = 2
+    CARD_TYPE = "Jesus"
+
+    def get_options(self, player):
+        options = {}
+        for other_player in self.game.players:
+            if other_player != player:
+                options[other_player.get_name()] = other_player.get_id()
+        return options
+
+    def play_card(self, player, options, played_on):
+        if options is 0:
+            print("no option given")
+            return
+        other_player = self.game.get_player(options)
+        if other_player is None:
+            print("no player of that id was found")
+            return
+
+        other_player.set_hand([])
+        other_player.add_new_cards(self.game.starting_number_of_cards)
+        other_player.card_update()

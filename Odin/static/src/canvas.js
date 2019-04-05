@@ -333,7 +333,7 @@ class GameCanvas {
         if(this.draggedCard>=0 && this.mousePosition.y<this.canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*3) {
             let card = GAME.yourCards[this.draggedCard];
             if(card.allowedToPlay) {
-                GAME.playCard(card.id,0,0);
+                GAME.playCard(card.id,null,null);
             }
         }
         this.draggedCard = -1;

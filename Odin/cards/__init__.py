@@ -20,7 +20,7 @@ all_cards = [
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
     BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck,
     Pickup10, Pickup4, PickupTimes2,
-    BlankBro, Happiness, SwapHand, Communist, Pawn, FeelingBlue, Plus, FuckYou
+    BlankBro, Happiness, SwapHand, Communist, Pawn, FeelingBlue, Plus, FuckYou, Genocide, Jesus
 ]
 
 

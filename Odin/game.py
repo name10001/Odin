@@ -29,7 +29,7 @@ class Game:
         self.player_turn_index = random.randint(0, len(self.players) - 1)
         self.turn = self.players[self.player_turn_index]
         self.direction = 1  # 1 or -1
-        self.skip_next_turn = False
+        self.skip_next_turn = 0
 
     def find_card(self, card_id):
         """
@@ -72,19 +72,15 @@ class Game:
         """
         self.turn.finish_turn()
 
-        if self.skip_next_turn is True:
-            increment_by = 2
-            self.skip_next_turn = False
-        else:
-            increment_by = 1
-
         # increment player index
-        for i in range(0, increment_by):
+        for i in range(0, self.skip_next_turn + 1):
             self.player_turn_index += self.direction
             if self.player_turn_index == -1:
                 self.player_turn_index = len(self.players) - 1
             elif self.player_turn_index == len(self.players):
                 self.player_turn_index = 0
+
+        self.skip_next_turn = 0
 
         self.turn = self.players[self.player_turn_index]
 
@@ -109,6 +105,8 @@ class Game:
         player = self.get_player(session['player_id'])
         if player is None:
             return
+
+        print(player.get_name(), message, data)
 
         if message == "uno":
             player.say_uno()
