@@ -41,7 +41,7 @@ class Game:
             if card.id == card_id:
                 return card
         for player in self.players:
-            for card in player.get_cards():
+            for card in player.get_hand():
                 if card.id == card_id:
                     return card
         return None

@@ -102,7 +102,8 @@ class Player:
         """
         played_pickup = False
         for (card, chosen_option) in self.planning_pile:
-            card.play_card(self, chosen_option)
+            card_below = self.game.played_cards[self.game.played_cards.index(card)]
+            card.play_card(self, chosen_option, card_below)
             if card.CAN_BE_ON_PICKUP is True:
                 played_pickup = True
 
@@ -197,13 +198,13 @@ class Player:
 
         # get player cards
         self.hand.sort()
-        for card in self.get_cards():
+        for card in self.get_hand():
             json_to_send["your cards"].append(
                 {
                     "card id": card.get_id(),
                     "card image url": card.get_url(),
                     "can be played": self._can_be_played(card),
-                    "options": card.get_options(),
+                    "options": card.get_options(self),
                 }
             )
 
@@ -235,7 +236,10 @@ class Player:
     def get_sid(self):
         return self.sid
 
-    def get_cards(self):
+    def set_hand(self, hand):
+        self.hand = hand
+
+    def get_hand(self):
         return self.hand
 
     def get_name(self):

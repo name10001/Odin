@@ -1,6 +1,7 @@
 from flask import *
 import cards
 
+
 class AbstractCard:
     CARD_IMAGE_URL = 'cards/generic.png'
     DESCRIPTION = 'This is a abstract card and should only be used to inherit from. This should never be seen in a game'
@@ -15,7 +16,7 @@ class AbstractCard:
         self.game = game
         self.id = self._make_id()
 
-    def play_card(self, player, options):
+    def play_card(self, player, options, played_on):
         """
 
         :return: None
@@ -92,12 +93,12 @@ class AbstractCard:
 
         return id_safe
 
-    def get_options(self):
+    def get_options(self, player):
         """
         gets all the options for a card
         For example, the 'Fuck you' card requires you to pick a player.
         In that case this function would return a list of players
-        :return: a Dictionary where the key is an ID and the value is what the player should see.
+        :return: a Dictionary where the key is an value and the ID is what the player should see.
                  Or None if no options are needed
         """
         return None

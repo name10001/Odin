@@ -18,8 +18,9 @@ all_cards = [
     BlueSkip, GreenSkip, PurpleSkip, RedSkip, YellowSkip, WhiteSkip, BlackSkip,
     BluePickup2, GreenPickup2, PurplePickup2, RedPickup2, YellowPickup2, WhitePickup2, BlackPickup2,
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
+    BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck,
     Pickup10, Pickup4, PickupTimes2,
-    BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck, BlankBro, Happiness
+    BlankBro, Happiness, SwapHand, Communist, Pawn, FeelingBlue, Plus, FuckYou
 ]
 
 

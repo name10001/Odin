@@ -1,4 +1,5 @@
 from cards.abstract_card import AbstractCard
+import random
 
 # ~~~~~~~~~~~~~~
 #    Reverse
@@ -12,7 +13,7 @@ class Reverse:
     CARD_TYPE_ID = 16
     CAN_BE_ON_PICKUP = True
 
-    def play_card(self, player, options):
+    def play_card(self, player, options, played_on):
         self.game.direction *= -1
 
 
@@ -70,7 +71,7 @@ class Pickup2:
     CAN_BE_ON_PICKUP = True
     CARD_TYPE_ID = 19
 
-    def play_card(self, player, options):
+    def play_card(self, player, options, played_on):
         self.game.pickup += 2
 
 
@@ -130,7 +131,7 @@ class Pickup10(AbstractCard):
     CARD_IMAGE_URL = 'cards/pickup10_wild.png'
     CAN_BE_ON_PICKUP = True
 
-    def play_card(self, player, options):
+    def play_card(self, player, options, played_on):
         self.game.pickup += 10
 
 
@@ -143,7 +144,7 @@ class Pickup4(AbstractCard):
     CARD_IMAGE_URL = 'cards/pickup4_wild.png'
     CAN_BE_ON_PICKUP = True
 
-    def play_card(self, player, options):
+    def play_card(self, player, options, played_on):
         self.game.pickup += 4
 
 
@@ -156,7 +157,7 @@ class PickupTimes2(AbstractCard):
     CARD_IMAGE_URL = 'cards/multiply2_wild.png'
     CAN_BE_ON_PICKUP = True
 
-    def play_card(self, player, options):
+    def play_card(self, player, options, played_on):
         self.game.pickup *= 2
 
 # ~~~~~~~~~~~~~~
@@ -170,7 +171,7 @@ class Skip:
     CARD_TYPE_ID = 17
     CAN_BE_ON_PICKUP = True
     
-    def play_card(self, player, options):
+    def play_card(self, player, options, played_on):
         self.game.skip_next_turn = True
 
 
@@ -283,3 +284,124 @@ class YellowFuck(Fuck, AbstractCard):
     CARD_IMAGE_URL = 'cards/fuck_yellow.png'
 
 
+# ~~~~~~~~~~~~~~
+#    Other
+# ~~~~~~~~~~~~~~
+
+class Pawn(AbstractCard):
+    NAME = "Pawn"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/pawn.png'
+    NUMBER_IN_DECK = 1
+    CARD_TYPE = "pawn"
+    CAN_BE_ON_PICKUP = True
+
+    def play_card(self, player, options, played_on):
+        self.game.pickup = 0
+
+
+class Communist(AbstractCard):
+    NAME = "Communism"
+    CARD_COLOUR = "white"
+    CARD_IMAGE_URL = 'cards/communist.png'
+    NUMBER_IN_DECK = 1
+    CARD_TYPE = "communism"
+
+    def play_card(self, player, options, played_on):
+        all_cards = []
+        for player in self.game.players:
+            all_cards += player.get_hand()
+
+        random.shuffle(all_cards)
+
+        # remove any remaining cards
+        while len(all_cards) % len(self.game.players) != 0:
+            all_cards.pop()
+
+        # divide it evenly between everyone
+        number_of_cards_each = int(len(all_cards) / len(self.game.players))
+        i = 0
+        for player in self.game.players:
+            player.set_hand(all_cards[i:i+number_of_cards_each])
+            i += number_of_cards_each
+
+        self.game.update_players()
+
+
+class SwapHand(AbstractCard):
+    NAME = "Swap Hand"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/swap_hand.png'
+    NUMBER_IN_DECK = 1
+    CARD_TYPE = "swap"
+
+    def get_options(self, player):
+        options = {}
+        for other_player in self.game.players:
+            if other_player != player:
+                options[other_player.get_name()] = other_player.get_id()
+        return options
+
+    def play_card(self, player, options, played_on):
+        other_player = self.game.get_player(options)
+        if other_player is None:
+            print("no player of that id was found")
+            return
+
+        hand = player.get_hand()
+        player.set_hand(other_player.get_hand())
+        other_player.set_hand(hand)
+
+
+class FeelingBlue(AbstractCard):
+    NAME = "Feeling Blue"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/feeling_blue.png'
+    NUMBER_IN_DECK = 1
+    CARD_TYPE = "feeling blue"
+
+    def play_card(self, player, options, played_on):
+        player.add_new_cards(5)
+        player.card_update()
+
+
+class Plus(AbstractCard):
+    NAME = "Plus"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/plus_wild.png'
+    NUMBER_IN_DECK = 10
+    CARD_TYPE = "feeling blue"
+    CAN_BE_ON_PICKUP = True
+
+    def play_card(self, player, options, played_on):
+        for other_player in self.game.players:
+            if other_player != player:
+                other_player.add_new_cards(self.game.pickup)
+                other_player.card_update()
+
+        self.game.pickup = 0
+
+
+class FuckYou(AbstractCard):
+    NAME = "Fuck You"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/fuck_you.png'
+    NUMBER_IN_DECK = 1
+    CARD_TYPE = "fuck you"
+
+    def get_options(self, player):
+        options = {}
+        for other_player in self.game.players:
+            if other_player != player:
+                options[other_player.get_name()] = other_player.get_id()
+        return options
+
+    def play_card(self, player, options, played_on):
+        other_player = self.game.get_player(options)
+        if other_player is None:
+            print("no player of that id was found")
+            return
+
+        other_player.add_new_cards(self.game.pickup)
+        other_player.card_update()
+        self.game.pickup = 0
