@@ -17,18 +17,13 @@ def index():
 
 def make_unique_game_id():
     """
-    generates an unique id for a game that consisting of 4 random numbers each 3 digit
+    generates an unique id for a game that consisting of 1 random numbers each 5 digit
     :return: The generated ID as a string
     """
-    # I wish python had a do while loop
-    def generate():
-        new_game_id = '{:05d}'
-        return new_game_id.format(randint(10000, 100000))
-
     # generates an ID if its not unique, generate another
-    game_id = generate()
+    game_id = '{:05d}'.format(randint(10000, 100000))
     while game_id in games:
-        game_id = generate()
+        game_id = '{:05d}'.format(randint(10000, 100000))
 
     return game_id
 
@@ -56,11 +51,6 @@ def render_game(game_id):
         return games[game_id].render()
     else:
         return redirect('/')
-
-
-@fs.socket_io.on('connect')
-def user_connected():
-    pass
 
 
 @fs.socket_io.on('waiting room')
