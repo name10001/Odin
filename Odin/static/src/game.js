@@ -20,8 +20,11 @@ class Game {
         this.topCards = [];
         this.yourPlayedCards = [];//TODO implement this
         this.yourTurn = false;
+        this.yourId = 0;
         this.players = [];
         this.pickupAmount = 0;
+        this.turn = 0;
+        this.turnString = "";
     }
 
     update(update) {
@@ -40,10 +43,25 @@ class Game {
         }
         //update pickup
         this.pickupAmount = update['pickup size'];
-        this.yourTurn = update['your turn'];
     
         //update players
-        
+        this.players.length = 0;
+        for(let player of update['players']) {
+            if(player['is you']) {
+                this.yourId = this.players.length;
+            }
+            if(player['is turn']) {
+                this.turn = this.players.length;
+                if(player['is you']) {
+                    this.turnString = "Your Turn";
+                    this.yourTurn = true;
+                }else {
+                    this.turnString = player['name'] + "'s Turn";
+                    this.yourTurn = false;
+                }
+            }
+            this.players.push(new Player(player['name']));
+        }
     }
 
     playCard(cardId, picked_option){
