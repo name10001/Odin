@@ -171,7 +171,7 @@ class Skip:
     CAN_BE_ON_PICKUP = True
     
     def play_card(self, player, options):
-        self.game.slip_next = True
+        self.game.skip_next = True
 
 
 class BlueSkip(Skip, AbstractCard):
@@ -269,7 +269,6 @@ class RedFuck(Fuck, AbstractCard):
     NAME = "Red Fuck"
     CARD_COLOUR = "red"
     CARD_IMAGE_URL = 'cards/fuck_red.png'
-
 
 
 class BlackFuck(Fuck, AbstractCard):

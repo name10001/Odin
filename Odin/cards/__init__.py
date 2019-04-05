@@ -36,6 +36,40 @@ for card in all_cards:
     if card.CARD_COLOUR not in all_colours:
         all_colours.append(card.CARD_COLOUR)
 
+miscellaneous_category_index = 2
+category_indexs = [
+    {
+        "colours": (),
+        "type": ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'),
+        "index": 0
+    },
+    {
+        "colours": (),
+        "type": ('69'),
+        "index": 1
+    },
+    {
+        "colours": ('black'),
+        "type": (),
+        "index": 3
+    },
+    {
+        "colours": ('white'),
+        "type": (),
+        "index": 4
+    }
+]
+
+
+def get_card_index(card):
+    for category_index in category_indexs:
+        if card.CARD_TYPE in category_index["type"]:
+            return category_index["index"]
+        if card.CARD_COLOUR in category_index["colours"]:
+            return category_index["index"]
+    else:
+        return miscellaneous_category_index
+
 
 def get_random_card():
     """

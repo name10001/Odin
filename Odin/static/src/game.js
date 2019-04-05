@@ -409,6 +409,9 @@ function finishTurn(){
     socket.emit("game message", GAME_ID, "finished turn", null);
 }
 
+function undo(){
+    socket.emit("game message", GAME_ID, "undo", null);
+}
 /*
 
 

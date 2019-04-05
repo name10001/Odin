@@ -1,5 +1,5 @@
 from flask import *
-
+import cards
 
 class AbstractCard:
     CARD_IMAGE_URL = 'cards/generic.png'
@@ -104,7 +104,7 @@ class AbstractCard:
 
     def __gt__(self, other):
         """
-        if this card goes after the given other card
+        if this card goes after (is greater than) the given other card
         Order is number cards, other cards, black cards, white cards
         Then each is sorted by color then type
         :param other: other card
@@ -119,23 +119,41 @@ class AbstractCard:
             # compare colours
             return self.CARD_COLOUR > other.CARD_COLOUR
         """
-
+        """
+        # number are always below everything
         numbers = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '69')
         if self.CARD_TYPE in numbers and other.CARD_TYPE not in numbers:
             return False
         if self.CARD_TYPE not in numbers and other.CARD_TYPE in numbers:
             return True
 
+        # back and white cards go above everything
         good_colors = ("black", "white")
         if self.CARD_COLOUR in good_colors and other.CARD_COLOUR not in good_colors:
             return True
         if self.CARD_COLOUR not in good_colors and other.CARD_COLOUR in good_colors:
             return False
+        if self.CARD_COLOUR in good_colors and other.CARD_COLOUR in good_colors:
+            # black and white cards are sorted by
+            if self.CARD_COLOUR == other.CARD_COLOUR:
+                return self.CARD_TYPE > other.CARD_TYPE
+            else:
+                return self.CARD_COLOUR > other.CARD_COLOUR
 
+        # everything is then sorted by type then color
         if self.CARD_TYPE == other.CARD_TYPE:
             return self.CARD_COLOUR > other.CARD_COLOUR
         else:
             return self.CARD_TYPE > other.CARD_TYPE
+        """
+
+        if cards.get_card_index(self) == cards.get_card_index(other):
+            if self.CARD_TYPE == other.CARD_TYPE:
+                return self.CARD_COLOUR > other.CARD_COLOUR
+            else:
+                return self.CARD_TYPE > other.CARD_TYPE
+        else:
+            return cards.get_card_index(self) > cards.get_card_index(other)
 
     def __lt__(self, other):
         return not self.__gt__(other)

@@ -16,10 +16,10 @@ class Game:
         self.played_cards = []
         self.players = []
         self.direction = 1  # 1 or -1
-        self.starting_number_of_cards = 10
+        self.starting_number_of_cards = 100
         self.game_id = game_id
         self.deck = cards.Deck()
-        self.slip_next = False
+        self.skip_next = False
         self.say_uno_needed = False
 
         for player in players:
@@ -68,21 +68,31 @@ class Game:
         """
         self.turn.finish_turn()
 
-        self.player_turn_index += self.direction
+        if self.skip_next is True:
+            increment_by = 2
+            self.skip_next = False
+        else:
+            increment_by = 1
 
-        if self.player_turn_index == -1:
-            self.player_turn_index = len(self.players) - 1
-        elif self.player_turn_index == len(self.players):
-            self.player_turn_index = 0
+        # increment player index
+        for i in range(0, increment_by):
+            self.player_turn_index += self.direction
+            if self.player_turn_index == -1:
+                self.player_turn_index = len(self.players) - 1
+            elif self.player_turn_index == len(self.players):
+                self.player_turn_index = 0
 
         self.turn = self.players[self.player_turn_index]
 
-        if self.slip_next:
-            self.slip_next = False
-            self.next_turn()
-        else:
-            for player in self.players:
-                player.card_update()
+        self.update_players()
+
+    def update_players(self):
+        """
+        sends updates to all the players
+        :return:
+        """
+        for player in self.players:
+            player.card_update()
 
     def message(self, message, data):
         """
@@ -92,7 +102,9 @@ class Game:
         :return: None
         """
         player = self.get_player(session['player_id'])
-        print(player.get_name(), message, data)
+        if player is None:
+            return
+
         if message == "uno":
             player.say_uno()
         elif message == "play card":
@@ -102,6 +114,8 @@ class Game:
                 self.next_turn()
         elif message == "pickup":
             player.pickup()
+        elif message == "undo":
+            player.undo()
         else:
             print("got unknown message from player:", message)
 

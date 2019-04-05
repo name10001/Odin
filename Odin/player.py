@@ -12,10 +12,9 @@ class Player:
         self.said_uno_previous_turn = False
         self.said_uno_this_turn = False
         self.picked_up_this_turn = False
-        self.played_pickup = False
         self.sid = None
         self.add_new_cards(game.starting_number_of_cards)
-        self.cards_played_this_turn = []  # TODO - make it so the player knows what cards they have played so they can edit them
+        self.cards_to_play_this_turn = []  # TODO - make it so the player knows what cards they have played so they can edit them
 
     def say_uno(self):
         """
@@ -59,15 +58,27 @@ class Player:
         :return:
         """
         card = self.find_card(card_id)
+        if card is None:
+            return
 
         if self._can_be_played(card):
-            card.play_card(self, chosen_option)
             self.hand.remove(card)
             self.game.add_played_card(card)
-            if card.CAN_BE_ON_PICKUP is True:
-                self.played_pickup = True
-        self.cards_played_this_turn.append(card)
+            self.cards_to_play_this_turn.append((card, chosen_option))
         self.card_update()
+
+    def undo(self):
+        """
+        If the player has put down a card this turn it will undo the latest one
+        :return:
+        """
+        if len(self.cards_to_play_this_turn) == 0 or not self.is_turn():
+            return
+        card_to_remove = self.cards_to_play_this_turn.pop()[0]
+        self.game.played_cards.remove(card_to_remove)
+        self.hand.append(card_to_remove)
+
+        self.game.update_players()
 
     def _can_be_played(self, card):
         """
@@ -75,12 +86,10 @@ class Player:
         :return:
         """
         top_card = self.game.played_cards[-1]
-        is_first_card = len(self.cards_played_this_turn) == 0
-        print(self.cards_played_this_turn)
-        print(is_first_card)
+        is_first_card = len(self.cards_to_play_this_turn) == 0
 
         if self.is_turn() and not is_first_card:
-            return card.can_be_played_with(self.cards_played_this_turn[0])
+            return card.can_be_played_with(self.cards_to_play_this_turn[0][0])
         elif card.can_be_played_on(top_card, self.is_turn()):
             return True
         else:
@@ -91,18 +100,23 @@ class Player:
 
         :return:
         """
-        if self.game.pickup != 0 and self.played_pickup is False:
+        played_pickup = False
+        for (card, chosen_option) in self.cards_to_play_this_turn:
+            card.play_card(self, chosen_option)
+            if card.CAN_BE_ON_PICKUP is True:
+                played_pickup = True
+
+        if self.game.pickup != 0 and played_pickup is False:
             self.pickup()
-        self.played_pickup = False
 
         if self.said_uno_previous_turn is False and self.had_won() is True:
             self.pickup()
         self.said_uno_previous_turn = self.said_uno_this_turn
         self.said_uno_this_turn = False
 
-        if len(self.cards_played_this_turn) == 0:
+        if len(self.cards_to_play_this_turn) == 0:
             self.pickup()
-        self.cards_played_this_turn = []
+        self.cards_to_play_this_turn = []
 
         self.picked_up_this_turn = False
 
@@ -159,7 +173,7 @@ class Player:
             "players": []
         }
 
-        # get first 4 cards from deck TODO - separate this with cards that the player is currently using for their turn
+        # get first 4 cards from deck
         number_of_cards = len(self.game.played_cards)
         for card_index in range(max(number_of_cards - 4, 0), number_of_cards):
             card = self.game.played_cards[card_index]
@@ -167,7 +181,8 @@ class Player:
                 {
                     "card image url": card.get_url(),
                     "card id": card.get_id(),
-                    "card can be undone": False
+                    "card can be undone": False,
+                    "card color(temp)": card.CARD_COLOUR,
                 }
             )
 
@@ -179,7 +194,8 @@ class Player:
                     "card id": card.get_id(),
                     "card image url": card.get_url(),
                     "can be played": self._can_be_played(card),
-                    "options": card.get_options()
+                    "options": card.get_options(),
+                    "card color(temp)": card.CARD_COLOUR,
                 }
             )
 
