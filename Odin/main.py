@@ -7,14 +7,13 @@ from threading import Thread
 
 import flask_server as fs
 from waiting_room import WaitingRoom
-from player import Player
 
 games = {}
 
 
 @fs.app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template("index.html", message=None)
 
 
 def make_unique_game_id():
@@ -52,7 +51,7 @@ def render_game(game_id):
     if game_id in games:
         return games[game_id].render()
     else:
-        return redirect('/')
+        return render_template("index.html", message="Game not found")
 
 
 @fs.socket_io.on('waiting room')
