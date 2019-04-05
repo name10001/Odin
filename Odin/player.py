@@ -158,7 +158,7 @@ class Player:
         """
         # TODO: this keeps giving errors sometimes
         for i in range(0, number):
-            self.hand.append(self.game.deck.pickup()(self.game))
+            self.hand.append(self.game.deck.pickup())
 
     def card_update(self):
         """

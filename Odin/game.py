@@ -2,7 +2,6 @@ import cards
 from player import Player
 from flask import *
 from flask_socketio import *
-import flask_server as fs
 import random
 
 
@@ -11,22 +10,26 @@ class Game:
     This stores information about a game
     """
 
-    def __init__(self, game_id, players):
-        self.pickup = 0
-        self.played_cards = []
-        self.players = []
-        self.direction = 1  # 1 or -1
-        self.starting_number_of_cards = 100
+    def __init__(self, game_id, players, waiting_room, say_uno_needed=False, starting_number_of_cards=10):
+        self.say_uno_needed = say_uno_needed
         self.game_id = game_id
-        self.deck = cards.Deck()
-        self.skip_next = False
-        self.say_uno_needed = False
+        self.waiting_room = waiting_room
+        self.starting_number_of_cards = starting_number_of_cards
 
+        self.players = []
+
+        self.deck = cards.Deck(self)
+        self.played_cards = []
+        self.played_cards.append(self.deck.pickup())
+        self.pickup = 0
+
+        # setup players
         for player in players:
             self.players.append(Player(self, players[player], player))
-        self.player_turn_index = random.randint(0, len(self.players)-1)
+        self.player_turn_index = random.randint(0, len(self.players) - 1)
         self.turn = self.players[self.player_turn_index]
-        self.played_cards = [self.deck.pickup()(self)]
+        self.direction = 1  # 1 or -1
+        self.skip_next_turn = False
 
     def find_card(self, card_id):
         """
@@ -59,6 +62,7 @@ class Game:
         render the HTML needed to display the game
         :return:
         """
+        self.waiting_room.modify()
         return render_template("game.html", game=self)
 
     def next_turn(self):
@@ -68,9 +72,9 @@ class Game:
         """
         self.turn.finish_turn()
 
-        if self.skip_next is True:
+        if self.skip_next_turn is True:
             increment_by = 2
-            self.skip_next = False
+            self.skip_next_turn = False
         else:
             increment_by = 1
 
@@ -101,6 +105,7 @@ class Game:
         :param data:
         :return: None
         """
+        self.waiting_room.modify()
         player = self.get_player(session['player_id'])
         if player is None:
             return
@@ -134,6 +139,7 @@ class Game:
 
         :return:
         """
+        self.waiting_room.modify()
         self.get_player(session['player_id']).set_sid(request.sid)
         join_room(self.game_id + "_game")
         self.get_player(session['player_id']).card_update()

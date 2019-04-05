@@ -4,7 +4,8 @@ from flask import url_for
 
 
 class Deck:
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self.banded_types = []
         self.not_banded_types = cards.all_types
         self.banded_colours = []
@@ -25,7 +26,7 @@ class Deck:
             up_to = 0
             for card in self.cards:
                 if place_in_deck in range(up_to, up_to + card.NUMBER_IN_DECK):
-                    return card
+                    return card(self.game)
                 else:
                     up_to += card.NUMBER_IN_DECK
         print(place_in_deck, self.number_of_cards)
