@@ -37,25 +37,31 @@ for card in all_cards:
         all_colours.append(card.CARD_COLOUR)
 
 miscellaneous_category_index = 2
+# highest one takes priority!
 category_indexs = [
     {
         "colours": (),
-        "type": ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'),
+        "types": ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'),
         "index": 0
     },
     {
         "colours": (),
-        "type": ('69'),
+        "types": ('69'),
         "index": 1
     },
     {
+        "colours": (),
+        "types": ('pickup2', 'pickup10', 'pickup4', 'pickupTimes2'),
+        "index": 5
+    },
+    {
         "colours": ('black'),
-        "type": (),
+        "types": (),
         "index": 3
     },
     {
         "colours": ('white'),
-        "type": (),
+        "types": (),
         "index": 4
     }
 ]
@@ -63,12 +69,11 @@ category_indexs = [
 
 def get_card_index(card):
     for category_index in category_indexs:
-        if card.CARD_TYPE in category_index["type"]:
+        if card.CARD_TYPE in category_index["types"]:
             return category_index["index"]
         if card.CARD_COLOUR in category_index["colours"]:
             return category_index["index"]
-    else:
-        return miscellaneous_category_index
+    return miscellaneous_category_index
 
 
 def get_random_card():

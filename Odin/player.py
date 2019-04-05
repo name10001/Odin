@@ -14,7 +14,7 @@ class Player:
         self.picked_up_this_turn = False
         self.sid = None
         self.add_new_cards(game.starting_number_of_cards)
-        self.cards_to_play_this_turn = []  # TODO - make it so the player knows what cards they have played so they can edit them
+        self.planning_pile = []  # TODO - make it so the player knows what cards they have played so they can edit them
 
     def say_uno(self):
         """
@@ -64,7 +64,7 @@ class Player:
         if self._can_be_played(card):
             self.hand.remove(card)
             self.game.add_played_card(card)
-            self.cards_to_play_this_turn.append((card, chosen_option))
+            self.planning_pile.append((card, chosen_option))
         self.card_update()
 
     def undo(self):
@@ -72,9 +72,9 @@ class Player:
         If the player has put down a card this turn it will undo the latest one
         :return:
         """
-        if len(self.cards_to_play_this_turn) == 0 or not self.is_turn():
+        if len(self.planning_pile) == 0 or not self.is_turn():
             return
-        card_to_remove = self.cards_to_play_this_turn.pop()[0]
+        card_to_remove = self.planning_pile.pop()[0]
         self.game.played_cards.remove(card_to_remove)
         self.hand.append(card_to_remove)
 
@@ -86,10 +86,10 @@ class Player:
         :return:
         """
         top_card = self.game.played_cards[-1]
-        is_first_card = len(self.cards_to_play_this_turn) == 0
+        is_first_card = len(self.planning_pile) == 0
 
         if self.is_turn() and not is_first_card:
-            return card.can_be_played_with(self.cards_to_play_this_turn[0][0])
+            return card.can_be_played_with(self.planning_pile[0][0])
         elif card.can_be_played_on(top_card, self.is_turn()):
             return True
         else:
@@ -101,7 +101,7 @@ class Player:
         :return:
         """
         played_pickup = False
-        for (card, chosen_option) in self.cards_to_play_this_turn:
+        for (card, chosen_option) in self.planning_pile:
             card.play_card(self, chosen_option)
             if card.CAN_BE_ON_PICKUP is True:
                 played_pickup = True
@@ -114,9 +114,9 @@ class Player:
         self.said_uno_previous_turn = self.said_uno_this_turn
         self.said_uno_this_turn = False
 
-        if len(self.cards_to_play_this_turn) == 0:
+        if len(self.planning_pile) == 0:
             self.pickup()
-        self.cards_to_play_this_turn = []
+        self.planning_pile = []
 
         self.picked_up_this_turn = False
 
@@ -168,13 +168,14 @@ class Player:
         json_to_send = {
             "cards on deck": [],
             "your cards": [],
+            "planning pile": [],
             "direction": self.game.direction,
             "pickup size": self.game.pickup,
             "players": []
         }
 
-        # get first 4 cards from deck
-        number_of_cards = len(self.game.played_cards)
+        # get first 4 cards from deck that are not in planning pile
+        number_of_cards = len(self.game.played_cards) - len(self.planning_pile)
         for card_index in range(max(number_of_cards - 4, 0), number_of_cards):
             card = self.game.played_cards[card_index]
             json_to_send["cards on deck"].append(
@@ -182,7 +183,15 @@ class Player:
                     "card image url": card.get_url(),
                     "card id": card.get_id(),
                     "card can be undone": False,
-                    "card color(temp)": card.CARD_COLOUR,
+                }
+            )
+
+        # get cards from planning pile
+        for card, options in self.planning_pile:
+            json_to_send["planning pile"].append(
+                {
+                    "card image url": card.get_url(),
+                    "card id": card.get_id()
                 }
             )
 
@@ -195,7 +204,6 @@ class Player:
                     "card image url": card.get_url(),
                     "can be played": self._can_be_played(card),
                     "options": card.get_options(),
-                    "card color(temp)": card.CARD_COLOUR,
                 }
             )
 
