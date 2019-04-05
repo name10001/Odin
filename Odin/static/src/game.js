@@ -66,7 +66,7 @@ class Game {
                     this.yourTurn = false;
                 }
             }
-            this.players.push(new Player(player['name']));
+            this.players.push(new Player(player['name'],player['number of cards']));
         }
     }
 

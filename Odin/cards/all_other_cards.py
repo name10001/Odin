@@ -124,7 +124,7 @@ class YellowPickup2(Pickup2, AbstractCard):
 
 class Pickup10(AbstractCard):
     NUMBER_IN_DECK = 2
-    CARD_TYPE = "pickup2"
+    CARD_TYPE = "pickup10"
     CARD_TYPE_ID = 21
     NAME = "Pickup 10"
     CARD_COLOUR = "black"
@@ -369,7 +369,7 @@ class Plus(AbstractCard):
     NAME = "Plus"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/plus_wild.png'
-    NUMBER_IN_DECK = 10
+    NUMBER_IN_DECK = 2
     CARD_TYPE = "feeling blue"
     CAN_BE_ON_PICKUP = True
 
@@ -386,7 +386,7 @@ class FuckYou(AbstractCard):
     NAME = "Fuck You"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/fuck_you.png'
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 2
     CARD_TYPE = "fuck you"
 
     def get_options(self, player):
