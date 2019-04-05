@@ -110,7 +110,7 @@ class AbstractCard:
         :param other: other card
         :return: True if this card is grater
         """
-        
+        """
         if self.CARD_TYPE_ID < other.CARD_TYPE_ID:
             return False
         elif self.CARD_TYPE_ID > other.CARD_TYPE_ID:
@@ -118,8 +118,8 @@ class AbstractCard:
         else:
             # compare colours
             return self.CARD_COLOUR > other.CARD_COLOUR
-
         """
+
         numbers = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '69')
         if self.CARD_TYPE in numbers and other.CARD_TYPE not in numbers:
             return False
@@ -132,11 +132,10 @@ class AbstractCard:
         if self.CARD_COLOUR not in good_colors and other.CARD_COLOUR in good_colors:
             return False
 
-        if self.CARD_COLOUR == other.CARD_COLOUR:
-            return self.CARD_TYPE > other.CARD_TYPE
-        else:
+        if self.CARD_TYPE == other.CARD_TYPE:
             return self.CARD_COLOUR > other.CARD_COLOUR
-        """
+        else:
+            return self.CARD_TYPE > other.CARD_TYPE
 
     def __lt__(self, other):
         return not self.__gt__(other)

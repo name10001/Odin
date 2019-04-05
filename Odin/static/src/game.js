@@ -318,13 +318,13 @@ function release() {
         let card = yourCards[draggedCard];
         if(card.allowedToPlay) {
             playCard(card.id,0,0);
-            finishTurn();//TODO allow you to manually end your turn
+            //finishTurn();//TODO allow you to manually end your turn
         }
     }
     //pickup
     else if(draggedCard==-2 && mousePosition.y>canvas.height-100-CARD_HEIGHT) {
         pickup();
-        finishTurn();
+        //finishTurn();
     }
     draggedCard = -1;
     mousePressed = false;
@@ -406,7 +406,6 @@ function pickup(){
 }
 
 function finishTurn(){
-    // not currently working!
     socket.emit("game message", GAME_ID, "finished turn", null);
 }
 

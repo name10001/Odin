@@ -15,7 +15,7 @@ class Player:
         self.played_pickup = False
         self.sid = None
         self.add_new_cards(game.starting_number_of_cards)
-        self.first_card_of_turn = None # TODO - make it so the player knows what cards they have played so they can edit them
+        self.cards_played_this_turn = []  # TODO - make it so the player knows what cards they have played so they can edit them
 
     def say_uno(self):
         """
@@ -66,9 +66,8 @@ class Player:
             self.game.add_played_card(card)
             if card.CAN_BE_ON_PICKUP is True:
                 self.played_pickup = True
-
-        if self.first_card_of_turn is None:
-            self.first_card_of_turn = card
+        self.cards_played_this_turn.append(card)
+        self.card_update()
 
     def _can_be_played(self, card):
         """
@@ -76,10 +75,12 @@ class Player:
         :return:
         """
         top_card = self.game.played_cards[-1]
-        is_first_card = self.first_card_of_turn is None
+        is_first_card = len(self.cards_played_this_turn) == 0
+        print(self.cards_played_this_turn)
+        print(is_first_card)
 
         if self.is_turn() and not is_first_card:
-            return card.can_be_played_with(self.first_card_of_turn)
+            return card.can_be_played_with(self.cards_played_this_turn[0])
         elif card.can_be_played_on(top_card, self.is_turn()):
             return True
         else:
@@ -99,9 +100,9 @@ class Player:
         self.said_uno_previous_turn = self.said_uno_this_turn
         self.said_uno_this_turn = False
 
-        if self.first_card_of_turn is None:
+        if len(self.cards_played_this_turn) == 0:
             self.pickup()
-        self.first_card_of_turn = None
+        self.cards_played_this_turn = []
 
         self.picked_up_this_turn = False
 
@@ -141,7 +142,7 @@ class Player:
         :param number: number of cards to add
         :return: None
         """
-        # TODO: this keeps geting errors
+        # TODO: this keeps giving errors sometimes
         for i in range(0, number):
             self.hand.append(self.game.deck.pickup()(self.game))
 
@@ -157,12 +158,16 @@ class Player:
             "pickup size": self.game.pickup,
             "players": []
         }
-        # get first 3 cards from deck TODO - separate this with cards that the player is currently using for their turn
+
+        # get first 4 cards from deck TODO - separate this with cards that the player is currently using for their turn
         number_of_cards = len(self.game.played_cards)
         for card_index in range(max(number_of_cards - 4, 0), number_of_cards):
+            card = self.game.played_cards[card_index]
             json_to_send["cards on deck"].append(
                 {
-                    "card image url": self.game.played_cards[card_index].get_url()
+                    "card image url": card.get_url(),
+                    "card id": card.get_id(),
+                    "card can be undone": False
                 }
             )
 
@@ -178,22 +183,18 @@ class Player:
                 }
             )
 
-        # get other players I CHANGED THIS SO YOU KNOW WHICH PLAYER YOU ARE
-        for i in range(0,len(self.game.players)):
-            player = self.game.players[i]
-            if player.player_id == self.player_id:
-                json_to_send['your id'] = i
-
+        # get all players
+        for player in self.game.players:
             json_to_send["players"].append(
                 {
                     "name": player.get_name(),
                     "number of cards": player.size_of_hand(),
                     "is turn": player.is_turn(),
-                    "is uno": player.is_uno()
+                    "is uno": player.is_uno(),
+                    "is you": player == self,
                 }
             )
 
-        print(self.get_name(), json_to_send)
         # send
         with fs.app.app_context():
             fs.socket_io.emit("card update", json_to_send, room=self.sid)
