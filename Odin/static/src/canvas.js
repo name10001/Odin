@@ -182,28 +182,55 @@ class GameCanvas {
         //draw players
         if(GAME.players.length>0) {
             let px = this.canvas.width/2-this.CARD_WIDTH*2.5;
-            let py = this.canvas.height/2+this.CARD_HEIGHT/2-this.GAP_SIZE*3.5*(GAME.players.length-1);
+            let py = this.canvas.height/2+this.CARD_HEIGHT/4;
+            let pheight = this.GAP_SIZE*2.5;
+            let pgap = this.GAP_SIZE;
+            fontSize = Math.round(this.CARD_WIDTH/8);
+
             this.ctx.textAlign = "left";
             this.ctx.font = "bold " + fontSize + "px Courier New";
             let i = 0;
             for(let player of GAME.players) {
                 //box
-                this.ctx.fillStyle = "#999";
-                this.ctx.fillRect(px-fontSize/2,py-fontSize,this.CARD_WIDTH,this.GAP_SIZE*2.5);
+                this.ctx.fillStyle = i==GAME.yourId ? "#b99" : "#999";
+                this.ctx.fillRect(px-fontSize/2,py-fontSize,this.CARD_WIDTH,pheight);
                 if(i==GAME.turn) this.ctx.strokeStyle = "#ffa";
                 else this.ctx.strokeStyle = "#fff";
-                this.ctx.strokeRect(px-fontSize/2,py-fontSize,this.CARD_WIDTH,this.GAP_SIZE*2.5);
+                this.ctx.strokeRect(px-fontSize/2,py-fontSize,this.CARD_WIDTH,pheight);
                 
                 //name
                 if(i==GAME.turn) this.ctx.fillStyle = "#ffa";
                 else this.ctx.fillStyle = "#fff";
-                this.ctx.fillText(player.name,px,py);
-                this.ctx.fillText(player.nCards,px,py+this.GAP_SIZE);
+                this.ctx.fillText(player.name,px,py,this.CARD_WIDTH-fontSize);
+                this.ctx.fillText(player.nCards,px,py+pgap,this.CARD_WIDTH-fontSize);
 
                 //iterate
-                py-=this.GAP_SIZE*3.5;
+                py-=pgap+pheight;
                 i++;
             }
+
+            //draw an arrow to show direction
+            this.strokeStyle = "#ffa";
+            this.ctx.beginPath();
+            let topy = py-fontSize+pheight+pgap+pheight/2;
+            let bottomy = this.canvas.height/2+this.CARD_HEIGHT/4-fontSize+pheight/2;
+            let arrowx = px+this.CARD_WIDTH+this.GAP_SIZE*0.75;
+            this.ctx.moveTo(arrowx,topy);
+            this.ctx.lineTo(arrowx,bottomy);
+            this.ctx.stroke();
+            //arrowhead
+            this.ctx.beginPath();
+            if(GAME.direction==1) {
+                this.ctx.moveTo(arrowx-this.GAP_SIZE/2,topy+this.GAP_SIZE/2);
+                this.ctx.lineTo(arrowx,topy);
+                this.ctx.lineTo(arrowx+this.GAP_SIZE/2,topy+this.GAP_SIZE/2);
+            }
+            else {
+                this.ctx.moveTo(arrowx-this.GAP_SIZE/2,bottomy-this.GAP_SIZE/2);
+                this.ctx.lineTo(arrowx,bottomy);
+                this.ctx.lineTo(arrowx+this.GAP_SIZE/2,bottomy-this.GAP_SIZE/2);
+            }
+            this.ctx.stroke();
         }
 
         //draw hand scroller

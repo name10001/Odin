@@ -20,6 +20,7 @@ class Game {
         this.topCards = [];
         this.planningCards = [];
         this.yourTurn = false;
+        this.direction = 1;
         this.yourId = 0;
         this.players = [];
         this.pickupAmount = 0;
@@ -49,6 +50,9 @@ class Game {
 
         //update pickup
         this.pickupAmount = update['pickup size'];
+
+        //update direction
+        this.direction = update['direction'];
     
         //update players
         this.players.length = 0;
