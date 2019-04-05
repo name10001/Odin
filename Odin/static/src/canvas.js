@@ -83,8 +83,6 @@ class GameCanvas {
         this.CARD_HEIGHT = 209;
         this.GAP_SIZE = 20;
         this.CARD_WIDTH_GAP = this.CARD_WIDTH + this.GAP_SIZE;
-        this.CARD_MAX_SCROLL = this.canvas.width/2;
-        this.HAND_AREA_BORDER = this.canvas.height-100-this.CARD_HEIGHT;
 
         //initialize some variables
         this.mousePosition = {x:0,y:0};
@@ -100,6 +98,7 @@ class GameCanvas {
 
         //some buttons?
         this.finishButton = new Button(this.canvas.width/2+this.CARD_WIDTH+50,this.canvas.height/2-30,120,60,"FINISHED");
+        this.undoButton = new Button(this.canvas.width/2+this.CARD_WIDTH+200,this.canvas.height/2-30,120,60,"UNDO");
     }
     
     /**
@@ -144,6 +143,20 @@ class GameCanvas {
 
         //draw button
         this.finishButton.draw(this.ctx);
+        this.undoButton.draw(this.ctx);
+
+        //draw hand scroller
+        let scrollY = this.canvas.height-this.CARD_HEIGHT-100;
+        let scrollX = this.getScrollBarX();
+        this.ctx.strokeStyle = "#ddd";
+        this.ctx.fillStyle = "#999";
+        this.ctx.beginPath();
+        this.ctx.moveTo(20,scrollY);
+        this.ctx.lineTo(this.canvas.width-20,scrollY);
+        this.ctx.stroke();
+        this.ctx.fillRect(scrollX-50,scrollY-20,100,40);
+        this.ctx.strokeRect(scrollX-50,scrollY-20,100,40);
+
 
         //draw your hand
         for(let i = 0; i<GAME.yourCards.length;i++) {
@@ -179,14 +192,18 @@ class GameCanvas {
         this.mousePosition.x = x;
         this.mousePosition.y = y;
         //Clicked in hand area
-        if(this.mousePosition.y > this.HAND_AREA_BORDER) {
+        if(this.mousePosition.y > this.canvas.height-this.CARD_HEIGHT-70) {
             this.clickPosition.x = this.mousePosition.x-this.scrollOffset;
             this.clickPosition.y = this.mousePosition.y;
             this.dragType = 1;
         }
+        //Clicked in the scroll area
+        else if(this.mousePosition.y>this.canvas.height-this.CARD_HEIGHT-130) {
+            this.dragType = 4;
+        }
         //clicking the deck
         else if(this.mousePosition.x>this.canvas.width/2-CARD_WIDTH-10 && this.mousePosition.x<this.canvas.width/2-10 &&
-            this.mousePosition.y>this.canvas.height/2-CARD_HEIGHT/2 && this.mousePosition.y<this.canvas.height/2+CARD_HEIGHT/2) {
+            this.mousePosition.y>this.canvas.height/2-CARD_HEIGHT/2 && this.mousePosition.y<this.canvas.height/2+CARD_HEIGHT/2 && GAME.yourTurn) {
             this.selectOffset.x = this.canvas.width/2-CARD_WIDTH-10-this.mousePosition.x;
             this.selectOffset.y = this.canvas.height/2-CARD_HEIGHT/2-this.mousePosition.y;
             this.draggedCard = -2;
@@ -204,7 +221,7 @@ class GameCanvas {
         let x = this.clickPosition.x-this.canvas.width/2;
         let r = x % (this.CARD_WIDTH+20);
     
-        if(r<=this.CARD_WIDTH) {
+        if(r<=this.CARD_WIDTH && this.clickPosition.y<this.canvas.height-50 && this.clickPosition.y>this.canvas.height-50-this.CARD_HEIGHT) {
             let i = Math.floor(x/(this.CARD_WIDTH+20));
     
             if(i>=0 && i<GAME.yourCards.length) {
@@ -229,14 +246,20 @@ class GameCanvas {
         this.mousePosition.y = event.offsetY;
 
         this.finishButton.setHover(this.finishButton.isClicked(this.mousePosition.x,this.mousePosition.y));
+        this.undoButton.setHover(this.undoButton.isClicked(this.mousePosition.x,this.mousePosition.y));
         
         if(this.mousePressed) {
+            //scrolling through cards
             if(this.dragType==2) {
                 this.scrollOffset = this.mousePosition.x-this.clickPosition.x;
-                if(this.mousePosition.y<this.canvas.height-100-CARD_HEIGHT) {
+                if(this.mousePosition.y<this.canvas.height-130-CARD_HEIGHT) {
                     this.dragType = 3;
                     this.getClickedCard();
                 }
+            }
+            //scrolling through cards using the scrollbar
+            else if(this.dragType==4) {
+                this.setScrollBarX();
             }
             //determine if you are dragging the mouse horizontally or vertically
             else if(this.dragType==1){
@@ -255,14 +278,14 @@ class GameCanvas {
      */
     release() {
         //selected a card
-        if(this.draggedCard>=0 && this.mousePosition.y<this.HAND_AREA_BORDER) {
+        if(this.draggedCard>=0 && this.mousePosition.y<this.canvas.height-this.CARD_HEIGHT-130) {
             let card = GAME.yourCards[this.draggedCard];
             if(card.allowedToPlay) {
                 GAME.playCard(card.id,0,0);
             }
         }
         //pickup
-        else if(this.draggedCard==-2 && this.mousePosition.y>this.HAND_AREA_BORDER) {
+        else if(this.draggedCard==-2 && this.mousePosition.y>this.canvas.height-this.CARD_HEIGHT-70) {
             GAME.pickup();
             GAME.finishTurn();
         }
@@ -286,12 +309,31 @@ class GameCanvas {
         }
 
         this.scrollOffset+=this.scrollSpeed;
-        if(this.scrollOffset < -GAME.yourCards.length*this.CARD_WIDTH_GAP-this.CARD_MAX_SCROLL) {
-            this.scrollOffset = -GAME.yourCards.length*this.CARD_WIDTH_GAP-this.CARD_MAX_SCROLL;
+        if(this.scrollOffset < this.getMinScroll()) {
+            this.scrollOffset = this.getMinScroll();
         }
-        else if(this.scrollOffset > this.CARD_MAX_SCROLL+this.GAP_SIZE) {
-            this.scrollOffset = this.CARD_MAX_SCROLL+this.GAP_SIZE;
+        else if(this.scrollOffset > this.getMaxScroll()) {
+            this.scrollOffset = this.getMaxScroll();
         }
+    }
+
+    getMinScroll() {
+        return -GAME.yourCards.length*this.CARD_WIDTH_GAP-this.canvas.width/4;
+    }
+    getMaxScroll() {
+        return this.canvas.width/4 + this.GAP_SIZE;
+    }
+    getScrollBarX() {
+        let d = this.getMaxScroll()-this.getMinScroll();
+        let interpolate = 1 - (this.scrollOffset-this.getMinScroll())/d;
+        return 20+interpolate * (this.canvas.width-40);
+    }
+    setScrollBarX() {
+        let interpolate = (this.mousePosition.x-20)/(this.canvas.width-40);
+        if(interpolate<0) interpolate = 0;
+        if(interpolate>1) interpolate = 1;
+        interpolate = 1 - interpolate;
+        this.scrollOffset = this.getMinScroll() + interpolate * (this.getMaxScroll()-this.getMinScroll());
     }
 }
 
@@ -336,9 +378,8 @@ function touchMove(event) {
 function resize() {
     GAME_CANVAS.canvas.width = window.innerWidth;
     GAME_CANVAS.canvas.height = window.innerHeight;
-    GAME_CANVAS.CARD_MAX_SCROLL = GAME_CANVAS.canvas.width/2;
-    GAME_CANVAS.HAND_AREA_BORDER = GAME_CANVAS.canvas.height-100-GAME_CANVAS.CARD_HEIGHT;
     GAME_CANVAS.finishButton.updateLocation(GAME_CANVAS.canvas.width/2+GAME_CANVAS.CARD_WIDTH+50,GAME_CANVAS.canvas.height/2-30);
+    GAME_CANVAS.undoButton.updateLocation(GAME_CANVAS.canvas.width/2+GAME_CANVAS.CARD_WIDTH+200,GAME_CANVAS.canvas.height/2-30);
 }
 
 var lastTime = 0;

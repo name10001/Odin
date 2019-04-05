@@ -73,6 +73,11 @@ class Game {
         socket.emit("game message", GAME_ID, "uno", null);
     }*/
 
+    undo() {
+        socket.emit("game message", GAME_ID, "undo", null);
+    }
+
+
     pickup(){
         socket.emit("game message", GAME_ID, "pickup", null);
     }
