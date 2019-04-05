@@ -15,10 +15,6 @@ class Button {
     setHover(hover) {
         this.hover = hover;
     }
-
-    canPress() {
-        return GAME.yourTurn;
-    }
     
     updateLocation(x,y) {
         this.x = x;
@@ -27,11 +23,11 @@ class Button {
 
     draw(ctx) {
         //draw the next turn button
-        ctx.fillStyle = this.canPress() ? "#376" : "#999";
-        ctx.strokeStyle = this.canPress() ? (this.hover ? "#ffa" : "#fff") : "#fff";
+        ctx.fillStyle = "#376";
+        ctx.strokeStyle = this.hover ? "#ffa" : "#fff";
         ctx.fillRect(this.x,this.y,this.width,this.height);
         ctx.strokeRect(this.x,this.y,this.width,this.height);
-        ctx.fillStyle = this.canPress() ? (this.hover ? "#ffa" : "#fff") : "#bbb";
+        ctx.fillStyle = this.hover ? "#ffa" : "#fff";
         ctx.textAlign = "center";
         ctx.font = "bold 16px Courier New";
         ctx.fillText(this.text,this.x+this.width/2,this.y+this.height/2+5);
@@ -97,8 +93,8 @@ class GameCanvas {
         
 
         //some buttons?
-        this.finishButton = new Button(this.canvas.width/2+this.CARD_WIDTH+50,this.canvas.height/2-30,120,60,"FINISHED");
-        this.undoButton = new Button(this.canvas.width/2+this.CARD_WIDTH+200,this.canvas.height/2-30,120,60,"UNDO");
+        this.finishButton = new Button(this.canvas.width/2+120,this.canvas.height/2-30,120,60,"FINISHED");
+        this.undoButton = new Button(this.canvas.width/2+270,this.canvas.height/2-30,120,60,"UNDO");
     }
     
     /**
@@ -113,37 +109,48 @@ class GameCanvas {
         this.ctx.globalAlpha = 0.6;
         this.ctx.fillRect(0,0,canvas.width,canvas.height);
         this.ctx.globalAlpha = 1;
-        
-        //draw deck
-        this.ctx.drawImage(this.backImage,
-            this.canvas.width/2-this.CARD_WIDTH-10,
-            this.canvas.height/2-this.CARD_HEIGHT/2,
-            this.CARD_WIDTH,this.CARD_HEIGHT);
 
         //draw discard pile
         if(GAME.topCards.length>0) {
-            let x = this.canvas.width / 2 + 10;
+            let x = this.canvas.width / 2 - this.CARD_WIDTH - (GAME.topCards.length-1)*40;
             let y = this.canvas.height / 2 - this.CARD_HEIGHT / 2;
             for(let image of GAME.topCards) {
                 this.ctx.drawImage(image, x, y, this.CARD_WIDTH, this.CARD_HEIGHT);
-                y-=40;
+                this.ctx.drawImage(this.transparentImage,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
+                x+=40;
             }
         }
+        //draw planning cards
+        if(GAME.planningCards.length>0) {
+            let x = this.canvas.width/2-this.CARD_WIDTH+20;
+            let y = this.canvas.height/2-this.CARD_HEIGHT/2-20;
+            let gap = 40;
+            let maxGap = (y-20)/(GAME.planningCards.length-1);
+            if(maxGap < gap) gap = maxGap;
+            for(let card of GAME.planningCards) {
+                this.ctx.drawImage(card.image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
+                y-=gap;
+            }
+        }
+
         //draw whose turn it is
         this.ctx.textAlign = "left";
         this.ctx.font = "bold 24px Courier New";
         this.ctx.fillStyle = "#fff";
-        this.ctx.fillText(GAME.turnString,this.canvas.width/2+this.CARD_WIDTH+50,this.canvas.height/2-70);
+        this.ctx.fillText(GAME.turnString,this.canvas.width/2+120,this.canvas.height/2-70);
 
-        //draw pickup count
-        if(GAME.pickupAmount>0) {
-            this.ctx.textAlign = "center";
-            this.ctx.fillText("+" + GAME.pickupAmount,this.canvas.width/2-10-this.CARD_WIDTH/2,this.canvas.height/2-this.CARD_HEIGHT/2-12);
+        //draw buttons
+        if(GAME.planningCards.length==0) {
+            let pickupAmount = 1;
+            if(GAME.pickupAmount>0) pickupAmount = GAME.pickupAmount;
+            this.finishButton.text = "+" + pickupAmount;
         }
-
-        //draw button
+        else {
+            this.finishButton.text = "PLAY CARDS";
+        }
         this.finishButton.draw(this.ctx);
-        this.undoButton.draw(this.ctx);
+
+        if(GAME.planningCards.length>0) this.undoButton.draw(this.ctx);
 
         //draw hand scroller
         let scrollY = this.canvas.height-this.CARD_HEIGHT-100;
@@ -173,12 +180,9 @@ class GameCanvas {
         }
 
         //draw card you are dragging
-        if(this.draggedCard!=-1) {
-            let image;
-            if(this.draggedCard>=0) image = GAME.yourCards[this.draggedCard].image;
-            else image = this.backImage;
-            this.ctx.drawImage(image,this.mousePosition.x+this.selectOffset.x,this.mousePosition.y+this.selectOffset.y,this.CARD_WIDTH,this.CARD_HEIGHT);
-            if(this.draggedCard>=0) if(!GAME.yourCards[this.draggedCard].allowedToPlay) {
+        if(this.draggedCard>=0) {
+            this.ctx.drawImage(GAME.yourCards[this.draggedCard].image,this.mousePosition.x+this.selectOffset.x,this.mousePosition.y+this.selectOffset.y,this.CARD_WIDTH,this.CARD_HEIGHT);
+            if(!GAME.yourCards[this.draggedCard].allowedToPlay) {
                 this.ctx.drawImage(this.transparentImage,this.mousePosition.x+this.selectOffset.x,this.mousePosition.y+this.selectOffset.y,this.CARD_WIDTH,this.CARD_HEIGHT);
             }
         }
@@ -201,16 +205,13 @@ class GameCanvas {
         else if(this.mousePosition.y>this.canvas.height-this.CARD_HEIGHT-130) {
             this.dragType = 4;
         }
-        //clicking the deck
-        else if(this.mousePosition.x>this.canvas.width/2-CARD_WIDTH-10 && this.mousePosition.x<this.canvas.width/2-10 &&
-            this.mousePosition.y>this.canvas.height/2-CARD_HEIGHT/2 && this.mousePosition.y<this.canvas.height/2+CARD_HEIGHT/2 && GAME.yourTurn) {
-            this.selectOffset.x = this.canvas.width/2-CARD_WIDTH-10-this.mousePosition.x;
-            this.selectOffset.y = this.canvas.height/2-CARD_HEIGHT/2-this.mousePosition.y;
-            this.draggedCard = -2;
-        }
         //clicking on the finish turn button
-        else if(this.finishButton.isClicked(this.mousePosition.x,this.mousePosition.y) && this.finishButton.canPress()) {
+        else if(this.finishButton.isClicked(this.mousePosition.x,this.mousePosition.y) && GAME.yourTurn) {
             GAME.finishTurn();
+        }
+        //clicking on the undo button
+        else if(this.undoButton.isClicked(this.mousePosition.x,this.mousePosition.y) && GAME.planningCards.length>0) {
+            GAME.undo();
         }
     }
 
@@ -378,8 +379,8 @@ function touchMove(event) {
 function resize() {
     GAME_CANVAS.canvas.width = window.innerWidth;
     GAME_CANVAS.canvas.height = window.innerHeight;
-    GAME_CANVAS.finishButton.updateLocation(GAME_CANVAS.canvas.width/2+GAME_CANVAS.CARD_WIDTH+50,GAME_CANVAS.canvas.height/2-30);
-    GAME_CANVAS.undoButton.updateLocation(GAME_CANVAS.canvas.width/2+GAME_CANVAS.CARD_WIDTH+200,GAME_CANVAS.canvas.height/2-30);
+    GAME_CANVAS.finishButton.updateLocation(GAME_CANVAS.canvas.width/2+120,GAME_CANVAS.canvas.height/2-30);
+    GAME_CANVAS.undoButton.updateLocation(GAME_CANVAS.canvas.width/2+270,GAME_CANVAS.canvas.height/2-30);
 }
 
 var lastTime = 0;

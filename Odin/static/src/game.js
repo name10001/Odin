@@ -18,7 +18,7 @@ class Game {
     constructor() {
         this.yourCards = [];
         this.topCards = [];
-        this.yourPlayedCards = [];//TODO implement this
+        this.planningCards = [];
         this.yourTurn = false;
         this.yourId = 0;
         this.players = [];
@@ -41,6 +41,12 @@ class Game {
         for(let card of update['cards on deck']) {
             this.topCards.push(GAME_CANVAS.cardImages[card['card image url']]);
         }
+        //update planning cards
+        this.planningCards.length = 0;
+        for(let card of update['planning pile']) {
+            this.planningCards.push(new Card(card['card id'], card['card image url'], true));
+        }
+
         //update pickup
         this.pickupAmount = update['pickup size'];
     
