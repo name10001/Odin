@@ -293,7 +293,7 @@ class EA30(EA):
 
 
 class Fuck(AbstractCard):
-    NUMBER_IN_DECK = 10
+    NUMBER_IN_DECK = 1
     CARD_TYPE_ID = 13
     CARD_TYPE = "fuck"
 
@@ -336,11 +336,7 @@ class YellowFuck(Fuck):
 # ~~~~~~~~~~~~~~
 
 class AllOfSameColour(AbstractCard):
-    NAME = "Pawn"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/pawn.png'
     NUMBER_IN_DECK = 1
-    CARD_TYPE = "pawn"
 
     def can_be_played_with(self, card, player):
         return card.CARD_COLOUR == self.CARD_COLOUR
@@ -359,6 +355,41 @@ class LadyOfTheNight(AllOfSameColour):
     CARD_IMAGE_URL = 'cards/lady_of_the_night.png'
     CARD_TYPE = "Lady of the night"
 
+class Smurf(AllOfSameColour):
+    NAME = "Smurf"
+    CARD_COLOUR = "blue"
+    CARD_IMAGE_URL = 'cards/smurf.png'
+    CARD_TYPE = "Smurf"
+
+
+class Creeper(AllOfSameColour):
+    NAME = "Creeper"
+    CARD_COLOUR = "green"
+    CARD_IMAGE_URL = 'cards/creeper.png'
+    CARD_TYPE = "Creeper"
+
+class FilthySharon(AllOfSameColour):
+    NAME = "Filthy Sharon"
+    CARD_COLOUR = "white"
+    CARD_IMAGE_URL = 'cards/filthy_sharon.png'
+    CARD_TYPE = "Filthy Sharon"
+
+class Nazi(AbstractCard):
+    NUMBER_IN_DECK = 1
+    NAME = "Nazi"
+    CARD_TYPE = "Nazi"
+    CARD_COLOUR = "white"
+    CARD_IMAGE_URL = 'cards/nazi.png'
+
+    def can_be_played_on(self, card, player):
+        if player.is_turn() is False:
+            return False
+        if self.game.pickup != 0 and self.CAN_BE_ON_PICKUP is False:
+            return False
+        return card.CARD_COLOUR == "white"
+
+    def can_be_played_with(self,card,player):
+        return card.CARD_TYPE == self.CARD_TYPE or card.CARD_COLOUR == "black"
 
 # ~~~~~~~~~~~~~~
 #    Other

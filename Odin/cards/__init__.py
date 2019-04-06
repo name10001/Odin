@@ -24,7 +24,7 @@ all_cards = [
     EA15, EA20, EA30,
     BlankBro, Happiness,
     SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos,
-    ManOfTheDay, LadyOfTheNight
+    ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, Nazi
 ]
 
 
