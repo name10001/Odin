@@ -11,8 +11,8 @@
 
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
         
-        <script src="{{ url_for('static', filename='src/game.js') }}"></script>
-        <script src="{{ url_for('static', filename='src/canvas.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/game.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/canvas.js') }}"></script>
         <script>
             var GAME_ID = "{{ game.get_id() }}";
             var ALL_URLS = {{ game.deck.get_all_urls() | safe }};

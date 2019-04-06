@@ -1,4 +1,3 @@
-
 class Player {
     constructor(name, nCards) {
         this.name = name;
@@ -7,10 +6,18 @@ class Player {
 }
 
 class Card {
-    constructor(id, url, allowedToPlay) {
+    constructor(id, url, allowedToPlay, options) {
         this.id = id;
         this.allowedToPlay = allowedToPlay;
         this.image = GAME_CANVAS.cardImages[url];
+        this.optionStrings = [];
+        this.optionIds = [];
+        if(options!=null) {
+            for(let string of Object.keys(options)) {
+                this.optionStrings.push(string);
+                this.optionIds.push(options[string]);
+            }
+        }
     }
 }
 
@@ -29,12 +36,12 @@ class Game {
     }
 
     update(update) {
-        console.log(update);
+        //console.log(update);
         this.yourCards.length = 0;
     
         //update the cards in your hand
         for(let card of update['your cards']) {
-            this.yourCards.push(new Card(card['card id'],card['card image url'],card['can be played']));
+            this.yourCards.push(new Card(card['card id'],card['card image url'],card['can be played'],card['options']));
         }
     
         //update cards at the top
@@ -45,7 +52,7 @@ class Game {
         //update planning cards
         this.planningCards.length = 0;
         for(let card of update['planning pile']) {
-            this.planningCards.push(new Card(card['card id'], card['card image url'], true));
+            this.planningCards.push(new Card(card['card id'], card['card image url'], true,null));
         }
 
         //update pickup
