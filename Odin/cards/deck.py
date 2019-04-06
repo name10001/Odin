@@ -1,5 +1,5 @@
 import cards
-from random import randint
+import random
 from flask import url_for
 
 
@@ -22,10 +22,10 @@ class Deck:
         if len(self.cards) == 0:  # if all cards have been banded
             return cards.get_random_card()
         else:
-            place_in_deck = randint(0, self.number_of_cards - 1)
-            up_to = 0
+            place_in_deck = random.uniform(0, self.number_of_cards - 1)
+            up_to = 0.0
             for card in self.cards:
-                if place_in_deck in range(up_to, up_to + card.NUMBER_IN_DECK):
+                if up_to <= place_in_deck < up_to + card.NUMBER_IN_DECK:
                     return card(self.game)
                 else:
                     up_to += card.NUMBER_IN_DECK

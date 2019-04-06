@@ -297,7 +297,7 @@ class Fuck(AbstractCard):
     CARD_TYPE_ID = 13
     CARD_TYPE = "fuck"
 
-    def is_compatible_with(self, card):
+    def is_compatible_with(self, card, player):
         return card.CARD_COLOUR == self.CARD_COLOUR or card.CARD_TYPE == self.CARD_TYPE
 
 
@@ -332,8 +332,38 @@ class YellowFuck(Fuck):
 
 
 # ~~~~~~~~~~~~~~
+# all of same colour
+# ~~~~~~~~~~~~~~
+
+class AllOfSameColour(AbstractCard):
+    NAME = "Pawn"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/pawn.png'
+    NUMBER_IN_DECK = 1
+    CARD_TYPE = "pawn"
+
+    def can_be_played_with(self, card, player):
+        return card.CARD_COLOUR == self.CARD_COLOUR
+
+
+class ManOfTheDay(AllOfSameColour):
+    NAME = "Man of the day"
+    CARD_COLOUR = "yellow"
+    CARD_IMAGE_URL = 'cards/man_of_the_day.png'
+    CARD_TYPE = "Man of the day"
+
+
+class LadyOfTheNight(AllOfSameColour):
+    NAME = "Lady of the night"
+    CARD_COLOUR = "red"
+    CARD_IMAGE_URL = 'cards/lady_of_the_night.png'
+    CARD_TYPE = "Lady of the night"
+
+
+# ~~~~~~~~~~~~~~
 #    Other
 # ~~~~~~~~~~~~~~
+
 
 class Pawn(AbstractCard):
     NAME = "Pawn"
@@ -359,7 +389,7 @@ class Communist(AbstractCard):
     NAME = "Communism"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/communist.png'
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 0.5
     CARD_TYPE = "communism"
 
     def play_card(self, player, options, played_on):
@@ -571,3 +601,13 @@ class Jesus(AbstractCard):
         other_player.add_new_cards(self.game.starting_number_of_cards)
         other_player.card_update()
 
+
+class FreeTurn(AbstractCard):
+    NUMBER_IN_DECK = 2
+    CARD_TYPE = "free turn"
+    NAME = "Free Turn"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/free_turn.png'
+
+    def play_card(self, player, options, played_on):
+        self.game.iterate_turn_by = 0

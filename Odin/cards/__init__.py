@@ -16,13 +16,15 @@ all_cards = [
     BlueNine, GreenNine, PurpleNine, RedNine, YellowNine, 
     BlueSixtyNine, GreenSixtyNine, PurpleSixtyNine, RedSixtyNine, YellowSixtyNine, 
     BlueSkip, GreenSkip, PurpleSkip, RedSkip, YellowSkip, WhiteSkip, BlackSkip,
+
     BluePickup2, GreenPickup2, PurplePickup2, RedPickup2, YellowPickup2, WhitePickup2, BlackPickup2,
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
     BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck,
     Pickup10, Pickup4, PickupTimes2, Pawn, FeelingBlue, Plus, FuckYou,
     EA15, EA20, EA30,
     BlankBro, Happiness,
-    SwapHand, Communist, Capitalist, Genocide, Jesus
+    SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn,
+    ManOfTheDay, LadyOfTheNight
 ]
 
 

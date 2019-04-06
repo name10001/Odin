@@ -58,7 +58,7 @@ class AbstractCard:
             return False
         if self.game.pickup != 0 and self.CAN_BE_ON_PICKUP is False:
             return False
-        return card.is_compatible_with(self, player) and self.is_compatible_with(card, player)
+        return card.is_compatible_with(card, player) and self.is_compatible_with(card, player)
 
     def can_be_played_with(self, card, player):
         """
