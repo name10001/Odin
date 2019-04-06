@@ -23,7 +23,7 @@ all_cards = [
     Pickup10, Pickup4, PickupTimes2, Pawn, FeelingBlue, Plus, FuckYou,
     EA15, EA20, EA30,
     BlankBro, Happiness,
-    SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn,
+    SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos,
     ManOfTheDay, LadyOfTheNight
 ]
 

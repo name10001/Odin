@@ -611,3 +611,20 @@ class FreeTurn(AbstractCard):
 
     def play_card(self, player, options, played_on):
         self.game.iterate_turn_by = 0
+
+
+class Thanos(AbstractCard):
+    NAME = "Thanos"
+    CARD_COLOUR = "purple"
+    CARD_IMAGE_URL = 'cards/thanos.png'
+    NUMBER_IN_DECK = 1
+    CARD_TYPE = "Thanos"
+
+    def play_card(self, player, options, played_on):
+        """
+        removes half the players cards at random
+        """
+        hand = player.get_hand()
+        random.shuffle(hand)
+        player.set_hand(hand[0:int(len(hand) / 2)])
+        player.card_update()
