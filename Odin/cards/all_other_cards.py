@@ -389,7 +389,7 @@ class Communist(AbstractCard):
     NAME = "Communism"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/communist.png'
-    NUMBER_IN_DECK = 0.5
+    NUMBER_IN_DECK = 1
     CARD_TYPE = "communism"
 
     def play_card(self, player, options, played_on):
@@ -563,7 +563,7 @@ class Genocide(AbstractCard):
         for game_player in self.game.players:
             to_remove = []
             for card in game_player.get_hand():
-                if (category == "colour" and card.CARD_COLOUR == to_ban) 
+                if (category == "colour" and card.CARD_COLOUR == to_ban) \
                         or (category == "type" and card.CARD_TYPE == to_ban):
                     to_remove.append(card)
             for card in to_remove:
