@@ -111,50 +111,12 @@ class AbstractCard:
         :param other: other card
         :return: True if this card is grater
         """
-        """
-        if self.CARD_TYPE_ID < other.CARD_TYPE_ID:
-            return False
-        elif self.CARD_TYPE_ID > other.CARD_TYPE_ID:
-            return True
-        else:
-            # compare colours
-            return self.CARD_COLOUR > other.CARD_COLOUR
-        """
-        """
-        # number are always below everything
-        numbers = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '69')
-        if self.CARD_TYPE in numbers and other.CARD_TYPE not in numbers:
-            return False
-        if self.CARD_TYPE not in numbers and other.CARD_TYPE in numbers:
-            return True
-
-        # back and white cards go above everything
-        good_colors = ("black", "white")
-        if self.CARD_COLOUR in good_colors and other.CARD_COLOUR not in good_colors:
-            return True
-        if self.CARD_COLOUR not in good_colors and other.CARD_COLOUR in good_colors:
-            return False
-        if self.CARD_COLOUR in good_colors and other.CARD_COLOUR in good_colors:
-            # black and white cards are sorted by
-            if self.CARD_COLOUR == other.CARD_COLOUR:
-                return self.CARD_TYPE > other.CARD_TYPE
-            else:
-                return self.CARD_COLOUR > other.CARD_COLOUR
-
-        # everything is then sorted by type then color
-        if self.CARD_TYPE == other.CARD_TYPE:
-            return self.CARD_COLOUR > other.CARD_COLOUR
-        else:
-            return self.CARD_TYPE > other.CARD_TYPE
-        """
-
-        if cards.get_card_index(self) == cards.get_card_index(other):
-            if self.CARD_TYPE == other.CARD_TYPE:
-                return self.CARD_COLOUR > other.CARD_COLOUR
-            else:
-                return self.CARD_TYPE > other.CARD_TYPE
-        else:
+        if cards.get_card_index(self) != cards.get_card_index(other):
             return cards.get_card_index(self) > cards.get_card_index(other)
+        elif self.CARD_TYPE == other.CARD_TYPE:
+            return self.CARD_TYPE > other.CARD_TYPE
+        else:
+            return self.CARD_COLOUR > other.CARD_COLOUR
 
     def __lt__(self, other):
         return not self.__gt__(other)

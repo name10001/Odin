@@ -239,6 +239,9 @@ class Player:
     def set_hand(self, hand):
         self.hand = hand
 
+    def remove_card(self, card):
+        self.hand.remove(card)
+
     def get_hand(self):
         return self.hand
 
