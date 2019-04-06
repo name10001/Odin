@@ -19,8 +19,10 @@ all_cards = [
     BluePickup2, GreenPickup2, PurplePickup2, RedPickup2, YellowPickup2, WhitePickup2, BlackPickup2,
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
     BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck,
-    Pickup10, Pickup4, PickupTimes2,
-    BlankBro, Happiness, SwapHand, Communist, Pawn, FeelingBlue, Plus, FuckYou, Genocide, Jesus
+    Pickup10, Pickup4, PickupTimes2, Pawn, FeelingBlue, Plus, FuckYou,
+    EA15, EA20, EA30,
+    BlankBro, Happiness,
+    SwapHand, Communist, Capitalist, Genocide, Jesus
 ]
 
 

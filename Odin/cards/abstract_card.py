@@ -23,7 +23,7 @@ class AbstractCard:
         """
         pass
     
-    def is_compatible_with(self, card):
+    def is_compatible_with(self, card, player):
         """
         Can these 2 cards be played together
         :param card: 
@@ -47,20 +47,20 @@ class AbstractCard:
         else:
             return card.CARD_COLOUR == "black" or card.CARD_COLOUR == "white"
 
-    def can_be_played_on(self, card, is_players_turn):
+    def can_be_played_on(self, card, player):
         """
         Can this card be played on the given card
         :param card:
-        :param is_players_turn: is it the players turn of not
+        :param player: is it the players turn of not
         :return: True or False
         """
-        if is_players_turn is False:
+        if player.is_turn() is False:
             return False
         if self.game.pickup != 0 and self.CAN_BE_ON_PICKUP is False:
             return False
-        return card.is_compatible_with(self) and self.is_compatible_with(card)
+        return card.is_compatible_with(self, player) and self.is_compatible_with(card, player)
 
-    def can_be_played_with(self, card):
+    def can_be_played_with(self, card, player):
         """
         If this card is the first card played in a turn, can the given card be played with it
         :param card:
@@ -115,8 +115,10 @@ class AbstractCard:
             return cards.get_card_index(self) > cards.get_card_index(other)
         elif self.CARD_TYPE != other.CARD_TYPE:
             return self.CARD_TYPE > other.CARD_TYPE
-        else:
+        elif self.CARD_COLOUR != other.CARD_COLOUR:
             return self.CARD_COLOUR > other.CARD_COLOUR
+        else:
+            return self.NAME > other.NAME
 
     def __lt__(self, other):
         return not self.__gt__(other)
