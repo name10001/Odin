@@ -1,0 +1,35 @@
+
+
+Show list of card:
+{
+	"type": "card list",
+	"messgae":
+		[
+			"/static/cards/1_blue.png",
+			"/static/cards/5_blue.png",
+			"/static/cards/6_green.png",
+		]
+	"title": "Spy card, Jeffs cards",
+	"display time": 5,  # display time in seconds. -1 if infinite
+}
+
+Show 1 card:
+{
+	"type": "card list",
+	"messgae":
+		[
+			"/static/cards/1_blue.png",
+		]
+	"title": "Spy card, Jeffs cards",
+	"display time": 5,  # display time in seconds. -1 if infinite
+}
+
+Show String:
+{
+	"type": "string",
+	"messgae": "Bob has won!",
+	"title": "Game over",
+	"display time": -1,  # display time in seconds. -1 if infinite
+}
+
+
