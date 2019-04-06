@@ -136,7 +136,7 @@ class Pickup10(AbstractCard):
 
 
 class Pickup4(AbstractCard):
-    NUMBER_IN_DECK = 5
+    NUMBER_IN_DECK = 4
     CARD_TYPE = "pickup +4"
     CARD_TYPE_ID = 20
     NAME = "Pickup 4"
@@ -149,7 +149,7 @@ class Pickup4(AbstractCard):
 
 
 class PickupTimes2(AbstractCard):
-    NUMBER_IN_DECK = 5
+    NUMBER_IN_DECK = 4
     CARD_TYPE = "pickup x2"
     CARD_TYPE_ID = 22
     NAME = "Pickup x2"
