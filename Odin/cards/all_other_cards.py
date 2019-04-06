@@ -300,11 +300,9 @@ class Pawn(AbstractCard):
         """
         Update method which only lets you place when it's a pickup chain
         """
-        if is_players_turn is False:
+        if self.game.pickup == 0:  # won't let you place outside of pickup chain
             return False
-        if self.game.pickup == 0: # won't let you place outside of pickup chain
-            return False
-        return card.is_compatible_with(self) and self.is_compatible_with(card)
+        return super().can_be_played_on(card, is_players_turn)
 
     def play_card(self, player, options, played_on):
         self.game.pickup = 0
@@ -451,21 +449,24 @@ class Genocide(AbstractCard):
         if options is 0:
             print("no option given")
             return
-        catagory, to_ban = options.split(' ', 1)
-        if catagory == "type":
+
+        category, to_ban = options.split(' ', 1)
+
+        # remove from deck
+        if category == "type":
             self.game.deck.ban_type(to_ban)
-            for game_player in self.game.players:
-                deck = game_player.get_deck()
-                for card in deck:
-                    if card.CARD_TYPE == to_ban:
-                        deck.remove(card)
-        elif catagory == "colour":
+        elif category == "colour":
             self.game.deck.ban_colour(to_ban)
-            for game_player in self.game.players:
-                deck = game_player.get_deck()
-                for card in deck:
-                    if card.CARD_COLOUR == to_ban:
-                        deck.remove(card)
+
+        # remove from players
+        for game_player in self.game.players:
+            to_remove = []
+            for card in game_player.get_hand():
+                if (category == "colour" and card.CARD_COLOUR == to_ban) \
+                        or (category == "type" and card.CARD_TYPE == to_ban):
+                    to_remove.append(card)
+            for card in to_remove:
+                game_player.remove_card(card)
 
 
 class Jesus(AbstractCard):

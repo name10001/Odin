@@ -32,7 +32,7 @@ class Deck:
         print(place_in_deck, self.number_of_cards)
         raise RuntimeError("no card found")
 
-    def ban_color(self, card_color):
+    def ban_colour(self, card_color):
         """
         removes a color from the deck
         :param card_color: color to remove
@@ -52,7 +52,7 @@ class Deck:
         :return:
         """
         self.banded_types.append(card_type)
-        self.not_banded_colours.remove(card_type)
+        self.not_banded_types.remove(card_type)
         for card in self.cards:
             if card.CARD_TYPE == card_type:
                 self.cards.remove(card)
