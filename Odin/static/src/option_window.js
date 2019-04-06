@@ -115,7 +115,7 @@ class OptionsWindow {
             this.mousePosition.x = 0;
             this.mousePosition.y = 0;
         }
-        if(this.hoveredItem!=-1) {
+        if(this.hoveredItem!=-1 && !this.dragging) {
             //picked an option
             let pickedOption = this.optionIds[this.hoveredItem];
             GAME_CANVAS.exitOptions(pickedOption);
