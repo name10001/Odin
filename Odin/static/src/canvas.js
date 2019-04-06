@@ -215,7 +215,7 @@ class GameCanvas {
             }
 
             //draw an arrow to show direction
-            this.strokeStyle = "#ffa";
+            this.ctx.strokeStyle = "#ffa";
             this.ctx.beginPath();
             let topy = py-fontSize+pheight+pgap+pheight/2;
             let bottomy = this.canvas.height/2+this.CARD_HEIGHT/4-fontSize+pheight/2;
