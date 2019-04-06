@@ -639,6 +639,7 @@ class FreeTurn(AbstractCard):
     NAME = "Free Turn"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/free_turn.png'
+    CAN_BE_ON_PICKUP = True
 
     def play_card(self, player, options, played_on):
         self.game.iterate_turn_by = 0
