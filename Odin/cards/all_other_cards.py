@@ -67,7 +67,7 @@ class YellowReverse(Reverse):
 
 class Pickup2(AbstractCard):
     NUMBER_IN_DECK = 2
-    CARD_TYPE = "pickup2"
+    CARD_TYPE = "pickup +2"
     CAN_BE_ON_PICKUP = True
     CARD_TYPE_ID = 19
 
@@ -124,7 +124,7 @@ class YellowPickup2(Pickup2):
 
 class Pickup10(AbstractCard):
     NUMBER_IN_DECK = 2
-    CARD_TYPE = "pickup10"
+    CARD_TYPE = "pickup +10"
     CARD_TYPE_ID = 21
     NAME = "Pickup 10"
     CARD_COLOUR = "black"
@@ -137,7 +137,7 @@ class Pickup10(AbstractCard):
 
 class Pickup4(AbstractCard):
     NUMBER_IN_DECK = 5
-    CARD_TYPE = "pickup4"
+    CARD_TYPE = "pickup +4"
     CARD_TYPE_ID = 20
     NAME = "Pickup 4"
     CARD_COLOUR = "black"
@@ -150,7 +150,7 @@ class Pickup4(AbstractCard):
 
 class PickupTimes2(AbstractCard):
     NUMBER_IN_DECK = 5
-    CARD_TYPE = "pickupTimes2"
+    CARD_TYPE = "pickup x2"
     CARD_TYPE_ID = 22
     NAME = "Pickup x2"
     CARD_COLOUR = "black"
@@ -225,7 +225,7 @@ class YellowSkip(Skip):
 class BlankBro(AbstractCard):
     NAME = "JUST A BLANK BRO"
     NUMBER_IN_DECK = 3
-    CARD_TYPE = "blankbro"
+    CARD_TYPE = "blank bro"
     CARD_TYPE_ID = 12
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/black.png'
@@ -245,19 +245,47 @@ class Happiness(AbstractCard):
 # ~~~~~~~~~~~~~~
 
 class EA(AbstractCard):
-    NAME = "Pawn"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/pawn.png'
     NUMBER_IN_DECK = 1
-    CARD_TYPE = "pawn"
-    CAN_BE_ON_PICKUP = True
+    CARD_TYPE = "EA"
+    NUMBER_NEEDED = 0
 
-    def can_be_played_on(self, card, is_players_turn):
+    def can_be_played_on(self, card, player):
         """
-        Update method which only lets you place when it's a pickup chain
+        Must have enough cards in hand
         """
-        if self.game.pickup == 0:  # won't let you place outside of pickup chain
+        if len(player.get_hand()) < self.NUMBER_NEEDED:
             return False
+        else:
+            return super().can_be_played_on(card, player)
+
+    def can_be_played_with(self, card, player):
+        """
+        Must have enough cards in hand
+        """
+        if len(player.get_hand()) < self.NUMBER_NEEDED:
+            return False
+        else:
+            return super().can_be_played_with(card, player)
+
+
+class EA15(EA):
+    NAME = "EA $15"
+    CARD_IMAGE_URL = 'cards/ea_15.png'
+    NUMBER_NEEDED = 15
+
+
+class EA20(EA):
+    NAME = "EA $20"
+    CARD_IMAGE_URL = 'cards/ea_20.png'
+    NUMBER_NEEDED = 20
+
+
+class EA30(EA):
+    NAME = "EA $30"
+    CARD_IMAGE_URL = 'cards/ea_30.png'
+    NUMBER_NEEDED = 30
+
 
 # ~~~~~~~~~~~~~~
 #    Fuck
@@ -315,13 +343,13 @@ class Pawn(AbstractCard):
     CARD_TYPE = "pawn"
     CAN_BE_ON_PICKUP = True
 
-    def can_be_played_on(self, card, is_players_turn):
+    def can_be_played_on(self, card, player):
         """
         Update method which only lets you place when it's a pickup chain
         """
         if self.game.pickup == 0:  # won't let you place outside of pickup chain
             return False
-        return super().can_be_played_on(card, is_players_turn)
+        return super().can_be_played_on(card, player)
 
     def play_card(self, player, options, played_on):
         self.game.pickup = 0
@@ -351,6 +379,30 @@ class Communist(AbstractCard):
         for player in self.game.players:
             player.set_hand(all_cards[i:i+number_of_cards_each])
             i += number_of_cards_each
+
+        self.game.update_players()
+
+
+class Capitalist(AbstractCard):
+    NAME = "Capitalist"
+    CARD_COLOUR = "white"
+    CARD_IMAGE_URL = 'cards/capitalist.png'
+    NUMBER_IN_DECK = 1
+    CARD_TYPE = "capitalist"
+
+    def play_card(self, player, options, played_on):
+        """
+        finds the player with the most cards and doubles it
+        """
+        # finding richest player
+        richest_player = None
+        number_of_cards = 0
+        for player in self.game.players:
+            if len(player.get_hand()) > number_of_cards:
+                richest_player = player
+                number_of_cards = len(player.get_hand())
+
+        richest_player.add_new_cards(number_of_cards)
 
         self.game.update_players()
 
@@ -493,7 +545,7 @@ class Jesus(AbstractCard):
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/jesus.png'
     NUMBER_IN_DECK = 2
-    CARD_TYPE = "Jesus"
+    CARD_TYPE = "jesus"
 
     def get_options(self, player):
         options = {}
