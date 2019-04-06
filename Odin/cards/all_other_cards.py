@@ -293,7 +293,7 @@ class EA30(EA):
 
 
 class Fuck(AbstractCard):
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 10
     CARD_TYPE_ID = 13
     CARD_TYPE = "fuck"
 
@@ -535,7 +535,7 @@ class Genocide(AbstractCard):
     NAME = "Genocide"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/genocide.png'
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 0.5
     CARD_TYPE = "Genocide"
 
     def get_options(self, player):

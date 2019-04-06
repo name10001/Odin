@@ -29,7 +29,6 @@ class Deck:
                     return card(self.game)
                 else:
                     up_to += card.NUMBER_IN_DECK
-        print(place_in_deck, self.number_of_cards)
         raise RuntimeError("no card found")
 
     def ban_colour(self, card_color):

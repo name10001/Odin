@@ -56,7 +56,7 @@ category_indexs = [
     },
     {
         "colours": (),
-        "types": ('reverse','skip'),
+        "types": ('reverse', 'skip'),
         "index": 2
     },
     {
