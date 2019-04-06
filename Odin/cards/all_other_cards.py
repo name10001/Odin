@@ -535,7 +535,7 @@ class Genocide(AbstractCard):
     NAME = "Genocide"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/genocide.png'
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 1
     CARD_TYPE = "Genocide"
 
     def get_options(self, player):
@@ -563,7 +563,7 @@ class Genocide(AbstractCard):
         for game_player in self.game.players:
             to_remove = []
             for card in game_player.get_hand():
-                if (category == "colour" and card.CARD_COLOUR == to_ban) \
+                if (category == "colour" and card.CARD_COLOUR == to_ban) 
                         or (category == "type" and card.CARD_TYPE == to_ban):
                     to_remove.append(card)
             for card in to_remove:
@@ -603,7 +603,7 @@ class Jesus(AbstractCard):
 
 
 class FreeTurn(AbstractCard):
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 4
     CARD_TYPE = "free turn"
     NAME = "Free Turn"
     CARD_COLOUR = "black"

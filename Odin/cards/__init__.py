@@ -56,19 +56,24 @@ category_indexs = [
     },
     {
         "colours": (),
+        "types": ('reverse','skip'),
+        "index": 2
+    },
+    {
+        "colours": (),
         "types": ('pickup2', 'pickup10', 'pickup4', 'pickupTimes2'),
-        "index": 5
+        "index": 3
     },
     {
         "colours": ('black'),
         "types": (),
-        "index": 3
+        "index": 4
     },
     {
         "colours": ('white'),
         "types": (),
-        "index": 4
-    }
+        "index": 5
+    },
 ]
 
 
