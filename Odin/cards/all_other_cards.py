@@ -296,6 +296,16 @@ class Pawn(AbstractCard):
     CARD_TYPE = "pawn"
     CAN_BE_ON_PICKUP = True
 
+    def can_be_played_on(self, card, is_players_turn):
+        """
+        Update method which only lets you place when it's a pickup chain
+        """
+        if is_players_turn is False:
+            return False
+        if self.game.pickup == 0: # won't let you place outside of pickup chain
+            return False
+        return card.is_compatible_with(self) and self.is_compatible_with(card)
+
     def play_card(self, player, options, played_on):
         self.game.pickup = 0
 
@@ -339,7 +349,8 @@ class SwapHand(AbstractCard):
         options = {}
         for other_player in self.game.players:
             if other_player != player:
-                options[other_player.get_name()] = other_player.get_id()
+                cards = other_player.get_hand();
+                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(cards)) + ")"
         return options
 
     def play_card(self, player, options, played_on):
@@ -370,13 +381,18 @@ class Plus(AbstractCard):
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/plus_wild.png'
     NUMBER_IN_DECK = 2
-    CARD_TYPE = "feeling blue"
+    CARD_TYPE = "plus"
     CAN_BE_ON_PICKUP = True
 
     def play_card(self, player, options, played_on):
+        
+        amount = self.game.pickup
+        if amount == 0:
+            amount = 2
+        
         for other_player in self.game.players:
             if other_player != player:
-                other_player.add_new_cards(self.game.pickup)
+                other_player.add_new_cards(amount)
                 other_player.card_update()
 
         self.game.pickup = 0
@@ -394,7 +410,8 @@ class FuckYou(AbstractCard):
         options = {}
         for other_player in self.game.players:
             if other_player != player:
-                options[other_player.get_name()] = other_player.get_id()
+                cards = other_player.get_hand();
+                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(cards)) + ")"
         return options
 
     def play_card(self, player, options, played_on):
@@ -405,8 +422,12 @@ class FuckYou(AbstractCard):
         if other_player is None:
             print("no player of that id was found")
             return
+        
+        amount = self.game.pickup
+        if amount == 0:
+            amount = 5
 
-        other_player.add_new_cards(self.game.pickup)
+        other_player.add_new_cards(amount)
         other_player.card_update()
         self.game.pickup = 0
 
@@ -415,15 +436,15 @@ class Genocide(AbstractCard):
     NAME = "Genocide"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/genocide.png'
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 2
     CARD_TYPE = "Genocide"
 
     def get_options(self, player):
         options = {}
         for card_types in self.game.deck.not_banded_types:
-            options["Type: " + card_types] = "type " + card_types
+            options["type " + card_types] = "Type: " + card_types
         for card_colour in self.game.deck.not_banded_colours:
-            options["Colours: " + card_colour] = "colour " + card_colour
+            options["colour " + card_colour] = "Colour: " + card_colour
         return options
 
     def play_card(self, player, options, played_on):
@@ -458,7 +479,11 @@ class Jesus(AbstractCard):
         options = {}
         for other_player in self.game.players:
             if other_player != player:
-                options[other_player.get_name()] = other_player.get_id()
+                cards = other_player.get_hand();
+                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(cards)) + ")"
+            else:
+                options[other_player.get_id()] = other_player.get_name() + "(You)"
+
         return options
 
     def play_card(self, player, options, played_on):

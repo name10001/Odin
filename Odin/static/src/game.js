@@ -13,9 +13,9 @@ class Card {
         this.optionStrings = [];
         this.optionIds = [];
         if(options!=null) {
-            for(let string of Object.keys(options)) {
-                this.optionStrings.push(string);
-                this.optionIds.push(options[string]);
+            for(let id of Object.keys(options)) {
+                this.optionIds.push(id);
+                this.optionStrings.push(options[id]);
             }
         }
     }
