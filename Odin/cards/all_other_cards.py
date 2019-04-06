@@ -6,7 +6,7 @@ import random
 # ~~~~~~~~~~~~~~
 
 
-class Reverse:
+class Reverse(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "reverse"
@@ -17,44 +17,44 @@ class Reverse:
         self.game.direction *= -1
 
 
-class BlueReverse(Reverse, AbstractCard):
+class BlueReverse(Reverse):
     NAME = "Blue Reverse"
     CARD_COLOUR = "blue"
     CARD_IMAGE_URL = 'cards/reverse_blue.png'
 
 
-class GreenReverse(Reverse, AbstractCard):
+class GreenReverse(Reverse):
     NAME = "Green Reverse"
     CARD_COLOUR = "green"
     CARD_IMAGE_URL = 'cards/reverse_green.png'
 
 
-class PurpleReverse(Reverse, AbstractCard):
+class PurpleReverse(Reverse):
     NAME = "Purple Reverse"
     CARD_COLOUR = "purple"
     CARD_IMAGE_URL = 'cards/reverse_purple.png'
 
 
-class RedReverse(Reverse, AbstractCard):
+class RedReverse(Reverse):
     NAME = "Red Reverse"
     CARD_COLOUR = "red"
     CARD_IMAGE_URL = 'cards/reverse_red.png'
 
 
-class WhiteReverse(Reverse, AbstractCard):
+class WhiteReverse(Reverse):
     NAME = "White Reverse"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/reverse_white.png'
 
 
-class BlackReverse(Reverse, AbstractCard):
+class BlackReverse(Reverse):
     NAME = "Black Reverse"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/reverse_wild.png'
     NUMBER_IN_DECK = 1
 
 
-class YellowReverse(Reverse, AbstractCard):
+class YellowReverse(Reverse):
     NAME = "Yellow Reverse"
     CARD_COLOUR = "yellow"
     CARD_IMAGE_URL = 'cards/reverse_yellow.png'
@@ -65,7 +65,7 @@ class YellowReverse(Reverse, AbstractCard):
 # ~~~~~~~~~~~~~~
 
 
-class Pickup2:
+class Pickup2(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_TYPE = "pickup2"
     CAN_BE_ON_PICKUP = True
@@ -75,44 +75,44 @@ class Pickup2:
         self.game.pickup += 2
 
 
-class BluePickup2(Pickup2, AbstractCard):
+class BluePickup2(Pickup2):
     NAME = "Blue Pickup 2"
     CARD_COLOUR = "blue"
     CARD_IMAGE_URL = 'cards/pickup2_blue.png'
 
 
-class GreenPickup2(Pickup2, AbstractCard):
+class GreenPickup2(Pickup2):
     NAME = "Green Pickup 2"
     CARD_COLOUR = "green"
     CARD_IMAGE_URL = 'cards/pickup2_green.png'
 
 
-class PurplePickup2(Pickup2, AbstractCard):
+class PurplePickup2(Pickup2):
     NAME = "Purple Pickup 2"
     CARD_COLOUR = "purple"
     CARD_IMAGE_URL = 'cards/pickup2_purple.png'
 
 
-class RedPickup2(Pickup2, AbstractCard):
+class RedPickup2(Pickup2):
     NAME = "Red Pickup 2"
     CARD_COLOUR = "red"
     CARD_IMAGE_URL = 'cards/pickup2_red.png'
 
 
-class WhitePickup2(Pickup2, AbstractCard):
+class WhitePickup2(Pickup2):
     NAME = "White Pickup 2"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/pickup2_white.png'
 
 
-class BlackPickup2(Pickup2, AbstractCard):
+class BlackPickup2(Pickup2):
     NAME = "Black Pickup 2"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pickup2_wild.png'
     NUMBER_IN_DECK = 3
 
 
-class YellowPickup2(Pickup2, AbstractCard):
+class YellowPickup2(Pickup2):
     NAME = "Yellow Pickup 2"
     CARD_COLOUR = "yellow"
     CARD_IMAGE_URL = 'cards/pickup2_yellow.png'
@@ -165,54 +165,54 @@ class PickupTimes2(AbstractCard):
 # ~~~~~~~~~~~~~~
 
 
-class Skip:
+class Skip(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_TYPE = "skip"
     CARD_TYPE_ID = 17
     CAN_BE_ON_PICKUP = True
     
     def play_card(self, player, options, played_on):
-        self.game.skip_next_turn += 1
+        self.game.iterate_turn_by += 1
 
 
-class BlueSkip(Skip, AbstractCard):
+class BlueSkip(Skip):
     NAME = "Blue Skip"
     CARD_COLOUR = "blue"
     CARD_IMAGE_URL = 'cards/skip_blue.png'
 
 
-class GreenSkip(Skip, AbstractCard):
+class GreenSkip(Skip):
     NAME = "Green Skip"
     CARD_COLOUR = "green"
     CARD_IMAGE_URL = 'cards/skip_green.png'
 
 
-class PurpleSkip(Skip, AbstractCard):
+class PurpleSkip(Skip):
     NAME = "Purple Skip"
     CARD_COLOUR = "purple"
     CARD_IMAGE_URL = 'cards/skip_purple.png'
 
 
-class RedSkip(Skip, AbstractCard):
+class RedSkip(Skip):
     NAME = "Red Skip"
     CARD_COLOUR = "red"
     CARD_IMAGE_URL = 'cards/skip_red.png'
 
 
-class WhiteSkip(Skip, AbstractCard):
+class WhiteSkip(Skip):
     NAME = "White Skip"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/skip_white.png'
 
 
-class BlackSkip(Skip, AbstractCard):
+class BlackSkip(Skip):
     NAME = "Black Skip"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/skip_wild.png'
     NUMBER_IN_DECK = 1
 
 
-class YellowSkip(Skip, AbstractCard):
+class YellowSkip(Skip):
     NAME = "Yellow Skip"
     CARD_COLOUR = "yellow"
     CARD_IMAGE_URL = 'cards/skip_yellow.png'
@@ -241,11 +241,30 @@ class Happiness(AbstractCard):
 
 
 # ~~~~~~~~~~~~~~
+#      EA
+# ~~~~~~~~~~~~~~
+
+class EA(AbstractCard):
+    NAME = "Pawn"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/pawn.png'
+    NUMBER_IN_DECK = 1
+    CARD_TYPE = "pawn"
+    CAN_BE_ON_PICKUP = True
+
+    def can_be_played_on(self, card, is_players_turn):
+        """
+        Update method which only lets you place when it's a pickup chain
+        """
+        if self.game.pickup == 0:  # won't let you place outside of pickup chain
+            return False
+
+# ~~~~~~~~~~~~~~
 #    Fuck
 # ~~~~~~~~~~~~~~
 
 
-class Fuck:
+class Fuck(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_TYPE_ID = 13
     CARD_TYPE = "fuck"
@@ -254,31 +273,31 @@ class Fuck:
         return card.CARD_COLOUR == self.CARD_COLOUR or card.CARD_TYPE == self.CARD_TYPE
 
 
-class BlueFuck(Fuck, AbstractCard):
+class BlueFuck(Fuck):
     NAME = "Blue Fuck"
     CARD_COLOUR = "blue"
     CARD_IMAGE_URL = 'cards/fuck_blue.png'
 
 
-class GreenFuck(Fuck, AbstractCard):
+class GreenFuck(Fuck):
     NAME = "Green Fuck"
     CARD_COLOUR = "green"
     CARD_IMAGE_URL = 'cards/fuck_green.png'
 
 
-class RedFuck(Fuck, AbstractCard):
+class RedFuck(Fuck):
     NAME = "Red Fuck"
     CARD_COLOUR = "red"
     CARD_IMAGE_URL = 'cards/fuck_red.png'
 
 
-class BlackFuck(Fuck, AbstractCard):
+class BlackFuck(Fuck):
     NAME = "Black Fuck"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/fuck_black.png'
 
 
-class YellowFuck(Fuck, AbstractCard):
+class YellowFuck(Fuck):
     NAME = "Yellow Fuck"
     CARD_COLOUR = "yellow"
     CARD_IMAGE_URL = 'cards/fuck_yellow.png'
@@ -499,3 +518,4 @@ class Jesus(AbstractCard):
         other_player.set_hand([])
         other_player.add_new_cards(self.game.starting_number_of_cards)
         other_player.card_update()
+

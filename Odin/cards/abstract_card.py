@@ -113,7 +113,7 @@ class AbstractCard:
         """
         if cards.get_card_index(self) != cards.get_card_index(other):
             return cards.get_card_index(self) > cards.get_card_index(other)
-        elif self.CARD_TYPE == other.CARD_TYPE:
+        elif self.CARD_TYPE != other.CARD_TYPE:
             return self.CARD_TYPE > other.CARD_TYPE
         else:
             return self.CARD_COLOUR > other.CARD_COLOUR

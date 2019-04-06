@@ -29,7 +29,7 @@ class Game:
         self.player_turn_index = random.randint(0, len(self.players) - 1)
         self.turn = self.players[self.player_turn_index]
         self.direction = 1  # 1 or -1
-        self.skip_next_turn = 0
+        self.iterate_turn_by = 1
 
     def find_card(self, card_id):
         """
@@ -73,14 +73,14 @@ class Game:
         self.turn.finish_turn()
 
         # increment player index
-        for i in range(0, self.skip_next_turn + 1):
+        for i in range(0, self.iterate_turn_by):
             self.player_turn_index += self.direction
             if self.player_turn_index == -1:
                 self.player_turn_index = len(self.players) - 1
             elif self.player_turn_index == len(self.players):
                 self.player_turn_index = 0
 
-        self.skip_next_turn = 0
+        self.iterate_turn_by = 1
 
         self.turn = self.players[self.player_turn_index]
 
