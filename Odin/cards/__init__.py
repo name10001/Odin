@@ -20,7 +20,7 @@ all_cards = [
     BluePickup2, GreenPickup2, PurplePickup2, RedPickup2, YellowPickup2, WhitePickup2, BlackPickup2,
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
     BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck,
-    Pickup10, Pickup4, PickupTimes2, Pawn, FeelingBlue, Plus, FuckYou,
+    Pickup10, Pickup4, PickupTimes2, Pawn, FeelingBlue, Plus, FuckYou, AtomicBomb,
     EA15, EA20, EA30,
     BlankBro, Happiness,
     SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos,
@@ -56,23 +56,28 @@ category_indexs = [
     },
     {
         "colours": (),
-        "types": ('reverse', 'skip'),
+        "types": ("Fuckin' M8", "Creeper", "Smurf", "Lady Of The Night", "Man Of The Day","Thanos"),
         "index": 2
     },
     {
         "colours": (),
-        "types": ('pickup2', 'pickup10', 'pickup4', 'pickupTimes2'),
+        "types": ('Reverse', 'Skip'),
         "index": 3
+    },
+    {
+        "colours": (),
+        "types": ('+2', '+10', '+4', 'x2'),
+        "index": 4
     },
     {
         "colours": ('black'),
         "types": (),
-        "index": 4
+        "index": 5
     },
     {
         "colours": ('white'),
         "types": (),
-        "index": 5
+        "index": 6
     },
 ]
 
