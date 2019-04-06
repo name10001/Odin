@@ -480,7 +480,7 @@ class Jesus(AbstractCard):
         options = {}
         for other_player in self.game.players:
             if other_player != player:
-                cards = other_player.get_hand();
+                cards = other_player.get_hand()
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(cards)) + ")"
             else:
                 options[other_player.get_id()] = other_player.get_name() + "(You)"
