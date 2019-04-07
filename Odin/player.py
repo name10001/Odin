@@ -14,14 +14,16 @@ class Player:
         self.picked_up_this_turn = False
         self.sid = None
         self.add_new_cards(game.starting_number_of_cards)
-        self.planning_pile = []  # TODO - make it so the player knows what cards they have played so they can edit them
+        self.planning_pile = []
+        self.turns_left = 1
+        self.state = "not turn"
 
     def say_uno(self):
         """
         Say uno to all the other players and remembers that the player said Uno
         :return:
         """
-        if self.game.turn != self:
+        if self.is_turn() is False:
             return
         self.said_uno_this_turn = True
         with fs.app.app_context():
@@ -95,10 +97,17 @@ class Player:
         else:
             return False
 
+    def start_turn(self):
+        """
+        starts the players turn
+        :return:
+        """
+        self.state = "playing turn"
+
     def finish_turn(self):
         """
 
-        :return:
+        :return: boolean, True of the player should have another turn
         """
         played_pickup = False
         for (card, chosen_option) in self.planning_pile:
@@ -119,8 +128,6 @@ class Player:
             self.pickup()
         self.planning_pile = []
 
-        self.picked_up_this_turn = False
-
         if self.had_won():
             with fs.app.app_context():
                 fs.socket_io.emit(
@@ -130,6 +137,16 @@ class Player:
                     include_self=False
                 )
 
+        self.picked_up_this_turn = False
+
+        self.turns_left -= 1
+        if self.turns_left > 0:
+            return True
+        else:
+            self.state = "not turn"
+            self.turns_left = 1
+            return False
+
     def pickup(self):
         """
         If there is a pickup chain this will pick it up, otherwise it will pickup 1
@@ -138,7 +155,7 @@ class Player:
         """
         if self.picked_up_this_turn is True:
             return
-        if self.game.turn != self:
+        if self.is_turn() is False:
             return
         if self.game.pickup == 0:
             self.add_new_cards(1)
@@ -252,4 +269,4 @@ class Player:
         return self.player_id
     
     def is_turn(self):
-        return self == self.game.turn
+        return self.state == "playing turn"

@@ -28,6 +28,7 @@ class Game:
             self.players.append(Player(self, players[player], player))
         self.player_turn_index = random.randint(0, len(self.players) - 1)
         self.turn = self.players[self.player_turn_index]
+        self.turn.start_turn()
         self.direction = 1  # 1 or -1
         self.iterate_turn_by = 1
 
@@ -67,10 +68,13 @@ class Game:
 
     def next_turn(self):
         """
-        proceeds to the next player
+        Proceeds to the next player
         :return: None
         """
-        self.turn.finish_turn()
+        is_finished = self.turn.finish_turn()
+        if is_finished is True:
+            self.update_players()
+            return
 
         # increment player index
         for i in range(0, self.iterate_turn_by):
@@ -83,6 +87,7 @@ class Game:
         self.iterate_turn_by = 1
 
         self.turn = self.players[self.player_turn_index]
+        self.turn.start_turn()
 
         self.update_players()
 

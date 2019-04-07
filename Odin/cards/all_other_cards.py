@@ -670,7 +670,7 @@ class FreeTurn(AbstractCard):
     CAN_BE_ON_PICKUP = True
 
     def play_card(self, player, options, played_on):
-        self.game.iterate_turn_by = 0
+        player.turns_left += 1
 
 
 class Thanos(AbstractCard):
