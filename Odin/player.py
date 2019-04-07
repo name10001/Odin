@@ -9,8 +9,8 @@ class Player:
         self.player_id = player_id
         self.hand = []
         self.name = name
-        self.said_uno_previous_turn = False
-        self.said_uno_this_turn = False
+        # self.said_uno_previous_turn = False
+        # self.said_uno_this_turn = False
         self.picked_up_this_turn = False
         self.sid = None
         self.add_new_cards(game.starting_number_of_cards)
@@ -18,21 +18,21 @@ class Player:
         self.turns_left = 1
         self.state = "not turn"
 
-    def say_uno(self):
-        """
-        Say uno to all the other players and remembers that the player said Uno
-        :return:
-        """
-        if self.is_turn() is False:
-            return
-        self.said_uno_this_turn = True
-        with fs.app.app_context():
-            fs.socket_io.emit(
-                "message for player",
-                self.name + " is on Uno!",
-                room=self.game.game_id + "_game",
-                include_self=False
-            )
+    #def say_uno(self):
+    #    """
+    #    Say uno to all the other players and remembers that the player said Uno
+    #    :return:
+    #    """
+    #    if self.is_turn() is False:
+    #        return
+    #    self.said_uno_this_turn = True
+    #    with fs.app.app_context():
+    #        fs.socket_io.emit(
+    #            "message for player",
+    #            self.name + " is on Uno!",
+    #            room=self.game.game_id + "_game",
+    #            include_self=False
+    #        )
 
     def had_won(self):
         """
@@ -119,10 +119,10 @@ class Player:
         if self.game.pickup != 0 and played_pickup is False:
             self.pickup()
 
-        if self.said_uno_previous_turn is False and self.had_won() is True:
-            self.pickup()
-        self.said_uno_previous_turn = self.said_uno_this_turn
-        self.said_uno_this_turn = False
+        # if self.said_uno_previous_turn is False and self.had_won() is True:
+        #     self.pickup()
+        # self.said_uno_previous_turn = self.said_uno_this_turn
+        # self.said_uno_this_turn = False
 
         if len(self.planning_pile) == 0:
             self.pickup()
@@ -232,7 +232,7 @@ class Player:
                     "name": player.get_name(),
                     "number of cards": player.size_of_hand(),
                     "is turn": player.is_turn(),
-                    "is uno": player.is_uno(),
+                    #"is uno": player.is_uno(),
                     "is you": player == self,
                 }
             )
@@ -241,8 +241,8 @@ class Player:
         with fs.app.app_context():
             fs.socket_io.emit("card update", json_to_send, room=self.sid)
 
-    def is_uno(self):
-        return self.said_uno_previous_turn or self.said_uno_this_turn
+    # def is_uno(self):
+    #    return self.said_uno_previous_turn or self.said_uno_this_turn
 
     def size_of_hand(self):
         return len(self.hand)

@@ -10,8 +10,8 @@ class Game:
     This stores information about a game
     """
 
-    def __init__(self, game_id, players, waiting_room, say_uno_needed=False, starting_number_of_cards=100):
-        self.say_uno_needed = say_uno_needed
+    def __init__(self, game_id, players, waiting_room, starting_number_of_cards=100):
+        #self.say_uno_needed = say_uno_needed
         self.game_id = game_id
         self.waiting_room = waiting_room
         self.starting_number_of_cards = starting_number_of_cards
@@ -113,9 +113,9 @@ class Game:
 
         print(player.get_name(), message, data)
 
-        if message == "uno":
-            player.say_uno()
-        elif message == "play card":
+        #if message == "uno":
+        #    player.say_uno()
+        if message == "play card":
             player.play_card(data[0], data[1])
         elif message == "finished turn":
             if player == self.turn:
