@@ -1,6 +1,7 @@
 from cards.abstract_card import AbstractCard
 import random
 
+
 # ~~~~~~~~~~~~~~
 #    Reverse
 # ~~~~~~~~~~~~~~
@@ -122,6 +123,7 @@ class YellowPickup2(Pickup2):
 # Other pickups
 # ~~~~~~~~~~~~~~
 
+
 class Pickup10(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_TYPE = "+10"
@@ -159,6 +161,7 @@ class PickupTimes2(AbstractCard):
 
     def play_card(self, player, options, played_on):
         self.game.pickup *= 2
+
 
 # ~~~~~~~~~~~~~~
 #    Skip
