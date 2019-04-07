@@ -376,6 +376,11 @@ class FilthySharon(AllOfSameColour):
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/filthy_sharon.png'
     CARD_TYPE = "Filthy Sharon"
+        
+
+# ~~~~~~~~~~~~~~
+#    Other
+# ~~~~~~~~~~~~~~
 
 
 class Nazi(AbstractCard):
@@ -394,11 +399,6 @@ class Nazi(AbstractCard):
 
     def can_be_played_with(self, card, player):
         return card.CARD_TYPE == self.CARD_TYPE or card.CARD_COLOUR == "black"
-        
-
-# ~~~~~~~~~~~~~~
-#    Other
-# ~~~~~~~~~~~~~~
 
 
 class AtomicBomb(AbstractCard):
