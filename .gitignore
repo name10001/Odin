@@ -3,3 +3,4 @@ venv/
 __pycache__/
 */__pycache__/
 Odin/static/cards/cards not done/
+Odin/run.bat
