@@ -56,7 +56,7 @@ category_indexs = [
     },
     {
         "colours": (),
-        "types": ("Fuckin' M8", "Creeper", "Smurf", "Lady Of The Night", "Man Of The Day","Thanos"),
+        "types": ("Fuckin' M8", "Creeper", "Smurf", "Lady Of The Night", "Man Of The Day", "Thanos"),
         "index": 2
     },
     {

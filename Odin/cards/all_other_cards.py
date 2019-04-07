@@ -335,6 +335,7 @@ class YellowFuck(Fuck):
 # all of same colour
 # ~~~~~~~~~~~~~~
 
+
 class AllOfSameColour(AbstractCard):
     NUMBER_IN_DECK = 1
 
@@ -355,6 +356,7 @@ class LadyOfTheNight(AllOfSameColour):
     CARD_IMAGE_URL = 'cards/lady_of_the_night.png'
     CARD_TYPE = "Lady Of The Night"
 
+
 class Smurf(AllOfSameColour):
     NAME = "Smurf"
     CARD_COLOUR = "blue"
@@ -368,11 +370,13 @@ class Creeper(AllOfSameColour):
     CARD_IMAGE_URL = 'cards/creeper.png'
     CARD_TYPE = "Creeper"
 
+
 class FilthySharon(AllOfSameColour):
     NAME = "Filthy Sharon"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/filthy_sharon.png'
     CARD_TYPE = "Filthy Sharon"
+
 
 class Nazi(AbstractCard):
     NUMBER_IN_DECK = 1
@@ -388,8 +392,14 @@ class Nazi(AbstractCard):
             return False
         return card.CARD_COLOUR == "white"
 
-    def can_be_played_with(self,card,player):
+    def can_be_played_with(self, card, player):
         return card.CARD_TYPE == self.CARD_TYPE or card.CARD_COLOUR == "black"
+        
+
+# ~~~~~~~~~~~~~~
+#    Other
+# ~~~~~~~~~~~~~~
+
 
 class AtomicBomb(AbstractCard):
     NUMBER_IN_DECK = 1
@@ -397,20 +407,18 @@ class AtomicBomb(AbstractCard):
     CARD_TYPE = "Atomic Bomb"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = "cards/explosion.png"
-    pickupCards = ["Atomic Bomb","+2","+4","+10","x2","Plus","Fuck You","Pawn"]
+    pickupCards = ["Atomic Bomb", "+2", "+4", "+10", "x2", "Plus", "Fuck You", "Pawn"]
 
+    def play_card(self, player, options, played_on):
+        """
+        TODO cause this to automatically make the next person pickup?
+        Idk if this is necessary cause you can combine it with fuck you
 
-    def play_card(self,player,options,played_on):
-        # TODO cause this to automatically make the next person pickup? Idk if this is necessary cause you can combine it with fuck you
+        """
         pass
 
-    def can_be_played_with(self,card,player):
+    def can_be_played_with(self, card, player):
         return card.CARD_TYPE in self.pickupCards
-        
-
-# ~~~~~~~~~~~~~~
-#    Other
-# ~~~~~~~~~~~~~~
 
 
 class Pawn(AbstractCard):
