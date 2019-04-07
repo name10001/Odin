@@ -18,12 +18,15 @@ class Game:
 
         self.players = []
 
+        # setting up cards
         self.deck = cards.Deck(self)
         self.played_cards = []
         self.played_cards.append(self.deck.pickup())
         self.pickup = 0
 
-        # setup players
+        # setup players and turn system
+        if len(players) < 2:
+            print("WARNING: 2 or more players are needed to make the game work properly")
         for player in players:
             self.players.append(Player(self, players[player], player))
         self.player_turn_index = random.randint(0, len(self.players) - 1)
@@ -34,7 +37,7 @@ class Game:
 
     def find_card(self, card_id):
         """
-        checks to see if a card exists in this came
+        Checks to see if a card exists in this came
         :param card_id: id of card to look for
         :return: returns the card if found, else None
         """
@@ -49,10 +52,9 @@ class Game:
 
     def get_player(self, player_id):
         """
-        gets a player from this game with the given id
+        Gets the player from this game with the given id
         :param player_id: id of player to look for
         :return: returns the player if found, else None
-        :return:
         """
         for player in self.players:
             if player.get_id() == player_id:
@@ -71,6 +73,7 @@ class Game:
         Proceeds to the next player
         :return: None
         """
+        # if player has another turn
         is_finished = self.turn.finish_turn()
         if is_finished is True:
             self.update_players()
@@ -93,7 +96,7 @@ class Game:
 
     def update_players(self):
         """
-        sends updates to all the players
+        sends updates to all the players in this game
         :return:
         """
         for player in self.players:
@@ -102,8 +105,8 @@ class Game:
     def message(self, message, data):
         """
         When a message is sent to a game it comes here then gets sent to all the clients
-        :param message:
-        :param data:
+        :param message: the message to send to the server, e.g. "pickup" or "uno"
+        :param data: data that gone along with it, e.g. message="play card", data=("swap_hand_card_15", "Jeff")
         :return: None
         """
         self.waiting_room.modify()
@@ -139,8 +142,8 @@ class Game:
 
     def initial_connection(self):
         """
-
-        :return:
+        subscribes the player to game updates
+        :return: None
         """
         self.waiting_room.modify()
         self.get_player(session['player_id']).set_sid(request.sid)

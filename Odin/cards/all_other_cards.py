@@ -301,7 +301,7 @@ class Fuck(AbstractCard):
     CARD_TYPE = "Fuckin' M8"
 
     def is_compatible_with(self, card, player):
-        return card.CARD_COLOUR == self.CARD_COLOUR or card.CARD_TYPE == self.CARD_TYPE
+        return card.get_colour() == self.get_colour() or card.get_type() == self.get_type()
 
 
 class BlueFuck(Fuck):
@@ -343,7 +343,7 @@ class AllOfSameColour(AbstractCard):
     NUMBER_IN_DECK = 1
 
     def can_be_played_with(self, card, player):
-        return card.CARD_COLOUR == self.CARD_COLOUR
+        return card.get_colour() == self.get_colour()
 
 
 class ManOfTheDay(AllOfSameColour):
@@ -396,12 +396,12 @@ class Nazi(AbstractCard):
     def can_be_played_on(self, card, player):
         if player.is_turn() is False:
             return False
-        if self.game.pickup != 0 and self.CAN_BE_ON_PICKUP is False:
+        if self.game.pickup != 0 and self.can_be_on_pickup() is False:
             return False
-        return card.CARD_COLOUR == "white"
+        return card.get_colour() == "white"
 
     def can_be_played_with(self, card, player):
-        return card.CARD_TYPE == self.CARD_TYPE or card.CARD_COLOUR == "black"
+        return card.get_type() == self.get_type() or card.get_colour() == "black"
 
 
 class AtomicBomb(AbstractCard):
@@ -421,7 +421,7 @@ class AtomicBomb(AbstractCard):
         pass
 
     def can_be_played_with(self, card, player):
-        return card.CARD_TYPE in self.pickupCards
+        return card.get_type() in self.pickupCards
 
 
 class Pawn(AbstractCard):
@@ -512,6 +512,9 @@ class SwapHand(AbstractCard):
         return options
 
     def play_card(self, player, options, played_on):
+        if self.is_option_valid(player, options, is_player=True) is False:
+            print(options, "is not a valid option for", self.get_name())
+            return
         other_player = self.game.get_player(options)
         if other_player is None:
             print("no player of that id was found")
@@ -543,7 +546,6 @@ class Plus(AbstractCard):
     CAN_BE_ON_PICKUP = True
 
     def play_card(self, player, options, played_on):
-        
         amount = self.game.pickup
         if amount == 0:
             amount = 2
@@ -573,13 +575,10 @@ class FuckYou(AbstractCard):
         return options
 
     def play_card(self, player, options, played_on):
-        if options is 0:
-            print("no option given")
+        if self.is_option_valid(player, options, is_player=True) is False:
+            print(options, "is not a valid option for", self.get_name())
             return
         other_player = self.game.get_player(options)
-        if other_player is None:
-            print("no player of that id was found")
-            return
         
         amount = self.game.pickup
         if amount == 0:
@@ -606,8 +605,8 @@ class Genocide(AbstractCard):
         return options
 
     def play_card(self, player, options, played_on):
-        if options is 0:
-            print("no option given")
+        if self.is_option_valid(player, options) is False:
+            print(options, "is not a valid option for", self.get_name())
             return
 
         category, to_ban = options.split(' ', 1)
@@ -622,8 +621,8 @@ class Genocide(AbstractCard):
         for game_player in self.game.players:
             to_remove = []
             for card in game_player.get_hand():
-                if (category == "colour" and card.CARD_COLOUR == to_ban) \
-                        or (category == "type" and card.CARD_TYPE == to_ban):
+                if (category == "colour" and card.get_colour() == to_ban) \
+                        or (category == "type" and card.get_type() == to_ban):
                     to_remove.append(card)
             for card in to_remove:
                 game_player.remove_card(card)
@@ -648,14 +647,11 @@ class Jesus(AbstractCard):
         return options
 
     def play_card(self, player, options, played_on):
-        if options is 0:
-            print("no option given")
-            return
-        other_player = self.game.get_player(options)
-        if other_player is None:
-            print("no player of that id was found")
+        if self.is_option_valid(player, options, is_player=True) is False:
+            print(options, "is not a valid option for", self.get_name())
             return
 
+        other_player = self.game.get_player(options)
         other_player.set_hand([])
         other_player.add_new_cards(self.game.starting_number_of_cards)
         other_player.card_update()
@@ -688,3 +684,31 @@ class Thanos(AbstractCard):
         random.shuffle(hand)
         player.set_hand(hand[0:int(len(hand) / 2)])
         player.card_update()
+
+
+class ColourSwapper(AbstractCard):
+    NAME = "Colour swapper"
+    CARD_IMAGE_URL = 'cards/color_swapper.png'
+    NUMBER_IN_DECK = 100
+    CARD_TYPE = "Colour Swapper"
+
+    def __init__(self, game):
+        super().__init__(game)
+        self.colour = "black"
+
+    def get_options(self, player):
+        return {
+            "red": "Red",
+            "green": "Green",
+            "blue": "Blue",
+            "yellow": "Yellow"
+        }
+
+    def play_card(self, player, options, played_on):
+        if self.is_option_valid(player, options) is False:
+            print(options, "is not a valid option for", self.get_name())
+            return
+        self.colour = options
+
+    def get_colour(self):
+        return self.colour
