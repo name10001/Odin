@@ -33,7 +33,9 @@ class AbstractCard:
             return True
         if card.get_colour() == self.get_colour():
             return True
-        
+        if(card.get_colour() == "colour swapper"):
+            return True
+
         # white cards can be placed on anything that isn't black
         if self.get_colour() == "white":
             return card.get_colour() != "black"
