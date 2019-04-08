@@ -152,3 +152,6 @@ class Game:
 
     def get_id(self):
         return self.game_id
+
+    def get_top_card(self):
+        return self.played_cards[-1]

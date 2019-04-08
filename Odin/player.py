@@ -44,7 +44,7 @@ class Player:
         played_pickup = False
         # play cards from planing pile
         for (card, chosen_option) in self.planning_pile:
-            card_below = self.game.played_cards[self.game.played_cards.index(card)]
+            card_below = self.game.played_cards[self.game.played_cards.index(card)-1]
             card.play_card(self, chosen_option, card_below)
             if card.CAN_BE_ON_PICKUP is True:
                 played_pickup = True

@@ -33,7 +33,7 @@ class AbstractCard:
             return True
         if card.get_colour() == self.get_colour():
             return True
-        if(card.get_colour() == "colour swapper"):
+        if card.get_colour() == "colour swapper":
             return True
 
         # white cards can be placed on anything that isn't black
@@ -114,8 +114,9 @@ class AbstractCard:
         """
         if option is 0:
             return False
-        if option not in self.get_options(player):
-            False
+        if self.get_options(player) is not None:
+            if option not in self.get_options(player):
+                False
         if is_player and self.game.get_player(option) is None:
             return False
         return True
