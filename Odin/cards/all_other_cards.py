@@ -708,7 +708,7 @@ class ColourChooser(AbstractCard):
     
     def is_compatible_with(self, card, player):
         """
-        This compatiblity method is used to prevent white cards from being able to be played ontop
+        This compatibility method is used to prevent white cards from being able to be played on top
         """
         if card.get_colour() == "white" or card.get_colour() == "purple":
             return False
@@ -774,7 +774,6 @@ class ColourSwapper(AbstractCard):
         return False
 
 
-
 class RedBlueSwapper(ColourSwapper):
     NAME = "Red/Blue Colour Swapper"
     CARD_IMAGE_URL = 'cards/blue_red.png'
@@ -788,11 +787,13 @@ class RedYellowSwapper(ColourSwapper):
     COLOUR_1 = "red"
     COLOUR_2 = "yellow"
 
+
 class RedGreenSwapper(ColourSwapper):
     NAME = "Red/Green Colour Swapper"
     CARD_IMAGE_URL = 'cards/green_red.png'
     COLOUR_1 = "red"
     COLOUR_2 = "green"
+
 
 class GreenBlueSwapper(ColourSwapper):
     NAME = "Green/Blue Colour Swapper"
@@ -800,11 +801,13 @@ class GreenBlueSwapper(ColourSwapper):
     COLOUR_1 = "green"
     COLOUR_2 = "blue"
 
+
 class BlueYellowSwapper(ColourSwapper):
     NAME = "Yellow/Blue Colour Swapper"
     CARD_IMAGE_URL = 'cards/yellow_blue.png'
     COLOUR_1 = "yellow"
     COLOUR_2 = "blue"
+
 
 class YellowGreenSwapper(ColourSwapper):
     NAME = "Yellow/Green Colour Swapper"
