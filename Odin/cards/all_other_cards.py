@@ -301,6 +301,8 @@ class Fuck(AbstractCard):
     CARD_TYPE = "Fuckin' M8"
 
     def is_compatible_with(self, card, player):
+        if card.get_colour() == "colour swapper":
+            return True
         return card.get_colour() == self.get_colour() or card.get_type() == self.get_type()
 
 
@@ -727,7 +729,7 @@ class ColourSwapper(AbstractCard):
     """
     Abstract double-colour swapper card
     """
-    NUMBER_IN_DECK = 50
+    NUMBER_IN_DECK = 1
     CARD_TYPE = "Colour Swapper"
     COLOUR_1 = "black"
     COLOUR_2 = "black"
@@ -766,6 +768,11 @@ class ColourSwapper(AbstractCard):
 
     def get_colour(self):
         return self.colour
+    
+    # TODO allow you to play multiple at once
+    def can_be_played_with(self, card, player):
+        return False
+
 
 
 class RedBlueSwapper(ColourSwapper):
@@ -773,3 +780,34 @@ class RedBlueSwapper(ColourSwapper):
     CARD_IMAGE_URL = 'cards/blue_red.png'
     COLOUR_1 = "red"
     COLOUR_2 = "blue"
+
+
+class RedYellowSwapper(ColourSwapper):
+    NAME = "Red/Yellow Colour Swapper"
+    CARD_IMAGE_URL = 'cards/red_yellow.png'
+    COLOUR_1 = "red"
+    COLOUR_2 = "yellow"
+
+class RedGreenSwapper(ColourSwapper):
+    NAME = "Red/Green Colour Swapper"
+    CARD_IMAGE_URL = 'cards/green_red.png'
+    COLOUR_1 = "red"
+    COLOUR_2 = "green"
+
+class GreenBlueSwapper(ColourSwapper):
+    NAME = "Green/Blue Colour Swapper"
+    CARD_IMAGE_URL = 'cards/green_blue.png'
+    COLOUR_1 = "green"
+    COLOUR_2 = "blue"
+
+class BlueYellowSwapper(ColourSwapper):
+    NAME = "Yellow/Blue Colour Swapper"
+    CARD_IMAGE_URL = 'cards/yellow_blue.png'
+    COLOUR_1 = "yellow"
+    COLOUR_2 = "blue"
+
+class YellowGreenSwapper(ColourSwapper):
+    NAME = "Yellow/Green Colour Swapper"
+    CARD_IMAGE_URL = 'cards/green_yellow.png'
+    COLOUR_1 = "yellow"
+    COLOUR_2 = "green"

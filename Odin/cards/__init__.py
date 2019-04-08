@@ -25,7 +25,8 @@ all_cards = [
     BlankBro, Happiness,
     SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos,
     ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, Nazi, 
-    ColourChooser, RedBlueSwapper
+    ColourChooser, RedBlueSwapper, RedGreenSwapper, RedYellowSwapper, GreenBlueSwapper,
+    BlueYellowSwapper, YellowGreenSwapper
 ]
 
 
