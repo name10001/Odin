@@ -58,28 +58,28 @@ category_indexs = [
     },
     {
         "colours": (),
-        "types": ("Fuckin' M8", "Creeper", "Smurf", "Lady Of The Night", "Man Of The Day", "Thanos"),
-        "index": 2
-    },
-    {
-        "colours": (),
-        "types": ('Reverse', 'Skip'),
+        "types": ("Creeper", "Smurf", "Lady Of The Night", "Man Of The Day"),
         "index": 3
     },
     {
         "colours": (),
-        "types": ('+2', '+10', '+4', 'x2'),
+        "types": ('Reverse', 'Skip'),
         "index": 4
+    },
+    {
+        "colours": (),
+        "types": ('+2', '+10', '+4', 'x2'),
+        "index": 5
     },
     {
         "colours": ('black'),
         "types": (),
-        "index": 5
+        "index": 6
     },
     {
         "colours": ('white'),
         "types": (),
-        "index": 6
+        "index": 7
     },
 ]
 

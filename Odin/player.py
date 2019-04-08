@@ -194,7 +194,7 @@ class Player:
         is_first_card = len(self.planning_pile) == 0
 
         if self.is_turn() and not is_first_card:
-            return self.planning_pile[0][0].can_be_played_with(card, self)
+            return card.can_be_played_with(self.planning_pile,self)
         elif card.can_be_played_on(top_card, self):
             return True
         else:

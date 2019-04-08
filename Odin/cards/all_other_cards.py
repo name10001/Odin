@@ -258,23 +258,25 @@ class EA(AbstractCard):
     CARD_TYPE = "EA"
     NUMBER_NEEDED = 0
 
-    def can_be_played_on(self, card, player):
-        """
-        Must have enough cards in hand
-        """
-        if len(player.get_hand()) < self.NUMBER_NEEDED:
-            return False
-        else:
-            return super().can_be_played_on(card, player)
+    #TODO implement this card properly, this will just be a blank at the moment
 
-    def can_be_played_with(self, card, player):
-        """
-        Must have enough cards in hand
-        """
-        if len(player.get_hand()) < self.NUMBER_NEEDED:
-            return False
-        else:
-            return super().can_be_played_with(card, player)
+    #def can_be_played_on(self, card, player):
+    #    """
+    #    Must have enough cards in hand
+    #    """
+    #    if len(player.get_hand()) < self.NUMBER_NEEDED:
+    #        return False
+    #    else:
+    #        return super().can_be_played_on(card, player)
+
+    #def can_be_played_with(self, card, player):
+    #    """
+    #    Must have enough cards in hand
+    #    """
+    #    if len(player.get_hand()) < self.NUMBER_NEEDED:
+    #        return False
+    #    else:
+    #        return super().can_be_played_with(card, player)
 
 
 class EA15(EA):
@@ -348,7 +350,7 @@ class YellowFuck(Fuck):
 class AllOfSameColour(AbstractCard):
     NUMBER_IN_DECK = 1
 
-    def can_be_played_with(self, card, player):
+    def can_play_with(self, card, player):
         return card.get_colour() == self.get_colour()
 
 
@@ -406,7 +408,7 @@ class Nazi(AbstractCard):
             return False
         return card.get_colour() == "white"
 
-    def can_be_played_with(self, card, player):
+    def can_play_with(self, card, player):
         return card.get_type() == self.get_type() or card.get_colour() == "black"
 
 
@@ -425,7 +427,7 @@ class AtomicBomb(AbstractCard):
         """
         pass
 
-    def can_be_played_with(self, card, player):
+    def can_play_with(self, card, player):
         return card.get_type() in self.pickupCards
 
 
@@ -814,7 +816,7 @@ class ColourSwapper(AbstractCard):
         return self.colour
     
     # TODO allow you to play multiple at once
-    def can_be_played_with(self, card, player):
+    def can_be_played_with(self, planning_pile, player):
         return False
 
 

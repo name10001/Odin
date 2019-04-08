@@ -10,7 +10,6 @@ class AbstractCard:
     CARD_TYPE = "Abstract"
     CAN_BE_ON_PICKUP = False
 
-
     def __init__(self, game):
         self.game = game
         self.id = self._make_id()
@@ -67,13 +66,27 @@ class AbstractCard:
             return False
         return card.is_compatible_with(self, player) and self.is_compatible_with(card, player)
 
-    def can_be_played_with(self, card, player):
+    def can_play_with(self, card, player):
         """
-        If this card is the first card played in a turn, can the given card be played with it
+        Returns if the given card can be played with this card
         :param card:
         :return:
         """
-        return self.get_type() == card.get_type()
+        return card.get_type() == self.get_type()
+
+    def can_be_played_with(self, planning_pile, player):
+        """
+        Can this card be played on the given planning pile?
+        By default this checks if you can play with ANY of the cards in the planning pile
+        :param planning_pile:
+        :return:
+        """
+        for card, options in planning_pile:
+            if card.can_play_with(self, player):
+                return True
+
+        return False
+
 
     def _make_id(self):
         """
