@@ -603,7 +603,7 @@ class Genocide(AbstractCard):
         for card_types in self.game.deck.not_banned_types:
             options["type " + card_types] = "Type: " + card_types
         for card_colour in self.game.deck.not_banned_colours:
-            options["colour " + card_colour] = "Colour: " + card_colour
+            options["colour " + card_colour] = "Colour: " + card_colour.capitalize()
         return options
 
     def play_card(self, player, options, played_on):
@@ -691,6 +691,7 @@ class Thanos(AbstractCard):
 class ColourChooser(AbstractCard):
     NAME = "Colour Chooser"
     CARD_IMAGE_URL = 'cards/color_swapper.png'
+    CARD_COLOUR = "black"
     NUMBER_IN_DECK = 4
     CARD_TYPE = "Colour Chooser"
 
@@ -733,6 +734,7 @@ class ColourSwapper(AbstractCard):
     CARD_TYPE = "Colour Swapper"
     COLOUR_1 = "black"
     COLOUR_2 = "black"
+    CARD_COLOUR = "colour swapper"
 
     def __init__(self, game):
         super().__init__(game)

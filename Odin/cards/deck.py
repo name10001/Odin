@@ -19,7 +19,7 @@ class Deck:
         It will not return banned cards unless all cards have been band
         :return:
         """
-        if len(self.cards) == 0:  # if all cards have been banned
+        if len(self.cards) == 0:  # if all cards have been banned - you would never reach here anyway because the game would end?
             return cards.get_random_card()
         else:
             place_in_deck = random.uniform(0, self.number_of_cards - 1)
@@ -37,9 +37,13 @@ class Deck:
         :param card_color: color to remove
         :return:
         """
+        if card_color in self.banned_colours:
+            return
         self.banned_colours.append(card_color)
         self.not_banned_colours.remove(card_color)
-        for card in self.cards:
+
+        cards_copy = self.cards.copy()
+        for card in cards_copy:
             if card.CARD_COLOUR == card_color:
                 self.cards.remove(card)
                 self.number_of_cards -= card.NUMBER_IN_DECK
@@ -50,9 +54,13 @@ class Deck:
         :param card_type: type to remove
         :return:
         """
+        if card_type in self.banned_types:
+            return
         self.banned_types.append(card_type)
         self.not_banned_types.remove(card_type)
-        for card in self.cards:
+
+        cards_copy = self.cards.copy()
+        for card in cards_copy:
             if card.CARD_TYPE == card_type:
                 self.cards.remove(card)
                 self.number_of_cards -= card.NUMBER_IN_DECK
