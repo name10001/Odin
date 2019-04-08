@@ -34,6 +34,8 @@ class Player:
             self.hand.remove(card)
             self.game.add_played_card(card)
             self.planning_pile.append((card, chosen_option))
+            card_below = self.game.played_cards[len(self.game.played_cards)-2]
+            card.prepare_card(self, chosen_option, card_below)
         self.card_update()
 
     def finish_turn(self):
@@ -177,6 +179,9 @@ class Player:
         card_to_remove = self.planning_pile.pop()[0]
         self.game.played_cards.remove(card_to_remove)
         self.hand.append(card_to_remove)
+
+        played_on = self.game.played_cards[len(self.game.played_cards)-1]
+        card_to_remove.undo_prepare_card(self, played_on)
 
         self.game.update_players()
 

@@ -10,11 +10,16 @@ class AbstractCard:
     CARD_COLOUR = "Abstract"
     CARD_TYPE = "Abstract"
     CAN_BE_ON_PICKUP = False
-    CARD_TYPE_ID = 0  # TODO: might delete latter if not needed
 
     def __init__(self, game):
         self.game = game
         self.id = self._make_id()
+
+    def prepare_card(self, player, options, played_on):
+        pass
+    
+    def undo_prepare_card(self, player, played_on):
+        pass
 
     def play_card(self, player, options, played_on):
         """

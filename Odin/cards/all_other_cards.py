@@ -11,7 +11,6 @@ class Reverse(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "Reverse"
-    CARD_TYPE_ID = 16
     CAN_BE_ON_PICKUP = True
 
     def play_card(self, player, options, played_on):
@@ -70,10 +69,12 @@ class Pickup2(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_TYPE = "+2"
     CAN_BE_ON_PICKUP = True
-    CARD_TYPE_ID = 19
 
-    def play_card(self, player, options, played_on):
+    def prepare_card(self, player, options, played_on):
         self.game.pickup += 2
+    
+    def undo_prepare_card(self, player, played_on):
+        self.game.pickup -= 2
 
 
 class BluePickup2(Pickup2):
@@ -127,40 +128,47 @@ class YellowPickup2(Pickup2):
 class Pickup10(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_TYPE = "+10"
-    CARD_TYPE_ID = 21
     NAME = "Pickup 10"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pickup10_wild.png'
     CAN_BE_ON_PICKUP = True
 
-    def play_card(self, player, options, played_on):
+    def prepare_card(self, player, options, played_on):
         self.game.pickup += 10
+    
+    def undo_prepare_card(self, player, played_on):
+        self.game.pickup -= 10
 
 
 class Pickup4(AbstractCard):
     NUMBER_IN_DECK = 4
     CARD_TYPE = "+4"
-    CARD_TYPE_ID = 20
     NAME = "Pickup 4"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pickup4_wild.png'
     CAN_BE_ON_PICKUP = True
 
-    def play_card(self, player, options, played_on):
+
+    def prepare_card(self, player, options, played_on):
         self.game.pickup += 4
+    
+    def undo_prepare_card(self, player, played_on):
+        self.game.pickup -= 4
 
 
 class PickupTimes2(AbstractCard):
     NUMBER_IN_DECK = 4
     CARD_TYPE = "x2"
-    CARD_TYPE_ID = 22
     NAME = "Pickup x2"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/multiply2_wild.png'
     CAN_BE_ON_PICKUP = True
 
-    def play_card(self, player, options, played_on):
+    def prepare_card(self, player, options, played_on):
         self.game.pickup *= 2
+    
+    def undo_prepare_card(self, player, played_on):
+        self.game.pickup /= 2
 
 
 # ~~~~~~~~~~~~~~
@@ -171,7 +179,6 @@ class PickupTimes2(AbstractCard):
 class Skip(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_TYPE = "Skip"
-    CARD_TYPE_ID = 17
     CAN_BE_ON_PICKUP = True
     
     def play_card(self, player, options, played_on):
@@ -229,7 +236,6 @@ class BlankBro(AbstractCard):
     NAME = "Just A Blank Bro"
     NUMBER_IN_DECK = 3
     CARD_TYPE = "Just A Blank Bro"
-    CARD_TYPE_ID = 12
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/black.png'
 
@@ -238,7 +244,6 @@ class Happiness(AbstractCard):
     NAME = "Happiness"
     NUMBER_IN_DECK = 3
     CARD_TYPE = "Happiness"
-    CARD_TYPE_ID = 11
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/white.png'
 
@@ -297,7 +302,6 @@ class EA30(EA):
 
 class Fuck(AbstractCard):
     NUMBER_IN_DECK = 1
-    CARD_TYPE_ID = 13
     CARD_TYPE = "Fuckin' M8"
 
     def is_compatible_with(self, card, player):
@@ -418,7 +422,6 @@ class AtomicBomb(AbstractCard):
         """
         TODO cause this to automatically make the next person pickup?
         Idk if this is necessary cause you can combine it with fuck you
-
         """
         pass
 
@@ -434,6 +437,8 @@ class Pawn(AbstractCard):
     CARD_TYPE = "Pawn"
     CAN_BE_ON_PICKUP = True
 
+    old_pickup = 0
+
     def can_be_played_on(self, card, player):
         """
         Update method which only lets you place when it's a pickup chain
@@ -442,8 +447,13 @@ class Pawn(AbstractCard):
             return False
         return super().can_be_played_on(card, player)
 
-    def play_card(self, player, options, played_on):
+
+    def prepare_card(self, player, options, played_on):
+        self.old_pickup = self.game.pickup
         self.game.pickup = 0
+    
+    def undo_prepare_card(self, player, played_on):
+        self.game.pickup = self.old_pickup
 
 
 class Communist(AbstractCard):
@@ -547,14 +557,17 @@ class Plus(AbstractCard):
     CARD_TYPE = "Plus"
     CAN_BE_ON_PICKUP = True
 
+    pickup_amount = 0
+
+    def prepare_card(self, player, options, played_on):
+        self.pickup_amount = self.game.pickup
+        if self.pickup_amount == 0:
+            self.pickup_amount = 2
+
     def play_card(self, player, options, played_on):
-        amount = self.game.pickup
-        if amount == 0:
-            amount = 2
-        
         for other_player in self.game.players:
             if other_player != player:
-                other_player.add_new_cards(amount)
+                other_player.add_new_cards(self.pickup_amount)
                 other_player.card_update()
 
         self.game.pickup = 0
@@ -575,18 +588,21 @@ class FuckYou(AbstractCard):
                 cards = other_player.get_hand();
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(cards)) + ")"
         return options
+    
+    pickup_amount = 0
+
+    def prepare_card(self, player, options, played_on):
+        self.pickup_amount = self.game.pickup
+        if self.pickup_amount == 0:
+            self.pickup_amount = 2
 
     def play_card(self, player, options, played_on):
         if self.is_option_valid(player, options, is_player=True) is False:
             print(options, "is not a valid option for", self.get_name())
             return
         other_player = self.game.get_player(options)
-        
-        amount = self.game.pickup
-        if amount == 0:
-            amount = 5
 
-        other_player.add_new_cards(amount)
+        other_player.add_new_cards(self.pickup_amount)
         other_player.card_update()
         self.game.pickup = 0
 
@@ -600,10 +616,10 @@ class Genocide(AbstractCard):
 
     def get_options(self, player):
         options = {}
-        for card_types in self.game.deck.not_banned_types:
-            options["type " + card_types] = "Type: " + card_types
         for card_colour in self.game.deck.not_banned_colours:
             options["colour " + card_colour] = "Colour: " + card_colour.capitalize()
+        for card_types in self.game.deck.not_banned_types:
+            options["type " + card_types] = "Type: " + card_types
         return options
 
     def play_card(self, player, options, played_on):
