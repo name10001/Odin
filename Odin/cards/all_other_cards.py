@@ -815,9 +815,18 @@ class ColourSwapper(AbstractCard):
     def get_colour(self):
         return self.colour
     
-    # TODO allow you to play multiple at once
     def can_be_played_with(self, planning_pile, player):
-        return False
+        """
+        can only play multiple if the card is compatible with the top card in the planning pile
+        """
+        card = planning_pile[len(planning_pile)-1][0]
+
+        if card.get_type() != self.get_type():
+            return False
+        
+        return colours_are_compatible(card.selected_colour, self.COLOUR_1) or colours_are_compatible(card.selected_colour, self.COLOUR_2)
+
+
 
 
 class RedBlueSwapper(ColourSwapper):
