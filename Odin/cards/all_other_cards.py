@@ -449,7 +449,6 @@ class Pawn(AbstractCard):
             return False
         return super().can_be_played_on(card, player)
 
-
     def prepare_card(self, player, options, played_on):
         self.old_pickup = self.game.pickup
         self.game.pickup = 0
@@ -784,8 +783,9 @@ class ColourSwapper(AbstractCard):
             return None
 
     def is_compatible_with(self, card, player):
-        if self.colour == "colour swapper": # compatible if either of the card colours are compatible
-            if colours_are_compatible(card.get_colour(), self.COLOUR_1) or colours_are_compatible(card.get_colour(), self.COLOUR_2):
+        if self.colour == "colour swapper":  # compatible if either of the card colours are compatible
+            if colours_are_compatible(card.get_colour(), self.COLOUR_1) \
+                    or colours_are_compatible(card.get_colour(), self.COLOUR_2):
                 return True
         else:
             return super().is_compatible_with(card, player)
@@ -819,9 +819,8 @@ class ColourSwapper(AbstractCard):
         if card.get_type() != self.get_type():
             return False
         
-        return colours_are_compatible(card.get_colour(), self.COLOUR_1) or colours_are_compatible(card.get_colour(), self.COLOUR_2)
-
-
+        return colours_are_compatible(card.get_colour(), self.COLOUR_1) \
+               or colours_are_compatible(card.get_colour(), self.COLOUR_2)
 
 
 class RedBlueSwapper(ColourSwapper):

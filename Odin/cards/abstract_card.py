@@ -81,11 +81,10 @@ class AbstractCard:
         :param planning_pile:
         :return:
         """
-        for card, options in planning_pile:
-            if card.can_play_with(self, player):
-                return True
-
-        return False
+        if planning_pile[0][0].can_play_with(self, player):
+            return True
+        else:
+            return False
 
 
     def _make_id(self):

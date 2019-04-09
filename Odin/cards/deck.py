@@ -44,7 +44,7 @@ class Deck:
 
         cards_copy = self.cards.copy()
         for card in cards_copy:
-            if card.get_colour() == card_color:
+            if card.CARD_COLOUR == card_color:
                 self.cards.remove(card)
                 self.number_of_cards -= card.NUMBER_IN_DECK
 
@@ -61,7 +61,7 @@ class Deck:
 
         cards_copy = self.cards.copy()
         for card in cards_copy:
-            if card.get_type() == card_type:
+            if card.CARD_TYPE == card_type:
                 self.cards.remove(card)
                 self.number_of_cards -= card.NUMBER_IN_DECK
 
