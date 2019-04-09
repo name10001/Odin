@@ -766,15 +766,10 @@ class ColourSwapper(AbstractCard):
     COLOUR_1 = "black"
     COLOUR_2 = "black"
     CARD_COLOUR = "colour swapper"
-    selected_colour = "colour swapper"  # temporary selected colour
 
     def __init__(self, game):
         super().__init__(game)
         self.colour = "colour swapper"  # gets changed to a particular colour after being played
-
-    
-        
-    
 
     def get_options(self, player):
         top_colour = self.game.get_top_card().get_colour()
@@ -800,17 +795,17 @@ class ColourSwapper(AbstractCard):
         first_compatible = colours_are_compatible(played_on.get_colour(), self.COLOUR_1)
         second_compatible = colours_are_compatible(played_on.get_colour(), self.COLOUR_2)
         if first_compatible and not second_compatible:
-            self.selected_colour = self.COLOUR_2
+            self.colour = self.COLOUR_2
         elif second_compatible and not first_compatible:
-            self.selected_colour = self.COLOUR_1
+            self.colour = self.COLOUR_1
         else:
             if self.is_option_valid(player, options) is False:
                 print(options, "is not a valid option for", self.get_name())
                 return
-            self.selected_colour = options
+            self.colour = options
     
-    def play_card(self, player, options, played_on):
-        self.colour = self.selected_colour
+    def undo_prepare_card(self, player, played_on):
+        self.colour = "colour swapper"
 
     def get_colour(self):
         return self.colour
@@ -824,7 +819,7 @@ class ColourSwapper(AbstractCard):
         if card.get_type() != self.get_type():
             return False
         
-        return colours_are_compatible(card.selected_colour, self.COLOUR_1) or colours_are_compatible(card.selected_colour, self.COLOUR_2)
+        return colours_are_compatible(card.get_colour(), self.COLOUR_1) or colours_are_compatible(card.get_colour(), self.COLOUR_2)
 
 
 
