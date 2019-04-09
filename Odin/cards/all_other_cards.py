@@ -420,6 +420,7 @@ class AtomicBomb(AbstractCard):
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = "cards/explosion.png"
     pickupCards = ["Atomic Bomb", "+2", "+4", "+10", "x2", "Plus", "Fuck You", "Pawn"]
+    CAN_BE_ON_PICKUP = True
 
     def play_card(self, player, options, played_on):
         """
