@@ -66,13 +66,16 @@ class AbstractCard:
             return False
         return card.is_compatible_with(self, player) and self.is_compatible_with(card, player)
 
-    def can_play_with(self, card, player):
+    def can_play_with(self, card, player, is_first_card):
         """
-        Returns if the given card can be played with this card
+        Can this additional card be played with this card? Considers if this is the first card in the planning pile
         :param card:
         :return:
         """
-        return card.get_type() == self.get_type()
+        if is_first_card:
+            return card.get_type() == self.get_type()
+        
+        return False
 
     def can_be_played_with(self, planning_pile, player):
         """
@@ -81,10 +84,12 @@ class AbstractCard:
         :param planning_pile:
         :return:
         """
-        if planning_pile[0][0].can_play_with(self, player):
-            return True
-        else:
-            return False
+        is_first_card = True
+        for card, options in planning_pile:
+            if card.can_play_with(self, player, is_first_card):
+                return True
+            is_first_card = False
+        return False
 
 
     def _make_id(self):

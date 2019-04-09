@@ -351,7 +351,7 @@ class YellowFuck(Fuck):
 class AllOfSameColour(AbstractCard):
     NUMBER_IN_DECK = 1
 
-    def can_play_with(self, card, player):
+    def can_play_with(self, card, player, is_first_card):
         return card.get_colour() == self.get_colour()
 
 
@@ -409,7 +409,7 @@ class Nazi(AbstractCard):
             return False
         return card.get_colour() == "white"
 
-    def can_play_with(self, card, player):
+    def can_play_with(self, card, player, is_first_card):
         return card.get_type() == self.get_type() or card.get_colour() == "black"
 
 
@@ -428,7 +428,7 @@ class AtomicBomb(AbstractCard):
         """
         pass
 
-    def can_play_with(self, card, player):
+    def can_play_with(self, card, player, is_first_card):
         return card.get_type() in self.pickupCards
 
 
