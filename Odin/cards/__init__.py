@@ -115,3 +115,16 @@ def get_random_card():
         else:
             up_to += card.NUMBER_IN_DECK
     raise RuntimeError("no card found.")
+
+
+def colours_are_compatible(colour1, colour2):
+    if colour1 == colour2:
+        return True
+    elif colour1 == "white":
+        return colour2 != "black"
+    elif colour1 == "black":
+        return colour2 != "white" and colour2 != "purple"
+    elif colour1 == "purple":
+        return colour2 == "white"
+    else:
+        return colour2 == "white" or colour2 == "black"

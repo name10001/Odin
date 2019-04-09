@@ -164,7 +164,7 @@ class Player:
         if self.game.pickup == 0:
             self.add_new_cards(1)
         else:
-            self.add_new_cards(min(1000, self.game.pickup))
+            self.add_new_cards(self.game.pickup)
             self.game.pickup = 0
         self.card_update()
         self.picked_up_this_turn = True
@@ -226,6 +226,8 @@ class Player:
         :return: None
         """
         for i in range(0, number):
+            if len(self.hand) > 9999:
+                break
             self.hand.append(self.game.deck.pickup())
 
     def had_won(self):

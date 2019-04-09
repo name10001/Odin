@@ -19,7 +19,8 @@ class Deck:
         It will not return banned cards unless all cards have been band
         :return:
         """
-        if len(self.cards) == 0:  # if all cards have been banned - you would never reach here anyway because the game would end?
+        # if all cards have been banned - you would never reach here anyway because the game would end?
+        if len(self.cards) == 0:
             return cards.get_random_card()
         else:
             place_in_deck = random.uniform(0, self.number_of_cards - 1)

@@ -1,4 +1,5 @@
 from cards.abstract_card import AbstractCard
+import cards
 import random
 
 
@@ -741,19 +742,6 @@ class ColourChooser(AbstractCard):
 
     def get_colour(self):
         return self.colour
-
-
-def colours_are_compatible(colour1, colour2):
-        if colour1 == colour2:
-            return True
-        elif colour1 == "white":
-            return colour2 != "black"
-        elif colour1 == "black":
-            return colour2 != "white" and colour2 != "purple"
-        elif colour1 == "purple":
-            return colour2 == "white"
-        else:
-            return colour2 == "white" or colour2 == "black"
     
 
 class ColourSwapper(AbstractCard):
@@ -773,7 +761,7 @@ class ColourSwapper(AbstractCard):
     def get_options(self, player):
         top_colour = self.game.get_top_card().get_colour()
 
-        if colours_are_compatible(top_colour, self.COLOUR_1) and colours_are_compatible(top_colour, self.COLOUR_2):
+        if cards.colours_are_compatible(top_colour, self.COLOUR_1) and cards.colours_are_compatible(top_colour, self.COLOUR_2):
             # if both colours are compatible with the bottom, then you get to choose the outcome
             return {
                 self.COLOUR_1: self.COLOUR_1.capitalize(),
@@ -784,16 +772,16 @@ class ColourSwapper(AbstractCard):
 
     def is_compatible_with(self, card, player):
         if self.colour == "colour swapper":  # compatible if either of the card colours are compatible
-            if colours_are_compatible(card.get_colour(), self.COLOUR_1) \
-                    or colours_are_compatible(card.get_colour(), self.COLOUR_2):
+            if cards.colours_are_compatible(card.get_colour(), self.COLOUR_1) \
+                    or cards.colours_are_compatible(card.get_colour(), self.COLOUR_2):
                 return True
         else:
             return super().is_compatible_with(card, player)
 
     def prepare_card(self, player, options, played_on):
         # change colour to the opposite of the one you played on
-        first_compatible = colours_are_compatible(played_on.get_colour(), self.COLOUR_1)
-        second_compatible = colours_are_compatible(played_on.get_colour(), self.COLOUR_2)
+        first_compatible = cards.colours_are_compatible(played_on.get_colour(), self.COLOUR_1)
+        second_compatible = cards.colours_are_compatible(played_on.get_colour(), self.COLOUR_2)
         if first_compatible and not second_compatible:
             self.colour = self.COLOUR_2
         elif second_compatible and not first_compatible:
@@ -819,8 +807,8 @@ class ColourSwapper(AbstractCard):
         if card.get_type() != self.get_type():
             return False
         
-        return colours_are_compatible(card.get_colour(), self.COLOUR_1) \
-               or colours_are_compatible(card.get_colour(), self.COLOUR_2)
+        return cards.colours_are_compatible(card.get_colour(), self.COLOUR_1) \
+               or cards.colours_are_compatible(card.get_colour(), self.COLOUR_2)
 
 
 class RedBlueSwapper(ColourSwapper):
