@@ -10,7 +10,7 @@ class Game:
     This stores information about a game
     """
 
-    def __init__(self, game_id, players, waiting_room, starting_number_of_cards=100):
+    def __init__(self, game_id, players, waiting_room, starting_number_of_cards=50):
         #self.say_uno_needed = say_uno_needed
         self.game_id = game_id
         self.waiting_room = waiting_room
