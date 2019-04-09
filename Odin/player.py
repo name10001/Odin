@@ -225,7 +225,7 @@ class Player:
         :param number: number of cards to add
         :return: None
         """
-        for i in range(0, number):
+        for i in range(0, int(number)):
             if len(self.hand) > 9999:
                 break
             self.hand.append(self.game.deck.pickup())
