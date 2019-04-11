@@ -1,6 +1,7 @@
 from flask import *
 import cards
 
+
 class AbstractCard:
     CARD_IMAGE_URL = 'cards/generic.png'
     DESCRIPTION = 'This is a abstract card and should only be used to inherit from. This should never be seen in a game'
