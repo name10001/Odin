@@ -3,10 +3,6 @@ const CARD_RATIO = 670.0/1045.0;
 const MAX_CARD_WIDTH = 134;
 const MAX_FONT_SIZE = 40;
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 class Button {
     constructor(x,y,width,height,text) {
         this.x = x;
@@ -45,7 +41,7 @@ class Button {
 /**
  * Class for the main game canvas
  */
-class GameCanvas {
+class Gui {
     /**
      * Creates a game canvas
      */
@@ -62,21 +58,6 @@ class GameCanvas {
         this.transparentImage = new Image;
         this.transparentImage.src = '/static/transparent.png';
 
-        //load all events
-        if('ontouchstart' in document.documentElement) {
-            this.canvas.addEventListener('touchstart',touchStart);
-            this.canvas.addEventListener('touchmove',touchMove);
-            this.canvas.addEventListener('touchend',touchEnd);
-        }
-        else {
-            this.canvas.addEventListener('mousedown',mouseDown);
-            this.canvas.addEventListener('mousemove',mouseMove);
-            this.canvas.addEventListener('mouseup',mouseUp);
-        }
-
-        this.canvas.addEventListener('mouseleave',mouseLeave);
-        this.canvas.addEventListener('wheel',mouseWheel);
-        window.addEventListener('resize',resize);
 
         this.cardImages = [];
         //load all card images
@@ -525,61 +506,4 @@ class GameCanvas {
         interpolate = 1 - interpolate;
         this.scrollOffset = this.getMinScroll() + interpolate * (this.getMaxScroll()-this.getMinScroll());
     }
-}
-
-
-
-/*
-
-VARIOUS EVENTS
-
-*/
-
-function mouseDown(event) {
-    if(event.button == 0) {
-        GAME_CANVAS.click(event.offsetX,event.offsetY,event.shiftKey);
-    }
-}
-function mouseMove(event) {
-    GAME_CANVAS.drag(event.offsetX,event.offsetY);
-}
-function mouseUp(event) {
-    if(event.button==0) {
-        GAME_CANVAS.release(false);
-    }
-}
-
-function touchStart(event) {
-    GAME_CANVAS.click(event.touches[0].clientX,event.touches[0].clientY,false);
-}
-function touchMove(event) {
-    GAME_CANVAS.drag(event.touches[0].clientX, event.touches[0].clientY);
-}
-function touchEnd(event) {
-    GAME_CANVAS.release(true);
-}
-
-function mouseLeave(event) {
-    if(GAME_CANVAS.mousePressed) {
-        GAME_CANVAS.release();
-    }
-}
-function mouseWheel(event) {
-    GAME_CANVAS.wheel(Math.sign(event.deltaY));
-}
-function resize() {
-    GAME_CANVAS.setCardDimensions(window.innerWidth,window.innerHeight);
-}
-
-var lastTime = 0;
-function gameLoop(timestamp) {
-    sleep(10);
-    let dt = timestamp-lastTime;
-    lastTime = timestamp;
-    
-    //update scrolling speed
-    GAME_CANVAS.scroll(dt);
-    GAME_CANVAS.draw(dt);
-
-    requestAnimationFrame(gameLoop);
 }

@@ -13,12 +13,14 @@
         
         <script type="text/javascript" src="{{ url_for('static', filename='src/game.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/option_window.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='src/canvas.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/gui.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/listener.js') }}"></script>
         <script>
             var GAME_ID = "{{ game.get_id() }}";
             var ALL_URLS = {{ game.deck.get_all_urls() | safe }};
             var GAME;
-            var GAME_CANVAS;
+            var GUI;
+            var IS_MOBILE;
 
             //main - load socket, create game
             $(document).ready(function() {
@@ -31,7 +33,7 @@
                 });
 
                 GAME = new Game();
-                GAME_CANVAS = new GameCanvas();
+                GUI = new Gui();
 
                 socket.on('connect', function () {
                     socket.emit("initial game connection", GAME_ID);
@@ -46,8 +48,8 @@
                 socket.on('card update', function(update) {
                     GAME.update(update);
                 });
-
-                gameLoop(0);
+                
+                setup();
             });
         </script>
 

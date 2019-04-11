@@ -118,7 +118,7 @@ class OptionsWindow {
         if(this.hoveredItem!=-1 && !this.dragging) {
             //picked an option
             let pickedOption = this.optionIds[this.hoveredItem];
-            GAME_CANVAS.exitOptions(pickedOption);
+            GUI.exitOptions(pickedOption);
             return;
         }
         this.mousePressed = false;

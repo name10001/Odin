@@ -10,7 +10,7 @@ class CardStack {
         this.allowedToPlay = allowedToPlay;
         this.options = options;
         this.url = url;
-        this.image = GAME_CANVAS.cardImages[url];
+        this.image = GUI.cardImages[url];
         this.optionStrings = [];
         this.optionIds = [];
         this.cardIds = [id];
@@ -47,7 +47,7 @@ class CardStack {
     constructor(id, url, allowedToPlay, options) {
         this.id = id;
         this.allowedToPlay = allowedToPlay;
-        this.image = GAME_CANVAS.cardImages[url];
+        this.image = GUI.cardImages[url];
         this.optionStrings = [];
         this.optionIds = [];
         if(options!=null) {
@@ -97,7 +97,7 @@ class Game {
         //update cards at the top
         this.topCards.length = 0;
         for(let card of update['cards on deck']) {
-            this.topCards.push(GAME_CANVAS.cardImages[card['card image url']]);
+            this.topCards.push(GUI.cardImages[card['card image url']]);
         }
         //update planning cards
         this.planningCards.length = 0;
