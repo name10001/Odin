@@ -9,45 +9,14 @@ class Player:
         self.player_id = player_id
         self.hand = []
         self.name = name
-        self.said_uno_previous_turn = False
-        self.said_uno_this_turn = False
+        # self.said_uno_previous_turn = False
+        # self.said_uno_this_turn = False
         self.picked_up_this_turn = False
         self.sid = None
         self.add_new_cards(game.starting_number_of_cards)
-        self.planning_pile = []  # TODO - make it so the player knows what cards they have played so they can edit them
-
-    def say_uno(self):
-        """
-        Say uno to all the other players and remembers that the player said Uno
-        :return:
-        """
-        if self.game.turn != self:
-            return
-        self.said_uno_this_turn = True
-        with fs.app.app_context():
-            fs.socket_io.emit(
-                "message for player",
-                self.name + " is on Uno!",
-                room=self.game.game_id + "_game",
-                include_self=False
-            )
-
-    def had_won(self):
-        """
-        checks if the player has one, if they have then it returns True.
-        :return:
-        """
-        return len(self.hand) == 0
-
-    def find_card(self, card_id):
-        """
-        Finds a card owned by the player
-        :param card_id:
-        :return: Card if a card is found, None if not found
-        """
-        for card in self.hand:
-            if card.get_id() == card_id:
-                return card
+        self.planning_pile = []
+        self.turns_left = 1
+        self.state = "not turn"
 
     def play_card(self, card_id, chosen_option):
         """
@@ -65,62 +34,38 @@ class Player:
             self.hand.remove(card)
             self.game.add_played_card(card)
             self.planning_pile.append((card, chosen_option))
+            card_below = self.game.played_cards[len(self.game.played_cards)-2]
+            card.prepare_card(self, chosen_option, card_below)
         self.card_update()
-
-    def undo(self):
-        """
-        If the player has put down a card this turn it will undo the latest one
-        :return:
-        """
-        if len(self.planning_pile) == 0 or not self.is_turn():
-            return
-        card_to_remove = self.planning_pile.pop()[0]
-        self.game.played_cards.remove(card_to_remove)
-        self.hand.append(card_to_remove)
-
-        self.game.update_players()
-
-    def _can_be_played(self, card):
-        """
-        Can the given card be played right now
-        :return:
-        """
-        top_card = self.game.played_cards[-1]
-        is_first_card = len(self.planning_pile) == 0
-
-        if self.is_turn() and not is_first_card:
-            return card.can_be_played_with(self.planning_pile[0][0], self)
-        elif card.can_be_played_on(top_card, self):
-            return True
-        else:
-            return False
 
     def finish_turn(self):
         """
 
-        :return:
+        :return: boolean, True of the player should have another turn
         """
         played_pickup = False
+        # play cards from planing pile
         for (card, chosen_option) in self.planning_pile:
-            card_below = self.game.played_cards[self.game.played_cards.index(card)]
+            card_below = self.game.played_cards[self.game.played_cards.index(card)-1]
             card.play_card(self, chosen_option, card_below)
             if card.CAN_BE_ON_PICKUP is True:
                 played_pickup = True
 
+        # if the player has won but did not say uno in the previous turn, make them pickup
+        # if self.said_uno_previous_turn is False and self.had_won() is True:
+        #     self.pickup()
+        # self.said_uno_previous_turn = self.said_uno_this_turn
+        # self.said_uno_this_turn = False
+
+        #
         if self.game.pickup != 0 and played_pickup is False:
             self.pickup()
-
-        if self.said_uno_previous_turn is False and self.had_won() is True:
-            self.pickup()
-        self.said_uno_previous_turn = self.said_uno_this_turn
-        self.said_uno_this_turn = False
-
+        # if player did not play any cards, make them pickup
         if len(self.planning_pile) == 0:
             self.pickup()
         self.planning_pile = []
 
-        self.picked_up_this_turn = False
-
+        # send wining message to everyone but this player
         if self.had_won():
             with fs.app.app_context():
                 fs.socket_io.emit(
@@ -130,41 +75,23 @@ class Player:
                     include_self=False
                 )
 
-    def pickup(self):
-        """
-        If there is a pickup chain this will pick it up, otherwise it will pickup 1
-        only runs if its the players turn
-        :return: None
-        """
-        if self.picked_up_this_turn is True:
-            return
-        if self.game.turn != self:
-            return
-        if self.game.pickup == 0:
-            self.add_new_cards(1)
-        else:
-            self.add_new_cards(self.game.pickup)
-            self.game.pickup = 0
-        self.card_update()
-        self.picked_up_this_turn = True
+        self.picked_up_this_turn = False
 
-    def add_new_cards(self, number):
-        """
-        gets new cards from deck and adds them to hand
-        Does not update player
-        Does not check for pickup chains of weather its the players turn
-        if you want that, use pickup(self) instead
-        :param number: number of cards to add
-        :return: None
-        """
-        # TODO: this keeps giving errors sometimes
-        for i in range(0, number):
-            self.hand.append(self.game.deck.pickup())
+        # check if player has any more turns left.
+        self.turns_left -= 1
+        if self.turns_left > 0:
+            return True
+        else:
+            self.state = "not turn"
+            self.turns_left = 1
+            return False
 
     def card_update(self):
         """
-        sends all cards to client in json from
-        :return:
+        Sends all the information to the player to render the game.
+        This includes but is not limited to, the players hand, the played cards and other player information
+        It is sent in the form of JSON to the client where the information is rendered using javascript
+        :return: None
         """
         json_to_send = {
             "cards on deck": [],
@@ -208,24 +135,126 @@ class Player:
                 }
             )
 
-        # get all players
+        # get information all players
         for player in self.game.players:
             json_to_send["players"].append(
                 {
                     "name": player.get_name(),
                     "number of cards": player.size_of_hand(),
                     "is turn": player.is_turn(),
-                    "is uno": player.is_uno(),
+                    #"is uno": player.is_uno(),
                     "is you": player == self,
                 }
             )
 
-        # send
+        # send players client
         with fs.app.app_context():
             fs.socket_io.emit("card update", json_to_send, room=self.sid)
 
-    def is_uno(self):
-        return self.said_uno_previous_turn or self.said_uno_this_turn
+    def pickup(self):
+        """
+        If there is a pickup chain this will pick it up, otherwise it will pickup 1
+        only runs if its the players turn
+        :return: None
+        """
+        if self.picked_up_this_turn is True:
+            return
+        if self.is_turn() is False:
+            return
+        if self.game.pickup == 0:
+            self.add_new_cards(1)
+        else:
+            self.add_new_cards(self.game.pickup)
+            self.game.pickup = 0
+        self.card_update()
+        self.picked_up_this_turn = True
+
+    def undo(self):
+        """
+        If the player has put down a card this turn it will undo the latest one
+        :return:
+        """
+        if len(self.planning_pile) == 0 or not self.is_turn():
+            return
+        card_to_remove = self.planning_pile.pop()[0]
+        self.game.played_cards.remove(card_to_remove)
+        self.hand.append(card_to_remove)
+
+        played_on = self.game.played_cards[len(self.game.played_cards)-1]
+        card_to_remove.undo_prepare_card(self, played_on)
+
+        self.game.update_players()
+
+    def _can_be_played(self, card):
+        """
+        Can the given card be played right now
+        :return:
+        """
+        top_card = self.game.played_cards[-1]
+        is_first_card = len(self.planning_pile) == 0
+
+        if self.is_turn() and not is_first_card:
+            return card.can_be_played_with(self.planning_pile, self)
+        elif card.can_be_played_on(top_card, self):
+            return True
+        else:
+            return False
+
+    # def say_uno(self):
+    #    """
+    #    Say uno to all the other players and remembers that the player said Uno
+    #    :return:
+    #    """
+    #    if self.is_turn() is False:
+    #        return
+    #    self.said_uno_this_turn = True
+    #    with fs.app.app_context():
+    #        fs.socket_io.emit(
+    #            "message for player",
+    #            self.name + " is on Uno!",
+    #            room=self.game.game_id + "_game",
+    #            include_self=False
+    #        )
+
+    def add_new_cards(self, number):
+        """
+        gets new cards from deck and adds them to hand
+        Does not update player
+        Does not check for pickup chains of weather its the players turn
+        if you want that, use pickup(self) instead
+        :param number: number of cards to add
+        :return: None
+        """
+        number_to_pickup = min(6969 - len(self.hand), int(number))
+        for i in range(0, number_to_pickup):
+            self.hand.append(self.game.deck.pickup())
+
+    def had_won(self):
+        """
+        checks if the player has one, if they have then it returns True.
+        :return:
+        """
+        return len(self.hand) == 0
+
+    def find_card(self, card_id):
+        """
+        Finds a card owned by the player
+        :param card_id:
+        :return: Card if a card is found, None if not found
+        """
+        for card in self.hand:
+            if card.get_id() == card_id:
+                return card
+
+    def start_turn(self):
+        """
+        starts the players turn
+        :return:
+        """
+        self.state = "playing turn"
+
+    # def is_uno(self):
+    #    return self.said_uno_previous_turn or self.said_uno_this_turn
 
     def size_of_hand(self):
         return len(self.hand)
@@ -252,4 +281,4 @@ class Player:
         return self.player_id
     
     def is_turn(self):
-        return self == self.game.turn
+        return self.state == "playing turn"

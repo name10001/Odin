@@ -16,13 +16,17 @@ all_cards = [
     BlueNine, GreenNine, PurpleNine, RedNine, YellowNine, 
     BlueSixtyNine, GreenSixtyNine, PurpleSixtyNine, RedSixtyNine, YellowSixtyNine, 
     BlueSkip, GreenSkip, PurpleSkip, RedSkip, YellowSkip, WhiteSkip, BlackSkip,
+
     BluePickup2, GreenPickup2, PurplePickup2, RedPickup2, YellowPickup2, WhitePickup2, BlackPickup2,
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
     BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck,
-    Pickup10, Pickup4, PickupTimes2, Pawn, FeelingBlue, Plus, FuckYou,
+    Pickup10, Pickup4, PickupTimes2, Pawn, FeelingBlue, Plus, FuckYou, AtomicBomb,
     EA15, EA20, EA30,
     BlankBro, Happiness,
-    SwapHand, Communist, Capitalist, Genocide, Jesus
+    SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos,
+    ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, Nazi, 
+    ColourChooser, RedBlueSwapper, RedGreenSwapper, RedYellowSwapper, GreenBlueSwapper,
+    BlueYellowSwapper, YellowGreenSwapper, BlackWhiteSwapper
 ]
 
 
@@ -54,27 +58,44 @@ category_indexs = [
     },
     {
         "colours": (),
-        "types": ('pickup2', 'pickup10', 'pickup4', 'pickupTimes2'),
+        "types": ("Creeper", "Smurf", "Lady Of The Night", "Man Of The Day"),
+        "index": 3
+    },
+    {
+        "colours": (),
+        "types": ('Reverse', 'Skip'),
+        "index": 4
+    },
+    {
+        "colours": (),
+        "types": ('+2', '+10', '+4', 'x2'),
         "index": 5
     },
     {
         "colours": ('black'),
         "types": (),
-        "index": 3
+        "index": 6
     },
     {
         "colours": ('white'),
         "types": (),
-        "index": 4
-    }
+        "index": 7
+    },
 ]
 
 
 def get_card_index(card):
+    """
+    Finds and returns the category index of the given card.
+    This is used for sorting cards by category.
+    The higher the index the higher in the pile it should be
+    :param card: card ti find the category of
+    :return: int that represents the category that its in
+    """
     for category_index in category_indexs:
-        if card.CARD_TYPE in category_index["types"]:
+        if card.get_type() in category_index["types"]:
             return category_index["index"]
-        if card.CARD_COLOUR in category_index["colours"]:
+        if card.get_colour() in category_index["colours"]:
             return category_index["index"]
     return miscellaneous_category_index
 
@@ -82,9 +103,9 @@ def get_card_index(card):
 def get_random_card():
     """
     gets a new random card and returns it
-    This does not take into account that it may be a band type
-    use Deck class for that
-    :return: a card
+    This does not take into account that it may be a banned type
+    use a Deck class for that
+    :return: an uninitiated card
     """
     place_in_deck = randint(0, size_of_deck)
     up_to = 0
@@ -94,3 +115,16 @@ def get_random_card():
         else:
             up_to += card.NUMBER_IN_DECK
     raise RuntimeError("no card found.")
+
+
+def colours_are_compatible(colour1, colour2):
+    if colour1 == colour2:
+        return True
+    elif colour1 == "white":
+        return colour2 != "black"
+    elif colour1 == "black":
+        return colour2 != "white" and colour2 != "purple"
+    elif colour1 == "purple":
+        return colour2 == "white"
+    else:
+        return colour2 == "white" or colour2 == "black"

@@ -3,6 +3,10 @@ const CARD_RATIO = 670.0/1045.0;
 const MAX_CARD_WIDTH = 134;
 const MAX_FONT_SIZE = 40;
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 class Button {
     constructor(x,y,width,height,text) {
         this.x = x;
@@ -89,6 +93,7 @@ class GameCanvas {
         this.clickPosition = {x:0,y:0};
         this.mouseMove = {x:0,y:0};
         this.draggedCard = -1;
+        this.dragAll = false;
         this.optionsWindow = null;
         this.scrollSpeed = 0;
         this.dragType = 0;
@@ -249,27 +254,60 @@ class GameCanvas {
         this.ctx.stroke();
         this.ctx.fillRect(scrollX-this.CARD_WIDTH/2,scrollY-this.GAP_SIZE,this.CARD_WIDTH,this.GAP_SIZE*2);
         this.ctx.strokeRect(scrollX-this.CARD_WIDTH/2,scrollY-this.GAP_SIZE,this.CARD_WIDTH,this.GAP_SIZE*2);
+        
 
-
+        
         //draw your hand
-        for(let i = 0; i<GAME.yourCards.length;i++) {
-            let card = GAME.yourCards[i];
-            if(i==this.draggedCard) continue;
-            this.ctx.drawImage(card.image,
-                this.canvas.width/2+this.scrollOffset+i*this.CARD_WIDTH_GAP,this.canvas.height-this.GAP_SIZE-this.CARD_HEIGHT,
-                this.CARD_WIDTH,this.CARD_HEIGHT);
-            if(!card.allowedToPlay) {
+        //number font
+        this.ctx.font = "bold " + (fontSize*2) + "px Courier New";
+        this.ctx.textAlign = "left";
+
+        for(let i = 0; i<GAME.yourStacks.length;i++) {
+            let stack = GAME.yourStacks[i];
+            let stackSize = stack.size();
+            if(stackSize>=100) stackSize = 99;//if you have >=100 of one type, just say 99
+            if(i==this.draggedCard) {
+                stackSize--;
+                if(this.dragAll || stackSize==0) {
+                    continue;
+                }
+            }
+            let x = this.canvas.width/2+this.scrollOffset+i*this.CARD_WIDTH_GAP;
+            let y = this.canvas.height-this.GAP_SIZE-this.CARD_HEIGHT;
+            this.ctx.drawImage(stack.image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
+            if(!stack.allowedToPlay) {
                 this.ctx.drawImage(this.transparentImage,
-                    this.canvas.width/2+this.scrollOffset+i*this.CARD_WIDTH_GAP,this.canvas.height-this.GAP_SIZE-this.CARD_HEIGHT,
-                    this.CARD_WIDTH,this.CARD_HEIGHT);
+                    x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
+            }
+            if(stackSize>1) {
+                this.ctx.fillStyle = "#fff";
+                this.ctx.fillRect(x,y+this.CARD_HEIGHT-fontSize*2.5,fontSize*5,fontSize*2.5);
+                this.ctx.fillStyle = "#000";
+                
+                this.ctx.fillText("x" + stackSize, x+fontSize/2,y+this.CARD_HEIGHT-fontSize*0.5);
             }
         }
 
         //draw card you are dragging
         if(this.draggedCard>=0 && this.optionsWindow == null) {
-            this.ctx.drawImage(GAME.yourCards[this.draggedCard].image,this.mousePosition.x+this.selectOffset.x,this.mousePosition.y+this.selectOffset.y,this.CARD_WIDTH,this.CARD_HEIGHT);
-            if(!GAME.yourCards[this.draggedCard].allowedToPlay) {
-                this.ctx.drawImage(this.transparentImage,this.mousePosition.x+this.selectOffset.x,this.mousePosition.y+this.selectOffset.y,this.CARD_WIDTH,this.CARD_HEIGHT);
+            let x = this.mousePosition.x+this.selectOffset.x;
+            let y = this.mousePosition.y+this.selectOffset.y;
+
+            this.ctx.drawImage(GAME.yourStacks[this.draggedCard].image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
+            if(!GAME.yourStacks[this.draggedCard].allowedToPlay) {
+                this.ctx.drawImage(this.transparentImage,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
+            }
+            if(this.dragAll) {
+                let stack = GAME.yourStacks[this.draggedCard];
+                let stackSize = stack.size();
+
+                if(stackSize>1) {
+                    this.ctx.fillStyle = "#fff";
+                    this.ctx.fillRect(x,y+this.CARD_HEIGHT-fontSize*2.5,fontSize*5,fontSize*2.5);
+                    this.ctx.fillStyle = "#000";
+                    
+                    this.ctx.fillText("x" + stackSize, x+fontSize/2,y+this.CARD_HEIGHT-fontSize*0.5);
+                }
             }
         }
 
@@ -282,7 +320,7 @@ class GameCanvas {
     /**
      * Method when you tap/click a point on the screen
      */
-    click(x, y) {
+    click(x, y, shiftPressed) {
         if(this.optionsWindow!=null) {
             this.optionsWindow.click(x,y);
             return;
@@ -295,6 +333,7 @@ class GameCanvas {
             this.clickPosition.x = this.mousePosition.x-this.scrollOffset;
             this.clickPosition.y = this.mousePosition.y;
             this.dragType = 1;
+            if(shiftPressed) this.dragAll = true;
         }
         //Clicked in the scroll area
         else if(this.mousePosition.y<this.canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*2 && this.mousePosition.y>this.canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*4) {
@@ -320,7 +359,7 @@ class GameCanvas {
         if(r<=this.CARD_WIDTH && this.clickPosition.y<this.canvas.height-this.GAP_SIZE && this.clickPosition.y>this.canvas.height-this.GAP_SIZE-this.CARD_HEIGHT) {
             let i = Math.floor(x/this.CARD_WIDTH_GAP);
     
-            if(i>=0 && i<GAME.yourCards.length) {
+            if(i>=0 && i<GAME.yourStacks.length) {
                 //i is the card id you selected
                 this.draggedCard = i;
                 this.selectOffset.x = -r;
@@ -380,7 +419,7 @@ class GameCanvas {
         }
         //selected a card
         if(this.draggedCard>=0 && this.mousePosition.y<this.canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*3) {
-            let card = GAME.yourCards[this.draggedCard];
+            let card = GAME.yourStacks[this.draggedCard];
             if(card.allowedToPlay) {
                 //TODO show all card options
                 if(card.optionIds.length>0) {
@@ -394,12 +433,20 @@ class GameCanvas {
                         this.mousePosition.y = 0;
                     }
                     return;
-                }else GAME.playCard(card.id,null);
+                }else {
+                    if(this.dragAll) {
+                        card.playAll();
+                    }
+                    else {
+                        card.playSingle();
+                    }
+                }
             }
         }
         this.draggedCard = -1;
         this.mousePressed = false;
         this.dragType = 0;
+        this.dragAll = false;
         if(touch) {
             this.mousePosition.x = 0;
             this.mousePosition.y = 0;
@@ -446,14 +493,22 @@ class GameCanvas {
      */
     exitOptions(pickedOption) {
         this.optionsWindow = null;
-        GAME.playCard(GAME.yourCards[this.draggedCard].id,pickedOption);
+
+        if(this.dragAll) {
+            GAME.yourStacks[this.draggedCard].playAll(pickedOption);
+
+        }else {
+            GAME.yourStacks[this.draggedCard].playSingle(pickedOption);
+
+        }
+        //GAME.playCard(GAME.your[this.draggedCard].id,pickedOption);
         
         this.draggedCard = -1;
-
+        this.dragAll = false;
     }
 
     getMinScroll() {
-        return -GAME.yourCards.length*this.CARD_WIDTH_GAP-this.canvas.width/4;
+        return -GAME.yourStacks.length*this.CARD_WIDTH_GAP-this.canvas.width/4;
     }
     getMaxScroll() {
         return this.canvas.width/4 + this.GAP_SIZE;
@@ -482,7 +537,7 @@ VARIOUS EVENTS
 
 function mouseDown(event) {
     if(event.button == 0) {
-        GAME_CANVAS.click(event.offsetX,event.offsetY);
+        GAME_CANVAS.click(event.offsetX,event.offsetY,event.shiftKey);
     }
 }
 function mouseMove(event) {
@@ -495,7 +550,7 @@ function mouseUp(event) {
 }
 
 function touchStart(event) {
-    GAME_CANVAS.click(event.touches[0].clientX,event.touches[0].clientY);
+    GAME_CANVAS.click(event.touches[0].clientX,event.touches[0].clientY,false);
 }
 function touchMove(event) {
     GAME_CANVAS.drag(event.touches[0].clientX, event.touches[0].clientY);
@@ -518,6 +573,7 @@ function resize() {
 
 var lastTime = 0;
 function gameLoop(timestamp) {
+    sleep(10);
     let dt = timestamp-lastTime;
     lastTime = timestamp;
     

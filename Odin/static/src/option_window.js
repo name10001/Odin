@@ -74,7 +74,7 @@ class OptionsWindow {
 
             //draw the text
             ctx.fillStyle = ctx.strokeStyle;
-            ctx.fillText(this.optionStrings[i],x+gap+fontSize,y2+fontSize*1.25);
+            ctx.fillText(this.optionStrings[i],x+gap+fontSize,y2+fontSize*1.25,optionBoxWidth-fontSize*2);
 
             i++;
             y2+=this.optionBoxHeight;

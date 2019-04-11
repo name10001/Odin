@@ -10,30 +10,34 @@ class Game:
     This stores information about a game
     """
 
-    def __init__(self, game_id, players, waiting_room, say_uno_needed=False, starting_number_of_cards=10):
-        self.say_uno_needed = say_uno_needed
+    def __init__(self, game_id, players, waiting_room, starting_number_of_cards=50):
+        #self.say_uno_needed = say_uno_needed
         self.game_id = game_id
         self.waiting_room = waiting_room
         self.starting_number_of_cards = starting_number_of_cards
 
         self.players = []
 
+        # setting up cards
         self.deck = cards.Deck(self)
         self.played_cards = []
         self.played_cards.append(self.deck.pickup())
         self.pickup = 0
 
-        # setup players
+        # setup players and turn system
+        if len(players) < 2:
+            print("WARNING: 2 or more players are needed to make the game work properly")
         for player in players:
             self.players.append(Player(self, players[player], player))
         self.player_turn_index = random.randint(0, len(self.players) - 1)
         self.turn = self.players[self.player_turn_index]
+        self.turn.start_turn()
         self.direction = 1  # 1 or -1
         self.iterate_turn_by = 1
 
     def find_card(self, card_id):
         """
-        checks to see if a card exists in this came
+        Checks to see if a card exists in this came
         :param card_id: id of card to look for
         :return: returns the card if found, else None
         """
@@ -48,10 +52,9 @@ class Game:
 
     def get_player(self, player_id):
         """
-        gets a player from this game with the given id
+        Gets the player from this game with the given id
         :param player_id: id of player to look for
         :return: returns the player if found, else None
-        :return:
         """
         for player in self.players:
             if player.get_id() == player_id:
@@ -67,10 +70,14 @@ class Game:
 
     def next_turn(self):
         """
-        proceeds to the next player
+        Proceeds to the next player
         :return: None
         """
-        self.turn.finish_turn()
+        # if player has another turn
+        is_finished = self.turn.finish_turn()
+        if is_finished is True:
+            self.update_players()
+            return
 
         # increment player index
         for i in range(0, self.iterate_turn_by):
@@ -83,12 +90,13 @@ class Game:
         self.iterate_turn_by = 1
 
         self.turn = self.players[self.player_turn_index]
+        self.turn.start_turn()
 
         self.update_players()
 
     def update_players(self):
         """
-        sends updates to all the players
+        sends updates to all the players in this game
         :return:
         """
         for player in self.players:
@@ -97,8 +105,8 @@ class Game:
     def message(self, message, data):
         """
         When a message is sent to a game it comes here then gets sent to all the clients
-        :param message:
-        :param data:
+        :param message: the message to send to the server, e.g. "pickup" or "uno"
+        :param data: data that gone along with it, e.g. message="play card", data=("swap_hand_card_15", "Jeff")
         :return: None
         """
         self.waiting_room.modify()
@@ -108,9 +116,9 @@ class Game:
 
         print(player.get_name(), message, data)
 
-        if message == "uno":
-            player.say_uno()
-        elif message == "play card":
+        #if message == "uno":
+        #    player.say_uno()
+        if message == "play card":
             player.play_card(data[0], data[1])
         elif message == "finished turn":
             if player == self.turn:
@@ -134,8 +142,8 @@ class Game:
 
     def initial_connection(self):
         """
-
-        :return:
+        subscribes the player to game updates
+        :return: None
         """
         self.waiting_room.modify()
         self.get_player(session['player_id']).set_sid(request.sid)
@@ -144,3 +152,6 @@ class Game:
 
     def get_id(self):
         return self.game_id
+
+    def get_top_card(self):
+        return self.played_cards[-1]

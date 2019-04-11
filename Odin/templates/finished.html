@@ -9,7 +9,15 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
-        <title>один</title>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+        
+        <script>
+            $(document).ready(function() {
+				socket = io.connect(document.domain, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
+            });
+        
+        </script>
+        <title>Game</title>
         <style>
             body {
                 background-image: url("{{ url_for('static', filename='banner.jpg') }}");
@@ -17,27 +25,20 @@
                 background-size: 100% 100%;
                 height: 100vh;
             }
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0px;
+                border: 0;
+                overflow: hidden; /*  Disable scrollbars */
+                display: block;  /* No floating content on sides */
+            }
             #loginPanel {
                 top: 20vh;
             }
         </style>
     </head>
     <body>
-    <div class="col-sm-6 col-sm-offset-3" id="loginPanel">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Pick a user name
-            </div>
-            <div class="panel-body">
-                <form method="post">
-                    <div class="form-group">
-                        <label for="InputName">User name</label>
-                        <input type="text" class="form-control" id="InputName" name="player_name" placeholder="Enter a name" maxlength="20" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-            </div>
-        </div>
-    </div>
-  </body>
+        <!--Idk isaac you'd probably be better at implementing this than me-->
+    </body>
 </html>

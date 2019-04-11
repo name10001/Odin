@@ -5,7 +5,45 @@ class Player {
     }
 }
 
-class Card {
+class CardStack {
+    constructor(id, url, allowedToPlay, options) {
+        this.allowedToPlay = allowedToPlay;
+        this.options = options;
+        this.url = url;
+        this.image = GAME_CANVAS.cardImages[url];
+        this.optionStrings = [];
+        this.optionIds = [];
+        this.cardIds = [id];
+        if(options!=null) {
+            for(let id of Object.keys(options)) {
+                this.optionIds.push(id);
+                this.optionStrings.push(options[id]);
+            }
+        }
+    }
+
+    addCard(id) {
+        this.cardIds.push(id);
+    }
+
+    playAll(options) {
+        for(let id of this.cardIds) {
+            GAME.playCard(id,options);
+        }
+    }
+
+    playSingle(options) {
+        let id = this.cardIds.pop();
+        GAME.playCard(id,options);
+    }
+
+    size() {
+        return this.cardIds.length;
+    }
+
+}
+
+/*class Card {
     constructor(id, url, allowedToPlay, options) {
         this.id = id;
         this.allowedToPlay = allowedToPlay;
@@ -19,11 +57,12 @@ class Card {
             }
         }
     }
-}
+}*/
 
 class Game {
     constructor() {
-        this.yourCards = [];
+        //this.yourCards = [];
+        this.yourStacks = [];
         this.topCards = [];
         this.planningCards = [];
         this.yourTurn = false;
@@ -37,13 +76,24 @@ class Game {
 
     update(update) {
         //console.log(update);
-        this.yourCards.length = 0;
-    
+        //this.yourCards.length = 0;
+        
+
+        this.yourStacks.length = 0;
+        let lastStack = null;
         //update the cards in your hand
         for(let card of update['your cards']) {
-            this.yourCards.push(new Card(card['card id'],card['card image url'],card['can be played'],card['options']));
+            //this.yourCards.push(new CardStack(card['card id'], card['card image url'], card['can be played'], card['options']));
+            if(lastStack != null) {
+                if(lastStack.url == card['card image url']) {
+                    lastStack.addCard(card['card id']);
+                    continue;
+                }
+            }
+            lastStack = new CardStack(card['card id'], card['card image url'], card['can be played'], card['options']);
+            this.yourStacks.push(lastStack);
         }
-    
+
         //update cards at the top
         this.topCards.length = 0;
         for(let card of update['cards on deck']) {
@@ -52,7 +102,7 @@ class Game {
         //update planning cards
         this.planningCards.length = 0;
         for(let card of update['planning pile']) {
-            this.planningCards.push(new Card(card['card id'], card['card image url'], true,null));
+            this.planningCards.push(new CardStack(card['card id'], card['card image url'], true,null));
         }
 
         //update pickup
