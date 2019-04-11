@@ -393,9 +393,9 @@ class Gui {
     /**
      * Release the mouse/touch
      */
-    release(touch) {
+    release() {
         if(this.optionsWindow!=null) {
-            this.optionsWindow.release(touch);
+            this.optionsWindow.release();
             return;
         }
         //selected a card
@@ -409,7 +409,7 @@ class Gui {
                     //keep dragged card at same value
                     this.mousePressed = false;
                     this.dragType = 0;
-                    if(touch) {
+                    if(IS_MOBILE) {
                         this.mousePosition.x = 0;
                         this.mousePosition.y = 0;
                     }
@@ -428,7 +428,7 @@ class Gui {
         this.mousePressed = false;
         this.dragType = 0;
         this.dragAll = false;
-        if(touch) {
+        if(IS_MOBILE) {
             this.mousePosition.x = 0;
             this.mousePosition.y = 0;
         }

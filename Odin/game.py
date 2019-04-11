@@ -11,7 +11,7 @@ class Game:
     """
 
     def __init__(self, game_id, players, waiting_room, starting_number_of_cards=50):
-        #self.say_uno_needed = say_uno_needed
+        # self.say_uno_needed = say_uno_needed
         self.game_id = game_id
         self.waiting_room = waiting_room
         self.starting_number_of_cards = starting_number_of_cards

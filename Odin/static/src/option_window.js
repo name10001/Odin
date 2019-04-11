@@ -110,8 +110,8 @@ class OptionsWindow {
 
     }
     
-    release(touch) {
-        if(touch) {
+    release() {
+        if(IS_MOBILE) {
             this.mousePosition.x = 0;
             this.mousePosition.y = 0;
         }

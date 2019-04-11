@@ -4,30 +4,53 @@ function sleep(ms) {
 }
 
 /**
- * Sets up all listeners
+ * Main method - sets up game, gui and listeners
  */
-function setup() {
+$(document).ready(function() {
+    // SocketIO
+    socket = io.connect(document.domain, {
+        'reconnection': true,
+        'reconnectionDelay': 500,
+        'maxReconnectionAttempts': Infinity
+    });
+
+    GAME = new Game();
+    GUI = new Gui();
+
+    socket.on('connect', function () {
+        socket.emit("initial game connection", GAME_ID);
+    });
+
+    socket.on('message for player', function (message) {
+        $("#message-from-server").html(message);
+        $('.modal').modal("show");
+
+    });
+
+    socket.on('card update', function(update) {
+        GAME.update(update);
+    });
+    
     //load all events
     if('ontouchstart' in document.documentElement) {
-        this.canvas.addEventListener('touchstart',touchStart);
-        this.canvas.addEventListener('touchmove',touchMove);
-        this.canvas.addEventListener('touchend',touchEnd);
+        GUI.canvas.addEventListener('touchstart',touchStart);
+        GUI.canvas.addEventListener('touchmove',touchMove);
+        GUI.canvas.addEventListener('touchend',touchEnd);
         IS_MOBILE = true;
     }
     else {
-        this.canvas.addEventListener('mousedown',mouseDown);
-        this.canvas.addEventListener('mousemove',mouseMove);
-        this.canvas.addEventListener('mouseup',mouseUp);
-        this.canvas.addEventListener('mouseleave',mouseLeave);
-        this.canvas.addEventListener('wheel',mouseWheel);
+        GUI.canvas.addEventListener('mousedown',mouseDown);
+        GUI.canvas.addEventListener('mousemove',mouseMove);
+        GUI.canvas.addEventListener('mouseup',mouseUp);
+        GUI.canvas.addEventListener('mouseleave',mouseLeave);
+        GUI.canvas.addEventListener('wheel',mouseWheel);
         IS_MOBILE = false;
     }
 
     window.addEventListener('resize',resize);
 
     gameLoop(0);
-
-}
+});
 
 function mouseDown(event) {
     if(event.button == 0) {
@@ -39,7 +62,7 @@ function mouseMove(event) {
 }
 function mouseUp(event) {
     if(event.button==0) {
-        GUI.release(false);
+        GUI.release();
     }
 }
 
@@ -50,7 +73,7 @@ function touchMove(event) {
     GUI.drag(event.touches[0].clientX, event.touches[0].clientY);
 }
 function touchEnd(event) {
-    GUI.release(true);
+    GUI.release();
 }
 
 function mouseLeave(event) {
@@ -61,6 +84,10 @@ function mouseLeave(event) {
 function mouseWheel(event) {
     GUI.wheel(Math.sign(event.deltaY));
 }
+
+/**
+ * Resize method, calculates dimensions of items on the screen
+ */
 function resize() {
     GUI.setCardDimensions(window.innerWidth,window.innerHeight);
 }
