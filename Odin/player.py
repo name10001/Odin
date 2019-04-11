@@ -183,8 +183,6 @@ class Player:
         else:
             self.add_new_cards(self.game.pickup)
             self.game.pickup = 0
-        print("from pickup")
-        self.card_update()
         self.picked_up_this_turn = True
 
     def undo(self):
@@ -244,10 +242,8 @@ class Player:
         :return: None
         """
         number = min(1420 - len(self.sorted_hand_list), int(number))
-        cards_to_add = self.game.deck.pickup(number)
-        for card in cards_to_add:
-            self.add_card(card(self.game), update_player=False, sort_after=False)
-        self.sorted_hand_list.sort()
+        cards_to_add = [card(self.game) for card in self.game.deck.pickup(number)]
+        self.add_cards(cards_to_add, update_player=False)
 
     def add_card(self, card, sort_after=True, update_player=True):
         """
@@ -281,7 +277,7 @@ class Player:
             print("from add_cards")
             self.card_update()
 
-    def remove_card(self, card, update_player=True):
+    def remove_card(self, card, update_player=False):
         """
         removes multiple cards
         :param card:
@@ -333,7 +329,7 @@ class Player:
     def set_hand(self, hand):
         self.sorted_hand_list = []
         self.hand_dict.clear()
-        self.add_cards(hand)
+        self.add_cards(hand, update_player=False)
 
     def get_hand(self):
         return self.sorted_hand_list

@@ -108,12 +108,7 @@ class AbstractCard:
                     or character in ("_",):
                 id_safe += character
 
-        # if its ID is already in use, add a number to it
-        if self.game.find_card(id_safe) is not None:
-            num = 2
-            while self.game.find_card(id_safe + "_" + str(num)) is not None:
-                num += 1
-            id_safe += "_" + str(num)
+        id_safe += "_" + str(id(self))
 
         return id_safe
 
