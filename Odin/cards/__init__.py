@@ -4,11 +4,11 @@ from cards.all_other_cards import *
 from cards.deck import Deck
 
 all_cards = [
-    BlueZero, GreenZero, PurpleZero, RedZero, YellowZero, 
-    BlueOne, GreenOne, PurpleOne, RedOne, YellowOne, 
-    BlueTwo, GreenTwo, PurpleTwo, RedTwo, YellowTwo, 
-    BlueThree, GreenThree, PurpleThree, RedThree, YellowThree, 
-    BlueFour, GreenFour, PurpleFour, RedFour, YellowFour, 
+    BlueZero, GreenZero, PurpleZero, RedZero, YellowZero,
+    BlueOne, GreenOne, PurpleOne, RedOne, YellowOne,
+    BlueTwo, GreenTwo, PurpleTwo, RedTwo, YellowTwo,
+    BlueThree, GreenThree, PurpleThree, RedThree, YellowThree,
+    BlueFour, GreenFour, PurpleFour, RedFour, YellowFour,
     BlueFive, GreenFive, PurpleFive, RedFive, YellowFive, 
     BlueSix, GreenSix, PurpleSix, RedSix, YellowSix, 
     BlueSeven, GreenSeven, PurpleSeven, RedSeven, YellowSeven, 
@@ -28,6 +28,7 @@ all_cards = [
     ColourChooser, RedBlueSwapper, RedGreenSwapper, RedYellowSwapper, GreenBlueSwapper,
     BlueYellowSwapper, YellowGreenSwapper, BlackWhiteSwapper
 ]
+
 
 card_weights = [card.NUMBER_IN_DECK for card in all_cards]
 

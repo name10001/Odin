@@ -1,42 +1,59 @@
 import cards
 import flask_server as fs
-
+from time import time
 
 class Player:
     def __init__(self, game, name, player_id):
         self.name = name
         self.game = game
         self.player_id = player_id
-        self.hand = []
+        self.sorted_hand_list = []
+        self.hand_dict = {}
         self.name = name
         # self.said_uno_previous_turn = False
         # self.said_uno_this_turn = False
         self.picked_up_this_turn = False
         self.sid = None
-        self.add_new_cards(game.starting_number_of_cards)
         self.planning_pile = []
         self.turns_left = 1
         self.state = "not turn"
 
-    def play_card(self, card_id, chosen_option):
+    def play_cards(self, cards):
+        """
+        Takes cards out of players hand and adds it to the games played cards
+        Also preforms all actions of the card and checks if its aloud to be played
+        :param cards: array of card to play. 2d array. e.g. [["id", "option"], ["id", "option"], etc]
+        :return: None
+        """
+        for card in cards:
+            self.play_card(card[0], card[1], update_player=False)
+        print("from play cards")
+        self.card_update()
+        self.game.update_players(exclude=self)
+
+    def play_card(self, card_id, chosen_option, update_player=True):
         """
         Takes card out of players hand and adds it to the games played cards
         Also preforms all actions of the card and checks if its aloud to be played
         :param card_id:
         :param chosen_option:
-        :return:
+        :param update_player: boolean, should the player's client be updated after the card is played
+        :return:None
         """
         card = self.find_card(card_id)
         if card is None:
             return
-
         if self._can_be_played(card):
-            self.hand.remove(card)
-            self.game.add_played_card(card)
+            self.remove_card(card, update_player=False)
+            self.game.add_played_card(card, update_players=False)
             self.planning_pile.append((card, chosen_option))
             card_below = self.game.played_cards[len(self.game.played_cards)-2]
             card.prepare_card(self, chosen_option, card_below)
-        self.card_update()
+
+        if update_player:
+            print("from play 1 card")
+            self.card_update()
+            self.game.update_players(exclude=self)
 
     def finish_turn(self):
         """
@@ -93,6 +110,7 @@ class Player:
         It is sent in the form of JSON to the client where the information is rendered using javascript
         :return: None
         """
+        print("updateing player!")
         json_to_send = {
             "cards on deck": [],
             "your cards": [],
@@ -165,6 +183,7 @@ class Player:
         else:
             self.add_new_cards(self.game.pickup)
             self.game.pickup = 0
+        print("from pickup")
         self.card_update()
         self.picked_up_this_turn = True
 
@@ -177,7 +196,7 @@ class Player:
             return
         card_to_remove = self.planning_pile.pop()[0]
         self.game.played_cards.remove(card_to_remove)
-        self.hand.append(card_to_remove)
+        self.add_card(card_to_remove)
 
         played_on = self.game.played_cards[len(self.game.played_cards)-1]
         card_to_remove.undo_prepare_card(self, played_on)
@@ -224,16 +243,64 @@ class Player:
         :param number: number of cards to add
         :return: None
         """
-        number = min(6969 - len(self.hand), int(number))
-        self.hand += self.game.deck.pickup(number)
-        self.hand.sort()
+        number = min(1420 - len(self.sorted_hand_list), int(number))
+        cards_to_add = self.game.deck.pickup(number)
+        for card in cards_to_add:
+            self.add_card(card(self.game), update_player=False, sort_after=False)
+        self.sorted_hand_list.sort()
+
+    def add_card(self, card, sort_after=True, update_player=True):
+        """
+        adds a single card
+        :param card:
+        :param sort_after:
+        :param update_player:
+        :return:
+        """
+        self.sorted_hand_list.append(card)
+        self.hand_dict[card.get_id()] = card
+        if sort_after is True:
+            self.sorted_hand_list.sort()
+        if update_player:
+            print("from add_card")
+            self.card_update()
+
+    def add_cards(self, cards, sort_after=True, update_player=True):
+        """
+        adds multiple cards
+        :param cards:
+        :param sort_after:
+        :param update_player:
+        :return:
+        """
+        for card in cards:
+            self.add_card(card, update_player=False, sort_after=False)
+        if sort_after is True:
+            self.sorted_hand_list.sort()
+        if update_player:
+            print("from add_cards")
+            self.card_update()
+
+    def remove_card(self, card, update_player=True):
+        """
+        removes multiple cards
+        :param card:
+        :param sort_after:
+        :param update_player:
+        :return:
+        """
+        self.sorted_hand_list.remove(card)
+        del self.hand_dict[card.get_id()]
+        if update_player:
+            print("from remove card")
+            self.card_update()
 
     def had_won(self):
         """
         checks if the player has one, if they have then it returns True.
         :return:
         """
-        return len(self.hand) == 0
+        return len(self.sorted_hand_list) == 0
 
     def find_card(self, card_id):
         """
@@ -241,9 +308,8 @@ class Player:
         :param card_id:
         :return: Card if a card is found, None if not found
         """
-        for card in self.hand:
-            if card.get_id() == card_id:
-                return card
+        if card_id in self.hand_dict:
+            return self.hand_dict[card_id]
 
     def start_turn(self):
         """
@@ -256,7 +322,7 @@ class Player:
     #    return self.said_uno_previous_turn or self.said_uno_this_turn
 
     def size_of_hand(self):
-        return len(self.hand)
+        return len(self.sorted_hand_list)
 
     def set_sid(self, sid):
         self.sid = sid
@@ -265,13 +331,12 @@ class Player:
         return self.sid
 
     def set_hand(self, hand):
-        self.hand = hand
-
-    def remove_card(self, card):
-        self.hand.remove(card)
+        self.sorted_hand_list = []
+        self.hand_dict.clear()
+        self.add_cards(hand)
 
     def get_hand(self):
-        return self.hand
+        return self.sorted_hand_list
 
     def get_name(self):
         return self.name

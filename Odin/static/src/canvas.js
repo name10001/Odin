@@ -3,10 +3,6 @@ const CARD_RATIO = 670.0/1045.0;
 const MAX_CARD_WIDTH = 134;
 const MAX_FONT_SIZE = 40;
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 class Button {
     constructor(x,y,width,height,text) {
         this.x = x;
@@ -573,7 +569,6 @@ function resize() {
 
 var lastTime = 0;
 function gameLoop(timestamp) {
-    sleep(10);
     let dt = timestamp-lastTime;
     lastTime = timestamp;
     

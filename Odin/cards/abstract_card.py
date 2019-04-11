@@ -92,7 +92,6 @@ class AbstractCard:
             is_first_card = False
         return False
 
-
     def _make_id(self):
         """
         makes and ID that is unique to itself and is human readable
