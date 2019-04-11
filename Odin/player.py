@@ -124,7 +124,6 @@ class Player:
             )
 
         # get player cards
-        self.hand.sort()
         for card in self.get_hand():
             json_to_send["your cards"].append(
                 {
@@ -225,9 +224,9 @@ class Player:
         :param number: number of cards to add
         :return: None
         """
-        number_to_pickup = min(6969 - len(self.hand), int(number))
-        for i in range(0, number_to_pickup):
-            self.hand.append(self.game.deck.pickup())
+        number = min(6969 - len(self.hand), int(number))
+        self.hand += self.game.deck.pickup(number)
+        self.hand.sort()
 
     def had_won(self):
         """

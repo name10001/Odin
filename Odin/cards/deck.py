@@ -11,9 +11,9 @@ class Deck:
         self.banned_colours = []
         self.not_banned_colours = cards.all_colours
         self.cards = cards.all_cards.copy()
-        self.number_of_cards = cards.size_of_deck
+        self.card_weights = cards.card_weights.copy()
 
-    def pickup(self):
+    def pickup(self, number):
         """
         gets a new random card and returns it.
         It will not return banned cards unless all cards have been band
@@ -21,16 +21,10 @@ class Deck:
         """
         # if all cards have been banned - you would never reach here anyway because the game would end?
         if len(self.cards) == 0:
-            return cards.get_random_card()
+            picked_card = cards.get_random_cards(number)
         else:
-            place_in_deck = random.uniform(0, self.number_of_cards - 1)
-            up_to = 0.0
-            for card in self.cards:
-                if up_to <= place_in_deck < up_to + card.NUMBER_IN_DECK:
-                    return card(self.game)
-                else:
-                    up_to += card.NUMBER_IN_DECK
-        raise RuntimeError("no card found")
+            picked_card = random.choices(self.cards, weights=self.card_weights, k=number)
+        return [card(self.game) for card in picked_card]
 
     def ban_colour(self, card_color):
         """
@@ -43,11 +37,10 @@ class Deck:
         self.banned_colours.append(card_color)
         self.not_banned_colours.remove(card_color)
 
-        cards_copy = self.cards.copy()
-        for card in cards_copy:
+        for card in self.cards.copy():
             if card.CARD_COLOUR == card_color:
                 self.cards.remove(card)
-                self.number_of_cards -= card.NUMBER_IN_DECK
+        self.card_weights = [card.NUMBER_IN_DECK for card in self.cards]
 
     def ban_type(self, card_type):
         """
@@ -60,11 +53,10 @@ class Deck:
         self.banned_types.append(card_type)
         self.not_banned_types.remove(card_type)
 
-        cards_copy = self.cards.copy()
-        for card in cards_copy:
+        for card in self.cards.copy():
             if card.CARD_TYPE == card_type:
                 self.cards.remove(card)
-                self.number_of_cards -= card.NUMBER_IN_DECK
+        self.card_weights = [card.NUMBER_IN_DECK for card in self.cards]
 
     @staticmethod
     def get_all_urls():

@@ -21,7 +21,7 @@ class Game:
         # setting up cards
         self.deck = cards.Deck(self)
         self.played_cards = []
-        self.played_cards.append(self.deck.pickup())
+        self.played_cards = self.deck.pickup(1)
         self.pickup = 0
 
         # setup players and turn system
