@@ -1,7 +1,7 @@
 from cards.abstract_card import AbstractCard
 import cards
 import random
-
+from time import time
 
 # ~~~~~~~~~~~~~~
 #    Reverse
@@ -484,8 +484,6 @@ class Communist(AbstractCard):
             player.set_hand(all_cards[i:i+number_of_cards_each])
             i += number_of_cards_each
 
-        self.game.update_players()
-
 
 class Capitalist(AbstractCard):
     NAME = "Capitalist"
@@ -507,8 +505,6 @@ class Capitalist(AbstractCard):
                 number_of_cards = len(player.get_hand())
 
         richest_player.add_new_cards(number_of_cards)
-
-        self.game.update_players()
 
 
 class SwapHand(AbstractCard):

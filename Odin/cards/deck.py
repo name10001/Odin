@@ -21,10 +21,9 @@ class Deck:
         """
         # if all cards have been banned - you would never reach here anyway because the game would end?
         if len(self.cards) == 0:
-            picked_card = cards.get_random_cards(number)
+            return cards.get_random_cards(number)
         else:
-            picked_card = random.choices(self.cards, weights=self.card_weights, k=number)
-        return [card(self.game) for card in picked_card]
+            return random.choices(self.cards, weights=self.card_weights, k=number)
 
     def ban_colour(self, card_color):
         """

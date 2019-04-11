@@ -27,14 +27,16 @@ class CardStack {
     }
 
     playAll(options) {
+        var card_array = [];
         for(let id of this.cardIds) {
-            GAME.playCard(id,options);
+            card_array.push([id,options]);
         }
+        GAME.playCard(card_array);
     }
 
     playSingle(options) {
         let id = this.cardIds.pop();
-        GAME.playCard(id,options);
+        GAME.playCard([[id,options]]);
     }
 
     size() {
@@ -131,9 +133,9 @@ class Game {
         }
     }
 
-    playCard(cardId, picked_option){
+    playCard(card_array){
         // leave picked_option as null unless needed
-        socket.emit("game message", GAME_ID, "play card", [cardId, picked_option]);
+        socket.emit("game message", GAME_ID, "play card", card_array);
     }
 
     /*sayUno(){

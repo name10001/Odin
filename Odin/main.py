@@ -108,4 +108,4 @@ schedule.every().hour.do(clear_old_games)
 if __name__ == '__main__':
     t = Thread(target=run_schedule)
     t.start()
-    fs.socket_io.run(fs.app, debug=True, host='0.0.0.0', port=80)
+    fs.socket_io.run(fs.app, debug=False, host='0.0.0.0', port=80)
