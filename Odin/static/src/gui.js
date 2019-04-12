@@ -38,7 +38,7 @@ class Gui {
         this.finishButton = new Button(CARD_WIDTH, 3, 1, "FINISHED");
         this.undoButton = new Button(CARD_WIDTH, 3, 1, "UNDO");
 
-        this.cardScroller = new ScrollArea(new Container(),CARD_WIDTH+1,CARD_HEIGHT+5);
+        this.cardScroller = new ScrollArea(new Container(),CARD_WIDTH+1,CARD_HEIGHT+9,IS_MOBILE ? 0 : 3);
     }
 
     updateCards(cardPanels) {
@@ -165,52 +165,7 @@ class Gui {
         this.cardScroller.draw();
         //DRAW CARD OPTIONS WINDOW
         if(this.optionsWindow!=null) this.optionsWindow.draw(canvas.width/2-this.CARD_WIDTH*2,canvas.height/4,this.CARD_WIDTH*4,canvas.height/2);
-
-        //draw hand scroller
-        /*let scrollY = canvas.height-this.CARD_HEIGHT-GUI_SCALE*3;
-        let scrollX = this.getScrollBarX();
-        ctx.strokeStyle = "#ddd";
-        ctx.fillStyle = "#999";
-        ctx.beginPath();
-        ctx.moveTo(GUI_SCALE,scrollY);
-        ctx.lineTo(canvas.width-GUI_SCALE,scrollY);
-        ctx.stroke();
-        ctx.fillRect(scrollX-this.CARD_WIDTH/2,scrollY-GUI_SCALE,this.CARD_WIDTH,GUI_SCALE*2);
-        ctx.strokeRect(scrollX-this.CARD_WIDTH/2,scrollY-GUI_SCALE,this.CARD_WIDTH,GUI_SCALE*2);*/
         
-
-        
-        //draw your hand
-        //number font
-        /*ctx.font = "bold " + (fontSize*2) + "px Courier New";
-        ctx.textAlign = "left";
-        console.log(this.scrollOffset);
-
-        for(let i = 0; i<game.yourStacks.length;i++) {
-            let stack = game.yourStacks[i];
-            let stackSize = stack.size();
-            if(stackSize>=100) stackSize = 99;//if you have >=100 of one type, just say 99
-            if(i==this.draggedCard) {
-                stackSize--;
-                if(this.dragAll || stackSize==0) {
-                    continue;
-                }
-            }
-            let x = canvas.width/2+this.scrollOffset+i*(this.CARD_WIDTH+GUI_SCALE);
-            let y = canvas.height-GUI_SCALE-this.CARD_HEIGHT;
-            ctx.drawImage(stack.image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
-            if(!stack.allowedToPlay) {
-                ctx.drawImage(this.transparentImage,
-                    x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
-            }
-            if(stackSize>1) {
-                ctx.fillStyle = "#fff";
-                ctx.fillRect(x,y+this.CARD_HEIGHT-fontSize*2.5,fontSize*5,fontSize*2.5);
-                ctx.fillStyle = "#000";
-                
-                ctx.fillText("x" + stackSize, x+fontSize/2,y+this.CARD_HEIGHT-fontSize*0.5);
-            }
-        }*/
 
         //draw card you are dragging
         /*if(this.draggedCard>=0 && this.optionsWindow == null) {

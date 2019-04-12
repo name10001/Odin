@@ -1,4 +1,10 @@
 
+const CARD_RATIO = 670.0/1045.0;
+const CARD_WIDTH = 9;
+const CARD_HEIGHT = CARD_WIDTH/CARD_RATIO;
+const MIN_WIDTH = 48;//in terms of GUI_SCALE units
+const MIN_HEIGHT = 60;
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -8,6 +14,7 @@ function sleep(ms) {
  */
 $(document).ready(function() {
     // SETUP GUI
+    IS_MOBILE = 'ontouchstart' in document.documentElement;
     game = new Game();
     gui = new Gui();
     mousePosition = {x:0,y:0};
@@ -18,11 +25,10 @@ $(document).ready(function() {
     ctx = canvas.getContext('2d');
     
     // EVENTS
-    if('ontouchstart' in document.documentElement) {
+    if(IS_MOBILE) {
         canvas.addEventListener('touchstart',touchStart);
         canvas.addEventListener('touchmove',touchMove);
         canvas.addEventListener('touchend',touchEnd);
-        IS_MOBILE = true;
     }
     else {
         canvas.addEventListener('mousedown',mouseDown);
@@ -30,7 +36,6 @@ $(document).ready(function() {
         canvas.addEventListener('mouseup',mouseUp);
         canvas.addEventListener('mouseleave',mouseLeave);
         canvas.addEventListener('wheel',mouseWheel);
-        IS_MOBILE = false;
     }
 
     window.addEventListener('resize',resize);
@@ -100,7 +105,8 @@ function touchEnd(event) {
 }
 
 function mouseLeave(event) {
-    if(gui.mousePressed) {
+    if(mousePressed) {
+        mousePressed = false;
         gui.release();
     }
 }
