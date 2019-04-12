@@ -14,7 +14,7 @@
         <script>
 			$(document).ready(function() {
 				// SocketIO
-				socket = io.connect(document.domain, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
+				socket = io.connect(location.host, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
 				socket.on('connect', function() {
 				    $("list-of-players").html("");
 					socket.emit("waiting room", "{{ game.get_id() }}");
