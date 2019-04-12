@@ -46,12 +46,6 @@ class Gui {
      * Creates a game canvas
      */
     constructor() {
-        this.canvas = document.getElementById('canvas');
-        this.ctx = canvas.getContext('2d');
-
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        
         //some assets
         this.backImage = new Image;
         this.backImage.src = '/static/cards/back.png';
@@ -85,21 +79,19 @@ class Gui {
         this.undoButton = new Button(0,0,0,0,"UNDO");
         
         //work out some "constants"
-        this.setCardDimensions(window.innerWidth,window.innerHeight);
+        this.setCardDimensions();
         this.scrollOffset = -this.CARD_WIDTH/2;
     }
 
     /**
      * Set the dimensions of gaps and gaps based on your canvas window size
      */
-    setCardDimensions(newWidth, newHeight) {
-        this.canvas.width = newWidth;
-        this.canvas.height = newHeight;
+    setCardDimensions() {
 
-        let width = this.canvas.width/6;
+        let width = canvas.width/6;
         if(width>MAX_CARD_WIDTH) width = MAX_CARD_WIDTH;
         let height = width/CARD_RATIO;
-        if(height>this.canvas.height/4.2) height = this.canvas.height/4.2;
+        if(height>canvas.height/4.2) height = canvas.height/4.2;
 
         this.CARD_WIDTH = height*CARD_RATIO;
         this.CARD_HEIGHT = height;
@@ -109,8 +101,8 @@ class Gui {
 
 
         //update buttons
-        this.finishButton.updateSize(this.canvas.width/2+this.CARD_WIDTH*0.75,this.canvas.height/2-this.GAP_SIZE*1.5,this.CARD_WIDTH,this.GAP_SIZE*3);
-        this.undoButton.updateSize(this.canvas.width/2+this.GAP_SIZE+this.CARD_WIDTH*1.75,this.canvas.height/2-this.GAP_SIZE*1.5,this.CARD_WIDTH,this.GAP_SIZE*3);
+        this.finishButton.updateSize(canvas.width/2+this.CARD_WIDTH*0.75,canvas.height/2-this.GAP_SIZE*1.5,this.CARD_WIDTH,this.GAP_SIZE*3);
+        this.undoButton.updateSize(canvas.width/2+this.GAP_SIZE+this.CARD_WIDTH*1.75,canvas.height/2-this.GAP_SIZE*1.5,this.CARD_WIDTH,this.GAP_SIZE*3);
     }
     
     /**
@@ -118,33 +110,33 @@ class Gui {
      */
     draw(dt) {
         //clear
-        this.ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
         
         //background
-        this.ctx.fillStyle = "#222";
-        this.ctx.globalAlpha = 0.6;
-        this.ctx.fillRect(0,0,canvas.width,canvas.height);
-        this.ctx.globalAlpha = 1;
+        ctx.fillStyle = "#222";
+        ctx.globalAlpha = 0.6;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.globalAlpha = 1;
 
         //draw discard pile
-        if(GAME.topCards.length>0) {
-            let x = this.canvas.width / 2 - this.CARD_WIDTH/2 - (GAME.topCards.length-1)*this.GAP_SIZE*2;
-            let y = this.canvas.height / 2 - this.CARD_HEIGHT / 2;
-            for(let image of GAME.topCards) {
-                this.ctx.drawImage(image, x, y, this.CARD_WIDTH, this.CARD_HEIGHT);
-                this.ctx.drawImage(this.transparentImage,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
+        if(game.topCards.length>0) {
+            let x = canvas.width / 2 - this.CARD_WIDTH/2 - (game.topCards.length-1)*this.GAP_SIZE*2;
+            let y = canvas.height / 2 - this.CARD_HEIGHT / 2;
+            for(let image of game.topCards) {
+                ctx.drawImage(image, x, y, this.CARD_WIDTH, this.CARD_HEIGHT);
+                ctx.drawImage(this.transparentImage,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
                 x+=this.GAP_SIZE*2;
             }
         }
         //draw planning cards
-        if(GAME.planningCards.length>0) {
-            let x = this.canvas.width/2-this.CARD_WIDTH/2+this.GAP_SIZE;
-            let y = this.canvas.height/2-this.CARD_HEIGHT/2-this.GAP_SIZE;
+        if(game.planningCards.length>0) {
+            let x = canvas.width/2-this.CARD_WIDTH/2+this.GAP_SIZE;
+            let y = canvas.height/2-this.CARD_HEIGHT/2-this.GAP_SIZE;
             let gap = this.GAP_SIZE*2;
-            let maxGap = (y-this.GAP_SIZE)/(GAME.planningCards.length-1);
+            let maxGap = (y-this.GAP_SIZE)/(game.planningCards.length-1);
             if(maxGap < gap) gap = maxGap;
-            for(let card of GAME.planningCards) {
-                this.ctx.drawImage(card.image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
+            for(let card of game.planningCards) {
+                ctx.drawImage(card.image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
                 y-=gap;
             }
         }
@@ -152,48 +144,48 @@ class Gui {
         //draw whose turn it is
         let fontSize = Math.round(this.CARD_WIDTH/8);
         if(fontSize>MAX_FONT_SIZE) fontSize = MAX_FONT_SIZE;
-        this.ctx.textAlign = "left";
-        this.ctx.font = "bold " + (fontSize*2) + "px Courier New";
-        this.ctx.fillStyle = "#fff";
-        this.ctx.fillText(GAME.turnString,this.canvas.width/2+this.CARD_WIDTH*0.75,this.canvas.height/2-this.GAP_SIZE*3.5);
+        ctx.textAlign = "left";
+        ctx.font = "bold " + (fontSize*2) + "px Courier New";
+        ctx.fillStyle = "#fff";
+        ctx.fillText(game.turnString,canvas.width/2+this.CARD_WIDTH*0.75,canvas.height/2-this.GAP_SIZE*3.5);
 
         //draw buttons
-        if(GAME.planningCards.length==0) {
+        if(game.planningCards.length==0) {
             let pickupAmount = 1;
-            if(GAME.pickupAmount>0) pickupAmount = GAME.pickupAmount;
+            if(game.pickupAmount>0) pickupAmount = game.pickupAmount;
             this.finishButton.text = "+" + pickupAmount;
         }
         else {
             this.finishButton.text = "PLAY CARDS";
         }
-        this.finishButton.draw(this.ctx,fontSize,this.mousePosition,GAME.yourTurn);
+        this.finishButton.draw(ctx,fontSize,this.mousePosition,game.yourTurn);
 
-        if(GAME.planningCards.length>0) this.undoButton.draw(this.ctx,fontSize,this.mousePosition,true);
+        if(game.planningCards.length>0) this.undoButton.draw(ctx,fontSize,this.mousePosition,true);
 
         //draw players
-        if(GAME.players.length>0) {
-            let px = this.canvas.width/2-this.CARD_WIDTH*2.5;
-            let py = this.canvas.height/2+this.CARD_HEIGHT/4;
+        if(game.players.length>0) {
+            let px = canvas.width/2-this.CARD_WIDTH*2.5;
+            let py = canvas.height/2+this.CARD_HEIGHT/4;
             let pheight = this.GAP_SIZE*2.5;
             let pgap = this.GAP_SIZE;
             fontSize = Math.round(this.CARD_WIDTH/8);
 
-            this.ctx.textAlign = "left";
-            this.ctx.font = "bold " + fontSize + "px Courier New";
+            ctx.textAlign = "left";
+            ctx.font = "bold " + fontSize + "px Courier New";
             let i = 0;
-            for(let player of GAME.players) {
+            for(let player of game.players) {
                 //box
-                this.ctx.fillStyle = i==GAME.yourId ? "#b99" : "#999";
-                this.ctx.fillRect(px-fontSize/2,py-fontSize,this.CARD_WIDTH,pheight);
-                if(i==GAME.turn) this.ctx.strokeStyle = "#ffa";
-                else this.ctx.strokeStyle = "#fff";
-                this.ctx.strokeRect(px-fontSize/2,py-fontSize,this.CARD_WIDTH,pheight);
+                ctx.fillStyle = i==game.yourId ? "#b99" : "#999";
+                ctx.fillRect(px-fontSize/2,py-fontSize,this.CARD_WIDTH,pheight);
+                if(i==game.turn) ctx.strokeStyle = "#ffa";
+                else ctx.strokeStyle = "#fff";
+                ctx.strokeRect(px-fontSize/2,py-fontSize,this.CARD_WIDTH,pheight);
                 
                 //name
-                if(i==GAME.turn) this.ctx.fillStyle = "#ffa";
-                else this.ctx.fillStyle = "#fff";
-                this.ctx.fillText(player.name,px,py,this.CARD_WIDTH-fontSize);
-                this.ctx.fillText(player.nCards,px,py+pgap,this.CARD_WIDTH-fontSize);
+                if(i==game.turn) ctx.fillStyle = "#ffa";
+                else ctx.fillStyle = "#fff";
+                ctx.fillText(player.name,px,py,this.CARD_WIDTH-fontSize);
+                ctx.fillText(player.nCards,px,py+pgap,this.CARD_WIDTH-fontSize);
 
                 //iterate
                 py-=pgap+pheight;
@@ -201,50 +193,50 @@ class Gui {
             }
 
             //draw an arrow to show direction
-            this.ctx.strokeStyle = "#ffa";
-            this.ctx.beginPath();
+            ctx.strokeStyle = "#ffa";
+            ctx.beginPath();
             let topy = py-fontSize+pheight+pgap+pheight/2;
-            let bottomy = this.canvas.height/2+this.CARD_HEIGHT/4-fontSize+pheight/2;
+            let bottomy = canvas.height/2+this.CARD_HEIGHT/4-fontSize+pheight/2;
             let arrowx = px+this.CARD_WIDTH+this.GAP_SIZE*0.75;
-            this.ctx.moveTo(arrowx,topy);
-            this.ctx.lineTo(arrowx,bottomy);
-            this.ctx.stroke();
+            ctx.moveTo(arrowx,topy);
+            ctx.lineTo(arrowx,bottomy);
+            ctx.stroke();
             //arrowhead
-            this.ctx.beginPath();
-            if(GAME.direction==1) {
-                this.ctx.moveTo(arrowx-this.GAP_SIZE/2,topy+this.GAP_SIZE/2);
-                this.ctx.lineTo(arrowx,topy);
-                this.ctx.lineTo(arrowx+this.GAP_SIZE/2,topy+this.GAP_SIZE/2);
+            ctx.beginPath();
+            if(game.direction==1) {
+                ctx.moveTo(arrowx-this.GAP_SIZE/2,topy+this.GAP_SIZE/2);
+                ctx.lineTo(arrowx,topy);
+                ctx.lineTo(arrowx+this.GAP_SIZE/2,topy+this.GAP_SIZE/2);
             }
             else {
-                this.ctx.moveTo(arrowx-this.GAP_SIZE/2,bottomy-this.GAP_SIZE/2);
-                this.ctx.lineTo(arrowx,bottomy);
-                this.ctx.lineTo(arrowx+this.GAP_SIZE/2,bottomy-this.GAP_SIZE/2);
+                ctx.moveTo(arrowx-this.GAP_SIZE/2,bottomy-this.GAP_SIZE/2);
+                ctx.lineTo(arrowx,bottomy);
+                ctx.lineTo(arrowx+this.GAP_SIZE/2,bottomy-this.GAP_SIZE/2);
             }
-            this.ctx.stroke();
+            ctx.stroke();
         }
 
         //draw hand scroller
-        let scrollY = this.canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*3;
+        let scrollY = canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*3;
         let scrollX = this.getScrollBarX();
-        this.ctx.strokeStyle = "#ddd";
-        this.ctx.fillStyle = "#999";
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.GAP_SIZE,scrollY);
-        this.ctx.lineTo(this.canvas.width-this.GAP_SIZE,scrollY);
-        this.ctx.stroke();
-        this.ctx.fillRect(scrollX-this.CARD_WIDTH/2,scrollY-this.GAP_SIZE,this.CARD_WIDTH,this.GAP_SIZE*2);
-        this.ctx.strokeRect(scrollX-this.CARD_WIDTH/2,scrollY-this.GAP_SIZE,this.CARD_WIDTH,this.GAP_SIZE*2);
+        ctx.strokeStyle = "#ddd";
+        ctx.fillStyle = "#999";
+        ctx.beginPath();
+        ctx.moveTo(this.GAP_SIZE,scrollY);
+        ctx.lineTo(canvas.width-this.GAP_SIZE,scrollY);
+        ctx.stroke();
+        ctx.fillRect(scrollX-this.CARD_WIDTH/2,scrollY-this.GAP_SIZE,this.CARD_WIDTH,this.GAP_SIZE*2);
+        ctx.strokeRect(scrollX-this.CARD_WIDTH/2,scrollY-this.GAP_SIZE,this.CARD_WIDTH,this.GAP_SIZE*2);
         
 
         
         //draw your hand
         //number font
-        this.ctx.font = "bold " + (fontSize*2) + "px Courier New";
-        this.ctx.textAlign = "left";
+        ctx.font = "bold " + (fontSize*2) + "px Courier New";
+        ctx.textAlign = "left";
 
-        for(let i = 0; i<GAME.yourStacks.length;i++) {
-            let stack = GAME.yourStacks[i];
+        for(let i = 0; i<game.yourStacks.length;i++) {
+            let stack = game.yourStacks[i];
             let stackSize = stack.size();
             if(stackSize>=100) stackSize = 99;//if you have >=100 of one type, just say 99
             if(i==this.draggedCard) {
@@ -253,19 +245,19 @@ class Gui {
                     continue;
                 }
             }
-            let x = this.canvas.width/2+this.scrollOffset+i*this.CARD_WIDTH_GAP;
-            let y = this.canvas.height-this.GAP_SIZE-this.CARD_HEIGHT;
-            this.ctx.drawImage(stack.image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
+            let x = canvas.width/2+this.scrollOffset+i*this.CARD_WIDTH_GAP;
+            let y = canvas.height-this.GAP_SIZE-this.CARD_HEIGHT;
+            ctx.drawImage(stack.image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
             if(!stack.allowedToPlay) {
-                this.ctx.drawImage(this.transparentImage,
+                ctx.drawImage(this.transparentImage,
                     x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
             }
             if(stackSize>1) {
-                this.ctx.fillStyle = "#fff";
-                this.ctx.fillRect(x,y+this.CARD_HEIGHT-fontSize*2.5,fontSize*5,fontSize*2.5);
-                this.ctx.fillStyle = "#000";
+                ctx.fillStyle = "#fff";
+                ctx.fillRect(x,y+this.CARD_HEIGHT-fontSize*2.5,fontSize*5,fontSize*2.5);
+                ctx.fillStyle = "#000";
                 
-                this.ctx.fillText("x" + stackSize, x+fontSize/2,y+this.CARD_HEIGHT-fontSize*0.5);
+                ctx.fillText("x" + stackSize, x+fontSize/2,y+this.CARD_HEIGHT-fontSize*0.5);
             }
         }
 
@@ -274,27 +266,27 @@ class Gui {
             let x = this.mousePosition.x+this.selectOffset.x;
             let y = this.mousePosition.y+this.selectOffset.y;
 
-            this.ctx.drawImage(GAME.yourStacks[this.draggedCard].image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
-            if(!GAME.yourStacks[this.draggedCard].allowedToPlay) {
-                this.ctx.drawImage(this.transparentImage,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
+            ctx.drawImage(game.yourStacks[this.draggedCard].image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
+            if(!game.yourStacks[this.draggedCard].allowedToPlay) {
+                ctx.drawImage(this.transparentImage,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
             }
             if(this.dragAll) {
-                let stack = GAME.yourStacks[this.draggedCard];
+                let stack = game.yourStacks[this.draggedCard];
                 let stackSize = stack.size();
 
                 if(stackSize>1) {
-                    this.ctx.fillStyle = "#fff";
-                    this.ctx.fillRect(x,y+this.CARD_HEIGHT-fontSize*2.5,fontSize*5,fontSize*2.5);
-                    this.ctx.fillStyle = "#000";
+                    ctx.fillStyle = "#fff";
+                    ctx.fillRect(x,y+this.CARD_HEIGHT-fontSize*2.5,fontSize*5,fontSize*2.5);
+                    ctx.fillStyle = "#000";
                     
-                    this.ctx.fillText("x" + stackSize, x+fontSize/2,y+this.CARD_HEIGHT-fontSize*0.5);
+                    ctx.fillText("x" + stackSize, x+fontSize/2,y+this.CARD_HEIGHT-fontSize*0.5);
                 }
             }
         }
 
 
         //DRAW CARD OPTIONS WINDOW
-        if(this.optionsWindow!=null) this.optionsWindow.draw(this.ctx, this.canvas.width/2-this.CARD_WIDTH*2,this.canvas.height/4,this.CARD_WIDTH*4,this.canvas.height/2);
+        if(this.optionsWindow!=null) this.optionsWindow.draw(ctx, canvas.width/2-this.CARD_WIDTH*2,canvas.height/4,this.CARD_WIDTH*4,canvas.height/2);
 
     }
 
@@ -310,23 +302,23 @@ class Gui {
         this.mousePosition.x = x;
         this.mousePosition.y = y;
         //Clicked in hand area
-        if(this.mousePosition.y > this.canvas.height-this.CARD_HEIGHT-this.GAP_SIZE) {
+        if(this.mousePosition.y > canvas.height-this.CARD_HEIGHT-this.GAP_SIZE) {
             this.clickPosition.x = this.mousePosition.x-this.scrollOffset;
             this.clickPosition.y = this.mousePosition.y;
             this.dragType = 1;
             if(shiftPressed) this.dragAll = true;
         }
         //Clicked in the scroll area
-        else if(this.mousePosition.y<this.canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*2 && this.mousePosition.y>this.canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*4) {
+        else if(this.mousePosition.y<canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*2 && this.mousePosition.y>canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*4) {
             this.dragType = 4;
         }
         //clicking on the finish turn button
-        else if(this.finishButton.isClicked(this.mousePosition.x,this.mousePosition.y) && GAME.yourTurn) {
-            GAME.finishTurn();
+        else if(this.finishButton.isClicked(this.mousePosition.x,this.mousePosition.y) && game.yourTurn) {
+            game.finishTurn();
         }
         //clicking on the undo button
-        else if(this.undoButton.isClicked(this.mousePosition.x,this.mousePosition.y) && GAME.planningCards.length>0) {
-            GAME.undo();
+        else if(this.undoButton.isClicked(this.mousePosition.x,this.mousePosition.y) && game.planningCards.length>0) {
+            game.undo();
         }
     }
 
@@ -334,17 +326,17 @@ class Gui {
      * Determines the card at the clickPosition
      */
     getClickedCard() {
-        let x = this.clickPosition.x-this.canvas.width/2;
+        let x = this.clickPosition.x-canvas.width/2;
         let r = x % this.CARD_WIDTH_GAP;
     
-        if(r<=this.CARD_WIDTH && this.clickPosition.y<this.canvas.height-this.GAP_SIZE && this.clickPosition.y>this.canvas.height-this.GAP_SIZE-this.CARD_HEIGHT) {
+        if(r<=this.CARD_WIDTH && this.clickPosition.y<canvas.height-this.GAP_SIZE && this.clickPosition.y>canvas.height-this.GAP_SIZE-this.CARD_HEIGHT) {
             let i = Math.floor(x/this.CARD_WIDTH_GAP);
     
-            if(i>=0 && i<GAME.yourStacks.length) {
+            if(i>=0 && i<game.yourStacks.length) {
                 //i is the card id you selected
                 this.draggedCard = i;
                 this.selectOffset.x = -r;
-                this.selectOffset.y = (this.canvas.height-this.GAP_SIZE-this.CARD_HEIGHT)-this.clickPosition.y;
+                this.selectOffset.y = (canvas.height-this.GAP_SIZE-this.CARD_HEIGHT)-this.clickPosition.y;
                 return;
             }
         }
@@ -369,7 +361,7 @@ class Gui {
             //scrolling through cards
             if(this.dragType==2) {
                 this.scrollOffset = this.mousePosition.x-this.clickPosition.x;
-                if(this.mousePosition.y<this.canvas.height-this.GAP_SIZE*3-this.CARD_HEIGHT) {
+                if(this.mousePosition.y<canvas.height-this.GAP_SIZE*3-this.CARD_HEIGHT) {
                     this.dragType = 3;
                     this.getClickedCard();
                 }
@@ -399,8 +391,8 @@ class Gui {
             return;
         }
         //selected a card
-        if(this.draggedCard>=0 && this.mousePosition.y<this.canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*3) {
-            let card = GAME.yourStacks[this.draggedCard];
+        if(this.draggedCard>=0 && this.mousePosition.y<canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*3) {
+            let card = game.yourStacks[this.draggedCard];
             if(card.allowedToPlay) {
                 //TODO show all card options
                 if(card.optionIds.length>0) {
@@ -476,31 +468,31 @@ class Gui {
         this.optionsWindow = null;
 
         if(this.dragAll) {
-            GAME.yourStacks[this.draggedCard].playAll(pickedOption);
+            game.yourStacks[this.draggedCard].playAll(pickedOption);
 
         }else {
-            GAME.yourStacks[this.draggedCard].playSingle(pickedOption);
+            game.yourStacks[this.draggedCard].playSingle(pickedOption);
 
         }
-        //GAME.playCard(GAME.your[this.draggedCard].id,pickedOption);
+        //game.playCard(game.your[this.draggedCard].id,pickedOption);
         
         this.draggedCard = -1;
         this.dragAll = false;
     }
 
     getMinScroll() {
-        return -GAME.yourStacks.length*this.CARD_WIDTH_GAP-this.canvas.width/4;
+        return -game.yourStacks.length*this.CARD_WIDTH_GAP-canvas.width/4;
     }
     getMaxScroll() {
-        return this.canvas.width/4 + this.GAP_SIZE;
+        return canvas.width/4 + this.GAP_SIZE;
     }
     getScrollBarX() {
         let d = this.getMaxScroll()-this.getMinScroll();
         let interpolate = 1 - (this.scrollOffset-this.getMinScroll())/d;
-        return this.GAP_SIZE+interpolate * (this.canvas.width-(this.GAP_SIZE*2));
+        return this.GAP_SIZE+interpolate * (canvas.width-(this.GAP_SIZE*2));
     }
     setScrollBarX() {
-        let interpolate = (this.mousePosition.x-20)/(this.canvas.width-(this.GAP_SIZE*2));
+        let interpolate = (this.mousePosition.x-20)/(canvas.width-(this.GAP_SIZE*2));
         if(interpolate<0) interpolate = 0;
         if(interpolate>1) interpolate = 1;
         interpolate = 1 - interpolate;

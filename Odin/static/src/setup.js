@@ -7,15 +7,39 @@ function sleep(ms) {
  * Main method - sets up game, gui and listeners
  */
 $(document).ready(function() {
+    // SETUP GUI
+    canvas = document.getElementById('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    ctx = canvas.getContext('2d');
+    game = new Game();
+    gui = new Gui();
+    
+    // EVENTS
+    if('ontouchstart' in document.documentElement) {
+        canvas.addEventListener('touchstart',touchStart);
+        canvas.addEventListener('touchmove',touchMove);
+        canvas.addEventListener('touchend',touchEnd);
+        IS_MOBILE = true;
+    }
+    else {
+        canvas.addEventListener('mousedown',mouseDown);
+        canvas.addEventListener('mousemove',mouseMove);
+        canvas.addEventListener('mouseup',mouseUp);
+        canvas.addEventListener('mouseleave',mouseLeave);
+        canvas.addEventListener('wheel',mouseWheel);
+        IS_MOBILE = false;
+    }
+
+    window.addEventListener('resize',resize);
+
+    
     // SocketIO
     socket = io.connect(document.domain, {
         'reconnection': true,
         'reconnectionDelay': 500,
         'maxReconnectionAttempts': Infinity
     });
-
-    GAME = new Game();
-    GUI = new Gui();
 
     socket.on('connect', function () {
         socket.emit("initial game connection", GAME_ID);
@@ -28,79 +52,64 @@ $(document).ready(function() {
     });
 
     socket.on('card update', function(update) {
-        GAME.update(update);
+        game.update(update);
     });
-    
-    //load all events
-    if('ontouchstart' in document.documentElement) {
-        GUI.canvas.addEventListener('touchstart',touchStart);
-        GUI.canvas.addEventListener('touchmove',touchMove);
-        GUI.canvas.addEventListener('touchend',touchEnd);
-        IS_MOBILE = true;
-    }
-    else {
-        GUI.canvas.addEventListener('mousedown',mouseDown);
-        GUI.canvas.addEventListener('mousemove',mouseMove);
-        GUI.canvas.addEventListener('mouseup',mouseUp);
-        GUI.canvas.addEventListener('mouseleave',mouseLeave);
-        GUI.canvas.addEventListener('wheel',mouseWheel);
-        IS_MOBILE = false;
-    }
 
-    window.addEventListener('resize',resize);
-
+    // BEGIN GAMELOOP
     gameLoop(0);
 });
 
 function mouseDown(event) {
     if(event.button == 0) {
-        GUI.click(event.offsetX,event.offsetY, event.shiftKey);//TODO change implementation
+        gui.click(event.offsetX,event.offsetY, event.shiftKey);//TODO change implementation
     }
 }
 function mouseMove(event) {
-    GUI.drag(event.offsetX,event.offsetY);
+    gui.drag(event.offsetX,event.offsetY);
 }
 function mouseUp(event) {
     if(event.button==0) {
-        GUI.release();
+        gui.release();
     }
 }
 
 function touchStart(event) {
-    GUI.click(event.touches[0].clientX,event.touches[0].clientY,false);
+    gui.click(event.touches[0].clientX,event.touches[0].clientY,false);
 }
 function touchMove(event) {
-    GUI.drag(event.touches[0].clientX, event.touches[0].clientY);
+    gui.drag(event.touches[0].clientX, event.touches[0].clientY);
 }
 function touchEnd(event) {
-    GUI.release();
+    gui.release();
 }
 
 function mouseLeave(event) {
-    if(GUI.mousePressed) {
-        GUI.release();
+    if(gui.mousePressed) {
+        gui.release();
     }
 }
 function mouseWheel(event) {
-    GUI.wheel(Math.sign(event.deltaY));
+    gui.wheel(Math.sign(event.deltaY));
 }
 
 /**
  * Resize method, calculates dimensions of items on the screen
  */
 function resize() {
-    GUI.setCardDimensions(window.innerWidth,window.innerHeight);
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    gui.setCardDimensions();
 }
 
 var lastTime = 0;
 function gameLoop(timestamp) {
-    sleep(10);
+    sleep(2);
     let dt = timestamp-lastTime;
     lastTime = timestamp;
     
     //update scrolling speed
-    GUI.scroll(dt);
-    GUI.draw(dt);
+    gui.scroll(dt);
+    gui.draw(dt);
 
     requestAnimationFrame(gameLoop);
 }

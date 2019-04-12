@@ -10,7 +10,7 @@ class CardStack {
         this.allowedToPlay = allowedToPlay;
         this.options = options;
         this.url = url;
-        this.image = GUI.cardImages[url];
+        this.image = gui.cardImages[url];
         this.optionStrings = [];
         this.optionIds = [];
         this.cardIds = [id];
@@ -27,16 +27,16 @@ class CardStack {
     }
 
     playAll(options) {
-        var card_array = [];
+        let card_array = [];
         for(let id of this.cardIds) {
             card_array.push([id,options]);
         }
-        GAME.playCard(card_array);
+        game.playCard(card_array);
     }
 
     playSingle(options) {
         let id = this.cardIds.pop();
-        GAME.playCard([[id,options]]);
+        game.playCard([[id,options]]);
     }
 
     size() {
@@ -49,7 +49,7 @@ class CardStack {
     constructor(id, url, allowedToPlay, options) {
         this.id = id;
         this.allowedToPlay = allowedToPlay;
-        this.image = GUI.cardImages[url];
+        this.image = gui.cardImages[url];
         this.optionStrings = [];
         this.optionIds = [];
         if(options!=null) {
@@ -99,7 +99,7 @@ class Game {
         //update cards at the top
         this.topCards.length = 0;
         for(let card of update['cards on deck']) {
-            this.topCards.push(GUI.cardImages[card['card image url']]);
+            this.topCards.push(gui.cardImages[card['card image url']]);
         }
         //update planning cards
         this.planningCards.length = 0;
