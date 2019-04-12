@@ -35,10 +35,10 @@ class Gui {
         this.playAll = false;
 
         //some buttons (update the size in the setCardDimensions() function)
-        this.finishButton = new Button(0,0,0,0,"FINISHED");
-        this.undoButton = new Button(0,0,0,0,"UNDO");
+        this.finishButton = new Button(CARD_WIDTH, 3, 1, "FINISHED");
+        this.undoButton = new Button(CARD_WIDTH, 3, 1, "UNDO");
 
-        this.cardScroller = new ScrollArea(new Container(),CARD_WIDTH+1,CARD_HEIGHT+1);
+        this.cardScroller = new ScrollArea(new Container(),CARD_WIDTH+1,CARD_HEIGHT+5);
     }
 
     updateCards(cardPanels) {
@@ -51,9 +51,6 @@ class Gui {
     setCardDimensions() {
         this.CARD_WIDTH = CARD_WIDTH*GUI_SCALE;
         this.CARD_HEIGHT = CARD_HEIGHT*GUI_SCALE;
-        //update buttons
-        this.finishButton.updateSize(canvas.width/2+this.CARD_WIDTH*0.75,canvas.height/2-GUI_SCALE*1.5,this.CARD_WIDTH,GUI_SCALE*3);
-        this.undoButton.updateSize(canvas.width/2+GUI_SCALE+this.CARD_WIDTH*1.75,canvas.height/2-GUI_SCALE*1.5,this.CARD_WIDTH,GUI_SCALE*3);
     }
     
     /**
@@ -108,9 +105,9 @@ class Gui {
         else {
             this.finishButton.text = "PLAY CARDS";
         }
-        this.finishButton.draw(ctx,fontSize,game.yourTurn);
+        this.finishButton.draw(canvas.width/2+this.CARD_WIDTH*0.75,canvas.height/2-GUI_SCALE*1.5,game.yourTurn);
 
-        if(game.planningCards.length>0) this.undoButton.draw(ctx,fontSize,true);
+        if(game.planningCards.length>0) this.undoButton.draw(canvas.width/2+GUI_SCALE+this.CARD_WIDTH*1.75,canvas.height/2-GUI_SCALE*1.5,true);
 
         //draw players
         if(game.players.length>0) {
@@ -167,7 +164,7 @@ class Gui {
         }
         this.cardScroller.draw();
         //DRAW CARD OPTIONS WINDOW
-        if(this.optionsWindow!=null) this.optionsWindow.draw(ctx, canvas.width/2-this.CARD_WIDTH*2,canvas.height/4,this.CARD_WIDTH*4,canvas.height/2);
+        if(this.optionsWindow!=null) this.optionsWindow.draw(canvas.width/2-this.CARD_WIDTH*2,canvas.height/4,this.CARD_WIDTH*4,canvas.height/2);
 
         //draw hand scroller
         /*let scrollY = canvas.height-this.CARD_HEIGHT-GUI_SCALE*3;
@@ -265,11 +262,11 @@ class Gui {
         //clicking on the finish turn button
         else*/
         
-        if(this.finishButton.isClicked(mousePosition.x,mousePosition.y) && game.yourTurn) {
+        if(this.finishButton.isMouseOver(canvas.width/2+this.CARD_WIDTH*0.75,canvas.height/2-GUI_SCALE*1.5) && game.yourTurn) {
             game.finishTurn();
         }
         //clicking on the undo button
-        else if(this.undoButton.isClicked(mousePosition.x,mousePosition.y) && game.planningCards.length>0) {
+        else if(this.undoButton.isMouseOver(canvas.width/2+GUI_SCALE+this.CARD_WIDTH*1.75,canvas.height/2-GUI_SCALE*1.5) && game.planningCards.length>0) {
             game.undo();
         }
     }
@@ -408,14 +405,14 @@ class Gui {
     /**
      * Is called when you make a decision in the options menu
      */
-    exitOptions(pickedOption) {
+    exitOptions(card, pickedOption) {
         this.optionsWindow = null;
 
         if(this.playAll) {
-            game.yourStacks[this.draggedCard].playAll(pickedOption);
+            card.playAll(pickedOption);
 
         }else {
-            game.yourStacks[this.draggedCard].playSingle(pickedOption);
+            card.playSingle(pickedOption);
 
         }
         //game.playCard(game.your[this.draggedCard].id,pickedOption);

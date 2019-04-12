@@ -4,6 +4,7 @@
  */
 class OptionsWindow {
     constructor(card) {
+        this.card = card;
         this.image = card.image;
         this.optionStrings = card.optionStrings;
         this.optionIds = card.optionIds;
@@ -18,7 +19,7 @@ class OptionsWindow {
     /**
      * Draw the options window with specified dimensions
      */
-    draw(ctx, x, y, width, height) {
+    draw(x, y, width, height) {
         let fontSize = Math.round(width/20);
         let cardWidth = width/4;
         let cardHeight = cardWidth / CARD_RATIO;
@@ -82,7 +83,6 @@ class OptionsWindow {
     click() {
         this.clickPosition.x = mousePosition.x;
         this.clickPosition.y = mousePosition.y;
-        this.mousePressed = true;
         this.dragging = false;
     }
 
@@ -108,7 +108,7 @@ class OptionsWindow {
         if(this.hoveredItem!=-1 && !this.dragging) {
             //picked an option
             let pickedOption = this.optionIds[this.hoveredItem];
-            gui.exitOptions(pickedOption);
+            gui.exitOptions(this.card, pickedOption);
             return;
         }
         this.dragging = false;

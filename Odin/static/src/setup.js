@@ -76,6 +76,7 @@ function mouseMove(event) {
 }
 function mouseUp(event) {
     if(event.button==0) {
+        mousePressed = false;
         gui.release();
     }
 }
@@ -94,6 +95,7 @@ function touchMove(event) {
 function touchEnd(event) {
     mousePosition.x = 0;
     mousePosition.y = 0;
+    mousePressed = false;
     gui.release();
 }
 

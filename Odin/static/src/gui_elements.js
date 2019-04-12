@@ -1,34 +1,28 @@
 class Button {
-    constructor(x,y,width,height,text) {
-        this.x = x;
-        this.y = y;
+    constructor(width, height, fontSize, text) {
         this.width = width;
         this.height = height;
+        this.fontSize = fontSize;
         this.text = text;
     }
-    
-    updateSize(x,y,width,height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+
+    isMouseOver(x, y) {
+        return mousePosition.x>x && mousePosition.x<x+this.width * GUI_SCALE &&
+            mousePosition.y>y && mousePosition.y<y+this.height * GUI_SCALE;
     }
 
-    draw(ctx, fontSize, canPress) {
-        let hover = this.isClicked(mousePosition.x,mousePosition.y);
+    draw(x, y, canPress) {
+        let hover = this.isMouseOver(x, y);
+        let fontSize = this.fontSize * GUI_SCALE;
         //draw the next turn button
         ctx.fillStyle = canPress ? "#376" : "#999";
         ctx.strokeStyle = canPress ? (hover ? "#ffa" : "#fff") : "#fff";
-        ctx.fillRect(this.x,this.y,this.width,this.height);
-        ctx.strokeRect(this.x,this.y,this.width,this.height);
+        ctx.fillRect(x,y,this.width * GUI_SCALE,this.height * GUI_SCALE);
+        ctx.strokeRect(x,y,this.width * GUI_SCALE,this.height * GUI_SCALE);
         ctx.fillStyle = canPress ? (hover ? "#ffa" : "#fff") : "#bbb";
         ctx.textAlign = "center";
         ctx.font = "bold " + fontSize + "px Courier New";
-        ctx.fillText(this.text,this.x+this.width/2,this.y+this.height/2+fontSize/3);
-    }
-
-    isClicked(x,y) {
-       return x>this.x && x<this.x+this.width && y>this.y && y<this.y+this.height;
+        ctx.fillText(this.text,x+this.width*GUI_SCALE/2,y+this.height*GUI_SCALE/2+fontSize/3);
     }
 }
 
@@ -48,26 +42,23 @@ class Container {
 class CardStackPanel {
     constructor(cardStack) {
         this.cardStack = cardStack;
+        this.playButton = new Button(3,3,2,"+");
+        this.playallButton = new Button(3,3,1,"+All");
     }
 
     draw(x,y,width,height) {
-
         ctx.font = "bold " + (GUI_SCALE*2) + "px Courier New";
         ctx.textAlign = "left";
 
         let stackSize = this.cardStack.size();
         if(stackSize>=100) stackSize = 99;//if you have >=100 of one type, just say 99
 
+        //draw card
         ctx.drawImage(this.cardStack.image,
             x+GUI_SCALE/2, y+GUI_SCALE/2,
             GUI_SCALE*CARD_WIDTH, GUI_SCALE*CARD_HEIGHT);
         
-        if(!this.cardStack.allowedToPlay) {
-            ctx.drawImage(gui.transparentImage,
-                x+GUI_SCALE/2, y+GUI_SCALE/2,
-                GUI_SCALE*CARD_WIDTH, GUI_SCALE*CARD_HEIGHT);
-        }
-        
+        //draw stack size
         if(stackSize>1) {
             ctx.fillStyle = "#fff";
             ctx.fillRect(x+GUI_SCALE/2, y+GUI_SCALE*CARD_HEIGHT-GUI_SCALE*2,GUI_SCALE*5,GUI_SCALE*2.5);
@@ -75,20 +66,40 @@ class CardStackPanel {
             
             ctx.fillText("x" + stackSize, x+GUI_SCALE, y+GUI_SCALE*CARD_HEIGHT);
         }
+
+        //draw transparent overlay if you aren't allowed to play
+        if(!this.cardStack.allowedToPlay) {
+            ctx.drawImage(gui.transparentImage,
+                x+GUI_SCALE/2, y+GUI_SCALE/2,
+                GUI_SCALE*CARD_WIDTH, GUI_SCALE*CARD_HEIGHT);
+        }
+
+        //draw buttons
+        this.playButton.draw(x+GUI_SCALE, y + (CARD_HEIGHT+1.5)*GUI_SCALE,this.cardStack.allowedToPlay);
+        this.playallButton.draw(x+GUI_SCALE*(CARD_WIDTH-3), y + (CARD_HEIGHT+1.5)*GUI_SCALE,this.cardStack.allowedToPlay);
     }
 
     click(x,y) {
         //clicked the card
         if(x > GUI_SCALE/2 && x<GUI_SCALE*CARD_WIDTH+GUI_SCALE/2 &&
             y > GUI_SCALE/2 && y<GUI_SCALE*CARD_HEIGHT+GUI_SCALE/2) {
-            this.play();
+                console.log("INFO");
+            //Show card details here
         }
 
-        //clicked the buttons? TODO here
-
+        else if(x > GUI_SCALE && x<GUI_SCALE*4 &&
+            y > GUI_SCALE*(CARD_HEIGHT+1.5) && y<GUI_SCALE*(CARD_HEIGHT+4.5)) {
+            this.play();
+        }
+        else if(x > GUI_SCALE*(CARD_WIDTH-3) && x<GUI_SCALE*CARD_WIDTH &&
+            y > GUI_SCALE*(CARD_HEIGHT+1.5) && y<GUI_SCALE*(CARD_HEIGHT+4.5)) {
+            this.playAll();
+        }
     }
 
     play() {
+        if(!this.cardStack.allowedToPlay) return;
+
         if(this.cardStack.optionIds.length>0) {
             gui.optionsWindow = new OptionsWindow(this.cardStack);
         }
@@ -98,6 +109,8 @@ class CardStackPanel {
     }
 
     playAll() {
+        if(!this.cardStack.allowedToPlay) return;
+
         if(this.cardStack.optionIds.length>0) {
             gui.optionsWindow = new OptionsWindow(this.cardStack);
             gui.playAll = true;
