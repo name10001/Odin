@@ -8,12 +8,12 @@ function sleep(ms) {
  */
 $(document).ready(function() {
     // SETUP GUI
-    canvas = document.getElementById('canvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    ctx = canvas.getContext('2d');
     game = new Game();
     gui = new Gui();
+    
+    canvas = document.getElementById('canvas');
+    resize();
+    ctx = canvas.getContext('2d');
     
     // EVENTS
     if('ontouchstart' in document.documentElement) {
@@ -93,11 +93,18 @@ function mouseWheel(event) {
 }
 
 /**
- * Resize method, calculates dimensions of items on the screen
+ * Resize method, calculates new GUI_SCALE and resizes the canvas
  */
 function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+
+    let width = canvas.width/MIN_WIDTH;
+    let height = canvas.height/MIN_HEIGHT;
+
+    if (width<height) GUI_SCALE = width;
+    else GUI_SCALE = height;
+
     gui.setCardDimensions();
 }
 

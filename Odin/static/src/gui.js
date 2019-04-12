@@ -1,42 +1,3 @@
-//constants
-const CARD_RATIO = 670.0/1045.0;
-const MAX_CARD_WIDTH = 134;
-const MAX_FONT_SIZE = 40;
-
-class Button {
-    constructor(x,y,width,height,text) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.text = text;
-    }
-    
-    updateSize(x,y,width,height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-    }
-
-    draw(ctx, fontSize, mousePosition, canPress) {
-        let hover = this.isClicked(mousePosition.x,mousePosition.y);
-        //draw the next turn button
-        ctx.fillStyle = canPress ? "#376" : "#999";
-        ctx.strokeStyle = canPress ? (hover ? "#ffa" : "#fff") : "#fff";
-        ctx.fillRect(this.x,this.y,this.width,this.height);
-        ctx.strokeRect(this.x,this.y,this.width,this.height);
-        ctx.fillStyle = canPress ? (hover ? "#ffa" : "#fff") : "#bbb";
-        ctx.textAlign = "center";
-        ctx.font = "bold " + fontSize + "px Courier New";
-        ctx.fillText(this.text,this.x+this.width/2,this.y+this.height/2+fontSize/3);
-    }
-
-    isClicked(x,y) {
-       return x>this.x && x<this.x+this.width && y>this.y && y<this.y+this.height;
-    }
-}
-
 
 /**
  * Class for the main game canvas
@@ -73,36 +34,22 @@ class Gui {
         this.scrollSpeed = 0;
         this.dragType = 0;
         this.mousePressed = false;
+        this.scrollOffset = 0;
 
         //some buttons (update the size in the setCardDimensions() function)
         this.finishButton = new Button(0,0,0,0,"FINISHED");
         this.undoButton = new Button(0,0,0,0,"UNDO");
-        
-        //work out some "constants"
-        this.setCardDimensions();
-        this.scrollOffset = -this.CARD_WIDTH/2;
     }
 
     /**
      * Set the dimensions of gaps and gaps based on your canvas window size
      */
     setCardDimensions() {
-
-        let width = canvas.width/6;
-        if(width>MAX_CARD_WIDTH) width = MAX_CARD_WIDTH;
-        let height = width/CARD_RATIO;
-        if(height>canvas.height/4.2) height = canvas.height/4.2;
-
-        this.CARD_WIDTH = height*CARD_RATIO;
-        this.CARD_HEIGHT = height;
-        
-        this.GAP_SIZE = this.CARD_WIDTH/8;
-        this.CARD_WIDTH_GAP = this.CARD_WIDTH + this.GAP_SIZE;
-
-
+        this.CARD_WIDTH = CARD_WIDTH*GUI_SCALE;
+        this.CARD_HEIGHT = CARD_HEIGHT*GUI_SCALE;
         //update buttons
-        this.finishButton.updateSize(canvas.width/2+this.CARD_WIDTH*0.75,canvas.height/2-this.GAP_SIZE*1.5,this.CARD_WIDTH,this.GAP_SIZE*3);
-        this.undoButton.updateSize(canvas.width/2+this.GAP_SIZE+this.CARD_WIDTH*1.75,canvas.height/2-this.GAP_SIZE*1.5,this.CARD_WIDTH,this.GAP_SIZE*3);
+        this.finishButton.updateSize(canvas.width/2+this.CARD_WIDTH*0.75,canvas.height/2-GUI_SCALE*1.5,this.CARD_WIDTH,GUI_SCALE*3);
+        this.undoButton.updateSize(canvas.width/2+GUI_SCALE+this.CARD_WIDTH*1.75,canvas.height/2-GUI_SCALE*1.5,this.CARD_WIDTH,GUI_SCALE*3);
     }
     
     /**
@@ -120,20 +67,20 @@ class Gui {
 
         //draw discard pile
         if(game.topCards.length>0) {
-            let x = canvas.width / 2 - this.CARD_WIDTH/2 - (game.topCards.length-1)*this.GAP_SIZE*2;
+            let x = canvas.width / 2 - this.CARD_WIDTH/2 - (game.topCards.length-1)*GUI_SCALE*2;
             let y = canvas.height / 2 - this.CARD_HEIGHT / 2;
             for(let image of game.topCards) {
                 ctx.drawImage(image, x, y, this.CARD_WIDTH, this.CARD_HEIGHT);
                 ctx.drawImage(this.transparentImage,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
-                x+=this.GAP_SIZE*2;
+                x+=GUI_SCALE*2;
             }
         }
         //draw planning cards
         if(game.planningCards.length>0) {
-            let x = canvas.width/2-this.CARD_WIDTH/2+this.GAP_SIZE;
-            let y = canvas.height/2-this.CARD_HEIGHT/2-this.GAP_SIZE;
-            let gap = this.GAP_SIZE*2;
-            let maxGap = (y-this.GAP_SIZE)/(game.planningCards.length-1);
+            let x = canvas.width/2-this.CARD_WIDTH/2+GUI_SCALE;
+            let y = canvas.height/2-this.CARD_HEIGHT/2-GUI_SCALE;
+            let gap = GUI_SCALE*2;
+            let maxGap = (y-GUI_SCALE)/(game.planningCards.length-1);
             if(maxGap < gap) gap = maxGap;
             for(let card of game.planningCards) {
                 ctx.drawImage(card.image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
@@ -143,11 +90,10 @@ class Gui {
 
         //draw whose turn it is
         let fontSize = Math.round(this.CARD_WIDTH/8);
-        if(fontSize>MAX_FONT_SIZE) fontSize = MAX_FONT_SIZE;
         ctx.textAlign = "left";
         ctx.font = "bold " + (fontSize*2) + "px Courier New";
         ctx.fillStyle = "#fff";
-        ctx.fillText(game.turnString,canvas.width/2+this.CARD_WIDTH*0.75,canvas.height/2-this.GAP_SIZE*3.5);
+        ctx.fillText(game.turnString,canvas.width/2+this.CARD_WIDTH*0.75,canvas.height/2-GUI_SCALE*3.5);
 
         //draw buttons
         if(game.planningCards.length==0) {
@@ -166,8 +112,8 @@ class Gui {
         if(game.players.length>0) {
             let px = canvas.width/2-this.CARD_WIDTH*2.5;
             let py = canvas.height/2+this.CARD_HEIGHT/4;
-            let pheight = this.GAP_SIZE*2.5;
-            let pgap = this.GAP_SIZE;
+            let pheight = GUI_SCALE*2.5;
+            let pgap = GUI_SCALE;
             fontSize = Math.round(this.CARD_WIDTH/8);
 
             ctx.textAlign = "left";
@@ -197,36 +143,36 @@ class Gui {
             ctx.beginPath();
             let topy = py-fontSize+pheight+pgap+pheight/2;
             let bottomy = canvas.height/2+this.CARD_HEIGHT/4-fontSize+pheight/2;
-            let arrowx = px+this.CARD_WIDTH+this.GAP_SIZE*0.75;
+            let arrowx = px+this.CARD_WIDTH+GUI_SCALE*0.75;
             ctx.moveTo(arrowx,topy);
             ctx.lineTo(arrowx,bottomy);
             ctx.stroke();
             //arrowhead
             ctx.beginPath();
             if(game.direction==1) {
-                ctx.moveTo(arrowx-this.GAP_SIZE/2,topy+this.GAP_SIZE/2);
+                ctx.moveTo(arrowx-GUI_SCALE/2,topy+GUI_SCALE/2);
                 ctx.lineTo(arrowx,topy);
-                ctx.lineTo(arrowx+this.GAP_SIZE/2,topy+this.GAP_SIZE/2);
+                ctx.lineTo(arrowx+GUI_SCALE/2,topy+GUI_SCALE/2);
             }
             else {
-                ctx.moveTo(arrowx-this.GAP_SIZE/2,bottomy-this.GAP_SIZE/2);
+                ctx.moveTo(arrowx-GUI_SCALE/2,bottomy-GUI_SCALE/2);
                 ctx.lineTo(arrowx,bottomy);
-                ctx.lineTo(arrowx+this.GAP_SIZE/2,bottomy-this.GAP_SIZE/2);
+                ctx.lineTo(arrowx+GUI_SCALE/2,bottomy-GUI_SCALE/2);
             }
             ctx.stroke();
         }
 
         //draw hand scroller
-        let scrollY = canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*3;
+        let scrollY = canvas.height-this.CARD_HEIGHT-GUI_SCALE*3;
         let scrollX = this.getScrollBarX();
         ctx.strokeStyle = "#ddd";
         ctx.fillStyle = "#999";
         ctx.beginPath();
-        ctx.moveTo(this.GAP_SIZE,scrollY);
-        ctx.lineTo(canvas.width-this.GAP_SIZE,scrollY);
+        ctx.moveTo(GUI_SCALE,scrollY);
+        ctx.lineTo(canvas.width-GUI_SCALE,scrollY);
         ctx.stroke();
-        ctx.fillRect(scrollX-this.CARD_WIDTH/2,scrollY-this.GAP_SIZE,this.CARD_WIDTH,this.GAP_SIZE*2);
-        ctx.strokeRect(scrollX-this.CARD_WIDTH/2,scrollY-this.GAP_SIZE,this.CARD_WIDTH,this.GAP_SIZE*2);
+        ctx.fillRect(scrollX-this.CARD_WIDTH/2,scrollY-GUI_SCALE,this.CARD_WIDTH,GUI_SCALE*2);
+        ctx.strokeRect(scrollX-this.CARD_WIDTH/2,scrollY-GUI_SCALE,this.CARD_WIDTH,GUI_SCALE*2);
         
 
         
@@ -234,6 +180,7 @@ class Gui {
         //number font
         ctx.font = "bold " + (fontSize*2) + "px Courier New";
         ctx.textAlign = "left";
+        console.log(this.scrollOffset);
 
         for(let i = 0; i<game.yourStacks.length;i++) {
             let stack = game.yourStacks[i];
@@ -245,8 +192,8 @@ class Gui {
                     continue;
                 }
             }
-            let x = canvas.width/2+this.scrollOffset+i*this.CARD_WIDTH_GAP;
-            let y = canvas.height-this.GAP_SIZE-this.CARD_HEIGHT;
+            let x = canvas.width/2+this.scrollOffset+i*(this.CARD_WIDTH+GUI_SCALE);
+            let y = canvas.height-GUI_SCALE-this.CARD_HEIGHT;
             ctx.drawImage(stack.image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
             if(!stack.allowedToPlay) {
                 ctx.drawImage(this.transparentImage,
@@ -302,14 +249,14 @@ class Gui {
         this.mousePosition.x = x;
         this.mousePosition.y = y;
         //Clicked in hand area
-        if(this.mousePosition.y > canvas.height-this.CARD_HEIGHT-this.GAP_SIZE) {
+        if(this.mousePosition.y > canvas.height-this.CARD_HEIGHT-GUI_SCALE) {
             this.clickPosition.x = this.mousePosition.x-this.scrollOffset;
             this.clickPosition.y = this.mousePosition.y;
             this.dragType = 1;
             if(shiftPressed) this.dragAll = true;
         }
         //Clicked in the scroll area
-        else if(this.mousePosition.y<canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*2 && this.mousePosition.y>canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*4) {
+        else if(this.mousePosition.y<canvas.height-this.CARD_HEIGHT-GUI_SCALE*2 && this.mousePosition.y>canvas.height-this.CARD_HEIGHT-GUI_SCALE*4) {
             this.dragType = 4;
         }
         //clicking on the finish turn button
@@ -327,16 +274,16 @@ class Gui {
      */
     getClickedCard() {
         let x = this.clickPosition.x-canvas.width/2;
-        let r = x % this.CARD_WIDTH_GAP;
+        let r = x % (this.CARD_WIDTH+GUI_SCALE);
     
-        if(r<=this.CARD_WIDTH && this.clickPosition.y<canvas.height-this.GAP_SIZE && this.clickPosition.y>canvas.height-this.GAP_SIZE-this.CARD_HEIGHT) {
-            let i = Math.floor(x/this.CARD_WIDTH_GAP);
+        if(r<=this.CARD_WIDTH && this.clickPosition.y<canvas.height-GUI_SCALE && this.clickPosition.y>canvas.height-GUI_SCALE-this.CARD_HEIGHT) {
+            let i = Math.floor(x/(this.CARD_WIDTH+GUI_SCALE));
     
             if(i>=0 && i<game.yourStacks.length) {
                 //i is the card id you selected
                 this.draggedCard = i;
                 this.selectOffset.x = -r;
-                this.selectOffset.y = (canvas.height-this.GAP_SIZE-this.CARD_HEIGHT)-this.clickPosition.y;
+                this.selectOffset.y = (canvas.height-GUI_SCALE-this.CARD_HEIGHT)-this.clickPosition.y;
                 return;
             }
         }
@@ -361,7 +308,7 @@ class Gui {
             //scrolling through cards
             if(this.dragType==2) {
                 this.scrollOffset = this.mousePosition.x-this.clickPosition.x;
-                if(this.mousePosition.y<canvas.height-this.GAP_SIZE*3-this.CARD_HEIGHT) {
+                if(this.mousePosition.y<canvas.height-GUI_SCALE*3-this.CARD_HEIGHT) {
                     this.dragType = 3;
                     this.getClickedCard();
                 }
@@ -391,7 +338,7 @@ class Gui {
             return;
         }
         //selected a card
-        if(this.draggedCard>=0 && this.mousePosition.y<canvas.height-this.CARD_HEIGHT-this.GAP_SIZE*3) {
+        if(this.draggedCard>=0 && this.mousePosition.y<canvas.height-this.CARD_HEIGHT-GUI_SCALE*3) {
             let card = game.yourStacks[this.draggedCard];
             if(card.allowedToPlay) {
                 //TODO show all card options
@@ -481,18 +428,18 @@ class Gui {
     }
 
     getMinScroll() {
-        return -game.yourStacks.length*this.CARD_WIDTH_GAP-canvas.width/4;
+        return -game.yourStacks.length*(this.CARD_WIDTH+GUI_SCALE)-canvas.width/4;
     }
     getMaxScroll() {
-        return canvas.width/4 + this.GAP_SIZE;
+        return canvas.width/4 + GUI_SCALE;
     }
     getScrollBarX() {
         let d = this.getMaxScroll()-this.getMinScroll();
         let interpolate = 1 - (this.scrollOffset-this.getMinScroll())/d;
-        return this.GAP_SIZE+interpolate * (canvas.width-(this.GAP_SIZE*2));
+        return GUI_SCALE+interpolate * (canvas.width-(GUI_SCALE*2));
     }
     setScrollBarX() {
-        let interpolate = (this.mousePosition.x-20)/(canvas.width-(this.GAP_SIZE*2));
+        let interpolate = (this.mousePosition.x-20)/(canvas.width-(GUI_SCALE*2));
         if(interpolate<0) interpolate = 0;
         if(interpolate>1) interpolate = 1;
         interpolate = 1 - interpolate;

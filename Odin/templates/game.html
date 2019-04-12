@@ -12,6 +12,7 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
         
         <script type="text/javascript" src="{{ url_for('static', filename='src/game.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/gui_elements.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/option_window.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/gui.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/setup.js') }}"></script>
@@ -20,6 +21,14 @@
             var GAME_ID = "{{ game.get_id() }}";
             var ALL_URLS = {{ game.deck.get_all_urls() | safe }};
             var IS_MOBILE;
+
+            const CARD_RATIO = 670.0/1045.0;
+            const CARD_WIDTH = 8;
+            const CARD_HEIGHT = CARD_WIDTH/CARD_RATIO;
+            const MIN_WIDTH = 48;//in terms of GUI_SCALE units
+            const MIN_HEIGHT = 60;
+
+            var GUI_SCALE;
             var game, gui, canvas, ctx;
         </script>
 
