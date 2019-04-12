@@ -6,9 +6,19 @@ class Button {
         this.text = text;
     }
 
+    x() {return 0;}
+    y() {return 0;}
+
     isMouseOver(x, y) {
         return mousePosition.x>x && mousePosition.x<x+this.width * GUI_SCALE &&
             mousePosition.y>y && mousePosition.y<y+this.height * GUI_SCALE;
+    }
+    isMouseOverThis() {
+        return mousePosition.x>this.x() && mousePosition.x<this.x()+this.width * GUI_SCALE &&
+            mousePosition.y>this.y() && mousePosition.y<this.y()+this.height * GUI_SCALE;
+    }
+    drawThis(canPress) {
+        this.draw(this.x(),this.y(),canPress);
     }
 
     draw(x, y, canPress) {

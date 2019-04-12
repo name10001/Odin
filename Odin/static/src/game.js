@@ -67,10 +67,13 @@ class Game {
 
         this.yourStacks.length = 0;
 
+        let canPlay = 0;
+
         let cardStackPanels = [];
         let lastStack = null;
         //update the cards in your hand
         for(let card of update['your cards']) {
+            if(card['can be played']) canPlay++;
             //this.yourCards.push(new CardStack(card['card id'], card['card image url'], card['can be played'], card['options']));
             if(lastStack != null) {
                 if(lastStack.url == card['card image url']) {
@@ -110,7 +113,7 @@ class Game {
             if(player['is turn']) {
                 this.turn = this.players.length;
                 if(player['is you']) {
-                    this.turnString = "Your Turn";
+                    this.turnString = "Pick Cards: " + canPlay + "/" + player['number of cards'];
                     this.yourTurn = true;
                 }else {
                     this.turnString = player['name'] + "'s Turn";
