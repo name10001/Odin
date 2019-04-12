@@ -93,10 +93,10 @@ function touchMove(event) {
     gui.drag();
 }
 function touchEnd(event) {
-    mousePosition.x = 0;
-    mousePosition.y = 0;
     mousePressed = false;
     gui.release();
+    mousePosition.x = 0;
+    mousePosition.y = 0;
 }
 
 function mouseLeave(event) {
