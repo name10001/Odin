@@ -31,7 +31,7 @@ class Gui {
 
 
         //finish
-        this.finishButton = new Button(CARD_WIDTH*2+1, 3, 1, "+1");
+        this.finishButton = new Button(CARD_WIDTH*2+1, 4, 2, "+1");
         this.finishButton.x = function() {
             return gui.getLeftX() + GUI_SCALE*18;
         }
@@ -44,7 +44,7 @@ class Gui {
             return gui.getLeftX() + GUI_SCALE*18;
         }
         this.undoButton.y = function() {
-            return gui.getBottomY() - GUI_SCALE*8;
+            return gui.getBottomY() - GUI_SCALE*7;
         };
         //undo all
         this.undoAllButton = new Button(CARD_WIDTH, 3, 1, "UNDO ALL");
@@ -52,7 +52,7 @@ class Gui {
             return gui.getLeftX() + GUI_SCALE*(19+CARD_WIDTH);
         }
         this.undoAllButton.y = function() {
-            return gui.getBottomY() - GUI_SCALE*8;
+            return gui.getBottomY() - GUI_SCALE*7;
         };
 
 
@@ -78,7 +78,6 @@ class Gui {
 
     getBottomY() {
         let y = canvas.height - GUI_SCALE*(CARD_HEIGHT+10 + (IS_MOBILE ? 0 : 3));
-        if(LAYOUT_TYPE == 0) y -= GUI_SCALE*3;
         return y;
     }
     
@@ -96,6 +95,7 @@ class Gui {
         ctx.globalAlpha = 1;
 
         let bottomY = this.getBottomY();
+        if(LAYOUT_TYPE == 0) bottomY -= GUI_SCALE*3;
         let leftX = this.getLeftX();
 
         //draw discard pile
