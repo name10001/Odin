@@ -31,7 +31,7 @@ class Gui {
 
 
         //finish
-        this.finishButton = new Button(CARD_WIDTH, 3, 1, "+1");
+        this.finishButton = new Button(CARD_WIDTH*2+1, 3, 1, "+1");
         this.finishButton.x = function() {
             return gui.getLeftX() + GUI_SCALE*18;
         }
