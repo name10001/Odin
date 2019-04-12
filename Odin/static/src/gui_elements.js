@@ -42,8 +42,8 @@ class Container {
 class CardStackPanel {
     constructor(cardStack) {
         this.cardStack = cardStack;
-        this.playButton = new Button(3,3,2,"+");
-        this.playallButton = new Button(3,3,1,"+All");
+        this.helpButton = new Button(3,3,2,"?");
+        this.playallButton = new Button(CARD_WIDTH-1,3,2,"+All");
     }
 
     draw(x,y,width,height) {
@@ -65,6 +65,9 @@ class CardStackPanel {
             ctx.fillStyle = "#000";
             
             ctx.fillText("x" + stackSize, x+GUI_SCALE, y+GUI_SCALE*CARD_HEIGHT);
+            
+            //play all button
+            this.playallButton.draw(x+GUI_SCALE, y + (CARD_HEIGHT+1.5)*GUI_SCALE,this.cardStack.allowedToPlay);
         }
 
         //draw transparent overlay if you aren't allowed to play
@@ -74,25 +77,24 @@ class CardStackPanel {
                 GUI_SCALE*CARD_WIDTH, GUI_SCALE*CARD_HEIGHT);
         }
 
-        //draw buttons
-        this.playButton.draw(x+GUI_SCALE, y + (CARD_HEIGHT+1.5)*GUI_SCALE,this.cardStack.allowedToPlay);
-        this.playallButton.draw(x+GUI_SCALE*(CARD_WIDTH-3), y + (CARD_HEIGHT+1.5)*GUI_SCALE,this.cardStack.allowedToPlay);
+        this.helpButton.draw(x+GUI_SCALE*(CARD_WIDTH-2.5),y+GUI_SCALE/2,true);
+
     }
 
     click(x,y) {
-        //clicked the card
-        if(x > GUI_SCALE/2 && x<GUI_SCALE*CARD_WIDTH+GUI_SCALE/2 &&
-            y > GUI_SCALE/2 && y<GUI_SCALE*CARD_HEIGHT+GUI_SCALE/2) {
-                console.log("INFO");
-            //Show card details here
+        if(x > GUI_SCALE*(CARD_WIDTH-2.5) && x < GUI_SCALE*CARD_WIDTH+GUI_SCALE/2 &&
+        y > GUI_SCALE/2 && y<GUI_SCALE*3.5) {
+            console.log("info");
         }
 
-        else if(x > GUI_SCALE && x<GUI_SCALE*4 &&
-            y > GUI_SCALE*(CARD_HEIGHT+1.5) && y<GUI_SCALE*(CARD_HEIGHT+4.5)) {
+        //clicked the card
+        else if(x > GUI_SCALE/2 && x<GUI_SCALE*CARD_WIDTH+GUI_SCALE/2 &&
+            y > GUI_SCALE/2 && y<GUI_SCALE*CARD_HEIGHT+GUI_SCALE/2) {
             this.play();
         }
-        else if(x > GUI_SCALE*(CARD_WIDTH-3) && x<GUI_SCALE*CARD_WIDTH &&
-            y > GUI_SCALE*(CARD_HEIGHT+1.5) && y<GUI_SCALE*(CARD_HEIGHT+4.5)) {
+        //clicked the play all button
+        else if(x > GUI_SCALE && x<GUI_SCALE*CARD_WIDTH &&
+            y > GUI_SCALE*(CARD_HEIGHT+1.5) && y<GUI_SCALE*(CARD_HEIGHT+4.5) && this.cardStack.cardIds.length>1) {
             this.playAll();
         }
     }
