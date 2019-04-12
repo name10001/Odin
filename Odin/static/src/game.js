@@ -45,22 +45,6 @@ class CardStack {
 
 }
 
-/*class Card {
-    constructor(id, url, allowedToPlay, options) {
-        this.id = id;
-        this.allowedToPlay = allowedToPlay;
-        this.image = gui.cardImages[url];
-        this.optionStrings = [];
-        this.optionIds = [];
-        if(options!=null) {
-            for(let id of Object.keys(options)) {
-                this.optionIds.push(id);
-                this.optionStrings.push(options[id]);
-            }
-        }
-    }
-}*/
-
 class Game {
     constructor() {
         //this.yourCards = [];
@@ -82,6 +66,8 @@ class Game {
         
 
         this.yourStacks.length = 0;
+
+        let cardStackPanels = [];
         let lastStack = null;
         //update the cards in your hand
         for(let card of update['your cards']) {
@@ -94,7 +80,9 @@ class Game {
             }
             lastStack = new CardStack(card['card id'], card['card image url'], card['can be played'], card['options']);
             this.yourStacks.push(lastStack);
+            cardStackPanels.push(new CardStackPanel(lastStack));
         }
+        gui.updateCards(cardStackPanels);
 
         //update cards at the top
         this.topCards.length = 0;

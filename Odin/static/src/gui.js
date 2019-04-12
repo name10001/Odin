@@ -24,21 +24,25 @@ class Gui {
 
 
         //initialize some variables
-        this.mousePosition = {x:0,y:0};
-        this.selectOffset = {x:0,y:0};
-        this.clickPosition = {x:0,y:0};
-        this.mouseMove = {x:0,y:0};
-        this.draggedCard = -1;
-        this.dragAll = false;
+        //this.selectOffset = {x:0,y:0};
+        //this.clickPosition = {x:0,y:0};
+        //this.draggedCard = -1;
+        //this.dragAll = false;
         this.optionsWindow = null;
-        this.scrollSpeed = 0;
-        this.dragType = 0;
-        this.mousePressed = false;
-        this.scrollOffset = 0;
+        //this.scrollSpeed = 0;
+        ///this.dragType = 0;
+        ///this.scrollOffset = 0;
+        this.playAll = false;
 
         //some buttons (update the size in the setCardDimensions() function)
         this.finishButton = new Button(0,0,0,0,"FINISHED");
         this.undoButton = new Button(0,0,0,0,"UNDO");
+
+        this.cardScroller = new ScrollArea(new Container(),CARD_WIDTH+1,CARD_HEIGHT+1);
+    }
+
+    updateCards(cardPanels) {
+        this.cardScroller.setItems(cardPanels);
     }
 
     /**
@@ -104,9 +108,9 @@ class Gui {
         else {
             this.finishButton.text = "PLAY CARDS";
         }
-        this.finishButton.draw(ctx,fontSize,this.mousePosition,game.yourTurn);
+        this.finishButton.draw(ctx,fontSize,game.yourTurn);
 
-        if(game.planningCards.length>0) this.undoButton.draw(ctx,fontSize,this.mousePosition,true);
+        if(game.planningCards.length>0) this.undoButton.draw(ctx,fontSize,true);
 
         //draw players
         if(game.players.length>0) {
@@ -161,9 +165,12 @@ class Gui {
             }
             ctx.stroke();
         }
+        this.cardScroller.draw();
+        //DRAW CARD OPTIONS WINDOW
+        if(this.optionsWindow!=null) this.optionsWindow.draw(ctx, canvas.width/2-this.CARD_WIDTH*2,canvas.height/4,this.CARD_WIDTH*4,canvas.height/2);
 
         //draw hand scroller
-        let scrollY = canvas.height-this.CARD_HEIGHT-GUI_SCALE*3;
+        /*let scrollY = canvas.height-this.CARD_HEIGHT-GUI_SCALE*3;
         let scrollX = this.getScrollBarX();
         ctx.strokeStyle = "#ddd";
         ctx.fillStyle = "#999";
@@ -172,13 +179,13 @@ class Gui {
         ctx.lineTo(canvas.width-GUI_SCALE,scrollY);
         ctx.stroke();
         ctx.fillRect(scrollX-this.CARD_WIDTH/2,scrollY-GUI_SCALE,this.CARD_WIDTH,GUI_SCALE*2);
-        ctx.strokeRect(scrollX-this.CARD_WIDTH/2,scrollY-GUI_SCALE,this.CARD_WIDTH,GUI_SCALE*2);
+        ctx.strokeRect(scrollX-this.CARD_WIDTH/2,scrollY-GUI_SCALE,this.CARD_WIDTH,GUI_SCALE*2);*/
         
 
         
         //draw your hand
         //number font
-        ctx.font = "bold " + (fontSize*2) + "px Courier New";
+        /*ctx.font = "bold " + (fontSize*2) + "px Courier New";
         ctx.textAlign = "left";
         console.log(this.scrollOffset);
 
@@ -206,12 +213,12 @@ class Gui {
                 
                 ctx.fillText("x" + stackSize, x+fontSize/2,y+this.CARD_HEIGHT-fontSize*0.5);
             }
-        }
+        }*/
 
         //draw card you are dragging
-        if(this.draggedCard>=0 && this.optionsWindow == null) {
-            let x = this.mousePosition.x+this.selectOffset.x;
-            let y = this.mousePosition.y+this.selectOffset.y;
+        /*if(this.draggedCard>=0 && this.optionsWindow == null) {
+            let x = mousePosition.x+this.selectOffset.x;
+            let y = mousePosition.y+this.selectOffset.y;
 
             ctx.drawImage(game.yourStacks[this.draggedCard].image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
             if(!game.yourStacks[this.draggedCard].allowedToPlay) {
@@ -229,42 +236,40 @@ class Gui {
                     ctx.fillText("x" + stackSize, x+fontSize/2,y+this.CARD_HEIGHT-fontSize*0.5);
                 }
             }
-        }
+        }*/
 
 
-        //DRAW CARD OPTIONS WINDOW
-        if(this.optionsWindow!=null) this.optionsWindow.draw(ctx, canvas.width/2-this.CARD_WIDTH*2,canvas.height/4,this.CARD_WIDTH*4,canvas.height/2);
 
     }
 
     /**
      * Method when you tap/click a point on the screen
      */
-    click(x, y, shiftPressed) {
+    click() {
         if(this.optionsWindow!=null) {
-            this.optionsWindow.click(x,y);
+            this.optionsWindow.click();
             return;
         }
-        this.mousePressed = true;
-        this.mousePosition.x = x;
-        this.mousePosition.y = y;
+        this.cardScroller.click();
         //Clicked in hand area
-        if(this.mousePosition.y > canvas.height-this.CARD_HEIGHT-GUI_SCALE) {
-            this.clickPosition.x = this.mousePosition.x-this.scrollOffset;
-            this.clickPosition.y = this.mousePosition.y;
+        /*if(mousePosition.y > canvas.height-this.CARD_HEIGHT-GUI_SCALE) {
+            this.clickPosition.x = mousePosition.x-this.scrollOffset;
+            this.clickPosition.y = mousePosition.y;
             this.dragType = 1;
-            if(shiftPressed) this.dragAll = true;
+            //if(shiftPressed) this.dragAll = true;
         }
         //Clicked in the scroll area
-        else if(this.mousePosition.y<canvas.height-this.CARD_HEIGHT-GUI_SCALE*2 && this.mousePosition.y>canvas.height-this.CARD_HEIGHT-GUI_SCALE*4) {
+        else if(mousePosition.y<canvas.height-this.CARD_HEIGHT-GUI_SCALE*2 && mousePosition.y>canvas.height-this.CARD_HEIGHT-GUI_SCALE*4) {
             this.dragType = 4;
         }
         //clicking on the finish turn button
-        else if(this.finishButton.isClicked(this.mousePosition.x,this.mousePosition.y) && game.yourTurn) {
+        else*/
+        
+        if(this.finishButton.isClicked(mousePosition.x,mousePosition.y) && game.yourTurn) {
             game.finishTurn();
         }
         //clicking on the undo button
-        else if(this.undoButton.isClicked(this.mousePosition.x,this.mousePosition.y) && game.planningCards.length>0) {
+        else if(this.undoButton.isClicked(mousePosition.x,mousePosition.y) && game.planningCards.length>0) {
             game.undo();
         }
     }
@@ -272,7 +277,7 @@ class Gui {
     /**
      * Determines the card at the clickPosition
      */
-    getClickedCard() {
+    /*getClickedCard() {
         let x = this.clickPosition.x-canvas.width/2;
         let r = x % (this.CARD_WIDTH+GUI_SCALE);
     
@@ -289,26 +294,23 @@ class Gui {
         }
     
         this.draggedCard = -1;
-    }
+    }*/
 
     /**
      * When you drag the mouse/touch 
      */
-    drag(x,y) {
+    drag() {
         if(this.optionsWindow!=null) {
-            this.optionsWindow.drag(x,y);
+            this.optionsWindow.drag();
             return;
         }
-        this.mouseMove.x = x-this.mousePosition.x;
-        this.mouseMove.y = y-this.mousePosition.y;
-        this.mousePosition.x = x;
-        this.mousePosition.y = y;
+        this.cardScroller.drag();
         
-        if(this.mousePressed) {
+        /*if(mousePressed) {
             //scrolling through cards
             if(this.dragType==2) {
-                this.scrollOffset = this.mousePosition.x-this.clickPosition.x;
-                if(this.mousePosition.y<canvas.height-GUI_SCALE*3-this.CARD_HEIGHT) {
+                this.scrollOffset = mousePosition.x-this.clickPosition.x;
+                if(mousePosition.y<canvas.height-GUI_SCALE*3-this.CARD_HEIGHT) {
                     this.dragType = 3;
                     this.getClickedCard();
                 }
@@ -319,15 +321,15 @@ class Gui {
             }
             //determine if you are dragging the mouse horizontally or vertically
             else if(this.dragType==1){
-                if(Math.abs(this.mousePosition.x-this.scrollOffset-this.clickPosition.x)>20) {
+                if(Math.abs(mousePosition.x-this.scrollOffset-this.clickPosition.x)>20) {
                     this. dragType = 2;
                 }
-                else if(Math.abs(this.mousePosition.y-this.clickPosition.y)>20) {
+                else if(Math.abs(mousePosition.y-this.clickPosition.y)>20) {
                     this.dragType = 3;
                     this.getClickedCard();
                 }
             }
-        }
+        }*/
     }
     /**
      * Release the mouse/touch
@@ -337,21 +339,17 @@ class Gui {
             this.optionsWindow.release();
             return;
         }
+        this.cardScroller.release();
         //selected a card
-        if(this.draggedCard>=0 && this.mousePosition.y<canvas.height-this.CARD_HEIGHT-GUI_SCALE*3) {
+        /*if(this.draggedCard>=0 && mousePosition.y<canvas.height-this.CARD_HEIGHT-GUI_SCALE*3) {
             let card = game.yourStacks[this.draggedCard];
             if(card.allowedToPlay) {
                 //TODO show all card options
                 if(card.optionIds.length>0) {
                     //open option picking window
-                    this.optionsWindow = new OptionsWindow(card,this.mousePosition);
+                    this.optionsWindow = new OptionsWindow(card,mousePosition);
                     //keep dragged card at same value
-                    this.mousePressed = false;
                     this.dragType = 0;
-                    if(IS_MOBILE) {
-                        this.mousePosition.x = 0;
-                        this.mousePosition.y = 0;
-                    }
                     return;
                 }else {
                     if(this.dragAll) {
@@ -364,13 +362,8 @@ class Gui {
             }
         }
         this.draggedCard = -1;
-        this.mousePressed = false;
         this.dragType = 0;
-        this.dragAll = false;
-        if(IS_MOBILE) {
-            this.mousePosition.x = 0;
-            this.mousePosition.y = 0;
-        }
+        this.dragAll = false;*/
     }
 
     /** 
@@ -381,7 +374,8 @@ class Gui {
             this.optionsWindow.wheel(amount);
             return;
         }
-        this.scrollSpeed = -amount * this.CARD_WIDTH;
+        this.cardScroller.setScrollSpeed(amount*0.7);
+        //this.scrollSpeed = -amount * this.CARD_WIDTH;
     }
 
     /**
@@ -389,8 +383,11 @@ class Gui {
      */
     scroll(dt) {
         if(this.optionsWindow!=null) return;
+
+        this.cardScroller.scroll(dt);
+
         //accelerate based on your dragging speed
-        if(this.scrollSpeed > 0) {
+        /*if(this.scrollSpeed > 0) {
             this.scrollSpeed-=dt;
             if(this.scrollSpeed<0) this.scrollSpeed = 0;
         }
@@ -405,7 +402,7 @@ class Gui {
         }
         else if(this.scrollOffset > this.getMaxScroll()) {
             this.scrollOffset = this.getMaxScroll();
-        }
+        }*/
     }
 
     /**
@@ -414,7 +411,7 @@ class Gui {
     exitOptions(pickedOption) {
         this.optionsWindow = null;
 
-        if(this.dragAll) {
+        if(this.playAll) {
             game.yourStacks[this.draggedCard].playAll(pickedOption);
 
         }else {
@@ -423,11 +420,11 @@ class Gui {
         }
         //game.playCard(game.your[this.draggedCard].id,pickedOption);
         
-        this.draggedCard = -1;
-        this.dragAll = false;
+        //this.draggedCard = -1;
+        this.playAll = false;
     }
 
-    getMinScroll() {
+    /*getMinScroll() {
         return -game.yourStacks.length*(this.CARD_WIDTH+GUI_SCALE)-canvas.width/4;
     }
     getMaxScroll() {
@@ -439,10 +436,10 @@ class Gui {
         return GUI_SCALE+interpolate * (canvas.width-(GUI_SCALE*2));
     }
     setScrollBarX() {
-        let interpolate = (this.mousePosition.x-20)/(canvas.width-(GUI_SCALE*2));
+        let interpolate = (mousePosition.x-20)/(canvas.width-(GUI_SCALE*2));
         if(interpolate<0) interpolate = 0;
         if(interpolate>1) interpolate = 1;
         interpolate = 1 - interpolate;
         this.scrollOffset = this.getMinScroll() + interpolate * (this.getMaxScroll()-this.getMinScroll());
-    }
+    }*/
 }

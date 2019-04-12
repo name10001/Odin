@@ -3,15 +3,13 @@
  * Class for the options window
  */
 class OptionsWindow {
-    constructor(card, mousePosition) {
+    constructor(card) {
         this.image = card.image;
         this.optionStrings = card.optionStrings;
         this.optionIds = card.optionIds;
         this.scrollAmount = 0;
-        this.mousePosition = {x:mousePosition.x,y:mousePosition.y};
         //this.mouseMove = {x:0,y:0};
         this.clickPosition = {x:0,y:0};
-        this.mousePressed = false;
         this.dragging = false;
         this.hoveredItem = -1;
         this.optionBoxHeight = 20;//literally just a placeholder number until updated in draw()
@@ -58,10 +56,10 @@ class OptionsWindow {
         let i = this.scrollAmount;
 
         //calculate the item that you are hovered over
-        if(this.mousePosition.x<x+gap || this.mousePosition.x>x+gap+optionBoxWidth) this.hoveredItem = -1;
-        else if(!this.dragging && (this.mousePosition.y<y2 || this.mousePosition.y>y2+optionBoxesHeight)) this.hoveredItem = -1;
+        if(mousePosition.x<x+gap || mousePosition.x>x+gap+optionBoxWidth) this.hoveredItem = -1;
+        else if(!this.dragging && (mousePosition.y<y2 || mousePosition.y>y2+optionBoxesHeight)) this.hoveredItem = -1;
         else {
-            let dy = this.mousePosition.y-y2;
+            let dy = mousePosition.y-y2;
             this.hoveredItem = this.scrollAmount+Math.floor(dy/this.optionBoxHeight);
             if(this.hoveredItem>=this.optionIds.length) this.hoveredItem = -1;//clicked blank space in option window
         }
@@ -81,27 +79,23 @@ class OptionsWindow {
         }
     }
 
-    click(x,y) {
-        this.clickPosition.x = x;
-        this.clickPosition.y = y;
-        this.mousePosition.x = x;
-        this.mousePosition.y = y;
+    click() {
+        this.clickPosition.x = mousePosition.x;
+        this.clickPosition.y = mousePosition.y;
         this.mousePressed = true;
         this.dragging = false;
     }
 
-    drag(x,y) {
-        this.mousePosition.x = x;
-        this.mousePosition.y = y;
-        if(this.mousePressed) {
-            if(Math.abs(this.clickPosition.x-this.mousePosition.x)>10 || Math.abs(this.clickPosition.y-this.mousePosition.y)>10) this.dragging = true;
+    drag() {
+        if(mousePressed) {
+            if(Math.abs(this.clickPosition.x-mousePosition.x)>10 || Math.abs(this.clickPosition.y-mousePosition.y)>10) this.dragging = true;
             
             if(this.dragging) {
-                if(this.mousePosition.y-this.clickPosition.y>this.optionBoxHeight) {
+                if(mousePosition.y-this.clickPosition.y>this.optionBoxHeight) {
                     this.clickPosition.y+=this.optionBoxHeight;
                     this.scrollUp();
                 }
-                else if(this.mousePosition.y-this.clickPosition.y<-this.optionBoxHeight) {
+                else if(mousePosition.y-this.clickPosition.y<-this.optionBoxHeight) {
                     this.clickPosition.y-=this.optionBoxHeight;
                     this.scrollDown();
                 }
@@ -111,17 +105,12 @@ class OptionsWindow {
     }
     
     release() {
-        if(IS_MOBILE) {
-            this.mousePosition.x = 0;
-            this.mousePosition.y = 0;
-        }
         if(this.hoveredItem!=-1 && !this.dragging) {
             //picked an option
             let pickedOption = this.optionIds[this.hoveredItem];
             gui.exitOptions(pickedOption);
             return;
         }
-        this.mousePressed = false;
         this.dragging = false;
     }
     wheel(amount) {

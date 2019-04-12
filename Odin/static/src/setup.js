@@ -10,6 +10,8 @@ $(document).ready(function() {
     // SETUP GUI
     game = new Game();
     gui = new Gui();
+    mousePosition = {x:0,y:0};
+    mousePressed = false;
     
     canvas = document.getElementById('canvas');
     resize();
@@ -61,11 +63,16 @@ $(document).ready(function() {
 
 function mouseDown(event) {
     if(event.button == 0) {
-        gui.click(event.offsetX,event.offsetY, event.shiftKey);//TODO change implementation
+        mousePressed = true;
+        mousePosition.x = event.offsetX;
+        mousePosition.y = event.offsetY;
+        gui.click();
     }
 }
 function mouseMove(event) {
-    gui.drag(event.offsetX,event.offsetY);
+    mousePosition.x = event.offsetX;
+    mousePosition.y = event.offsetY;
+    gui.drag();
 }
 function mouseUp(event) {
     if(event.button==0) {
@@ -74,12 +81,19 @@ function mouseUp(event) {
 }
 
 function touchStart(event) {
-    gui.click(event.touches[0].clientX,event.touches[0].clientY,false);
+    mousePressed = true;
+    mousePosition.x = event.touches[0].clientX;
+    mousePosition.y = event.touches[0].clientY;
+    gui.click();
 }
 function touchMove(event) {
-    gui.drag(event.touches[0].clientX, event.touches[0].clientY);
+    mousePosition.x = event.touches[0].clientX;
+    mousePosition.y = event.touches[0].clientY;
+    gui.drag();
 }
 function touchEnd(event) {
+    mousePosition.x = 0;
+    mousePosition.y = 0;
     gui.release();
 }
 
