@@ -42,7 +42,7 @@ $(document).ready(function() {
 
     
     // SocketIO
-    socket = io.connect(document.domain, {
+    socket = io.connect(location.host, {
         'reconnection': true,
         'reconnectionDelay': 500,
         'maxReconnectionAttempts': Infinity
