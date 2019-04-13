@@ -157,37 +157,49 @@ class Gui {
 
 
         //draw players
-        /*if(game.players.length>0) {
-            let px = canvas.width/2-this.CARD_WIDTH*2.5;
-            let py = canvas.height/2+this.CARD_HEIGHT/4;
-            let pheight = GUI_SCALE*2.5;
+        if(game.players.length>0) {
+            let px = canvas.width/2 - this.CARD_WIDTH;
+            let fontSize = bigFontSize;
+            let medFontSize = Math.round(GUI_SCALE*1.5);
+            let py = GUI_SCALE;
+            let pheight = GUI_SCALE*5;
             let pgap = GUI_SCALE;
-            fontSize = Math.round(this.CARD_WIDTH/8);
+            let pwidth = this.CARD_WIDTH*3+GUI_SCALE;
 
-            ctx.textAlign = "left";
-            ctx.font = "bold " + fontSize + "px Courier New";
-            let i = 0;
-            for(let player of game.players) {
+            ctx.font = "bold " + bigFontSize + "px Courier New";
+            let i = game.turn;
+            do {
+                let player = game.players[i];
                 //box
-                ctx.fillStyle = i==game.yourId ? "#b99" : "#999";
-                ctx.fillRect(px-fontSize/2,py-fontSize,this.CARD_WIDTH,pheight);
-                if(i==game.turn) ctx.strokeStyle = "#ffa";
-                else ctx.strokeStyle = "#fff";
-                ctx.strokeRect(px-fontSize/2,py-fontSize,this.CARD_WIDTH,pheight);
+                ctx.fillStyle = i==game.yourId ? "#ece677" : "#a4e4e5";
+                ctx.strokeStyle = "#fff";
+                ctx.fillRect(px, py, pwidth, pheight);
+                ctx.strokeRect(px, py, pwidth, pheight);
                 
                 //name
-                if(i==game.turn) ctx.fillStyle = "#ffa";
-                else ctx.fillStyle = "#fff";
-                ctx.fillText(player.name,px,py,this.CARD_WIDTH-fontSize);
-                ctx.fillText(player.nCards,px,py+pgap,this.CARD_WIDTH-fontSize);
+                ctx.fillStyle = "#000";
+                ctx.textAlign = "left";
+                ctx.fillText(player.name,px+fontSize/2,py+pheight/2+fontSize/3,fontSize*5);
+                ctx.textAlign = "right";
+                ctx.fillText(player.nCards,px+pwidth-fontSize/2,py+pheight/2+fontSize/3.,fontSize*4);
 
-                //iterate
-                py-=pgap+pheight;
-                i++;
-            }
+                //adjust size for non-turn players
+                if(i==game.turn) {
+                    py+=pheight/2;
+                    ctx.font = "bold " + medFontSize + "px Courier New";
+                    px+=this.CARD_WIDTH;
+                    pwidth-=this.CARD_WIDTH;
+                    pheight/=2;
+                    fontSize = medFontSize;
+                }
+                py+=pgap+pheight;
+                i+=game.direction;
+                if(i<0) i = game.players.length-1;
+                else if(i>=game.players.length) i = 0;
+            }while(i!=game.turn);
 
             //draw an arrow to show direction
-            ctx.strokeStyle = "#ffa";
+            /*ctx.strokeStyle = "#ffa";
             ctx.beginPath();
             let topy = py-fontSize+pheight+pgap+pheight/2;
             let bottomy = canvas.height/2+this.CARD_HEIGHT/4-fontSize+pheight/2;
@@ -207,8 +219,8 @@ class Gui {
                 ctx.lineTo(arrowx,bottomy);
                 ctx.lineTo(arrowx+GUI_SCALE/2,bottomy-GUI_SCALE/2);
             }
-            ctx.stroke();
-        }*/
+            ctx.stroke();*/
+        }
 
 
         //DRAW CARD SCROLLER

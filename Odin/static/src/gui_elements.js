@@ -67,6 +67,7 @@ class CardStackPanel {
             GUI_SCALE*CARD_WIDTH, GUI_SCALE*CARD_HEIGHT);
         
         this.playButton.draw(x+GUI_SCALE, y + (CARD_HEIGHT+1.5)*GUI_SCALE,this.cardStack.allowedToPlay);
+        this.playallButton.draw(x+GUI_SCALE, y + (CARD_HEIGHT+5.5)*GUI_SCALE,this.cardStack.allowedToPlay);
         //draw stack size
         if(stackSize>1) {
             ctx.font = "bold " + (GUI_SCALE*2) + "px Courier New";
@@ -77,8 +78,6 @@ class CardStackPanel {
             
             ctx.fillText("x" + stackSize, x+GUI_SCALE, y+GUI_SCALE*CARD_HEIGHT);
             
-            //play all button
-            this.playallButton.draw(x+GUI_SCALE, y + (CARD_HEIGHT+5.5)*GUI_SCALE,this.cardStack.allowedToPlay);
         }
 
         //draw transparent overlay if you aren't allowed to play
@@ -106,7 +105,7 @@ class CardStackPanel {
         }
         //clicked the play all button
         else if(x > GUI_SCALE && x<GUI_SCALE*CARD_WIDTH &&
-            y > GUI_SCALE*(CARD_HEIGHT+5.5) && y<GUI_SCALE*(CARD_HEIGHT+8.5) && this.cardStack.cardIds.length>1) {
+            y > GUI_SCALE*(CARD_HEIGHT+5.5) && y<GUI_SCALE*(CARD_HEIGHT+8.5)) {
             this.playAll();
         }
     }
