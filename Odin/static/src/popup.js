@@ -1,9 +1,19 @@
 
+class PopupWindow {
+    constructor(width,height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    draw() {}
+}
+
 /**
  * Class for the options window
  */
-class OptionsWindow {
-    constructor(card) {
+class OptionsWindow extends PopupWindow {
+    constructor(width,height,card) {
+        super(width,height);
         this.card = card;
         this.image = card.image;
         this.optionStrings = card.optionStrings;
@@ -19,10 +29,15 @@ class OptionsWindow {
     /**
      * Draw the options window with specified dimensions
      */
-    draw(x, y, width, height) {
-        let fontSize = Math.round(width/20);
-        let cardWidth = width/4;
-        let cardHeight = cardWidth / CARD_RATIO;
+    draw() {
+        let width = this.width * canvas.width;
+        let height = this.height * canvas.height;
+        let x = (canvas.width-width)/2;
+        let y = (canvas.height-height)/2;
+
+        let fontSize = GUI_SCALE*2;
+        let cardWidth = GUI_SCALE*CARD_WIDTH;
+        let cardHeight = GUI_SCALE*CARD_HEIGHT;
         let gap = cardWidth/8;
         let optionsWidth = width-cardWidth-gap*2;
 

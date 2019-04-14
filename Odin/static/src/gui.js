@@ -24,7 +24,7 @@ class Gui {
 
 
         //initialize some variables
-        this.optionsWindow = null;
+        this.popup = null;
         this.playAll = false;
 
         //SOME BUTTONS
@@ -57,7 +57,7 @@ class Gui {
 
 
         //SCROLLER
-        this.cardScroller = new ScrollArea(new Container(),CARD_WIDTH+1,CARD_HEIGHT+9,IS_MOBILE ? 0 : 3);
+        this.cardScroller = new ScrollArea(new Container(),CARD_WIDTH+1,CARD_HEIGHT+9,3,0);
     }
 
     updateCards(cardPanels) {
@@ -77,7 +77,7 @@ class Gui {
     }
 
     getBottomY() {
-        let y = canvas.height - GUI_SCALE*(CARD_HEIGHT+10 + (IS_MOBILE ? 0 : 3));
+        let y = canvas.height - GUI_SCALE*(CARD_HEIGHT+13);
         return y;
     }
     
@@ -197,36 +197,13 @@ class Gui {
                 if(i<0) i = game.players.length-1;
                 else if(i>=game.players.length) i = 0;
             }while(i!=game.turn);
-
-            //draw an arrow to show direction
-            /*ctx.strokeStyle = "#ffa";
-            ctx.beginPath();
-            let topy = py-fontSize+pheight+pgap+pheight/2;
-            let bottomy = canvas.height/2+this.CARD_HEIGHT/4-fontSize+pheight/2;
-            let arrowx = px+this.CARD_WIDTH+GUI_SCALE*0.75;
-            ctx.moveTo(arrowx,topy);
-            ctx.lineTo(arrowx,bottomy);
-            ctx.stroke();
-            //arrowhead
-            ctx.beginPath();
-            if(game.direction==1) {
-                ctx.moveTo(arrowx-GUI_SCALE/2,topy+GUI_SCALE/2);
-                ctx.lineTo(arrowx,topy);
-                ctx.lineTo(arrowx+GUI_SCALE/2,topy+GUI_SCALE/2);
-            }
-            else {
-                ctx.moveTo(arrowx-GUI_SCALE/2,bottomy-GUI_SCALE/2);
-                ctx.lineTo(arrowx,bottomy);
-                ctx.lineTo(arrowx+GUI_SCALE/2,bottomy-GUI_SCALE/2);
-            }
-            ctx.stroke();*/
         }
 
 
         //DRAW CARD SCROLLER
         this.cardScroller.draw();
-        //DRAW CARD OPTIONS WINDOW
-        if(this.optionsWindow!=null) this.optionsWindow.draw(canvas.width/2-this.CARD_WIDTH*2,canvas.height/4,this.CARD_WIDTH*4,canvas.height/2);
+        //DRAW POPUP
+        if(this.popup!=null) this.popup.draw();
         
 
         //DRAW MOVING CARDS
@@ -238,8 +215,8 @@ class Gui {
      * Method when you tap/click a point on the screen
      */
     click() {
-        if(this.optionsWindow!=null) {
-            this.optionsWindow.click();
+        if(this.popup!=null) {
+            this.popup.click();
             return;
         }
         this.cardScroller.click();
@@ -264,8 +241,8 @@ class Gui {
      * When you drag the mouse/touch 
      */
     drag() {
-        if(this.optionsWindow!=null) {
-            this.optionsWindow.drag();
+        if(this.popup!=null) {
+            this.popup.drag();
             return;
         }
         this.cardScroller.drag();
@@ -275,8 +252,8 @@ class Gui {
      * Release the mouse/touch
      */
     release() {
-        if(this.optionsWindow!=null) {
-            this.optionsWindow.release();
+        if(this.popup!=null) {
+            this.popup.release();
             return;
         }
         this.cardScroller.release();
@@ -286,8 +263,8 @@ class Gui {
      * Mouse Wheel
      */
     wheel(amount) {
-        if(this.optionsWindow!=null) {
-            this.optionsWindow.wheel(amount);
+        if(this.popup!=null) {
+            this.popup.wheel(amount);
             return;
         }
         this.cardScroller.setScrollSpeed(amount*0.7);
@@ -298,7 +275,7 @@ class Gui {
      * Scrolling 
      */
     scroll(dt) {
-        if(this.optionsWindow!=null) return;
+        if(this.popup!=null) return;
 
         this.cardScroller.scroll(dt);
     }
@@ -307,7 +284,7 @@ class Gui {
      * Is called when you make a decision in the options menu
      */
     exitOptions(card, pickedOption) {
-        this.optionsWindow = null;
+        this.popup = null;
 
         if(this.playAll) {
             card.playAll(pickedOption);

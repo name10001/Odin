@@ -114,7 +114,7 @@ class CardStackPanel {
         if(!this.cardStack.allowedToPlay) return;
 
         if(this.cardStack.optionIds.length>0) {
-            gui.optionsWindow = new OptionsWindow(this.cardStack);
+            gui.popup = new OptionsWindow(0.5,0.5,this.cardStack);
         }
         else {
             this.cardStack.playSingle();
@@ -125,7 +125,7 @@ class CardStackPanel {
         if(!this.cardStack.allowedToPlay) return;
 
         if(this.cardStack.optionIds.length>0) {
-            gui.optionsWindow = new OptionsWindow(this.cardStack);
+            gui.popup = new OptionsWindow(0.5,0.5,this.cardStack);
             gui.playAll = true;
         }
         else {
@@ -144,12 +144,13 @@ class ScrollArea {
      * @param {Container} container container with a set width and height
      * @param {float} itemWidth width of each item in GUI_SCALE units
      * @param {float} itemHeight height of each item in GUI_SCALE units
+     * @param {integer} location 0 = bottom, 1 = left
      */
-    constructor(container, itemWidth, itemHeight, scrollbarHeight) {
+    constructor(container, itemWidth, itemHeight, scrollbarSize, location) {
         this.container = container;
         this.itemWidth = itemWidth;
         this.itemHeight = itemHeight;
-        this.scrollbarHeight = scrollbarHeight;
+        this.scrollbarSize = scrollbarSize;
         this.location = location;
 
         this.scrollOffset = 0.5;//offset from 0 to 1.
@@ -200,8 +201,8 @@ class ScrollArea {
         }
 
         //draw the scrollbar
-        if(this.scrollbarHeight > 0) {
-            let scrollY = this.container.getBottom() - height - GUI_SCALE*this.scrollbarHeight/2;
+        if(this.scrollbarSize > 0) {
+            let scrollY = this.container.getBottom() - height - GUI_SCALE*this.scrollbarSize/2;
             let scrollX = this.scrollOffset*(this.container.getWidth()-GUI_SCALE*2);
             ctx.strokeStyle = "#ddd";
             ctx.fillStyle = "#999";
@@ -215,10 +216,20 @@ class ScrollArea {
     }
 
     getMinScroll() {
-        return -this.container.getWidth()*0.75;
+        if(this.location==0) {
+            return -this.container.getWidth()*0.75;
+        }
+        else {
+            return -this.container.getHeight()*0.75;
+        }
     }
     getMaxScroll() {
-        return this.items.length * this.itemWidth * GUI_SCALE - this.container.getWidth()*0.25;
+        if(this.location == 0) {
+            return this.items.length * this.itemWidth * GUI_SCALE - this.container.getWidth()*0.25;
+        }
+        else {
+            return this.items.length * this.itemHeight * GUI_SCALE - this.container.getHeight()*0.25;
+        }
     }
     getTotalWidth() {
         return this.getMaxScroll() - this.getMinScroll();
@@ -268,7 +279,7 @@ class ScrollArea {
         }
         //check if in bounds of scrollbar
         else if(mousePosition.x>this.container.getLeft() && mousePosition.x<this.container.getRight() &&
-                    mousePosition.y>this.container.getBottom()-height-this.scrollbarHeight*GUI_SCALE && mousePosition.y<this.container.getBottom()-height) {
+                    mousePosition.y>this.container.getBottom()-height-this.scrollbarSize*GUI_SCALE && mousePosition.y<this.container.getBottom()-height) {
             this.scrolling = true;
         }
     }
