@@ -199,6 +199,13 @@ class Gui {
             }while(i!=game.turn);
         }
 
+        //draw pickup amount
+        if(game.pickupAmount>0) {
+            ctx.fillStyle = "#fff";
+            ctx.textAlign = "right";
+            ctx.font = "bold " + bigFontSize + "px Courier New";
+            ctx.fillText("+" + game.pickupAmount,canvas.width/2-bigFontSize/2,GUI_SCALE*8.75,this.CARD_WIDTH);
+        }
 
         //DRAW CARD SCROLLER
         this.cardScroller.draw();
