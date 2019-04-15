@@ -275,7 +275,10 @@ class Gui {
      * Scrolling 
      */
     scroll(dt) {
-        if(this.popup!=null) return;
+        if(this.popup!=null) {
+            this.popup.scroll(dt);
+            return;
+        }
 
         this.cardScroller.scroll(dt);
     }
@@ -286,14 +289,13 @@ class Gui {
     exitOptions(card, pickedOption) {
         this.popup = null;
 
-        if(this.playAll) {
-            card.playAll(pickedOption);
-
-        }else {
-            card.playSingle(pickedOption);
-
+        if(card!=null) {
+            if(this.playAll) {
+                card.playAll(pickedOption);
+            }else {
+                card.playSingle(pickedOption);
+            }
         }
-        //game.playCard(game.your[this.draggedCard].id,pickedOption);
         
         //this.draggedCard = -1;
         this.playAll = false;

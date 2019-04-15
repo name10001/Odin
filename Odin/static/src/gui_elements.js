@@ -32,7 +32,7 @@ class Button {
         ctx.fillStyle = canPress ? (hover ? "#ffa" : "#fff") : "#bbb";
         ctx.textAlign = "center";
         ctx.font = "bold " + fontSize + "px Courier New";
-        ctx.fillText(this.text,x+this.width*GUI_SCALE/2,y+this.height*GUI_SCALE/2+fontSize/3);
+        ctx.fillText(this.text,x+this.width*GUI_SCALE/2,y+this.height*GUI_SCALE/2+fontSize/3,this.width*GUI_SCALE-fontSize);
     }
 }
 
@@ -45,8 +45,8 @@ class Container {
     getRight() {return canvas.width;}
     getTop() {return 0;}
     getBottom() {return canvas.height;}
-    getWidth() {return canvas.width;}
-    getHeight() {return canvas.height;}
+    getWidth() {return this.getRight()-this.getLeft();}
+    getHeight() {return this.getBottom()-this.getTop();}
 }
 
 class CardStackPanel {
@@ -114,7 +114,7 @@ class CardStackPanel {
         if(!this.cardStack.allowedToPlay) return;
 
         if(this.cardStack.optionIds.length>0) {
-            gui.popup = new OptionsWindow(0.5,0.5,this.cardStack);
+            gui.popup = new OptionsWindow(this.cardStack);
         }
         else {
             this.cardStack.playSingle();
@@ -125,7 +125,7 @@ class CardStackPanel {
         if(!this.cardStack.allowedToPlay) return;
 
         if(this.cardStack.optionIds.length>0) {
-            gui.popup = new OptionsWindow(0.5,0.5,this.cardStack);
+            gui.popup = new OptionsWindow(this.cardStack);
             gui.playAll = true;
         }
         else {
@@ -185,7 +185,7 @@ class ScrollArea {
         let height = this.itemHeight * GUI_SCALE;
 
         let x = this.container.getLeft();
-        let y = this.container.getBottom() - height;
+        let y = this.location==0 ? this.container.getBottom() - height : this.container.getTop();
 
         //scroll area
         let minScroll = this.getMinScroll();
@@ -194,24 +194,50 @@ class ScrollArea {
 
         //draw items from left to right
         let start = minScroll + this.scrollOffset * totalWidth;
-        x-=start;
-        for(let item of this.items) {
-            item.draw(x,y,width,height);
-            x+=width;
+        
+        if(this.location == 0) {
+            x-=start;
+            for(let item of this.items) {
+                item.draw(x,y,width,height);
+                x+=width;
+            }
+        }
+        else {
+            y-=start;
+            for(let item of this.items) {
+                if(y>this.container.getBottom()) break;
+                if(y+height>this.container.getTop()) item.draw(x,y,width,height);
+                y+=height;
+            }
         }
 
         //draw the scrollbar
         if(this.scrollbarSize > 0) {
-            let scrollY = this.container.getBottom() - height - GUI_SCALE*this.scrollbarSize/2;
-            let scrollX = this.scrollOffset*(this.container.getWidth()-GUI_SCALE*2);
-            ctx.strokeStyle = "#ddd";
-            ctx.fillStyle = "#999";
-            ctx.beginPath();
-            ctx.moveTo(this.container.getLeft()+GUI_SCALE,scrollY);
-            ctx.lineTo(this.container.getRight()-GUI_SCALE,scrollY);
-            ctx.stroke();
-            ctx.fillRect(scrollX-width/2,scrollY-GUI_SCALE,width,GUI_SCALE*2);
-            ctx.strokeRect(scrollX-width/2,scrollY-GUI_SCALE,width,GUI_SCALE*2);
+            if(this.location == 0) {
+                let scrollY = this.container.getBottom() - height - GUI_SCALE*this.scrollbarSize/2;
+                let scrollX = this.container.getLeft() + this.scrollOffset*(this.container.getWidth()-GUI_SCALE*2);
+                ctx.strokeStyle = "#ddd";
+                ctx.fillStyle = "#999";
+                ctx.beginPath();
+                ctx.moveTo(this.container.getLeft()+GUI_SCALE,scrollY);
+                ctx.lineTo(this.container.getRight()-GUI_SCALE,scrollY);
+                ctx.stroke();
+                ctx.fillRect(scrollX-width/2,scrollY-GUI_SCALE,width,GUI_SCALE*2);
+                ctx.strokeRect(scrollX-width/2,scrollY-GUI_SCALE,width,GUI_SCALE*2);
+
+            }
+            else {
+                let scrollX = this.container.getLeft() + width + GUI_SCALE*this.scrollbarSize/2;
+                let scrollY = this.container.getTop()+this.scrollOffset*(this.container.getHeight()-GUI_SCALE*2);
+                ctx.strokeStyle = "#ddd";
+                ctx.fillStyle = "#999";
+                ctx.beginPath();
+                ctx.moveTo(scrollX,this.container.getTop()+GUI_SCALE);
+                ctx.lineTo(scrollX,this.container.getBottom()-GUI_SCALE);
+                ctx.stroke();
+                ctx.fillRect(scrollX-GUI_SCALE,scrollY-height/2,GUI_SCALE*2,height);
+                ctx.strokeRect(scrollX-GUI_SCALE,scrollY-height/2,GUI_SCALE*2,height);
+            }
         }
     }
 
@@ -220,7 +246,7 @@ class ScrollArea {
             return -this.container.getWidth()*0.75;
         }
         else {
-            return -this.container.getHeight()*0.75;
+            return 0;
         }
     }
     getMaxScroll() {
@@ -228,7 +254,7 @@ class ScrollArea {
             return this.items.length * this.itemWidth * GUI_SCALE - this.container.getWidth()*0.25;
         }
         else {
-            return this.items.length * this.itemHeight * GUI_SCALE - this.container.getHeight()*0.25;
+            return (this.items.length-1) * this.itemHeight * GUI_SCALE;
         }
     }
     getTotalWidth() {
@@ -268,25 +294,45 @@ class ScrollArea {
     }
 
     click() {
-        let height = this.itemHeight * GUI_SCALE;
+        let left = this.container.getLeft();
+        let bottom = this.container.getBottom();
+        let right = this.location==0 ? this.container.getRight() : this.container.getLeft() + this.itemWidth * GUI_SCALE;
+        let top = this.location==0 ? this.container.getBottom() - this.itemHeight * GUI_SCALE : this.container.getTop();
+        
         //check if within bounds of the scroll area
-        if(mousePosition.x>this.container.getLeft() && mousePosition.x<this.container.getRight() &&
-                    mousePosition.y<this.container.getBottom() && mousePosition.y>this.container.getBottom()-height) {
-            this.clickPosition.x = mousePosition.x-this.container.getLeft();
-            this.clickPosition.y = mousePosition.y-this.container.getBottom()+height;
+        if(mousePosition.x>left && mousePosition.x<right &&
+                    mousePosition.y<bottom && mousePosition.y>top) {
+            this.clickPosition.x = mousePosition.x-left;
+            this.clickPosition.y = mousePosition.y-top;
             this.clickScrollOffset = this.scrollOffset;
             this.dragging = false;
         }
         //check if in bounds of scrollbar
-        else if(mousePosition.x>this.container.getLeft() && mousePosition.x<this.container.getRight() &&
-                    mousePosition.y>this.container.getBottom()-height-this.scrollbarSize*GUI_SCALE && mousePosition.y<this.container.getBottom()-height) {
-            this.scrolling = true;
+        else {
+            
+            if(this.location==0) {
+                bottom = top;
+                top -= this.scrollbarSize * GUI_SCALE;
+                left -= this.itemWidth*GUI_SCALE;
+                right += this.itemWidth*GUI_SCALE;
+            }
+            else {
+                left = right;
+                right += this.scrollbarSize * GUI_SCALE;
+                top -= this.itemHeight*GUI_SCALE;
+                bottom += this.itemHeight*GUI_SCALE;
+            }
+            if(mousePosition.x>left && mousePosition.x<right &&
+                mousePosition.y<bottom && mousePosition.y>top) {
+                this.scrolling = true;
+            }
         }
     }
 
     drag() {
         if(this.clickPosition.x>0 || this.clickPosition.y > 0) {
-            let dx = mousePosition.x-this.container.getLeft()-this.clickPosition.x;
+            let dx = this.location == 0 ? mousePosition.x-this.container.getLeft()-this.clickPosition.x :
+                    mousePosition.y-this.container.getTop()-this.clickPosition.y;
             
             if(Math.abs(dx) > 10) {
                 this.dragging = true;
@@ -304,8 +350,13 @@ class ScrollArea {
         }
         //scrollbar
         else if(this.scrolling) {
-            let offsetX = mousePosition.x-this.container.getLeft();
-            this.scrollOffset = offsetX / (this.container.getWidth()-GUI_SCALE*2);
+            if(this.location == 0) {
+                let offsetX = mousePosition.x-this.container.getLeft();
+                this.scrollOffset = offsetX / (this.container.getWidth()-GUI_SCALE*2);
+            }else {
+                let offsetY = mousePosition.y-this.container.getTop();
+                this.scrollOffset = offsetY / (this.container.getHeight()-GUI_SCALE*2);
+            }
         }
     }
 
@@ -313,17 +364,21 @@ class ScrollArea {
         if(this.clickPosition.x>0 || this.clickPosition.y > 0) {
             let height = this.itemHeight * GUI_SCALE;
             let x = mousePosition.x-this.container.getLeft();
-            let y = mousePosition.y-this.container.getBottom()+height;
+            let y = this.location==0 ? mousePosition.y-this.container.getBottom()+height : mousePosition.y-this.container.getTop();
             if(!this.dragging) {
                 let offset = this.getTotalWidth() * this.scrollOffset + this.getMinScroll();
-                let offsetX = x + offset;
-                let width = this.itemWidth * GUI_SCALE;
+                let offsetX = this.location==0 ? x + offset : y + offset;
+                let width = this.location==0 ? this.itemWidth * GUI_SCALE : this.itemHeight * GUI_SCALE;
 
                 if(offsetX>0) {
                     let index = Math.floor(offsetX/width);
                     //click
                     if(index < this.items.length) {
-                        this.items[index].click(offsetX - index * width, y);
+                        if(this.location==0) {
+                            this.items[index].click(offsetX - index * width, y);
+                        }else {
+                            this.items[index].click(x, offsetX - index * width);
+                        }
                     }
                 }
             }

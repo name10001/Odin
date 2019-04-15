@@ -1,145 +1,141 @@
-
-class PopupWindow {
-    constructor(width,height) {
-        this.width = width;
-        this.height = height;
+class OptionItem {
+    constructor(card, optionId, optionString) {
+        this.card = card;
+        this.optionId = optionId;
+        this.button = new Button(CARD_WIDTH*2,3,1.5,optionString);
     }
 
-    draw() {}
+    draw(x,y,width,height) {
+        this.button.draw(x,y,true);
+    }
+
+    click(x,y) {
+        gui.exitOptions(this.card, this.optionId);
+    }
+
 }
+
 
 /**
  * Class for the options window
  */
-class OptionsWindow extends PopupWindow {
-    constructor(width,height,card) {
-        super(width,height);
+class OptionsWindow {
+    constructor(card) {
         this.card = card;
         this.image = card.image;
-        this.optionStrings = card.optionStrings;
-        this.optionIds = card.optionIds;
-        this.scrollAmount = 0;
-        //this.mouseMove = {x:0,y:0};
-        this.clickPosition = {x:0,y:0};
-        this.dragging = false;
-        this.hoveredItem = -1;
-        this.optionBoxHeight = 20;//literally just a placeholder number until updated in draw()
+
+        //Create the scroll container
+        this.scrollContainer = new Container();
+        this.scrollContainer.window = this;
+        this.scrollContainer.getLeft = function() {
+            return this.window.getX() + GUI_SCALE;
+        }
+        this.scrollContainer.getRight = function() {
+            return canvas.width - this.window.getX();
+        }
+        this.scrollContainer.getTop = function() {
+            return canvas.height*0.25 + GUI_SCALE * 5;
+        }
+        this.scrollContainer.getBottom = function() {
+            return canvas.height*0.75 - GUI_SCALE*3.5;
+        }
+
+        //Create the scroller
+        this.optionsScroller = new ScrollArea(this.scrollContainer,CARD_WIDTH*2,3,3,1);
+        this.optionsScroller.scrollOffset = 0;
+        let items = [];
+        for(let i = 0;i<card.optionIds.length;i++) {
+            let id = card.optionIds[i];
+            let text = card.optionStrings[i];
+            
+            items.push(new OptionItem(card,id,text));
+        }
+        this.optionsScroller.setItems(items);
+
+        //create a cancel button
+        this.cancelButton = new Button(CARD_WIDTH,3,1.5,"CANCEL");
+        this.cancelButton.x = function() {
+            return canvas.width/2 + (0.5*CARD_WIDTH+2) * GUI_SCALE;
+        }
+        this.cancelButton.y = function() {
+            return canvas.height/4 + (CARD_HEIGHT+2) * GUI_SCALE;
+        }
+    }
+    getWidth() {
+        return (3 * CARD_WIDTH + 6) * GUI_SCALE;
+    }
+
+    getX() {
+        return (canvas.width-this.getWidth())/2;
+    }
+
+    getY() {
+        return canvas.height/4;
     }
 
     /**
      * Draw the options window with specified dimensions
      */
     draw() {
-        let width = this.width * canvas.width;
-        let height = this.height * canvas.height;
-        let x = (canvas.width-width)/2;
-        let y = (canvas.height-height)/2;
+        let width = this.getWidth();
+        let height = canvas.height/2;
+        let x = this.getX();
+        let y = this.getY();
 
         let fontSize = GUI_SCALE*2;
         let cardWidth = GUI_SCALE*CARD_WIDTH;
         let cardHeight = GUI_SCALE*CARD_HEIGHT;
-        let gap = cardWidth/8;
-        let optionsWidth = width-cardWidth-gap*2;
 
         //draw the options window
-        ctx.fillStyle = "#999";
+        ctx.fillStyle = "#4d0810";
         ctx.strokeStyle = "#fff";
         ctx.fillRect(x,y,width,height);
-        ctx.strokeRect(x,y,width,height);
 
         //draw card
-        ctx.drawImage(this.image,x+width-gap-cardWidth,y+gap,cardWidth,cardHeight);
+        ctx.drawImage(this.image,x+width-GUI_SCALE-cardWidth,y+GUI_SCALE,cardWidth,cardHeight);
+        this.cancelButton.drawThis(true);
+        
+        ctx.strokeStyle = "#fff";
+        ctx.fillStyle = "#222";
+        ctx.fillRect(this.scrollContainer.getLeft(),this.scrollContainer.getTop(),GUI_SCALE*CARD_WIDTH*2,this.scrollContainer.getHeight());
+        
+        //draw options box
+        this.optionsScroller.draw();
+
+        ctx.fillStyle = "#4d0810";
+        ctx.strokeStyle = "#fff";
+        ctx.fillRect(x+GUI_SCALE-1,y+GUI_SCALE*2-1,GUI_SCALE*CARD_WIDTH*2+2,GUI_SCALE*3+2);
+        ctx.fillRect(x+GUI_SCALE-1,y+height-GUI_SCALE*3.5-1,GUI_SCALE*CARD_WIDTH*2+2,GUI_SCALE*3+2);
+        ctx.strokeRect(this.scrollContainer.getLeft(),this.scrollContainer.getTop(),GUI_SCALE*CARD_WIDTH*2,this.scrollContainer.getHeight());
+        ctx.strokeRect(x,y,width,height);
 
         //draw text
         ctx.textAlign = "center";
         ctx.fillStyle = "#fff";
         ctx.font = "bold " + fontSize + "px Courier New";
-        ctx.fillText("Choose option:",x + optionsWidth/2,y+fontSize*2);
-
-        //draw options box
-        ctx.fillStyle = "#222";
-        ctx.strokeStyle = "#fff";
-        let optionBoxesHeight = height-gap-fontSize*3;
-        let optionBoxWidth = optionsWidth-gap*2;
-        ctx.fillRect(x+gap,y+fontSize*3,optionBoxWidth,optionBoxesHeight);
-        ctx.strokeRect(x+gap,y+fontSize*3,optionBoxWidth,optionBoxesHeight);
-
-        //draw all options
-        ctx.textAlign = "left";
-        let nOptions = Math.round(0.5*optionBoxesHeight/fontSize);
-        this.optionBoxHeight = optionBoxesHeight/nOptions;
-        let y2 = y+fontSize*3;
-        let i = this.scrollAmount;
-
-        //calculate the item that you are hovered over
-        if(mousePosition.x<x+gap || mousePosition.x>x+gap+optionBoxWidth) this.hoveredItem = -1;
-        else if(!this.dragging && (mousePosition.y<y2 || mousePosition.y>y2+optionBoxesHeight)) this.hoveredItem = -1;
-        else {
-            let dy = mousePosition.y-y2;
-            this.hoveredItem = this.scrollAmount+Math.floor(dy/this.optionBoxHeight);
-            if(this.hoveredItem>=this.optionIds.length) this.hoveredItem = -1;//clicked blank space in option window
-        }
-
-        while(i<this.optionIds.length && i<this.scrollAmount+nOptions) {
-            ctx.fillStyle = "#376";
-            ctx.fillRect(x+gap,y2,optionBoxWidth,this.optionBoxHeight);
-            ctx.strokeStyle = (this.hoveredItem==i && !this.dragging) ? "#ffa" : "#fff";
-            ctx.strokeRect(x+gap,y2,optionBoxWidth,this.optionBoxHeight);
-
-            //draw the text
-            ctx.fillStyle = ctx.strokeStyle;
-            ctx.fillText(this.optionStrings[i],x+gap+fontSize,y2+fontSize*1.25,optionBoxWidth-fontSize*2);
-
-            i++;
-            y2+=this.optionBoxHeight;
-        }
+        ctx.fillText("Choose option:",x + GUI_SCALE*(CARD_WIDTH+1),y+GUI_SCALE*3);
     }
 
     click() {
-        this.clickPosition.x = mousePosition.x;
-        this.clickPosition.y = mousePosition.y;
-        this.dragging = false;
+        this.optionsScroller.click();
+        if(this.cancelButton.isMouseOverThis()) {
+            gui.exitOptions(null,null);
+        }
     }
 
     drag() {
-        if(mousePressed) {
-            if(Math.abs(this.clickPosition.x-mousePosition.x)>10 || Math.abs(this.clickPosition.y-mousePosition.y)>10) this.dragging = true;
-            
-            if(this.dragging) {
-                if(mousePosition.y-this.clickPosition.y>this.optionBoxHeight) {
-                    this.clickPosition.y+=this.optionBoxHeight;
-                    this.scrollUp();
-                }
-                else if(mousePosition.y-this.clickPosition.y<-this.optionBoxHeight) {
-                    this.clickPosition.y-=this.optionBoxHeight;
-                    this.scrollDown();
-                }
-            }
-        }
+        this.optionsScroller.drag();
 
     }
     
     release() {
-        if(this.hoveredItem!=-1 && !this.dragging) {
-            //picked an option
-            let pickedOption = this.optionIds[this.hoveredItem];
-            gui.exitOptions(this.card, pickedOption);
-            return;
-        }
-        this.dragging = false;
+        this.optionsScroller.release();
     }
     wheel(amount) {
-        if(amount>0) this.scrollDown();
-        else this.scrollUp();
+        this.optionsScroller.setScrollSpeed(amount*0.7);
     }
-
-    scrollDown() {
-        this.scrollAmount ++;
-        if(this.scrollAmount > this.optionIds.length-1) this.scrollAmount = this.optionIds.length-1;
-    }
-    scrollUp() {
-        this.scrollAmount --;
-        if(this.scrollAmount<0) this.scrollAmount = 0;
+    scroll(dt) {
+        this.optionsScroller.scroll(dt);
     }
 }
 
