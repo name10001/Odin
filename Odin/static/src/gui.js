@@ -12,6 +12,7 @@ class Gui {
         this.backImage.src = '/static/cards/back.png';
         this.transparentImage = new Image;
         this.transparentImage.src = '/static/transparent.png';
+        this.movingCards = [];
 
 
         this.cardImages = [];
@@ -215,7 +216,36 @@ class Gui {
 
         //DRAW MOVING CARDS
         //TODO
+        let cardIndex = 0;
+        while(cardIndex < this.movingCards.length) {
+            let card = this.movingCards[cardIndex];
+            card.move(dt);
+            if(card.isFinished()) {
+                this.movingCards.splice(cardIndex,1);
+            }else{
+                card.draw();
+                cardIndex++;
+            }
+        }
+    }
 
+    /**
+     * Add a simple moving card animation
+     */
+    drawMovingCards(image, count, x, y) {
+        let bottomY = this.getBottomY();
+        if(LAYOUT_TYPE == 0) bottomY -= GUI_SCALE*3;
+        bottomY-=this.CARD_HEIGHT;
+        let leftX = this.getLeftX();
+
+        let wait = 0;
+        let maxWaitTime = 1200;
+        let waitIncr = (maxWaitTime - maxWaitTime * Math.exp(-0.1*count))/count;
+        for(let i = 0;i<count;i++) {
+            let movingCard = new AnimatedCard({x,y},{x:leftX,y:bottomY},3,wait,image,this.CARD_WIDTH,this.CARD_HEIGHT);
+            this.movingCards.push(movingCard);
+            wait+=waitIncr;
+        }
     }
 
     /**
@@ -298,8 +328,11 @@ class Gui {
 
         if(card!=null) {
             if(this.playAll) {
+                this.drawMovingCards(card.image, card.size(), canvas.width/2, canvas.height-GUI_SCALE*(9+CARD_HEIGHT));
                 card.playAll(pickedOption);
+                
             }else {
+                this.drawMovingCards(card.image, 1, canvas.width/2, canvas.height-GUI_SCALE*(9+CARD_HEIGHT));
                 card.playSingle(pickedOption);
             }
         }

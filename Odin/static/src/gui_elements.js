@@ -36,6 +36,50 @@ class Button {
     }
 }
 
+class AnimatedCard {
+    constructor(startPosition, endPosition, speed, wait, image, width, height) {
+        let dx = endPosition.x-startPosition.x;
+        let dy = endPosition.y-startPosition.y;
+        let len = Math.sqrt(dx*dx+dy*dy);
+        this.moveVector = {
+            x:speed*dx/len,
+            y:speed*dy/len
+        }
+        this.position = {
+            x:startPosition.x,
+            y:startPosition.y
+        }
+        this.image = image;
+        this.width = width;
+        this.height = height;
+        this.wait = wait;
+        this.end = len/speed + wait;
+        this.current = 0;
+    }
+
+    move(dt) {
+        let start = this.current; 
+        this.current += dt;
+        if(start < this.wait && this.current > this.wait) {
+            dt = this.current - this.wait;
+        }
+        if(this.current >= this.wait) {
+            this.position.x += this.moveVector.x*dt;
+            this.position.y += this.moveVector.y*dt;
+        }
+    }
+
+    isFinished() {
+        return this.current >= this.end;
+    }
+
+    draw() {
+        if(this.current >= this.wait) {
+            ctx.drawImage(this.image,this.position.x,this.position.y,this.width,this.height);
+        }
+    }
+}
+
 /**
  * Container class.
  * By default this just represents the canvas
@@ -92,7 +136,8 @@ class CardStackPanel {
     }
 
     click(x,y) {
-
+        let cardX = mousePosition.x - x + GUI_SCALE/2;
+        let cardY = mousePosition.y - y + GUI_SCALE/2;
         //clicked the card
         if(x > GUI_SCALE/2 && x<GUI_SCALE*CARD_WIDTH+GUI_SCALE/2 &&
                 y > GUI_SCALE/2 && y<GUI_SCALE*CARD_HEIGHT+GUI_SCALE/2) {
@@ -101,27 +146,28 @@ class CardStackPanel {
         //clicked the play button
         else if(x > GUI_SCALE && x<GUI_SCALE*CARD_WIDTH &&
             y > GUI_SCALE*(CARD_HEIGHT+1.5) && y<GUI_SCALE*(CARD_HEIGHT+4.5)) {
-            this.play();
+            this.play(cardX, cardY);
         }
         //clicked the play all button
         else if(x > GUI_SCALE && x<GUI_SCALE*CARD_WIDTH &&
             y > GUI_SCALE*(CARD_HEIGHT+5.5) && y<GUI_SCALE*(CARD_HEIGHT+8.5)) {
-            this.playAll();
+            this.playAll(cardX, cardY);
         }
     }
 
-    play() {
+    play(x,y) {
         if(!this.cardStack.allowedToPlay) return;
 
         if(this.cardStack.optionIds.length>0) {
             gui.popup = new OptionsWindow(this.cardStack);
         }
         else {
+            gui.drawMovingCards(this.cardStack.image,1,x,y);
             this.cardStack.playSingle();
         }
     }
 
-    playAll() {
+    playAll(x,y) {
         if(!this.cardStack.allowedToPlay) return;
 
         if(this.cardStack.optionIds.length>0) {
@@ -129,6 +175,7 @@ class CardStackPanel {
             gui.playAll = true;
         }
         else {
+            gui.drawMovingCards(this.cardStack.image,this.cardStack.size(),x,y);
             this.cardStack.playAll();
         }
     }
