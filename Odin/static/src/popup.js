@@ -2,11 +2,11 @@ class OptionItem {
     constructor(card, optionId, optionString) {
         this.card = card;
         this.optionId = optionId;
-        this.button = new Button(CARD_WIDTH*2,3,1.5,optionString);
+        this.button = new Button(CARD_WIDTH*2-0.3,2.7,1.5,optionString);
     }
 
     draw(x,y,width,height) {
-        this.button.draw(x,y,true);
+        this.button.draw(x+GUI_SCALE*0.15,y+GUI_SCALE*0.15,true);
     }
 
     click(x,y) {
@@ -28,7 +28,7 @@ class OptionsWindow {
         this.scrollContainer = new Container();
         this.scrollContainer.window = this;
         this.scrollContainer.getLeft = function() {
-            return this.window.getX() + GUI_SCALE;
+            return this.window.getX() + GUI_SCALE*2;
         }
         this.scrollContainer.getRight = function() {
             return canvas.width - this.window.getX();
@@ -55,14 +55,14 @@ class OptionsWindow {
         //create a cancel button
         this.cancelButton = new Button(CARD_WIDTH,3,1.5,"CANCEL");
         this.cancelButton.x = function() {
-            return canvas.width/2 + (0.5*CARD_WIDTH+2) * GUI_SCALE;
+            return canvas.width/2 + (0.5*CARD_WIDTH+2.5) * GUI_SCALE;
         }
         this.cancelButton.y = function() {
             return canvas.height/4 + (CARD_HEIGHT+2) * GUI_SCALE;
         }
     }
     getWidth() {
-        return (3 * CARD_WIDTH + 6) * GUI_SCALE;
+        return (3 * CARD_WIDTH + 7) * GUI_SCALE;
     }
 
     getX() {
@@ -87,8 +87,10 @@ class OptionsWindow {
         let cardHeight = GUI_SCALE*CARD_HEIGHT;
 
         //draw the options window
-        ctx.fillStyle = "#4d0810";
-        ctx.strokeStyle = "#fff";
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = GUI_SCALE/2;
+        ctx.strokeRect(x+3,y+3,width,height);
+        ctx.fillStyle = "#0d3a0d";
         ctx.fillRect(x,y,width,height);
 
         //draw card
@@ -102,18 +104,21 @@ class OptionsWindow {
         //draw options box
         this.optionsScroller.draw();
 
-        ctx.fillStyle = "#4d0810";
+        ctx.fillStyle = "#0d3a0d";
         ctx.strokeStyle = "#fff";
-        ctx.fillRect(x+GUI_SCALE-1,y+GUI_SCALE*2-1,GUI_SCALE*CARD_WIDTH*2+2,GUI_SCALE*3+2);
-        ctx.fillRect(x+GUI_SCALE-1,y+height-GUI_SCALE*3.5-1,GUI_SCALE*CARD_WIDTH*2+2,GUI_SCALE*3+2);
-        ctx.strokeRect(this.scrollContainer.getLeft(),this.scrollContainer.getTop(),GUI_SCALE*CARD_WIDTH*2,this.scrollContainer.getHeight());
+        ctx.fillRect(x+GUI_SCALE*2-1,y+GUI_SCALE*2-1,GUI_SCALE*CARD_WIDTH*2+2,GUI_SCALE*3+2);
+        ctx.fillRect(x+GUI_SCALE*2-1,y+height-GUI_SCALE*3.5-1,GUI_SCALE*CARD_WIDTH*2+2,GUI_SCALE*3+2);
+        
+        //ctx.lineWidth = GUI_SCALE/4;
+        //ctx.strokeRect(this.scrollContainer.getLeft(),this.scrollContainer.getTop(),GUI_SCALE*CARD_WIDTH*2,this.scrollContainer.getHeight());
+        
+        
+        ctx.lineWidth = GUI_SCALE/2;
+        ctx.strokeStyle = "#fff";
         ctx.strokeRect(x,y,width,height);
 
         //draw text
-        ctx.textAlign = "center";
-        ctx.fillStyle = "#fff";
-        ctx.font = "bold " + fontSize + "px Courier New";
-        ctx.fillText("Choose option:",x + GUI_SCALE*(CARD_WIDTH+1),y+GUI_SCALE*3);
+        drawText("Choose option",x + GUI_SCALE*(CARD_WIDTH+2),y+GUI_SCALE*3,"center",GUI_SCALE*2,undefined,true);
     }
 
     click() {

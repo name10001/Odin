@@ -81,6 +81,13 @@ class Gui {
         let y = canvas.height - GUI_SCALE*(CARD_HEIGHT+13);
         return y;
     }
+
+    getPlayerX() {
+        let x = canvas.width - GUI_SCALE*(2+2*CARD_WIDTH);
+        let maxX = this.getLeftX() + GUI_SCALE*(22+CARD_WIDTH*2);
+        if(x>maxX) x = maxX;
+        return x;
+    }
     
     /**
      * Main game loop for updating the canvas
@@ -124,17 +131,13 @@ class Gui {
 
         //draw the number of cards you have
         let bigFontSize = Math.round(GUI_SCALE*2);
-        ctx.textAlign = LAYOUT_TYPE == 0 ? "center" : "left";
-        ctx.font = "bold " + bigFontSize + "px Courier New";
-        ctx.fillStyle = "#fff";
-
         leftX += GUI_SCALE*18;
 
         if(LAYOUT_TYPE == 0) {
-            ctx.fillText(game.turnString,canvas.width/2,bottomY+GUI_SCALE*3);
+            drawText(game.turnString,canvas.width/2,bottomY+GUI_SCALE*3,"center",bigFontSize,undefined,true);
         }
         else {
-            ctx.fillText(game.turnString,leftX,bottomY-GUI_SCALE/2);
+            drawText(game.turnString,leftX,bottomY-GUI_SCALE/2,"left",bigFontSize,undefined,true);
         }
 
         //DRAW BUTTONS
@@ -159,7 +162,7 @@ class Gui {
 
         //draw players
         if(game.players.length>0) {
-            let px = canvas.width/2 - this.CARD_WIDTH;
+            let px = this.getPlayerX() - this.CARD_WIDTH;
             let fontSize = bigFontSize;
             let medFontSize = Math.round(GUI_SCALE*1.5);
             let py = GUI_SCALE;
@@ -167,27 +170,27 @@ class Gui {
             let pgap = GUI_SCALE;
             let pwidth = this.CARD_WIDTH*3+GUI_SCALE;
 
-            ctx.font = "bold " + bigFontSize + "px Courier New";
             let i = game.turn;
             do {
                 let player = game.players[i];
                 //box
-                ctx.fillStyle = i==game.yourId ? "#ece677" : "#a4e4e5";
+                ctx.fillStyle = i==game.yourId ? "#fdf10b" : "#038cde";
                 ctx.strokeStyle = "#fff";
+                ctx.lineJoin = "round";
+                ctx.lineWidth = pheight*0.1;
+                ctx.strokeStyle = "#000";
+                ctx.strokeRect(px+3, py+3, pwidth, pheight);
                 ctx.fillRect(px, py, pwidth, pheight);
+                ctx.strokeStyle = "#fff";
                 ctx.strokeRect(px, py, pwidth, pheight);
                 
                 //name
-                ctx.fillStyle = "#000";
-                ctx.textAlign = "left";
-                ctx.fillText(player.name,px+fontSize/2,py+pheight/2+fontSize/3,fontSize*5);
-                ctx.textAlign = "right";
-                ctx.fillText(player.nCards,px+pwidth-fontSize/2,py+pheight/2+fontSize/3.,fontSize*4);
+                drawText(player.name,px+fontSize/2,py+pheight/2+fontSize/3,"left",fontSize,fontSize*5,true);
+                drawText(player.nCards,px+pwidth-fontSize/2,py+pheight/2+fontSize/3,"right",fontSize,fontSize*4,true);
 
                 //adjust size for non-turn players
                 if(i==game.turn) {
                     py+=pheight/2;
-                    ctx.font = "bold " + medFontSize + "px Courier New";
                     px+=this.CARD_WIDTH;
                     pwidth-=this.CARD_WIDTH;
                     pheight/=2;
@@ -202,10 +205,8 @@ class Gui {
 
         //draw pickup amount
         if(game.pickupAmount>0) {
-            ctx.fillStyle = "#fff";
-            ctx.textAlign = "right";
-            ctx.font = "bold " + bigFontSize + "px Courier New";
-            ctx.fillText("+" + game.pickupAmount,canvas.width/2-bigFontSize/2,GUI_SCALE*8.75,this.CARD_WIDTH);
+            drawText("+" + game.pickupAmount, this.getPlayerX()-GUI_SCALE, GUI_SCALE*8.75, 
+                    "right", bigFontSize, this.CARD_WIDTH,true);
         }
 
         //DRAW CARD SCROLLER

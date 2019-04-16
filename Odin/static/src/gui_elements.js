@@ -1,3 +1,22 @@
+function drawText(text, x, y, textAlign, fontSize, maxWidth, outline, colour) {
+    if(outline == undefined) {
+        outline = false;
+    }
+    if(colour == undefined) {
+        colour = "#fff";
+    }
+    ctx.font = "bold italic " + Math.round(fontSize) + "px Arial";
+    ctx.textAlign = textAlign;
+
+    if(outline){
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 2;
+        ctx.strokeText(text,x,y,maxWidth);
+    }
+    ctx.fillStyle = colour;
+    ctx.fillText(text,x,y,maxWidth);
+}
+
 class Button {
     constructor(width, height, fontSize, text) {
         this.width = width;
@@ -23,16 +42,14 @@ class Button {
 
     draw(x, y, canPress) {
         let hover = this.isMouseOver(x, y);
-        let fontSize = this.fontSize * GUI_SCALE;
         //draw the next turn button
-        ctx.fillStyle = canPress ? "#376" : "#999";
-        ctx.strokeStyle = canPress ? (hover ? "#ffa" : "#fff") : "#fff";
+        ctx.fillStyle = canPress ? "#27ab25" : "#999";
+        ctx.strokeStyle = canPress ? (hover ? "#ffa" : "#fff") : "#ececec";
+        ctx.lineWidth = this.height*GUI_SCALE*0.1;
         ctx.fillRect(x,y,this.width * GUI_SCALE,this.height * GUI_SCALE);
         ctx.strokeRect(x,y,this.width * GUI_SCALE,this.height * GUI_SCALE);
-        ctx.fillStyle = canPress ? (hover ? "#ffa" : "#fff") : "#bbb";
-        ctx.textAlign = "center";
-        ctx.font = "bold " + fontSize + "px Courier New";
-        ctx.fillText(this.text,x+this.width*GUI_SCALE/2,y+this.height*GUI_SCALE/2+fontSize/3,this.width*GUI_SCALE-fontSize);
+        drawText(this.text,x+this.width*GUI_SCALE/2,y+this.height*GUI_SCALE/2+GUI_SCALE*this.fontSize*0.38,"center",
+                this.fontSize*GUI_SCALE,this.width*GUI_SCALE-GUI_SCALE*this.fontSize, false, ctx.strokeStyle);
     }
 }
 
@@ -257,14 +274,15 @@ class ScrollArea {
                 y+=height;
             }
         }
-
         //draw the scrollbar
         if(this.scrollbarSize > 0) {
+
+            ctx.strokeStyle = "#ddd";
+            ctx.fillStyle = "#999";
+            ctx.lineWidth = 1;
             if(this.location == 0) {
                 let scrollY = this.container.getBottom() - height - GUI_SCALE*this.scrollbarSize/2;
                 let scrollX = this.container.getLeft() + this.scrollOffset*(this.container.getWidth()-GUI_SCALE*2);
-                ctx.strokeStyle = "#ddd";
-                ctx.fillStyle = "#999";
                 ctx.beginPath();
                 ctx.moveTo(this.container.getLeft()+GUI_SCALE,scrollY);
                 ctx.lineTo(this.container.getRight()-GUI_SCALE,scrollY);
@@ -276,8 +294,6 @@ class ScrollArea {
             else {
                 let scrollX = this.container.getLeft() + width + GUI_SCALE*this.scrollbarSize/2;
                 let scrollY = this.container.getTop()+this.scrollOffset*(this.container.getHeight()-GUI_SCALE*2);
-                ctx.strokeStyle = "#ddd";
-                ctx.fillStyle = "#999";
                 ctx.beginPath();
                 ctx.moveTo(scrollX,this.container.getTop()+GUI_SCALE);
                 ctx.lineTo(scrollX,this.container.getBottom()-GUI_SCALE);
