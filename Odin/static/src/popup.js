@@ -137,7 +137,7 @@ class OptionsWindow {
         this.optionsScroller.release();
     }
     wheel(amount) {
-        this.optionsScroller.setScrollSpeed(amount*0.7);
+        this.optionsScroller.setScrollSpeed(amount*0.07);
     }
     scroll(dt) {
         this.optionsScroller.scroll(dt);

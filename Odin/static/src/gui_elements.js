@@ -131,13 +131,9 @@ class CardStackPanel {
         this.playallButton.draw(x+GUI_SCALE, y + (CARD_HEIGHT+5.5)*GUI_SCALE,this.cardStack.allowedToPlay);
         //draw stack size
         if(stackSize>1) {
-            ctx.font = "bold " + (GUI_SCALE*2) + "px Courier New";
-            ctx.textAlign = "left";
             ctx.fillStyle = "#fff";
             ctx.fillRect(x+GUI_SCALE/2, y+GUI_SCALE*CARD_HEIGHT-GUI_SCALE*2,GUI_SCALE*5,GUI_SCALE*2.5);
-            ctx.fillStyle = "#000";
-            
-            ctx.fillText("x" + stackSize, x+GUI_SCALE, y+GUI_SCALE*CARD_HEIGHT);
+            drawText("x" + stackSize, x+GUI_SCALE, y + GUI_SCALE*CARD_HEIGHT, "left", GUI_SCALE * 2, undefined, false, "#000");
             
         }
 
@@ -219,6 +215,7 @@ class ScrollArea {
 
         this.scrollOffset = 0.5;//offset from 0 to 1.
         this.scrollSpeed = 0;
+        this.dragTime = 0;
 
         this.items = [];//init with nothing
 
@@ -333,15 +330,15 @@ class ScrollArea {
         if(numItems<1) return;
         //accelerate based on your dragging speed
         if(this.scrollSpeed > 0) {
-            this.scrollSpeed-=dt*0.004/numItems;
+            this.scrollSpeed-=dt*0.0006/numItems;
             if(this.scrollSpeed<0) this.scrollSpeed = 0;
         }
         else if(this.scrollSpeed < 0) {
-            this.scrollSpeed+=dt*0.004/numItems;
+            this.scrollSpeed+=dt*0.0006/numItems;
             if(this.scrollSpeed>0) this.scrollSpeed = 0;
         }
-
-        this.scrollOffset+=this.scrollSpeed;
+        if(this.dragging) this.dragTime += dt;
+        this.scrollOffset+=this.scrollSpeed*dt;
         if(this.scrollOffset<0) this.scrollOffset = 0;
         else if(this.scrollOffset>1) this.scrollOffset = 1;
     }
@@ -397,8 +394,9 @@ class ScrollArea {
             let dx = this.location == 0 ? mousePosition.x-this.container.getLeft()-this.clickPosition.x :
                     mousePosition.y-this.container.getTop()-this.clickPosition.y;
             
-            if(Math.abs(dx) > 10) {
+            if(Math.abs(dx) > 10 && !this.dragging) {
                 this.dragging = true;
+                this.dragTime = 0;
             }
 
             //scroll by dragging
@@ -444,6 +442,13 @@ class ScrollArea {
                         }
                     }
                 }
+            }
+
+            if(this.dragging && this.dragTime > 0 && this.items.length > 0) {
+                let dx = this.location == 0 ?  mousePosition.x - this.clickPosition.x : mousePosition.y - this.clickPosition.y;
+                let dt = this.dragTime;
+                let dxdt = dx/dt;
+                this.scrollSpeed = -2.0*dxdt/(this.items.length*GUI_SCALE*(this.location==0 ? this.itemWidth : this.itemHeight));
             }
         }
 

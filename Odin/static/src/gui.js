@@ -305,7 +305,7 @@ class Gui {
             this.popup.wheel(amount);
             return;
         }
-        this.cardScroller.setScrollSpeed(amount*0.7);
+        this.cardScroller.setScrollSpeed(amount*0.07);
         //this.scrollSpeed = -amount * this.CARD_WIDTH;
     }
 

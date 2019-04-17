@@ -18,6 +18,7 @@ $(document).ready(function() {
     game = new Game();
     gui = new Gui();
     mousePosition = {x:0,y:0};
+    mouseMoveVector = {x:0,y:0};
     mousePressed = false;
     
     canvas = document.getElementById('canvas');
@@ -75,6 +76,8 @@ function mouseDown(event) {
     }
 }
 function mouseMove(event) {
+    mouseMoveVector.x = event.offsetX - mousePosition.x;
+    mouseMoveVector.y = event.offsetY - mousePosition.y;
     mousePosition.x = event.offsetX;
     mousePosition.y = event.offsetY;
     gui.drag();
@@ -93,6 +96,8 @@ function touchStart(event) {
     gui.click();
 }
 function touchMove(event) {
+    mouseMoveVector.x = event.touches[0].clientX - mousePosition.x;
+    mouseMoveVector.y = event.touches[0].clientY - mousePosition.y;
     mousePosition.x = event.touches[0].clientX;
     mousePosition.y = event.touches[0].clientY;
     gui.drag();
