@@ -445,7 +445,7 @@ class ScrollArea {
             }
 
             if(this.dragging && this.dragTime > 0 && this.items.length > 0) {
-                let dx = this.location == 0 ?  mousePosition.x - this.clickPosition.x : mousePosition.y - this.clickPosition.y;
+                let dx = this.location == 0 ?  x - this.clickPosition.x : y - this.clickPosition.y;
                 let dt = this.dragTime;
                 let dxdt = dx/dt;
                 this.scrollSpeed = -2.0*dxdt/(this.items.length*GUI_SCALE*(this.location==0 ? this.itemWidth : this.itemHeight));
