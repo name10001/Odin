@@ -15,11 +15,114 @@ class OptionItem {
 
 }
 
-class DescriptionWindow {
-    constructor(card) {
-        this.image = card.image;
-        
+function getLines(text, maxWidth) {
+    let words = text.split(" ");
+    let lines = [];
+    let currentLine = words[0];
+
+    for (let i = 1; i < words.length; i++) {
+        let word = words[i];
+        let width = ctx.measureText(currentLine + " " + word).width;
+        if (width < maxWidth) {
+            currentLine += " " + word;
+        } else {
+            lines.push(currentLine);
+            currentLine = word;
+        }
     }
+    lines.push(currentLine);
+    return lines;
+}
+
+class DescriptionWindow {
+    constructor(card, cardStack) {
+        this.image = card.image;
+        this.card = card;
+
+        this.exitButton = new Button(CARD_WIDTH-1,3,2,"EXIT");
+        this.exitButton.x = function() {
+            return canvas.width/2 + (CARD_WIDTH+1) * GUI_SCALE;
+        }
+        this.exitButton.y = function() {
+            return canvas.height/2 - (0.5*CARD_HEIGHT-2) * GUI_SCALE;
+        }
+    }
+
+    getWidth() {
+        return (CARD_WIDTH * 4 + 3) * GUI_SCALE;
+    }
+    getHeight() {
+        return CARD_HEIGHT * 3 * GUI_SCALE;
+    }
+    getX() {
+        return canvas.width/2 - this.getWidth()/2;
+    }
+    getY() {
+        return canvas.height/2 - this.getHeight()/2;
+    }
+
+    draw() {
+        let width = this.getWidth();
+        let height = this.getHeight();
+        let x = this.getX();
+        let y = this.getY();
+
+        let cardWidth = GUI_SCALE*CARD_WIDTH;
+        let cardHeight = GUI_SCALE*CARD_HEIGHT;
+
+        //draw the window
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = GUI_SCALE/2;
+        ctx.strokeRect(x+3,y+3,width,height);
+        ctx.fillStyle = "#0d3a0d";
+        ctx.fillRect(x,y,width,height);
+        ctx.strokeStyle = "#fff";
+        ctx.strokeRect(x,y,width,height);
+
+        //draw card
+        ctx.drawImage(this.image,x+width-GUI_SCALE-cardWidth,y+GUI_SCALE,cardWidth,cardHeight);
+        this.exitButton.drawThis(true);
+        
+        let descWidth = 3*CARD_WIDTH*GUI_SCALE;
+        
+        //draw title
+        drawText(this.card.name,x+GUI_SCALE+descWidth/2,y+GUI_SCALE*3,"center",GUI_SCALE*2,descWidth,true);
+        drawText("Effects",x+GUI_SCALE,y+GUI_SCALE*6,"left",GUI_SCALE*1.5,descWidth,true);
+        drawText("Compatibility",x+GUI_SCALE,y+GUI_SCALE*15,"left",GUI_SCALE*1.5,descWidth,true);
+
+        //draw a description
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "left";
+        ctx.font = "bold " + Math.round(GUI_SCALE) + "px Arial";
+        let effectLines = getLines(this.card.effectDescription,descWidth);
+        y += GUI_SCALE*8;
+        for(let line of effectLines) {
+            ctx.fillText(line,x+GUI_SCALE,y);
+            y+=GUI_SCALE;
+        }
+
+        y = this.getY() + GUI_SCALE * 17;
+        let compatibilityLines = getLines(this.card.compatibilityDescription,descWidth);
+        for(let line of compatibilityLines) {
+            ctx.fillText(line,x+GUI_SCALE,y);
+            y+=GUI_SCALE;
+        }
+
+    }
+
+    
+
+    click() {
+        if(this.exitButton.isMouseOverThis()) {
+            gui.popup = null;
+        }
+    }
+
+    drag() {}
+    
+    release() {}
+    wheel(amount) {}
+    scroll(dt) {}
 }
 
 

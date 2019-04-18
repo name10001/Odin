@@ -493,7 +493,7 @@ class Communist(AbstractCard):
     CARD_IMAGE_URL = 'cards/communist.png'
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Communist"
-    EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded"
+    EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded."
 
     def play_card(self, player, options, played_on):
         all_cards = []
