@@ -161,6 +161,9 @@ class Game {
         socket.emit("game message", GAME_ID, "undo", null);
     }
 
+    undoAll() {
+        socket.emit("game message", GAME_ID, "undo all", null);
+    }
 
     pickup(){
         socket.emit("game message", GAME_ID, "pickup", null);
