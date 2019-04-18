@@ -38,7 +38,6 @@ all_card_info = []
 all_types = []
 all_colours = []
 size_of_deck = 0
-# all_urls = []
 for card in all_cards:
     card_info = {
         "url": '/static/' + card.CARD_IMAGE_URL,
@@ -51,7 +50,6 @@ for card in all_cards:
     }
     all_card_info.append(card_info)
     size_of_deck += card.NUMBER_IN_DECK
-    # all_urls.append(card.CARD_IMAGE_URL)
     if card.CARD_TYPE not in all_types:
         all_types.append(card.CARD_TYPE)
     if card.CARD_COLOUR not in all_colours:
@@ -59,7 +57,7 @@ for card in all_cards:
 
 miscellaneous_category_index = 2
 # highest one takes priority!
-category_indexs = [
+category_indexes = [
     {
         "colours": (),
         "types": ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'),
@@ -111,7 +109,7 @@ def get_card_index(card):
     :param card: card ti find the category of
     :return: int that represents the category that its in
     """
-    for category_index in category_indexs:
+    for category_index in category_indexes:
         if card.get_type() in category_index["types"]:
             return category_index["index"]
         if card.get_colour() in category_index["colours"]:

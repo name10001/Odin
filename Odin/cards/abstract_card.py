@@ -1,5 +1,6 @@
 from flask import *
 import cards
+from util.extended_formatter import extended_formatter
 
 
 class AbstractCard:
@@ -185,21 +186,18 @@ class AbstractCard:
             to_return = cls.COMPATIBILITY_DESCRIPTION
         elif cls.CARD_COLOUR == "black":
             to_return = "This is a regular black card. Black cards are compatible with " \
-                    + "everything except white cards and purple cards." \
-                    + "Always compatible and can be played with other {card_colour} cards."
+                    + "everything except white cards and purple cards. " \
+                    + "Always compatible and can be played with other {cls.CARD_COLOUR} cards."
         elif cls.CARD_COLOUR == "white":
             to_return = "This is a regular white card. White cards are compatible with everything except " \
-                        + "black cards. Always compatible and can be played with other {card_type} cards."
+                        + "black cards. Always compatible and can be played with other {cls.CARD_TYPE} cards."
         elif cls.CARD_COLOUR == "purple":
             to_return = "This is a regular purple card. " \
                         + "Purple cards are compatible with all purple cards and white cards. " \
-                        + "Always compatible and can be played with other {card_type} cards."
+                        + "Always compatible and can be played with other {cls.CARD_TYPE} cards."
         else:
-            to_return = "This is a regular {card_colour} card. {card_colour_capital} cards are compatible with" \
-                        + "all other {card_colour} cards and can be played with any white or black card too. " \
-                        + "Always compatible and can be played with other {card_type} cards."
+            to_return = "This is a regular {cls.CARD_COLOUR} card. {cls.CARD_COLOUR!c} cards are compatible with" \
+                        + "all other {cls.CARD_COLOUR} cards and can be played with any white or black card too. " \
+                        + "Always compatible and can be played with other {cls.CARD_TYPE} cards."
 
-        return to_return.format(
-            card_colour=cls.CARD_COLOUR, card_colour_capital=cls.CARD_COLOUR.capitalize(),
-            card_type=cls.CARD_TYPE, card_type_capital=cls.CARD_TYPE.capitalize()
-        )
+        return extended_formatter.format(to_return, cls=cls)
