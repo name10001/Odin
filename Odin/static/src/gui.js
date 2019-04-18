@@ -260,9 +260,7 @@ class Gui {
         }
         //clicking the undo all button
         else if(this.undoAllButton.isMouseOverThis() && game.planningCards.length>0) {
-            for(let i = 0; i<game.planningCards.length;i++) {
-                game.undo();
-            }
+            game.undoAll();
         }
     }
 
