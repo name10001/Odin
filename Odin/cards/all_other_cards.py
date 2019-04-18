@@ -682,13 +682,17 @@ class Genocide(AbstractCard):
     CARD_TYPE = "Genocide"
     EFFECT_DESCRIPTION = "Pick any colour or type of card to entirely removed from the game. All cards of this colour/type will be removed from everyone's hand and will never be able to be picked up in the future of this game."
     COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
+    UNBANNABLE_COLOURS = ["black"]
+    UNBANNABLE_TYPES = []
 
     def get_options(self, player):
         options = {}
         for card_colour in self.game.deck.not_banned_colours:
-            options["colour " + card_colour] = "Colour: " + card_colour.capitalize()
-        for card_types in self.game.deck.not_banned_types:
-            options["type " + card_types] = "Type: " + card_types
+            if card_colour not in self.UNBANNABLE_COLOURS:
+                options["colour " + card_colour] = "Colour: " + card_colour.capitalize()
+        for card_type in self.game.deck.not_banned_types:
+            if card_type not in self.UNBANNABLE_TYPES:
+                options["type " + card_type] = "Type: " + card_type
         return options
 
     def play_card(self, player, options, played_on):

@@ -69,7 +69,7 @@ class Game:
         :return:
         """
         self.waiting_room.modify()
-        return render_template("game.html", game=self)
+        return render_template("game.html", game=self, cards=cards)
 
     def next_turn(self):
         """
@@ -134,6 +134,8 @@ class Game:
             player.pickup()
         elif message == "undo":
             player.undo()
+        elif message == "undo all":
+            player.undo_all()
         else:
             print("got unknown message from player:", message)
         print("finished processing, took: " + str(time() - start_time) + "s")
