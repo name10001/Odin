@@ -14,8 +14,6 @@ class BlueZero(AbstractCard):
     CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_blue.png'
 
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
-
 
 class GreenZero(AbstractCard):
     NAME = "Green Zero"
@@ -25,8 +23,6 @@ class GreenZero(AbstractCard):
     CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_green.png'
 
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
-
 
 class PurpleZero(AbstractCard):
     NAME = "Purple Zero"
@@ -35,7 +31,6 @@ class PurpleZero(AbstractCard):
     CARD_TYPE = "0"
     CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_purple.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class RedZero(AbstractCard):
@@ -45,7 +40,6 @@ class RedZero(AbstractCard):
     CARD_TYPE = "0"
     CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_red.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class YellowZero(AbstractCard):
@@ -55,7 +49,6 @@ class YellowZero(AbstractCard):
     CARD_TYPE = "0"
     CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_yellow.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 # ~~~~~~~~~~~~~~
@@ -70,7 +63,6 @@ class BlueOne(AbstractCard):
     CARD_TYPE = "1"
     CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_blue.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class GreenOne(AbstractCard):
@@ -80,7 +72,6 @@ class GreenOne(AbstractCard):
     CARD_TYPE = "1"
     CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_green.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class PurpleOne(AbstractCard):
@@ -90,7 +81,6 @@ class PurpleOne(AbstractCard):
     CARD_TYPE = "1"
     CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_purple.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class RedOne(AbstractCard):
@@ -100,7 +90,6 @@ class RedOne(AbstractCard):
     CARD_TYPE = "1"
     CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_red.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class YellowOne(AbstractCard):
@@ -110,7 +99,6 @@ class YellowOne(AbstractCard):
     CARD_TYPE = "1"
     CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_yellow.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 # ~~~~~~~~~~~~~~
@@ -125,7 +113,6 @@ class BlueTwo(AbstractCard):
     CARD_TYPE = "2"
     CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_blue.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class GreenTwo(AbstractCard):
@@ -135,7 +122,6 @@ class GreenTwo(AbstractCard):
     CARD_TYPE = "2"
     CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_green.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class PurpleTwo(AbstractCard):
@@ -145,7 +131,6 @@ class PurpleTwo(AbstractCard):
     CARD_TYPE = "2"
     CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_purple.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class RedTwo(AbstractCard):
@@ -155,7 +140,6 @@ class RedTwo(AbstractCard):
     CARD_TYPE = "2"
     CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_red.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class YellowTwo(AbstractCard):
@@ -165,7 +149,6 @@ class YellowTwo(AbstractCard):
     CARD_TYPE = "2"
     CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_yellow.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 # ~~~~~~~~~~~~~~
@@ -180,7 +163,6 @@ class BlueThree(AbstractCard):
     CARD_TYPE = "3"
     CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_blue.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class GreenThree(AbstractCard):
@@ -190,7 +172,6 @@ class GreenThree(AbstractCard):
     CARD_TYPE = "3"
     CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_green.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class PurpleThree(AbstractCard):
@@ -200,7 +181,6 @@ class PurpleThree(AbstractCard):
     CARD_TYPE = "3"
     CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_purple.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class RedThree(AbstractCard):
@@ -210,7 +190,6 @@ class RedThree(AbstractCard):
     CARD_TYPE = "3"
     CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_red.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class YellowThree(AbstractCard):
@@ -220,7 +199,6 @@ class YellowThree(AbstractCard):
     CARD_TYPE = "3"
     CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_yellow.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 # ~~~~~~~~~~~~~~
@@ -235,7 +213,6 @@ class BlueFour(AbstractCard):
     CARD_TYPE = "4"
     CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_blue.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class GreenFour(AbstractCard):
@@ -245,7 +222,6 @@ class GreenFour(AbstractCard):
     CARD_TYPE = "4"
     CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_green.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class PurpleFour(AbstractCard):
@@ -255,7 +231,6 @@ class PurpleFour(AbstractCard):
     CARD_TYPE = "4"
     CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_purple.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class RedFour(AbstractCard):
@@ -265,7 +240,6 @@ class RedFour(AbstractCard):
     CARD_TYPE = "4"
     CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_red.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class YellowFour(AbstractCard):
@@ -275,7 +249,6 @@ class YellowFour(AbstractCard):
     CARD_TYPE = "4"
     CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_yellow.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 # ~~~~~~~~~~~~~~
@@ -290,7 +263,6 @@ class BlueFive(AbstractCard):
     CARD_TYPE = "5"
     CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_blue.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class GreenFive(AbstractCard):
@@ -300,7 +272,6 @@ class GreenFive(AbstractCard):
     CARD_TYPE = "5"
     CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_green.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class PurpleFive(AbstractCard):
@@ -310,7 +281,6 @@ class PurpleFive(AbstractCard):
     CARD_TYPE = "5"
     CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_purple.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class RedFive(AbstractCard):
@@ -320,7 +290,6 @@ class RedFive(AbstractCard):
     CARD_TYPE = "5"
     CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_red.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class YellowFive(AbstractCard):
@@ -330,7 +299,6 @@ class YellowFive(AbstractCard):
     CARD_TYPE = "5"
     CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_yellow.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 # ~~~~~~~~~~~~~~
@@ -345,7 +313,6 @@ class BlueSix(AbstractCard):
     CARD_TYPE = "6"
     CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_blue.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class GreenSix(AbstractCard):
@@ -355,7 +322,6 @@ class GreenSix(AbstractCard):
     CARD_TYPE = "6"
     CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_green.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class PurpleSix(AbstractCard):
@@ -365,7 +331,6 @@ class PurpleSix(AbstractCard):
     CARD_TYPE = "6"
     CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_purple.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class RedSix(AbstractCard):
@@ -375,7 +340,6 @@ class RedSix(AbstractCard):
     CARD_TYPE = "6"
     CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_red.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class YellowSix(AbstractCard):
@@ -385,7 +349,6 @@ class YellowSix(AbstractCard):
     CARD_TYPE = "6"
     CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_yellow.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 # ~~~~~~~~~~~~~~
@@ -400,7 +363,6 @@ class BlueSeven(AbstractCard):
     CARD_TYPE = "7"
     CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_blue.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class GreenSeven(AbstractCard):
@@ -410,7 +372,6 @@ class GreenSeven(AbstractCard):
     CARD_TYPE = "7"
     CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_green.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class PurpleSeven(AbstractCard):
@@ -420,7 +381,6 @@ class PurpleSeven(AbstractCard):
     CARD_TYPE = "7"
     CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_purple.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class RedSeven(AbstractCard):
@@ -430,7 +390,6 @@ class RedSeven(AbstractCard):
     CARD_TYPE = "7"
     CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_red.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class YellowSeven(AbstractCard):
@@ -440,7 +399,6 @@ class YellowSeven(AbstractCard):
     CARD_TYPE = "7"
     CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_yellow.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 # ~~~~~~~~~~~~~~
@@ -455,7 +413,6 @@ class BlueEight(AbstractCard):
     CARD_TYPE = "8"
     CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_blue.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class GreenEight(AbstractCard):
@@ -465,7 +422,6 @@ class GreenEight(AbstractCard):
     CARD_TYPE = "8"
     CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_green.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class PurpleEight(AbstractCard):
@@ -475,7 +431,6 @@ class PurpleEight(AbstractCard):
     CARD_TYPE = "8"
     CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_purple.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class RedEight(AbstractCard):
@@ -485,7 +440,6 @@ class RedEight(AbstractCard):
     CARD_TYPE = "8"
     CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_red.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class YellowEight(AbstractCard):
@@ -495,7 +449,6 @@ class YellowEight(AbstractCard):
     CARD_TYPE = "8"
     CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_yellow.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 # ~~~~~~~~~~~~~~
@@ -510,7 +463,6 @@ class BlueNine(AbstractCard):
     CARD_TYPE = "9"
     CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_blue.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class GreenNine(AbstractCard):
@@ -520,7 +472,6 @@ class GreenNine(AbstractCard):
     CARD_TYPE = "9"
     CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_green.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class PurpleNine(AbstractCard):
@@ -530,7 +481,6 @@ class PurpleNine(AbstractCard):
     CARD_TYPE = "9"
     CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_purple.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class RedNine(AbstractCard):
@@ -540,7 +490,6 @@ class RedNine(AbstractCard):
     CARD_TYPE = "9"
     CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_red.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class YellowNine(AbstractCard):
@@ -550,7 +499,6 @@ class YellowNine(AbstractCard):
     CARD_TYPE = "9"
     CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_yellow.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 # ~~~~~~~~~~~~~~
@@ -566,7 +514,6 @@ class BlueSixtyNine(AbstractCard):
     CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_blue.png'
     EFFECT_DESCRIPTION = "A surprise ;)"
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class GreenSixtyNine(AbstractCard):
@@ -577,7 +524,6 @@ class GreenSixtyNine(AbstractCard):
     CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_green.png'
     EFFECT_DESCRIPTION = "A surprise ;)"
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class PurpleSixtyNine(AbstractCard):
@@ -588,7 +534,6 @@ class PurpleSixtyNine(AbstractCard):
     CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_purple.png'
     EFFECT_DESCRIPTION = "A surprise ;)"
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class RedSixtyNine(AbstractCard):
@@ -599,7 +544,6 @@ class RedSixtyNine(AbstractCard):
     CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_red.png'
     EFFECT_DESCRIPTION = "A surprise ;)"
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class YellowSixtyNine(AbstractCard):
@@ -610,4 +554,3 @@ class YellowSixtyNine(AbstractCard):
     CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_yellow.png'
     EFFECT_DESCRIPTION = "A surprise ;)"
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)

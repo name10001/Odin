@@ -4,7 +4,7 @@ import cards
 
 class AbstractCard:
     CARD_IMAGE_URL = 'cards/generic.png'
-    COMPATIBILITY_DESCRIPTION = 'This should describe what this card is compatible with'  # generate this using a function
+    COMPATIBILITY_DESCRIPTION = None  # generate this using a function
     EFFECT_DESCRIPTION = 'No effects.'  # default description of the cards effects
     NUMBER_IN_DECK = 0
     NAME = "Abstract card"
@@ -134,7 +134,7 @@ class AbstractCard:
             return False
         if self.get_options(player) is not None:
             if option not in self.get_options(player):
-                False
+                return False
         if is_player and self.game.get_player(option) is None:
             return False
         return True
@@ -178,3 +178,28 @@ class AbstractCard:
 
     def can_be_on_pickup(self):
         return self.CAN_BE_ON_PICKUP
+
+    @classmethod
+    def get_compatibility_description(cls):
+        if cls.COMPATIBILITY_DESCRIPTION is not None:
+            to_return = cls.COMPATIBILITY_DESCRIPTION
+        elif cls.CARD_COLOUR == "black":
+            to_return = "This is a regular black card. Black cards are compatible with " \
+                    + "everything except white cards and purple cards." \
+                    + "Always compatible and can be played with other {card_colour} cards."
+        elif cls.CARD_COLOUR == "white":
+            to_return = "This is a regular white card. White cards are compatible with everything except " \
+                        + "black cards. Always compatible and can be played with other {card_type} cards."
+        elif cls.CARD_COLOUR == "purple":
+            to_return = "This is a regular purple card. " \
+                        + "Purple cards are compatible with all purple cards and white cards. " \
+                        + "Always compatible and can be played with other {card_type} cards."
+        else:
+            to_return = "This is a regular {card_colour} card. {card_colour_capital} cards are compatible with" \
+                        + "all other {card_colour} cards and can be played with any white or black card too. " \
+                        + "Always compatible and can be played with other {card_type} cards."
+
+        return to_return.format(
+            card_colour=cls.CARD_COLOUR, card_colour_capital=cls.CARD_COLOUR.capitalize(),
+            card_type=cls.CARD_TYPE, card_type_capital=cls.CARD_TYPE.capitalize()
+        )

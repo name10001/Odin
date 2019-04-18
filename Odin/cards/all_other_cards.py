@@ -24,35 +24,30 @@ class BlueReverse(Reverse):
     NAME = "Blue Reverse"
     CARD_COLOUR = "blue"
     CARD_IMAGE_URL = 'cards/reverse_blue.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Reverse")
 
 
 class GreenReverse(Reverse):
     NAME = "Green Reverse"
     CARD_COLOUR = "green"
     CARD_IMAGE_URL = 'cards/reverse_green.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Reverse")
 
 
 class PurpleReverse(Reverse):
     NAME = "Purple Reverse"
     CARD_COLOUR = "purple"
     CARD_IMAGE_URL = 'cards/reverse_purple.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Reverse")
 
 
 class RedReverse(Reverse):
     NAME = "Red Reverse"
     CARD_COLOUR = "red"
     CARD_IMAGE_URL = 'cards/reverse_red.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Reverse")
 
 
 class WhiteReverse(Reverse):
     NAME = "White Reverse"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/reverse_white.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Reverse")
 
 
 class BlackReverse(Reverse):
@@ -60,14 +55,12 @@ class BlackReverse(Reverse):
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/reverse_wild.png'
     NUMBER_IN_DECK = 1
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Reverse")
 
 
 class YellowReverse(Reverse):
     NAME = "Yellow Reverse"
     CARD_COLOUR = "yellow"
     CARD_IMAGE_URL = 'cards/reverse_yellow.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Reverse")
 
 
 # ~~~~~~~~~~~~~~
@@ -92,42 +85,36 @@ class BluePickup2(Pickup2):
     NAME = "Blue Pickup 2"
     CARD_COLOUR = "blue"
     CARD_IMAGE_URL = 'cards/pickup2_blue.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"+2")
 
 
 class GreenPickup2(Pickup2):
     NAME = "Green Pickup 2"
     CARD_COLOUR = "green"
     CARD_IMAGE_URL = 'cards/pickup2_green.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"+2")
 
 
 class PurplePickup2(Pickup2):
     NAME = "Purple Pickup 2"
     CARD_COLOUR = "purple"
     CARD_IMAGE_URL = 'cards/pickup2_purple.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"+2")
 
 
 class RedPickup2(Pickup2):
     NAME = "Red Pickup 2"
     CARD_COLOUR = "red"
     CARD_IMAGE_URL = 'cards/pickup2_red.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"+2")
 
 
 class WhitePickup2(Pickup2):
     NAME = "White Pickup 2"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/pickup2_white.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"+2")
 
 
 class BlackPickup2(Pickup2):
     NAME = "Black Pickup 2"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pickup2_wild.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"+2")
     NUMBER_IN_DECK = 3
 
 
@@ -135,7 +122,6 @@ class YellowPickup2(Pickup2):
     NAME = "Yellow Pickup 2"
     CARD_COLOUR = "yellow"
     CARD_IMAGE_URL = 'cards/pickup2_yellow.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"+2")
 
 
 # ~~~~~~~~~~~~~~
@@ -151,7 +137,6 @@ class Pickup10(AbstractCard):
     CARD_IMAGE_URL = 'cards/pickup10_wild.png'
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 10 to the pickup chain value."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
     def prepare_card(self, player, options, played_on):
         self.game.pickup += 10
@@ -168,8 +153,6 @@ class Pickup4(AbstractCard):
     CARD_IMAGE_URL = 'cards/pickup4_wild.png'
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 4 to the pickup chain value."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
-
 
     def prepare_card(self, player, options, played_on):
         self.game.pickup += 4
@@ -186,7 +169,6 @@ class PickupTimes2(AbstractCard):
     CARD_IMAGE_URL = 'cards/multiply2_wild.png'
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "If a pickup chain is active, this card will double the pickup chain's value. If played outside of a pickup chain this will do nothing."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
     def prepare_card(self, player, options, played_on):
         self.game.pickup *= 2
@@ -214,42 +196,36 @@ class BlueSkip(Skip):
     NAME = "Blue Skip"
     CARD_COLOUR = "blue"
     CARD_IMAGE_URL = 'cards/skip_blue.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Skip")
 
 
 class GreenSkip(Skip):
     NAME = "Green Skip"
     CARD_COLOUR = "green"
     CARD_IMAGE_URL = 'cards/skip_green.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Skip")
 
 
 class PurpleSkip(Skip):
     NAME = "Purple Skip"
     CARD_COLOUR = "purple"
     CARD_IMAGE_URL = 'cards/skip_purple.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Skip")
 
 
 class RedSkip(Skip):
     NAME = "Red Skip"
     CARD_COLOUR = "red"
     CARD_IMAGE_URL = 'cards/skip_red.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Skip")
 
 
 class WhiteSkip(Skip):
     NAME = "White Skip"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/skip_white.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Skip")
 
 
 class BlackSkip(Skip):
     NAME = "Black Skip"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/skip_wild.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Skip")
     NUMBER_IN_DECK = 1
 
 
@@ -257,7 +233,6 @@ class YellowSkip(Skip):
     NAME = "Yellow Skip"
     CARD_COLOUR = "yellow"
     CARD_IMAGE_URL = 'cards/skip_yellow.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,"Skip")
 
 # ~~~~~~~~~~~~~~
 #    Blank
@@ -270,7 +245,6 @@ class BlankBro(AbstractCard):
     CARD_TYPE = "Just A Blank Bro"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/black.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class Happiness(AbstractCard):
@@ -279,7 +253,6 @@ class Happiness(AbstractCard):
     CARD_TYPE = "Happiness"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/white.png'
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 # ~~~~~~~~~~~~~~
@@ -292,7 +265,6 @@ class EA(AbstractCard):
     CARD_TYPE = "EA"
     NUMBER_NEEDED = 0
     EFFECT_DESCRIPTION = "This card hasn't even been implemented properly so it does nothing at the moment."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
     #TODO implement this card properly, this will just be a blank at the moment
 
@@ -341,46 +313,49 @@ class EA30(EA):
 class Fuck(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Fuckin' M8"
+    CARD_COLOUR = "Abstract"
 
     def is_compatible_with(self, card, player):
         if card.get_colour() == "colour swapper":
             return card.COLOUR_1 == self.get_colour() or card.COLOUR_2 == self.get_colour()
         return card.get_colour() == self.get_colour() or card.get_type() == self.get_type()
 
+    @classmethod
+    def get_compatibility_description(cls):
+        if cls.COMPATIBILITY_DESCRIPTION is not None:
+            return cls.COMPATIBILITY_DESCRIPTION
+        return "This card is only compatible with other " + cls.CARD_COLOUR \
+               + " cards. However, this is always compatible and can be played with other Fuckin' M8 cards"
+
 
 class BlueFuck(Fuck):
     NAME = "Fuckin' Blue M8"
     CARD_COLOUR = "blue"
     CARD_IMAGE_URL = 'cards/fuck_blue.png'
-    COMPATIBILITY_DESCRIPTION = "This card is only compatible with other blue cards. However, this is always compatible and can be played with other Fuckin' M8 cards"
 
 
 class GreenFuck(Fuck):
     NAME = "Fuckin' Green M8"
     CARD_COLOUR = "green"
     CARD_IMAGE_URL = 'cards/fuck_green.png'
-    COMPATIBILITY_DESCRIPTION = "This card is only compatible with other green cards. However, this is always compatible and can be played with other Fuckin' M8 cards"
 
 
 class RedFuck(Fuck):
     NAME = "Fuckin' Red M8"
     CARD_COLOUR = "red"
     CARD_IMAGE_URL = 'cards/fuck_red.png'
-    COMPATIBILITY_DESCRIPTION = "This card is only compatible with other red cards. However, this is always compatible and can be played with other Fuckin' M8 cards"
 
 
 class BlackFuck(Fuck):
     NAME = "Fuckin' Black M8"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/fuck_black.png'
-    COMPATIBILITY_DESCRIPTION = "This card is only compatible with other black cards. However, this is always compatible and can be played with other Fuckin' M8 cards"
 
 
 class YellowFuck(Fuck):
     NAME = "Fuckin' Yellow M8"
     CARD_COLOUR = "yellow"
     CARD_IMAGE_URL = 'cards/fuck_yellow.png'
-    COMPATIBILITY_DESCRIPTION = "This card is only compatible with other yellow cards. However, this is always compatible and can be played with other Fuckin' M8 cards"
 
 
 # ~~~~~~~~~~~~~~
@@ -401,7 +376,6 @@ class ManOfTheDay(AllOfSameColour):
     CARD_IMAGE_URL = 'cards/man_of_the_day.png'
     CARD_TYPE = "Man Of The Day"
     EFFECT_DESCRIPTION = "Allows you to place as many yellow cards as you like with this card on your turn."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class LadyOfTheNight(AllOfSameColour):
@@ -410,7 +384,6 @@ class LadyOfTheNight(AllOfSameColour):
     CARD_IMAGE_URL = 'cards/lady_of_the_night.png'
     CARD_TYPE = "Lady Of The Night"
     EFFECT_DESCRIPTION = "Allows you to place as many red cards as you like with this card on your turn."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class Smurf(AllOfSameColour):
@@ -419,7 +392,6 @@ class Smurf(AllOfSameColour):
     CARD_IMAGE_URL = 'cards/smurf.png'
     CARD_TYPE = "Smurf"
     EFFECT_DESCRIPTION = "Allows you to place as many blue cards as you like with this card on your turn."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class Creeper(AllOfSameColour):
@@ -428,7 +400,6 @@ class Creeper(AllOfSameColour):
     CARD_IMAGE_URL = 'cards/creeper.png'
     CARD_TYPE = "Creeper"
     EFFECT_DESCRIPTION = "Allows you to place as many green cards as you like with this card on your turn."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
 
 class FilthySharon(AllOfSameColour):
@@ -437,7 +408,6 @@ class FilthySharon(AllOfSameColour):
     CARD_IMAGE_URL = 'cards/filthy_sharon.png'
     CARD_TYPE = "Filthy Sharon"
     EFFECT_DESCRIPTION = "Allows you to place as many white cards as you like with this card on your turn."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
         
 
 # ~~~~~~~~~~~~~~
@@ -452,7 +422,10 @@ class Nazi(AbstractCard):
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/nazi.png'
     EFFECT_DESCRIPTION = "Allows you to place as many black cards as you like with this card on your turn."
-    COMPATIBILITY_DESCRIPTION = "This card can only be played on white cards. While you are allowed to play black cards WITH this card, this card will act like a regular white card after play, such that all cards except black cards can be played on it."
+    COMPATIBILITY_DESCRIPTION = "This card can only be played on white cards. " \
+                                + "While you are allowed to play black cards WITH this card, " \
+                                + "this card will act like a regular white card after play, " \
+                                + "such that all cards except black cards can be played on it."
 
     def can_be_played_on(self, card, player):
         if player.is_turn() is False:
@@ -474,7 +447,6 @@ class AtomicBomb(AbstractCard):
     pickupCards = ["Atomic Bomb", "+2", "+4", "+10", "x2", "Plus", "Fuck You", "Pawn"]
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Allows you to place as many pickup cards as you like with this card on your turn."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
     def play_card(self, player, options, played_on):
         """
@@ -522,7 +494,6 @@ class Communist(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Communist"
     EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded"
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
     def play_card(self, player, options, played_on):
         all_cards = []
@@ -550,7 +521,6 @@ class Capitalist(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Capitalist"
     EFFECT_DESCRIPTION = "The player with the most cards has the amount of cards in their hand doubled."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
     def play_card(self, player, options, played_on):
         """
@@ -574,7 +544,6 @@ class SwapHand(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Swap Hand"
     EFFECT_DESCRIPTION = "Choose a player and you will swap your entire hand with theirs upon play."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
     def get_options(self, player):
         options = {}
@@ -605,7 +574,6 @@ class FeelingBlue(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Feeling Blue"
     EFFECT_DESCRIPTION = "Upon playing this card, you will be forced to pickup 5 cards."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
     def play_card(self, player, options, played_on):
         player.add_new_cards(5)
@@ -619,8 +587,9 @@ class Plus(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_TYPE = "Plus"
     CAN_BE_ON_PICKUP = True
-    EFFECT_DESCRIPTION = "If you play this card inside a pickup chain, everyone except yourself will be forced to pickup the pickup chain value. Outside of a pickup chain, everyone except yourself is forced to pickup 2 cards."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
+    EFFECT_DESCRIPTION = "If you play this card inside a pickup chain, everyone except yourself " \
+                         + "will be forced to pickup the pickup chain value. Outside of a pickup chain, " \
+                         + "everyone except yourself is forced to pickup 2 cards."
 
     pickup_amount = 0
 
@@ -645,14 +614,15 @@ class FuckYou(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_TYPE = "Fuck You"
     CAN_BE_ON_PICKUP = True
-    EFFECT_DESCRIPTION = "If you play this card inside a pickup chain, one person of your choosing will be forced to pickup the pickup chain value. Outside of a pickup chain, the person of your choosing is forced to pickup 5 cards."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
+    EFFECT_DESCRIPTION = "If you play this card inside a pickup chain, one person of your choosing will be " \
+                         + "forced to pickup the pickup chain value. Outside of a pickup chain, " \
+                         + "the person of your choosing is forced to pickup 5 cards."
 
     def get_options(self, player):
         options = {}
         for other_player in self.game.players:
             if other_player != player:
-                cards = other_player.get_hand();
+                cards = other_player.get_hand()
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(cards)) + ")"
         return options
     
@@ -681,7 +651,6 @@ class Genocide(AbstractCard):
     NUMBER_IN_DECK = 0.5
     CARD_TYPE = "Genocide"
     EFFECT_DESCRIPTION = "Pick any colour or type of card to entirely removed from the game. All cards of this colour/type will be removed from everyone's hand and will never be able to be picked up in the future of this game."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
     UNBANNABLE_COLOURS = ["black"]
     UNBANNABLE_TYPES = []
 
@@ -726,7 +695,6 @@ class Jesus(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_TYPE = "Jesus"
     EFFECT_DESCRIPTION = "Choose any person (including yourself) to reset their entire hand back to a value of 15 cards."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
     def get_options(self, player):
         options = {}
@@ -758,7 +726,6 @@ class FreeTurn(AbstractCard):
     CARD_IMAGE_URL = 'cards/free_turn.png'
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Gain an extra turn. If you play multiple Free Turn cards together you will gain multiple extra turns."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
     def play_card(self, player, options, played_on):
         if player.turns_left < 10:
@@ -772,7 +739,6 @@ class Thanos(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Thanos"
     EFFECT_DESCRIPTION = "Upon play, half of the cards in your hand will randomly disappear."
-    COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
     def play_card(self, player, options, played_on):
         """
@@ -833,7 +799,9 @@ class ColourSwapper(AbstractCard):
     COLOUR_1 = "black"
     COLOUR_2 = "black"
     CARD_COLOUR = "colour swapper"
-    EFFECT_DESCRIPTION = "When played on one of the colours shown on the card, this card will swap to the opposite card. If played on a colour that is not shown on the card you get to choose the colour."
+    EFFECT_DESCRIPTION = "When played on one of the colours shown on the card, this card will swap to the " \
+                         + "opposite card. If played on a colour that is not shown on the card " \
+                         + "you get to choose the colour."
 
     def __init__(self, game):
         super().__init__(game)
@@ -891,11 +859,17 @@ class ColourSwapper(AbstractCard):
         return cards.colours_are_compatible(card.get_colour(), self.COLOUR_1) \
                or cards.colours_are_compatible(card.get_colour(), self.COLOUR_2)
 
-
-def default_colour_swapper_description(colour1, colour2):
-    return "Compatible with any " + colour1 + " or " + colour2 + " card. After play, this card switches to the opposite colour shown on the card as what was placed previously. " + \
-        "This card is also compatible with black cards and white cards. In situations where you place on a black or a white card, you get to decide what colour this card becomes. " + \
-            "If you play multiple colour swapper cards, the colours must be compatible as you place them."
+    @classmethod
+    def get_compatibility_description(cls):
+        if cls.COMPATIBILITY_DESCRIPTION is not None:
+            return cls.COMPATIBILITY_DESCRIPTION
+        return "Compatible with any " + cls.COLOUR_1 + " or " + cls.COLOUR_2 + "card. " \
+                + "After play, this card switches to the opposite colour shown " \
+                + "on the card as what was placed previously. " \
+                + "This card is also compatible with black cards and white cards. " \
+                + "In situations where you place on a black or a white card, " \
+                + "you get to decide what colour this card becomes." \
+                + "If you play multiple colour swapper cards, the colours must be compatible as you place them."
 
 
 class RedBlueSwapper(ColourSwapper):
@@ -903,14 +877,13 @@ class RedBlueSwapper(ColourSwapper):
     CARD_IMAGE_URL = 'cards/blue_red.png'
     COLOUR_1 = "red"
     COLOUR_2 = "blue"
-    COMPATIBILITY_DESCRIPTION = default_colour_swapper_description(COLOUR_1,COLOUR_2)
+
 
 class RedYellowSwapper(ColourSwapper):
     NAME = "Red/Yellow Colour Swapper"
     CARD_IMAGE_URL = 'cards/red_yellow.png'
     COLOUR_1 = "red"
     COLOUR_2 = "yellow"
-    COMPATIBILITY_DESCRIPTION = default_colour_swapper_description(COLOUR_1,COLOUR_2)
 
 
 class RedGreenSwapper(ColourSwapper):
@@ -918,7 +891,6 @@ class RedGreenSwapper(ColourSwapper):
     CARD_IMAGE_URL = 'cards/green_red.png'
     COLOUR_1 = "red"
     COLOUR_2 = "green"
-    COMPATIBILITY_DESCRIPTION = default_colour_swapper_description(COLOUR_1,COLOUR_2)
 
 
 class GreenBlueSwapper(ColourSwapper):
@@ -926,7 +898,6 @@ class GreenBlueSwapper(ColourSwapper):
     CARD_IMAGE_URL = 'cards/green_blue.png'
     COLOUR_1 = "green"
     COLOUR_2 = "blue"
-    COMPATIBILITY_DESCRIPTION = default_colour_swapper_description(COLOUR_1,COLOUR_2)
 
 
 class BlueYellowSwapper(ColourSwapper):
@@ -934,7 +905,6 @@ class BlueYellowSwapper(ColourSwapper):
     CARD_IMAGE_URL = 'cards/yellow_blue.png'
     COLOUR_1 = "yellow"
     COLOUR_2 = "blue"
-    COMPATIBILITY_DESCRIPTION = default_colour_swapper_description(COLOUR_1,COLOUR_2)
 
 
 class YellowGreenSwapper(ColourSwapper):
@@ -942,7 +912,6 @@ class YellowGreenSwapper(ColourSwapper):
     CARD_IMAGE_URL = 'cards/green_yellow.png'
     COLOUR_1 = "yellow"
     COLOUR_2 = "green"
-    COMPATIBILITY_DESCRIPTION = default_colour_swapper_description(COLOUR_1,COLOUR_2)
 
 
 class BlackWhiteSwapper(ColourSwapper):
@@ -951,6 +920,9 @@ class BlackWhiteSwapper(ColourSwapper):
     CARD_IMAGE_URL = 'cards/black_white.png'
     COLOUR_1 = "black"
     COLOUR_2 = "white"
-    COMPATIBILITY_DESCRIPTION = "This card can be played on any card. If you play on a black or a white card, this card will switch colours to the opposite colour of what you placed on. " + \
-        "If you play this on another colour, you will get to decide what colour this switches to. If you play with a purple card, since black cards are not compatible with purple cards, the white part of this card is used and switches the colour to black. " + \
-            "This can be played with other colour swapper cards."
+    COMPATIBILITY_DESCRIPTION = "This card can be played on any card. If you play on a black or a white card, " \
+                                + "this card will switch colours to the opposite colour of what you placed on. " \
+                                + "If you play this on another colour, you will get to decide what colour " \
+                                + "this switches to. If you play with a purple card, since black cards are not " \
+                                + "compatible with purple cards, the white part of this card is used and" \
+                                + "switches the colour to black. This can be played with other colour swapper cards."

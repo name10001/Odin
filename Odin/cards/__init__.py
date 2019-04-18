@@ -1,14 +1,3 @@
-def default_card_compatibility_description(colour, type):
-    if colour == "black":
-        return "This is a regular black card. Black cards are compatible with everything except white cards and purple cards. Always compatible and can be played with other " + type + " cards."
-    elif colour == "white":
-        return "This is a regular white card. White cards are compatible with everything except black cards. Always compatible and can be played with other " + type + " cards."
-    elif colour == "purple":
-        return "This is a regular purple card. Purple cards are compatible with all purple cards and white cards. Always compatible and can be played with other " + type + " cards."
-    else:
-        return "This is a regular " + colour + " card. " + colour.capitalize() + " cards are compatible with all other " + colour + " cards and can be played with any white or black card too. Always compatible and can be played with other " + type + " cards."
-
-
 from random import choices
 from cards.the_boring_cards import *
 from cards.all_other_cards import *
@@ -52,13 +41,13 @@ size_of_deck = 0
 # all_urls = []
 for card in all_cards:
     card_info = {
-        "url":'/static/' + card.CARD_IMAGE_URL,
+        "url": '/static/' + card.CARD_IMAGE_URL,
         "name": card.NAME,
         "type": card.CARD_TYPE,
         "colour": card.CARD_COLOUR,
         "can be on pickup": card.CAN_BE_ON_PICKUP,
         "effect description": card.EFFECT_DESCRIPTION,
-        "compatibility description": card.COMPATIBILITY_DESCRIPTION
+        "compatibility description": card.get_compatibility_description()
     }
     all_card_info.append(card_info)
     size_of_deck += card.NUMBER_IN_DECK
@@ -151,14 +140,14 @@ def get_random_card():
     return get_random_cards(1)[0]
 
 
-def colours_are_compatible(colour1, colour2):
-    if colour1 == colour2:
+def colours_are_compatible(colour_1, colour_2):
+    if colour_1 == colour_2:
         return True
-    elif colour1 == "white":
-        return colour2 != "black"
-    elif colour1 == "black":
-        return colour2 != "white" and colour2 != "purple"
-    elif colour1 == "purple":
-        return colour2 == "white"
+    elif colour_1 == "white":
+        return colour_2 != "black"
+    elif colour_1 == "black":
+        return colour_2 != "white" and colour_2 != "purple"
+    elif colour_1 == "purple":
+        return colour_2 == "white"
     else:
-        return colour2 == "white" or colour2 == "black"
+        return colour_2 == "white" or colour_2 == "black"
