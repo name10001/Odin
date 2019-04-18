@@ -521,7 +521,7 @@ class Communist(AbstractCard):
     CARD_IMAGE_URL = 'cards/communist.png'
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Communist"
-    EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded"
+    EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded."
     COMPATIBILITY_DESCRIPTION = cards.default_card_compatibility_description(CARD_COLOUR,CARD_TYPE)
 
     def play_card(self, player, options, played_on):
@@ -833,7 +833,7 @@ class ColourSwapper(AbstractCard):
     COLOUR_1 = "black"
     COLOUR_2 = "black"
     CARD_COLOUR = "colour swapper"
-    EFFECT_DESCRIPTION = "When played on one of the colours shown on the card, this card will swap to the opposite card. If played on a colour that is not shown on the card you get to choose the colour."
+    EFFECT_DESCRIPTION = "When played on one of the colours shown on the card, this card will swap to the opposite colour. If played on a colour that is not shown on the card you get to choose the colour."
 
     def __init__(self, game):
         super().__init__(game)

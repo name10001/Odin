@@ -10,7 +10,7 @@ function drawText(text, x, y, textAlign, fontSize, maxWidth, outline, colour) {
 
     if(outline){
         ctx.strokeStyle = "#000";
-        ctx.lineWidth = 2;
+        ctx.lineWidth = GUI_SCALE*0.2;
         ctx.strokeText(text,x,y,maxWidth);
     }
     ctx.fillStyle = colour;
@@ -154,12 +154,7 @@ class CardStackPanel {
         //clicked the card
         if(x > GUI_SCALE/2 && x<GUI_SCALE*CARD_WIDTH+GUI_SCALE/2 &&
                 y > GUI_SCALE/2 && y<GUI_SCALE*CARD_HEIGHT+GUI_SCALE/2) {
-            let card = this.cardStack.card;
-            console.log("NAME: " + card.name);
-            console.log("COLOUR: " + card.colour);
-            console.log("TYPE: " + card.type);
-            console.log("COMPATIBILITY: " + card.compatibilityDescription + " Allowed on pickups = " + card.compatiblePickup);
-            console.log("EFFECTS: " + card.effectDescription);
+            gui.popup = new DescriptionWindow(this.cardStack.card,this.cardStack);
         }
         //clicked the play button
         else if(x > GUI_SCALE && x<GUI_SCALE*CARD_WIDTH &&
