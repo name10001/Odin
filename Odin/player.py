@@ -185,7 +185,7 @@ class Player:
             self.game.pickup = 0
         self.picked_up_this_turn = True
 
-    def undo(self):
+    def undo(self, update_players=True):
         """
         If the player has put down a card this turn it will undo the latest one
         :return:
@@ -198,6 +198,19 @@ class Player:
 
         played_on = self.game.played_cards[len(self.game.played_cards)-1]
         card_to_remove.undo_prepare_card(self, played_on)
+
+        if update_players:
+            self.game.update_players()
+
+    def undo_all(self):
+        """
+        If the player has put down a card this turn it will undo the latest one
+        :return:
+        """
+        if not self.is_turn():
+            return
+        for i in range(0, len(self.planning_pile)):
+            self.undo(update_players=False)
 
         self.game.update_players()
 

@@ -612,13 +612,17 @@ class Genocide(AbstractCard):
     CARD_IMAGE_URL = 'cards/genocide.png'
     NUMBER_IN_DECK = 0.5
     CARD_TYPE = "Genocide"
+    UNBANNABLE_COLOURS = ["black"]
+    UNBANNABLE_TYPES = []
 
     def get_options(self, player):
         options = {}
         for card_colour in self.game.deck.not_banned_colours:
-            options["colour " + card_colour] = "Colour: " + card_colour.capitalize()
-        for card_types in self.game.deck.not_banned_types:
-            options["type " + card_types] = "Type: " + card_types
+            if card_colour not in self.UNBANNABLE_COLOURS:
+                options["colour " + card_colour] = "Colour: " + card_colour.capitalize()
+        for card_type in self.game.deck.not_banned_types:
+            if card_type not in self.UNBANNABLE_TYPES:
+                options["type " + card_type] = "Type: " + card_type
         return options
 
     def play_card(self, player, options, played_on):

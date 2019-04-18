@@ -33,11 +33,16 @@ all_cards = [
 card_weights = [card.NUMBER_IN_DECK for card in all_cards]
 
 # find information about all cards
+all_card_info = {}
 all_types = []
 all_colours = []
 size_of_deck = 0
 all_urls = []
 for card in all_cards:
+    all_card_info[card.CARD_IMAGE_URL] = {
+        "name": card.NAME,
+        "description": card.DESCRIPTION
+    }
     size_of_deck += card.NUMBER_IN_DECK
     all_urls.append(card.CARD_IMAGE_URL)
     if card.CARD_TYPE not in all_types:
