@@ -15,6 +15,13 @@ class OptionItem {
 
 }
 
+class DescriptionWindow {
+    constructor(card) {
+        this.image = card.image;
+        
+    }
+}
+
 
 /**
  * Class for the options window

@@ -4,7 +4,8 @@ import cards
 
 class AbstractCard:
     CARD_IMAGE_URL = 'cards/generic.png'
-    DESCRIPTION = 'This is a abstract card and should only be used to inherit from. This should never be seen in a game'
+    COMPATIBILITY_DESCRIPTION = 'This should describe what this card is compatible with'  # generate this using a function
+    EFFECT_DESCRIPTION = 'No effects.'  # default description of the cards effects
     NUMBER_IN_DECK = 0
     NAME = "Abstract card"
     CARD_COLOUR = "Abstract"

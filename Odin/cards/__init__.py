@@ -1,3 +1,14 @@
+def default_card_compatibility_description(colour, type):
+    if colour == "black":
+        return "This is a regular black card. Black cards are compatible with everything except white cards and purple cards. Always compatible and can be played with other " + type + " cards."
+    elif colour == "white":
+        return "This is a regular white card. White cards are compatible with everything except black cards. Always compatible and can be played with other " + type + " cards."
+    elif colour == "purple":
+        return "This is a regular purple card. Purple cards are compatible with all purple cards and white cards. Always compatible and can be played with other " + type + " cards."
+    else:
+        return "This is a regular " + colour + " card. " + colour.capitalize() + " cards are compatible with all other " + colour + " cards and can be played with any white or black card too. Always compatible and can be played with other " + type + " cards."
+
+
 from random import choices
 from cards.the_boring_cards import *
 from cards.all_other_cards import *
@@ -36,10 +47,10 @@ card_weights = [card.NUMBER_IN_DECK for card in all_cards]
 all_types = []
 all_colours = []
 size_of_deck = 0
-all_urls = []
+# all_urls = []
 for card in all_cards:
     size_of_deck += card.NUMBER_IN_DECK
-    all_urls.append(card.CARD_IMAGE_URL)
+    # all_urls.append(card.CARD_IMAGE_URL)
     if card.CARD_TYPE not in all_types:
         all_types.append(card.CARD_TYPE)
     if card.CARD_COLOUR not in all_colours:
@@ -60,28 +71,33 @@ category_indexs = [
     },
     {
         "colours": (),
-        "types": ("Creeper", "Smurf", "Lady Of The Night", "Man Of The Day"),
+        "types": ("Fuckin' M8"),
         "index": 3
     },
     {
         "colours": (),
-        "types": ('Reverse', 'Skip'),
+        "types": ("Creeper", "Smurf", "Lady Of The Night", "Man Of The Day"),
         "index": 4
     },
     {
         "colours": (),
-        "types": ('+2', '+10', '+4', 'x2'),
+        "types": ('Reverse', 'Skip'),
         "index": 5
+    },
+    {
+        "colours": (),
+        "types": ('+2', '+10', '+4', 'x2'),
+        "index": 6
     },
     {
         "colours": ('black'),
         "types": (),
-        "index": 6
+        "index": 7
     },
     {
         "colours": ('white'),
         "types": (),
-        "index": 7
+        "index": 8
     },
 ]
 

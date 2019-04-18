@@ -19,7 +19,12 @@
         <script>
             //some global variables
             var GAME_ID = "{{ game.get_id() }}";
-            var ALL_URLS = {{ game.deck.get_all_urls() | safe }};
+            
+            //there must be a better way to do this but oh well
+            var False = false;
+            var True = true;
+            
+            var ALL_CARDS = {{ game.deck.get_all_cards() | safe }};
             var IS_MOBILE;
 
             var LAYOUT_TYPE;

@@ -154,7 +154,12 @@ class CardStackPanel {
         //clicked the card
         if(x > GUI_SCALE/2 && x<GUI_SCALE*CARD_WIDTH+GUI_SCALE/2 &&
                 y > GUI_SCALE/2 && y<GUI_SCALE*CARD_HEIGHT+GUI_SCALE/2) {
-            console.log("info");
+            let card = this.cardStack.card;
+            console.log("NAME: " + card.name);
+            console.log("COLOUR: " + card.colour);
+            console.log("TYPE: " + card.type);
+            console.log("COMPATIBILITY: " + card.compatibilityDescription + " Allowed on pickups = " + card.compatiblePickup);
+            console.log("EFFECTS: " + card.effectDescription);
         }
         //clicked the play button
         else if(x > GUI_SCALE && x<GUI_SCALE*CARD_WIDTH &&

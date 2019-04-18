@@ -15,15 +15,6 @@ class Gui {
         this.movingCards = [];
 
 
-        this.cardImages = [];
-        //load all card images
-        for(let url of ALL_URLS) {
-            let image = new Image;
-            image.src = '/static/' + url;
-            this.cardImages['/static/' + url] = image;
-        }
-
-
         //initialize some variables
         this.popup = null;
         this.playAll = false;

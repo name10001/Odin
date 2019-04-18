@@ -5,12 +5,16 @@ class Player {
     }
 }
 
+/**
+ * A stack of cards in your hand
+ */
 class CardStack {
     constructor(id, url, allowedToPlay, options) {
         this.allowedToPlay = allowedToPlay;
         this.options = options;
         this.url = url;
-        this.image = gui.cardImages[url];
+        this.card = game.allCards[url];
+        this.image = game.allCards[url].image;
         this.optionStrings = [];
         this.optionIds = [];
         this.cardIds = [id];
@@ -42,12 +46,29 @@ class CardStack {
     size() {
         return this.cardIds.length;
     }
-
 }
 
+/**
+ * Represents a card type. Has a name, image and some info to be used for its description
+ */
+class Card {
+    constructor(card) {
+        this.name = card["name"];
+        this.colour = card["colour"];
+        this.type = card["type"];
+        this.compatiblePickup = card["can be on pickup"];
+        this.compatibilityDescription = card["compatibility description"];
+        this.effectDescription = card["effect description"];
+        this.image = new Image;
+        this.image.src = card["url"];
+    }
+}
+
+/**
+ * Class representing all the current game objects
+ */
 class Game {
     constructor() {
-        //this.yourCards = [];
         this.yourStacks = [];
         this.topCards = [];
         this.planningCards = [];
@@ -58,12 +79,15 @@ class Game {
         this.pickupAmount = 0;
         this.turn = 0;
         this.turnString = "";
+
+        //build a list of all cards - use the url as the key
+        this.allCards = [];
+        for(let card of ALL_CARDS) {
+            this.allCards[card["url"]] = new Card(card); 
+        }
     }
 
     update(update) {
-        //console.log(update);
-        //this.yourCards.length = 0;
-        
 
         this.yourStacks.length = 0;
 
@@ -90,7 +114,7 @@ class Game {
         //update cards at the top
         this.topCards.length = 0;
         for(let card of update['cards on deck']) {
-            this.topCards.push(gui.cardImages[card['card image url']]);
+            this.topCards.push(this.allCards[card['card image url']].image);
         }
         //update planning cards
         this.planningCards.length = 0;
