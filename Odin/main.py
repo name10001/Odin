@@ -120,4 +120,4 @@ if __name__ == '__main__':
 
     t = Thread(target=run_schedule)
     t.start()
-    fs.socket_io.run(fs.app, debug=False, port=PORT)
+    fs.socket_io.run(fs.app, debug=False, port=PORT, host='0.0.0.0')

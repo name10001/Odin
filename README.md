@@ -2,6 +2,7 @@
 The best fricken card game ever. <br />
 A humorous extenuation of Uno.
 If you like cards against humanity you may like this. <br />
+If you would like to play, go to: [odin-cards.com](http://odin-cards.com)
 
 ### A boring message from the developers:
 We do not stand by any message that can be derived from this game.
@@ -27,7 +28,7 @@ cd path/to/Odin
 virtualenv odin_env
 
 # open the virtualenv
-source odin_env/activate
+source odin_env/bin/activate
 
 # Install all the dependencies 
 pip3 install -r requirements.txt
@@ -43,6 +44,12 @@ Step 2: open main.py:
 PORT = 80
 # to this:
 PORT = 12345
+```
+
+##### Run permanently
+For advanced users: This is recommended if you want to deploy it to a server permanently
+```
+gunicorn3 -b 0.0.0.0:80 --worker-class eventlet -w 1 -p pidfile -D main:fs.app
 ```
 
 ### Windows
