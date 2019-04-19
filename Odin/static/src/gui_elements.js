@@ -113,8 +113,8 @@ class Container {
 class CardStackPanel {
     constructor(cardStack) {
         this.cardStack = cardStack;
-        this.playButton = new Button(CARD_WIDTH-1,3,1.5,"Add");
-        this.playallButton = new Button(CARD_WIDTH-1,3,1.5,"Add All");
+        this.playButton = new Button(CARD_WIDTH-1,3,1.5,"ADD");
+        this.playallButton = new Button(CARD_WIDTH-1,3,1.5,"ADD ALL");
     }
 
     draw(x,y,width,height) {
@@ -154,44 +154,20 @@ class CardStackPanel {
         //clicked the card
         if(x > GUI_SCALE/2 && x<GUI_SCALE*CARD_WIDTH+GUI_SCALE/2 &&
                 y > GUI_SCALE/2 && y<GUI_SCALE*CARD_HEIGHT+GUI_SCALE/2) {
-            gui.popup = new DescriptionWindow(this.cardStack.card,this.cardStack);
+            gui.popup = new DescriptionWindow(this.cardStack, cardX, cardY);
         }
         //clicked the play button
         else if(x > GUI_SCALE && x<GUI_SCALE*CARD_WIDTH &&
             y > GUI_SCALE*(CARD_HEIGHT+1.5) && y<GUI_SCALE*(CARD_HEIGHT+4.5)) {
-            this.play(cardX, cardY);
+            gui.play(this.cardStack, cardX, cardY);
         }
         //clicked the play all button
         else if(x > GUI_SCALE && x<GUI_SCALE*CARD_WIDTH &&
             y > GUI_SCALE*(CARD_HEIGHT+5.5) && y<GUI_SCALE*(CARD_HEIGHT+8.5)) {
-            this.playAll(cardX, cardY);
+            gui.playAllCards(this.cardStack, cardX, cardY);
         }
     }
 
-    play(x,y) {
-        if(!this.cardStack.allowedToPlay) return;
-
-        if(this.cardStack.optionIds.length>0) {
-            gui.popup = new OptionsWindow(this.cardStack);
-        }
-        else {
-            gui.drawMovingCards(this.cardStack.image,1,x,y);
-            this.cardStack.playSingle();
-        }
-    }
-
-    playAll(x,y) {
-        if(!this.cardStack.allowedToPlay) return;
-
-        if(this.cardStack.optionIds.length>0) {
-            gui.popup = new OptionsWindow(this.cardStack);
-            gui.playAll = true;
-        }
-        else {
-            gui.drawMovingCards(this.cardStack.image,this.cardStack.size(),x,y);
-            this.cardStack.playAll();
-        }
-    }
 }
 
 
