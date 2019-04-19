@@ -8,10 +8,10 @@ We do not stand by any message that can be derived from this game.
 All of this is just for fun and should not be taken seriously.
 
 ## How to install and run
-#### Linux
+### Linux
 ##### With root access:
 Step 1: open terminal:
-```
+```shell
 cd path/to/Odin
 sudo pip3 install -r requirements.txt
 sudo python3 Odin/main.py
@@ -20,7 +20,7 @@ Step 2: Done (:
 ##### Without root access:
 If you don't want to run as root you need to use a virtualenv <br />
 Step 1: open terminal:
-```
+```shell
 cd path/to/Odin
 
 # make the virtualenv
@@ -45,10 +45,10 @@ PORT = 80
 PORT = 12345
 ```
 
-#### Windows
+### Windows
 Step 1: Install python 3 <br />
 Step 2: Install dependencies. In command prompt as admin:
-```
+```shell
 cd path/to/Odin
 
 :: If python is in PATH:
@@ -58,7 +58,7 @@ pip3 install -r requirements.txt
 path/to/python.exe -m pip install -r requirements.txt
 ```
 Step 3: Run the program. In command prompt:
-```
+```shell
 :: If python is in PATH:
 python3 Odin/main.py
 
