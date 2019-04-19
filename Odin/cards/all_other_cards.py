@@ -16,8 +16,11 @@ class Reverse(AbstractCard):
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Reverses the direction of play."
 
-    def play_card(self, player, options, played_on):
+    def prepare_card(self, player, options, played_on):
         self.game.direction *= -1
+    
+    def undo_prepare_card(self, player, played_on):
+        self.game.direction *= -1;
 
 
 class BlueReverse(Reverse):
@@ -192,8 +195,11 @@ class Skip(AbstractCard):
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Skips the next person's turn."
     
-    def play_card(self, player, options, played_on):
+    def prepare_card(self, player, options, played_on):
         self.game.iterate_turn_by += 1
+    
+    def undo_prepare_card(self, player, played_on):
+        self.game.iterate_turn_by -= 1
 
 
 class BlueSkip(Skip):
@@ -450,13 +456,6 @@ class AtomicBomb(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Allows you to place as many pickup cards as you like with this card on your turn."
 
-    def play_card(self, player, options, played_on):
-        """
-        TODO cause this to automatically make the next person pickup?
-        Idk if this is necessary cause you can combine it with fuck you
-        """
-        pass
-
     def can_play_with(self, card, player, is_first_card):
         return card.get_type() in self.pickupCards
 
@@ -601,19 +600,30 @@ class Plus(AbstractCard):
                          + "everyone except yourself is forced to pickup 2 cards."
 
     pickup_amount = 0
+    old_pickup = 0
 
     def prepare_card(self, player, options, played_on):
+        self.old_pickup = self.game.pickup
         self.pickup_amount = self.game.pickup
+
+        if hasattr(played_on, 'pickup_amount'):  # allows you to place multiple and duplicate the effects
+            self.pickup_amount = played_on.pickup_amount
+        
         if self.pickup_amount == 0:
             self.pickup_amount = 2
+        
+        self.game.pickup = 0
+    
+    def undo_prepare_card(self, player, played_on):
+        self.game.pickup = self.old_pickup
 
     def play_card(self, player, options, played_on):
         for other_player in self.game.players:
             if other_player != player:
                 other_player.add_new_cards(self.pickup_amount)
                 other_player.card_update()
-
-        self.game.pickup = 0
+        
+        self.pickup_amount = 0  # prevent people from duplicating the pickup amount
 
 
 class FuckYou(AbstractCard):
@@ -627,6 +637,8 @@ class FuckYou(AbstractCard):
     EFFECT_DESCRIPTION = "If you play this card inside a pickup chain, one person of your choosing will be " \
                          + "forced to pickup the pickup chain value. Outside of a pickup chain, " \
                          + "the person of your choosing is forced to pickup 5 cards."
+    pickup_amount = 0
+    old_pickup = 0
 
     def get_options(self, player):
         options = {}
@@ -635,13 +647,21 @@ class FuckYou(AbstractCard):
                 cards = other_player.get_hand()
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(cards)) + ")"
         return options
-    
-    pickup_amount = 0
 
     def prepare_card(self, player, options, played_on):
+        self.old_pickup = self.game.pickup
         self.pickup_amount = self.game.pickup
+
+        if hasattr(played_on, 'pickup_amount'):  # allows you to place multiple and duplicate the effects
+            self.pickup_amount = played_on.pickup_amount
+        
         if self.pickup_amount == 0:
             self.pickup_amount = 2
+        
+        self.game.pickup = 0
+    
+    def undo_prepare_card(self, player, played_on):
+        self.game.pickup = self.old_pickup
 
     def play_card(self, player, options, played_on):
         if self.is_option_valid(player, options, is_player=True) is False:
@@ -651,7 +671,7 @@ class FuckYou(AbstractCard):
 
         other_player.add_new_cards(self.pickup_amount)
         other_player.card_update()
-        self.game.pickup = 0
+        self.pickup_amount = 0
 
 
 class Genocide(AbstractCard):
@@ -742,9 +762,11 @@ class FreeTurn(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Gain an extra turn. If you play multiple Free Turn cards together you will gain multiple extra turns."
 
-    def play_card(self, player, options, played_on):
-        if player.turns_left < 10:
-            player.turns_left += 1
+    def prepare_card(self, player, options, played_on):
+        player.turns_left += 1
+
+    def undo_prepare_card(self, player, played_on):
+        player.turns_left -= 1
 
 
 class Thanos(AbstractCard):

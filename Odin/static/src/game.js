@@ -78,6 +78,8 @@ class Game {
         this.players = [];
         this.pickupAmount = 0;
         this.turn = 0;
+        this.turnsLeft = 1;
+        this.skip = 0;
         this.turnString = "";
 
         //build a list of all cards - use the url as the key
@@ -136,6 +138,7 @@ class Game {
             }
             if(player['is turn']) {
                 this.turn = this.players.length;
+                this.turnsLeft = player['turns left'];
                 if(player['is you']) {
                     this.turnString = "Pick Cards: " + canPlay + "/" + player['number of cards'];
                     this.yourTurn = true;
@@ -146,6 +149,9 @@ class Game {
             }
             this.players.push(new Player(player['name'],player['number of cards']));
         }
+
+        
+        this.skip = (update['iteration']-1) % this.players.length; //tells you how many players will be skipped
     }
 
     playCard(card_array){

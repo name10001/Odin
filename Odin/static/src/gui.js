@@ -162,6 +162,7 @@ class Gui {
             let pwidth = this.CARD_WIDTH*3+GUI_SCALE;
 
             let i = game.turn;
+            let skip = game.skip;
             do {
                 let player = game.players[i];
                 //box
@@ -181,12 +182,33 @@ class Gui {
 
                 //adjust size for non-turn players
                 if(i==game.turn) {
+                    //draw extra details about the person's turn
+                    if(game.turnsLeft>1) {
+                        drawText(game.turnsLeft + " turns", px+fontSize*6,py+pheight*0.3,"left",fontSize/2,undefined,true);
+                    }
+
+
                     py+=pheight/2;
                     px+=this.CARD_WIDTH;
                     pwidth-=this.CARD_WIDTH;
                     pheight/=2;
                     fontSize = medFontSize;
                 }
+                else {
+                    //draw skips
+                    if(skip>0) {
+                        ctx.strokeStyle = "#f00";
+                        ctx.beginPath();
+                        ctx.moveTo(px,py);
+                        ctx.lineTo(px+pwidth,py+pheight);
+                        ctx.moveTo(px,py+pheight);
+                        ctx.lineTo(px+pwidth,py);
+                        ctx.stroke();
+
+                        skip--;
+                    }
+                }
+
                 py+=pgap+pheight;
                 i+=game.direction;
                 if(i<0) i = game.players.length-1;
