@@ -3,13 +3,13 @@ The best fricken card game ever. <br />
 A humorous extenuation of Uno.
 If you like cards against humanity you may like this. <br />
 
-#####A boring message from developers:
+##### A boring message from developers:
 We do not stand by any message that can be derived from this game.
 All of this is just for fun and should not be taken seriously.
 
 ## How to install and run
-####Linux
-#####With root access:
+#### Linux
+##### With root access:
 Step 1: open terminal:
 ```
 cd path/to/Odin
@@ -17,7 +17,7 @@ sudo pip3 install -r requirements.txt
 sudo python3 Odin/main.py
 ```
 Step 2: Done (:
-#####Without root access:
+##### Without root access:
 If you don't want to run as root you need to use a virtualenv <br />
 Step 1: open terminal:
 ```
@@ -45,7 +45,7 @@ PORT = 80
 PORT = 12345
 ```
 
-####Windows
+#### Windows
 Step 1: Install python 3 <br />
 Step 2: Install dependencies. In command prompt as admin:
 ```
