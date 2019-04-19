@@ -136,6 +136,7 @@ class Pickup10(AbstractCard):
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pickup10_wild.png'
     CAN_BE_ON_PICKUP = True
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 10 to the pickup chain value."
 
     def prepare_card(self, player, options, played_on):
@@ -152,6 +153,7 @@ class Pickup4(AbstractCard):
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pickup4_wild.png'
     CAN_BE_ON_PICKUP = True
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 4 to the pickup chain value."
 
     def prepare_card(self, player, options, played_on):
@@ -168,6 +170,7 @@ class PickupTimes2(AbstractCard):
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/multiply2_wild.png'
     CAN_BE_ON_PICKUP = True
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "If a pickup chain is active, this card will double the pickup chain's value. " \
                          + "If played outside of a pickup chain this will do nothing."
 
@@ -246,6 +249,7 @@ class BlankBro(AbstractCard):
     CARD_TYPE = "Just A Blank Bro"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/black.png'
+    MULTI_COLOURED = False
 
 
 class Happiness(AbstractCard):
@@ -254,6 +258,7 @@ class Happiness(AbstractCard):
     CARD_TYPE = "Happiness"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/white.png'
+    MULTI_COLOURED = False
 
 
 # ~~~~~~~~~~~~~~
@@ -266,6 +271,7 @@ class EA(AbstractCard):
     CARD_TYPE = "EA"
     NUMBER_NEEDED = 0
     EFFECT_DESCRIPTION = "This card hasn't even been implemented properly so it does nothing at the moment."
+    MULTI_COLOURED = False
 
     #TODO implement this card properly, this will just be a blank at the moment
 
@@ -315,8 +321,8 @@ class Fuck(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Fuckin' M8"
     CARD_COLOUR = "Abstract"
-    COMPATIBILITY_DESCRIPTION = "This card is only compatible with other {cls.CARD_COLOUR} cards. " \
-                                + "However, this is always compatible and can be played with other Fuckin' M8 cards"
+    COMPATIBILITY_DESCRIPTION = "This card is only compatible with other {cls.CARD_COLOUR} cards or " \
+                                + "other Fuckin' M8 cards."
 
     def is_compatible_with(self, card, player):
         if card.get_colour() == "colour swapper":
@@ -361,6 +367,7 @@ class YellowFuck(Fuck):
 
 class AllOfSameColour(AbstractCard):
     NUMBER_IN_DECK = 1
+    MULTI_COLOURED = False
 
     def can_play_with(self, card, player, is_first_card):
         return card.get_colour() == self.get_colour()
@@ -418,10 +425,8 @@ class Nazi(AbstractCard):
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/nazi.png'
     EFFECT_DESCRIPTION = "Allows you to place as many black cards as you like with this card on your turn."
-    COMPATIBILITY_DESCRIPTION = "This card can only be played on white cards. " \
-                                + "While you are allowed to play black cards WITH this card, " \
-                                + "this card will act like a regular white card after play, " \
-                                + "such that all cards except black cards can be played on it."
+    COMPATIBILITY_DESCRIPTION = "Before play: This card is only compatible with white cards. " \
+                                + "After play: Regular white card rules apply, such that it is compatible with any red, green, yellow, blue, purple or white cards."
 
     def can_be_played_on(self, card, player):
         if player.is_turn() is False:
@@ -442,6 +447,7 @@ class AtomicBomb(AbstractCard):
     CARD_IMAGE_URL = "cards/explosion.png"
     pickupCards = ["Atomic Bomb", "+2", "+4", "+10", "x2", "Plus", "Fuck You", "Pawn"]
     CAN_BE_ON_PICKUP = True
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Allows you to place as many pickup cards as you like with this card on your turn."
 
     def play_card(self, player, options, played_on):
@@ -463,9 +469,9 @@ class Pawn(AbstractCard):
     CARD_TYPE = "Pawn"
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Ends a pickup chain and causes no one to pickup."
-    COMPATIBILITY_DESCRIPTION = "This card can only be used on a pickup chain. " \
+    COMPATIBILITY_DESCRIPTION = "This card can ONLY be used on a pickup chain. " \
                                 + "During a pickup chain, regular black rules apply such that this " \
-                                + "can be played on anything that isn't white or purple."
+                                + "is compatible with any red, green, blue, yellow or black cards."
 
     old_pickup = 0
 
@@ -491,6 +497,7 @@ class Communist(AbstractCard):
     CARD_IMAGE_URL = 'cards/communist.png'
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Communist"
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded."
 
     def play_card(self, player, options, played_on):
@@ -518,6 +525,7 @@ class Capitalist(AbstractCard):
     CARD_IMAGE_URL = 'cards/capitalist.png'
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Capitalist"
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "The player with the most cards has the amount of cards in their hand doubled."
 
     def play_card(self, player, options, played_on):
@@ -541,6 +549,7 @@ class SwapHand(AbstractCard):
     CARD_IMAGE_URL = 'cards/swap_hand.png'
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Swap Hand"
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a player and you will swap your entire hand with theirs upon play."
 
     def get_options(self, player):
@@ -571,6 +580,7 @@ class FeelingBlue(AbstractCard):
     CARD_IMAGE_URL = 'cards/feeling_blue.png'
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Feeling Blue"
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon playing this card, you will be forced to pickup 5 cards."
 
     def play_card(self, player, options, played_on):
@@ -585,6 +595,7 @@ class Plus(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_TYPE = "Plus"
     CAN_BE_ON_PICKUP = True
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "If you play this card inside a pickup chain, everyone except yourself " \
                          + "will be forced to pickup the pickup chain value. Outside of a pickup chain, " \
                          + "everyone except yourself is forced to pickup 2 cards."
@@ -612,6 +623,7 @@ class FuckYou(AbstractCard):
     NUMBER_IN_DECK = 2
     CARD_TYPE = "Fuck You"
     CAN_BE_ON_PICKUP = True
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "If you play this card inside a pickup chain, one person of your choosing will be " \
                          + "forced to pickup the pickup chain value. Outside of a pickup chain, " \
                          + "the person of your choosing is forced to pickup 5 cards."
@@ -647,6 +659,7 @@ class Genocide(AbstractCard):
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/genocide.png'
     NUMBER_IN_DECK = 0.5
+    MULTI_COLOURED = False
     CARD_TYPE = "Genocide"
     EFFECT_DESCRIPTION = "Pick any colour or type of card to entirely removed from the game. " \
                          + "All cards of this colour/type will be removed from everyone's hand " \
@@ -694,6 +707,7 @@ class Jesus(AbstractCard):
     CARD_IMAGE_URL = 'cards/jesus.png'
     NUMBER_IN_DECK = 2
     CARD_TYPE = "Jesus"
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose any person (including yourself) to reset their entire hand back to a value of 15 cards."
 
     def get_options(self, player):
@@ -725,6 +739,7 @@ class FreeTurn(AbstractCard):
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/free_turn.png'
     CAN_BE_ON_PICKUP = True
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Gain an extra turn. If you play multiple Free Turn cards together you will gain multiple extra turns."
 
     def play_card(self, player, options, played_on):
@@ -738,6 +753,7 @@ class Thanos(AbstractCard):
     CARD_IMAGE_URL = 'cards/thanos.png'
     NUMBER_IN_DECK = 1
     CARD_TYPE = "Thanos"
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon play, half of the cards in your hand will randomly disappear."
 
     def play_card(self, player, options, played_on):
@@ -757,10 +773,8 @@ class ColourChooser(AbstractCard):
     NUMBER_IN_DECK = 4
     CARD_TYPE = "Colour Chooser"
     EFFECT_DESCRIPTION = "Allows you to change the colour to any of the 4 given colours: red, green, yellow or blue."
-    COMPATIBILITY_DESCRIPTION = "Initially, this card acts like a black card, where it can be played on anything " \
-                                + "that isn't white or purple. You get to decide on the colour it changes to after " \
-                                + "play, such that only other cards of that colour are compatible. " \
-                                + "Do note that after play, black cards will remain compatible with this card."
+    COMPATIBILITY_DESCRIPTION = "Before play: Regular black card, compatible with any black, red, green, blue or yellow cards. " \
+                                + "After play: Compatible any cards of the colour picked and black cards."
 
     def __init__(self, game):
         super().__init__(game)
@@ -804,14 +818,10 @@ class ColourSwapper(AbstractCard):
     CARD_COLOUR = "colour swapper"
     EFFECT_DESCRIPTION = "When played on one of the colours shown on the card, this card will swap to the " \
                          + "opposite card. If played on a colour that is not shown on the card " \
-                         + "you get to choose the colour."
-    COMPATIBILITY_DESCRIPTION = "Compatible with any {cls.COLOUR_1} or {cls.COLOUR_2} card. " \
-                                + "After play, this card switches to the opposite colour shown " \
-                                + "on the card as what was placed previously. " \
-                                + "This card is also compatible with black cards and white cards. " \
-                                + "In situations where you place on a black or a white card, " \
-                                + "you get to decide what colour this card becomes. If you play multiple " \
-                                + "colour swapper cards, the colours must be compatible as you place them."
+                         + "you get to choose the colour it switches to."
+    COMPATIBILITY_DESCRIPTION = "Before play: Compatible with any {cls.COLOUR_1}, {cls.COLOUR_2}, white or black cards. " \
+                                + "After play: Compatible with any cards of the chosen colour, white or black cards. " \
+                                + "Note: when playing multiple, the colours must be compatible too."
 
     def __init__(self, game):
         super().__init__(game)
@@ -918,9 +928,6 @@ class BlackWhiteSwapper(ColourSwapper):
     CARD_IMAGE_URL = 'cards/black_white.png'
     COLOUR_1 = "black"
     COLOUR_2 = "white"
-    COMPATIBILITY_DESCRIPTION = "This card can be played on any card. If you play on a black or a white card, " \
-                                + "this card will switch colours to the opposite colour of what you placed on. " \
-                                + "If you play this on another colour, you will get to decide what colour " \
-                                + "this switches to. If you play with a purple card, since black cards are not " \
-                                + "compatible with purple cards, the white part of this card is used and" \
-                                + "switches the colour to black. This can be played with other colour swapper cards."
+    COMPATIBILITY_DESCRIPTION = "Before play: Compatible with all colours. " \
+                                + "After play: Depends on the colour you selected. Black is compatible with any red, blue, green, yellow and black cards. " \
+                                + "White is compatible with any red, blue, green, yellow, purple and white cards. "
