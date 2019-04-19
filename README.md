@@ -3,7 +3,7 @@ The best fricken card game ever. <br />
 A humorous extenuation of Uno.
 If you like cards against humanity you may like this. <br />
 
-#### A boring message from developers:
+### A boring message from developers:
 We do not stand by any message that can be derived from this game.
 All of this is just for fun and should not be taken seriously.
 
