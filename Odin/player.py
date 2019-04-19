@@ -118,6 +118,7 @@ class Player:
             "planning pile": [],
             "direction": self.game.direction,
             "pickup size": self.game.pickup,
+            "iteration": self.game.iterate_turn_by,
             "players": []
         }
 
@@ -162,6 +163,7 @@ class Player:
                     "is turn": player.is_turn(),
                     #"is uno": player.is_uno(),
                     "is you": player == self,
+                    "turns left": player.turns_left
                 }
             )
 

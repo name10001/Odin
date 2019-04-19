@@ -12,6 +12,7 @@ class AbstractCard:
     CARD_COLOUR = "Abstract"
     CARD_TYPE = "Abstract"
     CAN_BE_ON_PICKUP = False
+    MULTI_COLOURED = True  # Used for generating compatibility description, set to False if there's only 1 colour of this type.
 
     def __init__(self, game):
         self.game = game
@@ -185,19 +186,20 @@ class AbstractCard:
         if cls.COMPATIBILITY_DESCRIPTION is not None:
             to_return = cls.COMPATIBILITY_DESCRIPTION
         elif cls.CARD_COLOUR == "black":
-            to_return = "This is a regular black card. Black cards are compatible with " \
-                    + "everything except white cards and purple cards. " \
-                    + "Always compatible and can be played with other {cls.CARD_COLOUR} cards."
+            to_return = "This is a regular black card. Compatible with all black, red, green, yellow and blue cards."
+            if cls.MULTI_COLOURED:
+                to_return += " Also compatible with {cls.CARD_TYPE} cards of any colour."
         elif cls.CARD_COLOUR == "white":
-            to_return = "This is a regular white card. White cards are compatible with everything except " \
-                        + "black cards. Always compatible and can be played with other {cls.CARD_TYPE} cards."
+            to_return = "This is a regular white card. Compatible with all white, purple, red, green, yellow and blue cards."
+            if cls.MULTI_COLOURED:
+                to_return += " Also compatible with {cls.CARD_TYPE} cards of any colour."
         elif cls.CARD_COLOUR == "purple":
-            to_return = "This is a regular purple card. " \
-                        + "Purple cards are compatible with all purple cards and white cards. " \
-                        + "Always compatible and can be played with other {cls.CARD_TYPE} cards."
+            to_return = "This is a regular purple card. Compatible with all purple and white cards."
+            if cls.MULTI_COLOURED:
+                to_return += " Also compatible with {cls.CARD_TYPE} cards of any colour."
         else:
-            to_return = "This is a regular {cls.CARD_COLOUR} card. {cls.CARD_COLOUR!c} cards are compatible with" \
-                        + "all other {cls.CARD_COLOUR} cards and can be played with any white or black card too. " \
-                        + "Always compatible and can be played with other {cls.CARD_TYPE} cards."
+            to_return = "This is a regular {cls.CARD_COLOUR} card. Compatible with all {cls.CARD_COLOUR}, black and white cards."
+            if cls.MULTI_COLOURED:
+                to_return += " Also compatible with {cls.CARD_TYPE} cards of any colour."
 
         return extended_formatter.format(to_return, cls=cls)
