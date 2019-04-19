@@ -4,9 +4,12 @@ import schedule
 from time import time, sleep
 from flask import *
 from threading import Thread
+from socket import gethostbyname, gethostname
 
 import flask_server as fs
 from waiting_room import WaitingRoom
+
+PORT = 80
 
 games = {}
 
@@ -106,6 +109,15 @@ def run_schedule():
 schedule.every().hour.do(clear_old_games)
 
 if __name__ == '__main__':
+    print("Game is now running")
+    print("Open a web browser and open one of the following:")
+    if PORT == 80:
+        print("\thttp:/" + gethostname() + "/")
+        print("\thttp:/" + gethostbyname(gethostname()) + "/")
+    else:
+        print("\thttp:/" + gethostname() + ":" + str(PORT) + "/")
+        print("\thttp:/" + gethostbyname(gethostname()) + ":" + str(PORT) + "/")
+
     t = Thread(target=run_schedule)
     t.start()
-    fs.socket_io.run(fs.app, debug=False, host='0.0.0.0', port=80)
+    fs.socket_io.run(fs.app, debug=False, port=PORT)
