@@ -36,13 +36,13 @@ pip3 install -r requirements.txt
 python3 Odin/main.py
 ```
 You also need change the port from 80 to something else
-This can be done at the end of main.py <br />
+This can be done near the top of main.py after the imports<br />
 Step 2: open main.py:
 ```python
 # from this:
-fs.socket_io.run(fs.app, port=80)
+PORT = 80
 # to this:
-fs.socket_io.run(fs.app, port=12345)
+PORT = 12345
 ```
 
 ####Windows
