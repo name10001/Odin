@@ -2,6 +2,7 @@ import cards
 import flask_server as fs
 from time import time
 
+
 class Player:
     def __init__(self, game, name, player_id):
         self.name = name

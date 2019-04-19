@@ -7,7 +7,7 @@ class Client:
     def __init__(self, sid, waiting_room):
         self.sid = sid
         self.waiting_room = waiting_room
-        self.player = None
+        self.connected = True
 
     def send_message(self, message_type, data):
         """
@@ -27,36 +27,15 @@ class Client:
         This is not always used.
         :return: None
         """
-        self.waiting_room.modify()
-
-        print(self.player.get_name(), message_type, data)
-
-        start_time = time()
-        if self.player is not None:
-            if message_type == "play card":
-                self.player.play_cards(data)
-            elif message_type == "pickup":
-                self.player.pickup()
-            elif message_type == "undo":
-                self.player.undo()
-            elif message_type == "undo all":
-                self.player.undo_all()
-        if self.game is not None:
-            if message_type == "finished turn":
-                if self.player == self.turn:
-                    self.next_turn()
-        else:
-            print("got unknown message from player:", message_type)
-
-        print("finished processing, took: " + str(time() - start_time) + "s")
-
-    def set_player(self, player):
-        self.player = player
+        # idk what to do here
+        pass
 
     def is_connected(self):
         """
         Is the user currently connected to the back-end with socket-io
         :return:
         """
-        # temporally
-        return True
+        return self.connected
+
+    def get_sid(self):
+        return sid
