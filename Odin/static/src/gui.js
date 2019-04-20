@@ -262,6 +262,33 @@ class Gui {
         }
     }
 
+    play(cardStack, x, y) {
+        if(!cardStack.allowedToPlay) return;
+
+        if(cardStack.optionIds.length>0) {
+            this.popup = new OptionsWindow(cardStack, x, y);
+        }
+        else {
+            this.drawMovingCards(cardStack.image,1,x,y);
+            this.popup = null;
+            cardStack.playSingle();
+        }
+    }
+
+    playAllCards(cardStack, x, y) {
+        if(!cardStack.allowedToPlay) return;
+
+        if(cardStack.optionIds.length>0) {
+            this.popup = new OptionsWindow(cardStack, x, y);
+            this.playAll = true;
+        }
+        else {
+            this.drawMovingCards(cardStack.image,cardStack.size(),x,y);
+            this.popup = null;
+            cardStack.playAll();
+        }
+    }
+
     /**
      * Method when you tap/click a point on the screen
      */
@@ -335,21 +362,24 @@ class Gui {
     /**
      * Is called when you make a decision in the options menu
      */
-    exitOptions(card, pickedOption) {
-        this.popup = null;
-
-        if(card!=null) {
-            if(this.playAll) {
-                this.drawMovingCards(card.image, card.size(), canvas.width/2, canvas.height-GUI_SCALE*(9+CARD_HEIGHT));
-                card.playAll(pickedOption);
-                
-            }else {
-                this.drawMovingCards(card.image, 1, canvas.width/2, canvas.height-GUI_SCALE*(9+CARD_HEIGHT));
-                card.playSingle(pickedOption);
-            }
+    pickOption(card, pickedOption, x, y) {
+        if(this.playAll) {
+            this.drawMovingCards(card.image, card.size(), x, y);
+            card.playAll(pickedOption);
+            
+        }else {
+            this.drawMovingCards(card.image, 1, x, y);
+            card.playSingle(pickedOption);
         }
         
-        //this.draggedCard = -1;
+        this.cancelOptions();
+    }
+
+    /**
+     * Exit options menu
+     */
+    cancelOptions() {
+        this.popup = null;
         this.playAll = false;
     }
 

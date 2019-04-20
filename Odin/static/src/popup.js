@@ -1,20 +1,3 @@
-class OptionItem {
-    constructor(card, optionId, optionString) {
-        this.card = card;
-        this.optionId = optionId;
-        this.button = new Button(CARD_WIDTH*2-0.3,2.7,1.5,optionString);
-    }
-
-    draw(x,y,width,height) {
-        this.button.draw(x+GUI_SCALE*0.15,y+GUI_SCALE*0.15,true);
-    }
-
-    click(x,y) {
-        gui.exitOptions(this.card, this.optionId);
-    }
-
-}
-
 function getLines(text, maxWidth) {
     let words = text.split(" ");
     let lines = [];
@@ -35,16 +18,36 @@ function getLines(text, maxWidth) {
 }
 
 class DescriptionWindow {
-    constructor(card, cardStack) {
-        this.image = card.image;
-        this.card = card;
+    constructor(cardStack, cardX, cardY) {
+        this.image = cardStack.image;
+        this.card = cardStack.card;
+        this.cardStack = cardStack;
+        this.cardX = cardX;
+        this.cardY = cardY;
+        this.allowedToPlay = cardStack.allowedToPlay;
 
-        this.exitButton = new Button(CARD_WIDTH-1,3,2,"EXIT");
+        this.exitButton = new Button(CARD_WIDTH-1, 3, 1.5, "EXIT");
         this.exitButton.x = function() {
             return canvas.width/2 + (CARD_WIDTH+1) * GUI_SCALE;
         }
         this.exitButton.y = function() {
             return canvas.height/2 - (0.5*CARD_HEIGHT-2) * GUI_SCALE;
+        }
+
+        this.addButton = new Button(CARD_WIDTH-1, 3, 1.5, "ADD");
+        this.addButton.x = function() {
+            return canvas.width/2 + (CARD_WIDTH+1) * GUI_SCALE;
+        }
+        this.addButton.y = function() {
+            return canvas.height/2 - (0.5*CARD_HEIGHT-6) * GUI_SCALE;
+        }
+
+        this.addallButton = new Button(CARD_WIDTH-1, 3, 1.5, "ADD ALL");
+        this.addallButton.x = function() {
+            return canvas.width/2 + (CARD_WIDTH+1) * GUI_SCALE;
+        }
+        this.addallButton.y = function() {
+            return canvas.height/2 - (0.5*CARD_HEIGHT-10) * GUI_SCALE;
         }
     }
 
@@ -82,6 +85,8 @@ class DescriptionWindow {
         //draw card
         ctx.drawImage(this.image,x+width-GUI_SCALE-cardWidth,y+GUI_SCALE,cardWidth,cardHeight);
         this.exitButton.drawThis(true);
+        this.addButton.drawThis(this.allowedToPlay);
+        this.addallButton.drawThis(this.allowedToPlay);
         
         let descWidth = 3*CARD_WIDTH*GUI_SCALE;
         
@@ -113,8 +118,17 @@ class DescriptionWindow {
     
 
     click() {
-        if(this.exitButton.isMouseOverThis()) {
+        //exit
+        if(this.exitButton.isMouseOverThis() || mousePosition.x < this.getX() || mousePosition.x > this.getX()+this.getWidth() || mousePosition.y < this.getY() || mousePosition.y > this.getY()+this.getHeight()) {
             gui.popup = null;
+        }
+        //add
+        else if(this.addButton.isMouseOverThis()) {
+            gui.play(this.cardStack,this.cardX,this.cardY);
+        }
+        //add all
+        else if(this.addallButton.isMouseOverThis()) {
+            gui.playAllCards(this.cardStack,this.cardX,this.cardY);
         }
     }
 
@@ -125,12 +139,33 @@ class DescriptionWindow {
     scroll(dt) {}
 }
 
+/**
+ * Option in an option window
+ */
+class OptionItem {
+    constructor(card, optionId, optionString, cardX, cardY) {
+        this.card = card;
+        this.optionId = optionId;
+        this.cardX = cardX;
+        this.cardY = cardY;
+        this.button = new Button(CARD_WIDTH*2-0.3,2.7,1.5,optionString);
+    }
+
+    draw(x,y,width,height) {
+        this.button.draw(x+GUI_SCALE*0.15,y+GUI_SCALE*0.15,true);
+    }
+
+    click(x,y) {
+        gui.pickOption(this.card, this.optionId, this.cardX, this.cardY);
+    }
+
+}
 
 /**
  * Class for the options window
  */
 class OptionsWindow {
-    constructor(card) {
+    constructor(card, cardX, cardY) {
         this.card = card;
         this.image = card.image;
 
@@ -158,7 +193,7 @@ class OptionsWindow {
             let id = card.optionIds[i];
             let text = card.optionStrings[i];
             
-            items.push(new OptionItem(card,id,text));
+            items.push(new OptionItem(card,id,text,cardX,cardY));
         }
         this.optionsScroller.setItems(items);
 
@@ -233,8 +268,8 @@ class OptionsWindow {
 
     click() {
         this.optionsScroller.click();
-        if(this.cancelButton.isMouseOverThis()) {
-            gui.exitOptions(null,null);
+        if(this.cancelButton.isMouseOverThis() || mousePosition.x < this.getX() || mousePosition.x > this.getX()+this.getWidth() || mousePosition.y < this.getY() || mousePosition.y > this.getY()+this.getHeight()) {
+            gui.cancelOptions();
         }
     }
 
