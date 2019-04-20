@@ -1,53 +1,53 @@
 from cards.abstract_card import AbstractCard
 import cards
 
+
+class NumberCard(AbstractCard):
+    NUMBER_IN_DECK = 2
+
+
 # ~~~~~~~~~~~~~~
 #     Zeros
 # ~~~~~~~~~~~~~~
 
 
-class BlueZero(AbstractCard):
+class BlueZero(NumberCard):
     NAME = "Blue Zero"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "blue"
     CARD_TYPE = "0"
-    CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_blue.png'
 
 
-class GreenZero(AbstractCard):
+class GreenZero(NumberCard):
     NAME = "Green Zero"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "green"
     CARD_TYPE = "0"
-    CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_green.png'
 
 
-class PurpleZero(AbstractCard):
+class PurpleZero(NumberCard):
     NAME = "Purple Zero"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "0"
-    CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_purple.png'
 
 
-class RedZero(AbstractCard):
+class RedZero(NumberCard):
     NAME = "Red Zero"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "red"
     CARD_TYPE = "0"
-    CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_red.png'
 
 
-class YellowZero(AbstractCard):
+class YellowZero(NumberCard):
     NAME = "Yellow Zero"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "yellow"
     CARD_TYPE = "0"
-    CARD_TYPE_ID = 0
     CARD_IMAGE_URL = 'cards/0_yellow.png'
 
 
@@ -56,48 +56,39 @@ class YellowZero(AbstractCard):
 # ~~~~~~~~~~~~~~
 
 
-class BlueOne(AbstractCard):
+class BlueOne(NumberCard):
     NAME = "Blue One"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "1"
-    CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_blue.png'
 
 
-class GreenOne(AbstractCard):
+class GreenOne(NumberCard):
     NAME = "Green One"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "1"
-    CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_green.png'
 
 
-class PurpleOne(AbstractCard):
+class PurpleOne(NumberCard):
     NAME = "Purple One"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "1"
-    CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_purple.png'
 
 
-class RedOne(AbstractCard):
+class RedOne(NumberCard):
     NAME = "Red One"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "1"
-    CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_red.png'
 
 
-class YellowOne(AbstractCard):
+class YellowOne(NumberCard):
     NAME = "Yellow One"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "1"
-    CARD_TYPE_ID = 1
     CARD_IMAGE_URL = 'cards/1_yellow.png'
 
 
@@ -106,48 +97,38 @@ class YellowOne(AbstractCard):
 # ~~~~~~~~~~~~~~
 
 
-class BlueTwo(AbstractCard):
+class BlueTwo(NumberCard):
     NAME = "Blue Two"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "2"
-    CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_blue.png'
 
 
-class GreenTwo(AbstractCard):
+class GreenTwo(NumberCard):
     NAME = "Green Two"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "2"
-    CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_green.png'
 
 
-class PurpleTwo(AbstractCard):
+class PurpleTwo(NumberCard):
     NAME = "Purple Two"
-    NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "2"
-    CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_purple.png'
 
 
-class RedTwo(AbstractCard):
+class RedTwo(NumberCard):
     NAME = "Red Two"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "2"
-    CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_red.png'
 
 
-class YellowTwo(AbstractCard):
+class YellowTwo(NumberCard):
     NAME = "Yellow Two"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "2"
-    CARD_TYPE_ID = 2
     CARD_IMAGE_URL = 'cards/2_yellow.png'
 
 
@@ -156,48 +137,40 @@ class YellowTwo(AbstractCard):
 # ~~~~~~~~~~~~~~
 
 
-class BlueThree(AbstractCard):
+class BlueThree(NumberCard):
     NAME = "Blue Three"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "3"
-    CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_blue.png'
 
 
-class GreenThree(AbstractCard):
+class GreenThree(NumberCard):
     NAME = "Green Three"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "3"
-    CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_green.png'
 
 
-class PurpleThree(AbstractCard):
+class PurpleThree(NumberCard):
     NAME = "Purple Three"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "3"
-    CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_purple.png'
 
 
-class RedThree(AbstractCard):
+class RedThree(NumberCard):
     NAME = "Red Three"
-    NUMBER_IN_DECK = 2
+    
     CARD_COLOUR = "red"
     CARD_TYPE = "3"
-    CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_red.png'
 
 
-class YellowThree(AbstractCard):
+class YellowThree(NumberCard):
     NAME = "Yellow Three"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "3"
-    CARD_TYPE_ID = 3
     CARD_IMAGE_URL = 'cards/3_yellow.png'
 
 
@@ -206,48 +179,39 @@ class YellowThree(AbstractCard):
 # ~~~~~~~~~~~~~~
 
 
-class BlueFour(AbstractCard):
+class BlueFour(NumberCard):
     NAME = "Blue Four"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "4"
-    CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_blue.png'
 
 
-class GreenFour(AbstractCard):
+class GreenFour(NumberCard):
     NAME = "Green Four"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "4"
-    CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_green.png'
 
 
-class PurpleFour(AbstractCard):
+class PurpleFour(NumberCard):
     NAME = "Purple Four"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "4"
-    CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_purple.png'
 
 
-class RedFour(AbstractCard):
+class RedFour(NumberCard):
     NAME = "Red Four"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "4"
-    CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_red.png'
 
 
-class YellowFour(AbstractCard):
+class YellowFour(NumberCard):
     NAME = "Yellow Four"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "4"
-    CARD_TYPE_ID = 4
     CARD_IMAGE_URL = 'cards/4_yellow.png'
 
 
@@ -256,48 +220,39 @@ class YellowFour(AbstractCard):
 # ~~~~~~~~~~~~~~
 
 
-class BlueFive(AbstractCard):
+class BlueFive(NumberCard):
     NAME = "Blue Five"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "5"
-    CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_blue.png'
 
 
-class GreenFive(AbstractCard):
+class GreenFive(NumberCard):
     NAME = "Green Five"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "5"
-    CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_green.png'
 
 
-class PurpleFive(AbstractCard):
+class PurpleFive(NumberCard):
     NAME = "Purple Five"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "5"
-    CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_purple.png'
 
 
-class RedFive(AbstractCard):
+class RedFive(NumberCard):
     NAME = "Red Five"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "5"
-    CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_red.png'
 
 
-class YellowFive(AbstractCard):
+class YellowFive(NumberCard):
     NAME = "Yellow Five"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "5"
-    CARD_TYPE_ID = 5
     CARD_IMAGE_URL = 'cards/5_yellow.png'
 
 
@@ -306,48 +261,39 @@ class YellowFive(AbstractCard):
 # ~~~~~~~~~~~~~~
 
 
-class BlueSix(AbstractCard):
+class BlueSix(NumberCard):
     NAME = "Blue Six"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "6"
-    CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_blue.png'
 
 
-class GreenSix(AbstractCard):
+class GreenSix(NumberCard):
     NAME = "Green Six"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "6"
-    CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_green.png'
 
 
-class PurpleSix(AbstractCard):
+class PurpleSix(NumberCard):
     NAME = "Purple Six"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "6"
-    CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_purple.png'
 
 
-class RedSix(AbstractCard):
+class RedSix(NumberCard):
     NAME = "Red Six"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "6"
-    CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_red.png'
 
 
-class YellowSix(AbstractCard):
+class YellowSix(NumberCard):
     NAME = "Yellow Six"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "6"
-    CARD_TYPE_ID = 6
     CARD_IMAGE_URL = 'cards/6_yellow.png'
 
 
@@ -356,48 +302,39 @@ class YellowSix(AbstractCard):
 # ~~~~~~~~~~~~~~
 
 
-class BlueSeven(AbstractCard):
+class BlueSeven(NumberCard):
     NAME = "Blue Seven"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "7"
-    CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_blue.png'
 
 
-class GreenSeven(AbstractCard):
+class GreenSeven(NumberCard):
     NAME = "Green Seven"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "7"
-    CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_green.png'
 
 
-class PurpleSeven(AbstractCard):
+class PurpleSeven(NumberCard):
     NAME = "Purple Seven"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "7"
-    CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_purple.png'
 
 
-class RedSeven(AbstractCard):
+class RedSeven(NumberCard):
     NAME = "Red Seven"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "7"
-    CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_red.png'
 
 
-class YellowSeven(AbstractCard):
+class YellowSeven(NumberCard):
     NAME = "Yellow Seven"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "7"
-    CARD_TYPE_ID = 7
     CARD_IMAGE_URL = 'cards/7_yellow.png'
 
 
@@ -406,48 +343,39 @@ class YellowSeven(AbstractCard):
 # ~~~~~~~~~~~~~~
 
 
-class BlueEight(AbstractCard):
+class BlueEight(NumberCard):
     NAME = "Blue Eight"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "8"
-    CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_blue.png'
 
 
-class GreenEight(AbstractCard):
+class GreenEight(NumberCard):
     NAME = "Green Eight"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "8"
-    CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_green.png'
 
 
-class PurpleEight(AbstractCard):
+class PurpleEight(NumberCard):
     NAME = "Purple Eight"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "8"
-    CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_purple.png'
 
 
-class RedEight(AbstractCard):
+class RedEight(NumberCard):
     NAME = "Red Eight"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "8"
-    CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_red.png'
 
 
-class YellowEight(AbstractCard):
+class YellowEight(NumberCard):
     NAME = "Yellow Eight"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "8"
-    CARD_TYPE_ID = 8
     CARD_IMAGE_URL = 'cards/8_yellow.png'
 
 
@@ -456,48 +384,39 @@ class YellowEight(AbstractCard):
 # ~~~~~~~~~~~~~~
 
 
-class BlueNine(AbstractCard):
+class BlueNine(NumberCard):
     NAME = "Blue Nine"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "blue"
     CARD_TYPE = "9"
-    CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_blue.png'
 
 
-class GreenNine(AbstractCard):
+class GreenNine(NumberCard):
     NAME = "Green Nine"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "green"
     CARD_TYPE = "9"
-    CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_green.png'
 
 
-class PurpleNine(AbstractCard):
+class PurpleNine(NumberCard):
     NAME = "Purple Nine"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "9"
-    CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_purple.png'
 
 
-class RedNine(AbstractCard):
+class RedNine(NumberCard):
     NAME = "Red Nine"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "red"
     CARD_TYPE = "9"
-    CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_red.png'
 
 
-class YellowNine(AbstractCard):
+class YellowNine(NumberCard):
     NAME = "Yellow Nine"
-    NUMBER_IN_DECK = 2
     CARD_COLOUR = "yellow"
     CARD_TYPE = "9"
-    CARD_TYPE_ID = 9
     CARD_IMAGE_URL = 'cards/9_yellow.png'
 
 
@@ -506,51 +425,46 @@ class YellowNine(AbstractCard):
 # ~~~~~~~~~~~~~~
 
 
-class BlueSixtyNine(AbstractCard):
+class BlueSixtyNine(NumberCard):
     NAME = "Blue Sixty Nine"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "blue"
     CARD_TYPE = "69"
-    CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_blue.png'
     EFFECT_DESCRIPTION = "A surprise ;)"
 
 
-class GreenSixtyNine(AbstractCard):
+class GreenSixtyNine(NumberCard):
     NAME = "Green Sixty Nine"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "green"
     CARD_TYPE = "69"
-    CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_green.png'
     EFFECT_DESCRIPTION = "A surprise ;)"
 
 
-class PurpleSixtyNine(AbstractCard):
+class PurpleSixtyNine(NumberCard):
     NAME = "Purple Sixty Nine"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "purple"
     CARD_TYPE = "69"
-    CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_purple.png'
     EFFECT_DESCRIPTION = "A surprise ;)"
 
 
-class RedSixtyNine(AbstractCard):
+class RedSixtyNine(NumberCard):
     NAME = "Red Sixty Nine"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "red"
     CARD_TYPE = "69"
-    CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_red.png'
     EFFECT_DESCRIPTION = "A surprise ;)"
 
 
-class YellowSixtyNine(AbstractCard):
+class YellowSixtyNine(NumberCard):
     NAME = "Yellow Sixty Nine"
     NUMBER_IN_DECK = 1
     CARD_COLOUR = "yellow"
     CARD_TYPE = "69"
-    CARD_TYPE_ID = 10
     CARD_IMAGE_URL = 'cards/69_yellow.png'
     EFFECT_DESCRIPTION = "A surprise ;)"

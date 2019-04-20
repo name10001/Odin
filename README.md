@@ -37,8 +37,7 @@ pip3 install -r requirements.txt
 python3 Odin/main.py
 ```
 You also need change the port from 80 to something else
-This can be done near the top of main.py after the imports<br />
-Step 2: open main.py:
+Step 2: open settings.py:
 ```python
 # from this:
 PORT = 80

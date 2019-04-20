@@ -1,6 +1,5 @@
 import cards
 import random
-from flask import url_for
 
 
 class Deck:
@@ -56,23 +55,3 @@ class Deck:
             if card.CARD_TYPE == card_type:
                 self.cards.remove(card)
         self.card_weights = [card.NUMBER_IN_DECK for card in self.cards]
-
-    #@staticmethod
-    #def get_all_cards():
-    #    """
-    #    gets all the cards with their name, URL and description
-    #    :return: List of strings containing urls
-    #    """
-    #    card_list = []
-    #    for card in cards.all_cards:
-    #        json_to_send = {
-    #            "url":url_for('static', filename=card.CARD_IMAGE_URL),
-    #            "name": card.NAME,
-    #            "type": card.CARD_TYPE,
-    #            "colour": card.CARD_COLOUR,
-    #            "can be on pickup": card.CAN_BE_ON_PICKUP,
-    #            "effect description": card.EFFECT_DESCRIPTION,
-    #            "compatibility description": card.COMPATIBILITY_DESCRIPTION
-    #        }
-    #        card_list.append(json_to_send)
-    #    return card_list

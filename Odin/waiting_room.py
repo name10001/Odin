@@ -3,6 +3,7 @@ from flask import *
 from flask_socketio import *
 import flask_server as fs
 from time import time
+import settings
 
 
 class WaitingRoom:
@@ -76,7 +77,7 @@ class WaitingRoom:
         self.running = True
         self.game = Game(self.game_id, self._players, self)
         with fs.app.app_context():
-            fs.socket_io.emit("refresh", room=self.game_id)
+            fs.socket_io.emit("refresh", room=self.game_id, starting_number_of_cards=20)
 
     def make_player_id(self, player_name):
         """

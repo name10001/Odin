@@ -12,29 +12,28 @@ class AbstractCard:
     CARD_COLOUR = "Abstract"
     CARD_TYPE = "Abstract"
     CAN_BE_ON_PICKUP = False
-    MULTI_COLOURED = True  # Used for generating compatibility description, set to False if there's only 1 colour of this type.
+    # Used for generating compatibility description, set to False if there's only 1 colour of this type.
+    MULTI_COLOURED = True
 
     def __init__(self, game):
+        self.option = None
         self.game = game
         self.id = self._make_id()
 
-    def prepare_card(self, player, options, played_on):
+    def prepare_card(self, player, played_on):
         pass
     
     def undo_prepare_card(self, player, played_on):
         pass
 
-    def play_card(self, player, options, played_on):
-        """
-
-        :return: None
-        """
+    def play_card(self, player, played_on):
         pass
     
     def is_compatible_with(self, card, player):
         """
         Can these 2 cards be played together
-        :param card: 
+        :param card:
+        :param player:
         :return: True or False
         """
         if card.get_type() == self.get_type():
@@ -74,6 +73,8 @@ class AbstractCard:
         """
         Can this additional card be played with this card? Considers if this is the first card in the planning pile
         :param card:
+        :param player:
+        :param is_first_card:
         :return:
         """
         if is_first_card:
@@ -86,10 +87,11 @@ class AbstractCard:
         Can this card be played on the given planning pile?
         By default this checks if you can play with ANY of the cards in the planning pile
         :param planning_pile:
+        :param player:
         :return:
         """
         is_first_card = True
-        for card, options in planning_pile:
+        for card in planning_pile:
             if card.can_play_with(self, player, is_first_card):
                 return True
             is_first_card = False
@@ -141,6 +143,24 @@ class AbstractCard:
             return False
         return True
 
+    @classmethod
+    def get_compatibility_description(cls):
+        if cls.COMPATIBILITY_DESCRIPTION is not None:
+            to_return = cls.COMPATIBILITY_DESCRIPTION
+        elif cls.CARD_COLOUR == "black":
+            to_return = "This is a regular black card. Compatible with all black, red, green, yellow and blue cards."
+        elif cls.CARD_COLOUR == "white":
+            to_return = "This is a regular white card. Compatible with all white, purple, red, green, yellow and blue cards."
+        elif cls.CARD_COLOUR == "purple":
+            to_return = "This is a regular purple card. Compatible with all purple and white cards."
+        else:
+            to_return = "This is a regular {cls.CARD_COLOUR} card. Compatible with all {cls.CARD_COLOUR}, black and white cards."
+
+        if cls.MULTI_COLOURED:
+            to_return += " Also compatible with {cls.CARD_TYPE} cards of any colour."
+
+        return extended_formatter.format(to_return, cls=cls)
+
     def __gt__(self, other):
         """
         is this card goes after (is greater than) the given other card
@@ -156,6 +176,9 @@ class AbstractCard:
             return self.get_colour() > other.get_colour()
         else:
             return self.get_name() > other.get_name()
+
+    def set_option(self, option):
+        self.option = option
 
     def __lt__(self, other):
         return not self.__gt__(other)
@@ -180,26 +203,3 @@ class AbstractCard:
 
     def can_be_on_pickup(self):
         return self.CAN_BE_ON_PICKUP
-
-    @classmethod
-    def get_compatibility_description(cls):
-        if cls.COMPATIBILITY_DESCRIPTION is not None:
-            to_return = cls.COMPATIBILITY_DESCRIPTION
-        elif cls.CARD_COLOUR == "black":
-            to_return = "This is a regular black card. Compatible with all black, red, green, yellow and blue cards."
-            if cls.MULTI_COLOURED:
-                to_return += " Also compatible with {cls.CARD_TYPE} cards of any colour."
-        elif cls.CARD_COLOUR == "white":
-            to_return = "This is a regular white card. Compatible with all white, purple, red, green, yellow and blue cards."
-            if cls.MULTI_COLOURED:
-                to_return += " Also compatible with {cls.CARD_TYPE} cards of any colour."
-        elif cls.CARD_COLOUR == "purple":
-            to_return = "This is a regular purple card. Compatible with all purple and white cards."
-            if cls.MULTI_COLOURED:
-                to_return += " Also compatible with {cls.CARD_TYPE} cards of any colour."
-        else:
-            to_return = "This is a regular {cls.CARD_COLOUR} card. Compatible with all {cls.CARD_COLOUR}, black and white cards."
-            if cls.MULTI_COLOURED:
-                to_return += " Also compatible with {cls.CARD_TYPE} cards of any colour."
-
-        return extended_formatter.format(to_return, cls=cls)

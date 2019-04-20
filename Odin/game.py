@@ -4,6 +4,8 @@ from flask import *
 from flask_socketio import *
 import random
 from time import time
+from cards.card_collection import CardCollection
+import flask_server as fs
 
 
 class Game:
@@ -12,7 +14,6 @@ class Game:
     """
 
     def __init__(self, game_id, players, waiting_room, starting_number_of_cards=50):
-        # self.say_uno_needed = say_uno_needed
         self.game_id = game_id
         self.waiting_room = waiting_room
         self.starting_number_of_cards = starting_number_of_cards
@@ -21,8 +22,8 @@ class Game:
 
         # setting up cards
         self.deck = cards.Deck(self)
-        self.played_cards = []
-        self.played_cards = [card(self) for card in self.deck.pickup(1)]
+        self.played_cards = CardCollection()
+        self.played_cards.add_card(self.deck.pickup(1)[0](self))
         self.pickup = 0
 
         # setup players and turn system
@@ -48,7 +49,7 @@ class Game:
             if card.get_id() == card_id:
                 return card
         for player in self.players:
-            card = player.find_card(card_id)
+            card = player.hand.find_card(card_id)
             if card is not None:
                 return card
         return None
@@ -95,8 +96,6 @@ class Game:
         self.turn = self.players[self.player_turn_index]
         self.turn.start_turn()
 
-        self.update_players()
-
     def update_players(self, exclude=None):
         """
         sends updates to all the players in this game
@@ -123,32 +122,29 @@ class Game:
 
         start_time = time()
 
-        #if message == "uno":
-        #    player.say_uno()
         if message == "play card":
             player.play_cards(data)
         elif message == "finished turn":
             if player == self.turn:
                 self.next_turn()
-        elif message == "pickup":
-            player.pickup()
         elif message == "undo":
             player.undo()
         elif message == "undo all":
             player.undo_all()
         else:
             print("got unknown message from player:", message)
+        self.update_players()
         print("finished processing, took: " + str(time() - start_time) + "s")
 
-    def add_played_card(self, card, update_players=True):
-        """
-        adds a card to the list of played cards and sends message to all game players
-        :param card: Card object to add
-        :return: None
-        """
-        self.played_cards.append(card)
-        if update_players:
-            self.update_players()
+    def send_to_all_players(self, message_type, data):
+        # for player in self.players:
+        #     player.client.send_message(message_type, data)
+        with fs.app.app_context():
+            fs.socket_io.emit(
+                message_type,
+                data,
+                room=self.game_id + "_game"
+            )
 
     def initial_connection(self):
         """
@@ -162,6 +158,3 @@ class Game:
 
     def get_id(self):
         return self.game_id
-
-    def get_top_card(self):
-        return self.played_cards[-1]

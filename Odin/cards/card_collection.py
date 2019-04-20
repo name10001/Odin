@@ -1,3 +1,4 @@
+from bisect import insort
 
 
 class CardCollection:
@@ -11,31 +12,37 @@ class CardCollection:
         self.cards_dict = {}
         if cards is not None:
             self.add_cards(cards)
-        self.sort = sort
+        self.should_sort = sort
 
-    def add_cards(self, cards, sort_after=True):
+    def sort(self):
+        """
+        Sorts the cards
+        :return:
+        """
+        if self.should_sort:
+            self.cards_list.sort()
+
+    def add_cards(self, cards):
         """
         Adds multiple cards to the collection
         :param cards: cards to add
-        :param sort_after: should the collection be sorted after the cards are added
         :return: None
         """
         for card in cards:
-            self.add_card(card, sort_after=False)
-        if self.sort and sort_after:
-            self.cards_list.sort()
+            self.add_card(card)
 
-    def add_card(self, card, sort_after=True):
+    def add_card(self, card):
         """
         Adds a single cards to the collection
         :param card: card to add
         :param sort_after: should the collection be sorted after the card is added
         :return: None
         """
-        self.cards_list.append(card)
+        if self.should_sort:
+            insort(self.cards_list, card)
+        else:
+            self.cards_list.append(card)
         self.cards_dict[card.get_id()] = card
-        if self.sort and sort_after:
-            self.cards_list.sort()
 
     def set_cards(self, cards):
         """
@@ -60,11 +67,31 @@ class CardCollection:
         if card_id in self.cards_dict:
             return self.cards_dict[card_id]
 
+    def clear(self):
+        self.cards_list.clear()
+        self.cards_dict.clear()
+
+    def index(self, object):
+        return self.cards_list.index(object)
+
+    def card_below(self, card):
+        index = self.index(card)
+        if index != 0:
+            return self[index-1]
+        else:
+            return None
+
     def get_cards(self):
         return self.cards_list
+
+    def get_top_card(self):
+        return self.cards_list[-1]
 
     def __len__(self):
         return len(self.cards_list)
 
     def __iter__(self):
         return self.cards_list.__iter__()
+
+    def __getitem__(self, key):
+        return self.cards_list[key]
