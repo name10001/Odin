@@ -10,6 +10,7 @@ All of this is just for fun and should not be taken seriously.
 
 ## How to install and run
 ### Linux
+This will probably works on Mac too however have not tested it and don't know much about Mac computers
 ##### With root access:
 Step 1: open terminal:
 ```shell
@@ -40,9 +41,9 @@ You also need change the port from 80 to something else
 Step 2: open settings.py:
 ```python
 # from this:
-PORT = 80
+port = 80
 # to this:
-PORT = 12345
+port = 12345
 ```
 
 ##### Run permanently
@@ -75,7 +76,8 @@ You will probably get a popup asking to let it though your firewall.
 Say yes otherwise the game will only be accessible from your computer
 
 ## How to access game
-One its running it should give you some URLs that you can copy into your web browser of choice (ideally firefox because its the best).
+One its running it should give you some URLs that you can copy into your web browser of choice
+(ideally firefox because its the best).
 This should work on any computer in your local network.
 If it doesnt you may need to let it thought your firewall or anti-virus software.<br />
 If you want it to be accessible to everyone on the internet you will need to port forward the game.
