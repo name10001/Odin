@@ -75,7 +75,7 @@ class WaitingRoom:
         """
         self.modify()
         self.running = True
-        self.game = Game(self.game_id, self._players, self, starting_number_of_cards=400)
+        self.game = Game(self.game_id, self._players, self, starting_number_of_cards=settings.starting_cards)
         with fs.app.app_context():
             fs.socket_io.emit("refresh", room=self.game_id)
 

@@ -140,9 +140,9 @@ class Gui {
             this.finishButton.text = "+" + pickupAmount;
         }
         else {
-            this.finishButton.text = "PLAY CARDS";
+            this.finishButton.text = game.cantPlayReason==null ? "PLAY CARDS" : game.cantPlayReason;
         }
-        this.finishButton.drawThis(game.yourTurn);
+        this.finishButton.drawThis(game.yourTurn && game.cantPlayReason==null);
 
         //undo button(s)
         if(game.planningCards.length>0) {
@@ -300,7 +300,7 @@ class Gui {
         this.cardScroller.click();
         
         //clciking the end turn button
-        if(this.finishButton.isMouseOverThis() && game.yourTurn) {
+        if(this.finishButton.isMouseOverThis() && game.yourTurn && game.cantPlayReason==null) {
             game.finishTurn();
         }
         //clicking on the undo button

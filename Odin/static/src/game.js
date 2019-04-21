@@ -81,6 +81,7 @@ class Game {
         this.turnsLeft = 1;
         this.skip = 0;
         this.turnString = "";
+        this.cantPlayReason = null;  // is null if you are allowed to have your turn with the cards you have played
 
         //build a list of all cards - use the url as the key
         this.allCards = [];
@@ -129,6 +130,10 @@ class Game {
 
         //update direction
         this.direction = update['direction'];
+
+        //can't play reason
+        this.cantPlayReason = update['cant play reason'];
+        
     
         //update players
         this.players.length = 0;

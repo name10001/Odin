@@ -16,10 +16,10 @@ class Reverse(AbstractCard):
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Reverses the direction of play."
 
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player, played_on, planning_pile):
         self.game.direction *= -1
     
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player, played_on, planning_pile):
         self.game.direction *= -1
 
 
@@ -77,10 +77,10 @@ class Pickup2(AbstractCard):
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 2 to the pickup chain value."
 
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player, played_on, planning_pile):
         self.game.pickup += 2
     
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player, played_on, planning_pile):
         self.game.pickup -= 2
 
 
@@ -142,10 +142,10 @@ class Pickup10(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 10 to the pickup chain value."
 
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player, played_on, planning_pile):
         self.game.pickup += 10
     
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player, played_on, planning_pile):
         self.game.pickup -= 10
 
 
@@ -159,10 +159,10 @@ class Pickup100(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 100 to the pickup chain value."
 
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player, played_on, planning_pile):
         self.game.pickup += 100
 
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player, played_on, planning_pile):
         self.game.pickup -= 100
 
 
@@ -176,10 +176,10 @@ class Pickup4(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 4 to the pickup chain value."
 
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player, played_on, planning_pile):
         self.game.pickup += 4
     
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player, played_on, planning_pile):
         self.game.pickup -= 4
 
 
@@ -194,10 +194,10 @@ class PickupTimes2(AbstractCard):
     EFFECT_DESCRIPTION = "If a pickup chain is active, this card will double the pickup chain's value. " \
                          + "If played outside of a pickup chain this will do nothing."
 
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player, played_on, planning_pile):
         self.game.pickup *= 2
     
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player, played_on, planning_pile):
         self.game.pickup /= 2
 
 
@@ -212,10 +212,10 @@ class PickupPower2(AbstractCard):
     EFFECT_DESCRIPTION = "If a pickup chain is active, this card will square the pickup chain's value. " \
                          + "If played outside of a pickup chain this will do nothing."
 
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player, played_on, planning_pile):
         self.game.pickup **= 2
 
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player, played_on, planning_pile):
         self.game.pickup = int(self.game.pickup ** 0.5)
 
 
@@ -230,10 +230,10 @@ class Skip(AbstractCard):
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Skips the next person's turn."
     
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player, played_on, planning_pile):
         self.game.iterate_turn_by += 1
     
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player, played_on, planning_pile):
         self.game.iterate_turn_by -= 1
 
 
@@ -311,7 +311,7 @@ class EA(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_TYPE = "EA"
     NUMBER_NEEDED = 0
-    EFFECT_DESCRIPTION = "This card hasn't even been implemented properly so it does nothing at the moment."
+    EFFECT_DESCRIPTION = "Requires a fee to be able to play. You must pay the fee when you pay this card with any number cards such that they all add up to {cls.NUMBER_NEEDED}."
     MULTI_COLOURED = False
 
     def __init__(self, game):
@@ -332,19 +332,23 @@ class EA(AbstractCard):
 
     def ready_to_play(self):
         if self.still_needs != 0:
-            return False, "You need " + str(self.still_needs) + " more cards on top of the EA card. "
+            return False, "$" + str(self.still_needs) + " remaining..."
         else:
             return True, None
 
-    def prepare_card(self, player, played_on, planing_pile):
-        if planing_pile[0].get_type() == 'EA' and planing_pile[0] is not self:
-            planing_pile[0].still_needs += self. NUMBER_NEEDED
+    def prepare_card(self, player, played_on, planning_pile):
+        if len(planning_pile) == 0:
+            return
+        if planning_pile[0].get_type() == 'EA' and planning_pile[0] is not self:
+            planning_pile[0].still_needs += self. NUMBER_NEEDED
             self.still_needs = 0
 
-    def undo_prepare_card(self, player, played_on, planing_pile):
-        if len(planing_pile) != 0:
-            if planing_pile[0].get_type() == 'EA' and planing_pile[0] is not self:
-                planing_pile[0].still_needs -= self. NUMBER_NEEDED
+    def undo_prepare_card(self, player, played_on, planning_pile):
+        if len(planning_pile) == 0:
+            return
+        if len(planning_pile) != 0:
+            if planning_pile[0].get_type() == 'EA' and planning_pile[0] is not self:
+                planning_pile[0].still_needs -= self. NUMBER_NEEDED
                 self.still_needs = self. NUMBER_NEEDED
 
 
@@ -533,11 +537,11 @@ class Pawn(AbstractCard):
             return False
         return super().can_be_played_on(card, player)
 
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player, played_on, planning_pile):
         self.old_pickup = self.game.pickup
         self.game.pickup = 0
     
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player, played_on, planning_pile):
         self.game.pickup = self.old_pickup
 
 
@@ -658,7 +662,7 @@ class Plus(AbstractCard):
         self.old_pickup = 0
         super().__init__(game)
 
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player, played_on, planning_pile):
         self.old_pickup = self.game.pickup
         self.pickup_amount = self.game.pickup
 
@@ -670,7 +674,7 @@ class Plus(AbstractCard):
         
         self.game.pickup = 0
     
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player, played_on, planning_pile):
         self.game.pickup = self.old_pickup
 
     def play_card(self, player, played_on, played_with):
@@ -705,7 +709,7 @@ class FuckYou(AbstractCard):
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
         return options
 
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player, played_on, planning_pile):
         self.old_pickup = self.game.pickup
         self.pickup_amount = self.game.pickup
 
@@ -717,7 +721,7 @@ class FuckYou(AbstractCard):
         
         self.game.pickup = 0
     
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player, played_on, planning_pile):
         self.game.pickup = self.old_pickup
 
     def play_card(self, player, played_on, played_with):
@@ -818,10 +822,10 @@ class FreeTurn(AbstractCard):
     EFFECT_DESCRIPTION = "Gain an extra turn. If you play multiple Free Turn cards together " \
                          + "you will gain multiple extra turns."
 
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player, played_on, planning_pile):
         player.turns_left += 1
 
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player, played_on, planning_pile):
         player.turns_left -= 1
 
 
@@ -925,7 +929,7 @@ class ColourSwapper(AbstractCard):
         else:
             return super().is_compatible_with(card, player)
 
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player, played_on, planning_pile):
         # change colour to the opposite of the one you played on
         first_compatible = cards.colours_are_compatible(played_on.get_colour(), self.COLOUR_1)
         second_compatible = cards.colours_are_compatible(played_on.get_colour(), self.COLOUR_2)
@@ -939,7 +943,7 @@ class ColourSwapper(AbstractCard):
                 return
             self.colour = self.option
     
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player, played_on, planning_pile):
         self.colour = "colour swapper"
 
     def get_colour(self):

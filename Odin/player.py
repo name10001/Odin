@@ -20,7 +20,7 @@ class Player:
     def play_cards(self, cards):
         """
         Takes cards out of players hand and adds it to the games played cards
-        Also preforms all actions of the card and checks if its aloud to be played
+        Also preforms all actions of the card and checks if its allowed to be played
         :param cards: array of card to play. 2d array. e.g. [["id", "option"], ["id", "option"], etc]
         :return: None
         """
@@ -30,7 +30,7 @@ class Player:
     def play_card(self, card_id, chosen_option):
         """
         Takes card out of players hand and adds it to the games played cards
-        Also preforms all actions of the card and checks if its aloud to be played
+        Also preforms all actions of the card and checks if its allowed to be played
         :param card_id:
         :param chosen_option:
         :return: None
@@ -59,8 +59,6 @@ class Player:
         for card in self.planning_pile:
             can_play, reason = card.ready_to_play()
             if can_play is False:
-                # TODO: send message to player giving them the reason they cant finish
-                print("cant finish turn:", reason)
                 return False
         # play cards from planing pile
         for card in self.planning_pile:
@@ -110,6 +108,7 @@ class Player:
             "pickup size": self.game.pickup,
             "iteration": self.game.iterate_turn_by,
             "players": [],
+            "cant play reason": None,
         }
 
         # get first 4 cards from deck that are not in planning pile
@@ -126,12 +125,19 @@ class Player:
 
         # get cards from planning pile
         for card in self.planning_pile:
+            can_play, reason = card.ready_to_play()
+
+            if can_play is False:
+                json_to_send["cant play reason"] = reason
+            
             json_to_send["planning pile"].append(
                 {
                     "card image url": card.get_url(),
                     "card id": card.get_id()
                 }
             )
+        
+
 
         # get player cards
         for card in self.hand:
