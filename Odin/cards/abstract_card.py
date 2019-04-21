@@ -20,13 +20,20 @@ class AbstractCard:
         self.game = game
         self.id = self._make_id()
 
-    def prepare_card(self, player, played_on):
+    def ready_to_play(self):
+        """
+        Can the player finish there turn
+        :return: returns (True, None) if they can, returns (False, "reason") if they cant
+        """
+        return True, None
+
+    def prepare_card(self, player, played_on, planing_pile):
         pass
     
-    def undo_prepare_card(self, player, played_on):
+    def undo_prepare_card(self, player, played_on, planing_pile):
         pass
 
-    def play_card(self, player, played_on):
+    def play_card(self, player, played_on, planing_pile):
         pass
     
     def is_compatible_with(self, card, player):
@@ -164,7 +171,7 @@ class AbstractCard:
     def __gt__(self, other):
         """
         is this card goes after (is greater than) the given other card
-        sorts by card category index, then type, then color then name
+        sorts by card category index, then type, then color then name then id
         :param other: other card
         :return: True if this card is grater
         """
@@ -174,8 +181,10 @@ class AbstractCard:
             return self.get_type() > other.get_type()
         elif self.get_colour() != other.get_colour():
             return self.get_colour() > other.get_colour()
-        else:
+        elif self.get_name() != other.get_name():
             return self.get_name() > other.get_name()
+        else:
+            return self.get_id() > other.get_id()
 
     def set_option(self, option):
         self.option = option

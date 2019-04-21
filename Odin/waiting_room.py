@@ -75,9 +75,9 @@ class WaitingRoom:
         """
         self.modify()
         self.running = True
-        self.game = Game(self.game_id, self._players, self)
+        self.game = Game(self.game_id, self._players, self, starting_number_of_cards=400)
         with fs.app.app_context():
-            fs.socket_io.emit("refresh", room=self.game_id, starting_number_of_cards=20)
+            fs.socket_io.emit("refresh", room=self.game_id)
 
     def make_player_id(self, player_name):
         """

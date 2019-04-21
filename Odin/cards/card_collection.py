@@ -1,10 +1,10 @@
-from bisect import insort
+import bisect
 
 
 class CardCollection:
     """
     This is meant to be a fast way to store cards.
-    It uses multiple kinds of data types in order to get maximum performance.
+    It uses a binary search tree and multiple kinds of data types in order to get maximum performance.
     It is not memory efferent however is fast.
     """
     def __init__(self, cards=None, sort=False):
@@ -39,7 +39,7 @@ class CardCollection:
         :return: None
         """
         if self.should_sort:
-            insort(self.cards_list, card)
+            bisect.insort(self.cards_list, card)
         else:
             self.cards_list.append(card)
         self.cards_dict[card.get_id()] = card
@@ -55,7 +55,8 @@ class CardCollection:
         self.add_cards(cards)
 
     def remove_card(self, card):
-        self.cards_list.remove(card)
+        index = self.index(card)
+        self.cards_list.pop(index)
         del self.cards_dict[card.get_id()]
 
     def find_card(self, card_id):
@@ -71,8 +72,15 @@ class CardCollection:
         self.cards_list.clear()
         self.cards_dict.clear()
 
-    def index(self, object):
-        return self.cards_list.index(object)
+    def index(self, card):
+        if self.should_sort:
+            card_index = bisect.bisect_right(self.cards_list, card)
+            if self.cards_list[card_index] is card:
+                return card_index
+            else:
+                raise ValueError("the given card is not in this collection")
+        else:
+            return self.cards_list.index(card)
 
     def card_below(self, card):
         index = self.index(card)

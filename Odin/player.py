@@ -50,13 +50,20 @@ class Player:
             if card_below is None:
                 card_below = self.game.played_cards.get_top_card()
 
-            card.prepare_card(self, card_below)
+            card.prepare_card(self, card_below, self.planning_pile)
 
     def finish_turn(self):
         """
 
-        :return: boolean, True of the player should have another turn
+        :return: boolean, False of the player should have another turn
         """
+        # checks if cards can be played:
+        for card in self.planning_pile:
+            can_play, reason = card.ready_to_play()
+            if can_play is False:
+                # TODO: send message to player giving them the reason they cant finish
+                print("cant finish turn:", reason)
+                return False
         # play cards from planing pile
         for card in self.planning_pile:
             # get the card below
@@ -64,7 +71,7 @@ class Player:
             if card_below is None:
                 card_below = self.game.played_cards.get_top_card()
 
-            card.play_card(self, card_below)
+            card.play_card(self, card_below, self.planning_pile)
 
             self.game.played_cards.add_card(card)
 
@@ -83,11 +90,11 @@ class Player:
         # check if player has any more turns left.
         self.turns_left -= 1
         if self.turns_left > 0:
-            return True
+            return False
         else:
             self.state = "not turn"
             self.turns_left = 1
-            return False
+            return True
 
     def card_update(self):
         """
@@ -184,7 +191,7 @@ class Player:
         self.hand.add_card(card_to_remove)
 
         played_on = self.game.played_cards[len(self.game.played_cards)-1]
-        card_to_remove.undo_prepare_card(self, played_on)
+        card_to_remove.undo_prepare_card(self, played_on, self.planning_pile)
 
     def undo_all(self):
         """

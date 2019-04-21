@@ -79,7 +79,7 @@ class Game:
         """
         # if player has another turn
         is_finished = self.turn.finish_turn()
-        if is_finished is True:
+        if is_finished is False:
             self.update_players()
             return
 
@@ -133,8 +133,11 @@ class Game:
             player.undo_all()
         else:
             print("got unknown message from player:", message)
+
+        print("processed message, took: " + str(time() - start_time) + "s")
+        start_time = time()
         self.update_players()
-        print("finished processing, took: " + str(time() - start_time) + "s")
+        print("updated player, took: " + str(time() - start_time) + "s")
 
     def send_to_all_players(self, message_type, data):
         # for player in self.players:
