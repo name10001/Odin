@@ -1,4 +1,5 @@
 import bisect
+from time import time
 
 
 class CardCollection:
@@ -35,7 +36,6 @@ class CardCollection:
         """
         Adds a single cards to the collection
         :param card: card to add
-        :param sort_after: should the collection be sorted after the card is added
         :return: None
         """
         if self.should_sort:

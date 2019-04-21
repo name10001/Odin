@@ -21,7 +21,7 @@ all_cards = [
     BluePickup2, GreenPickup2, PurplePickup2, RedPickup2, YellowPickup2, WhitePickup2, BlackPickup2,
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
     BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck,
-    Pickup10, Pickup4, PickupTimes2, Pawn, FeelingBlue, Plus, FuckYou, AtomicBomb,
+    Pickup10, Pickup4, PickupTimes2, Pawn, FeelingBlue, Plus, FuckYou, AtomicBomb, PickupPower2, Pickup100,
     EA15, EA20, EA30,
     BlankBro, Happiness,
     SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos,
@@ -55,17 +55,13 @@ for card in all_cards:
     if card.CARD_COLOUR not in all_colours:
         all_colours.append(card.CARD_COLOUR)
 
-miscellaneous_category_index = 2
 # highest one takes priority!
-category_indexes = [
+# don't mix "types" and "colours", only use one per index
+miscellaneous_category_index = 2
+category_indexes = (
     {
         "colours": (),
-        "types": ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'),
-        "index": 0
-    },
-    {
-        "colours": (),
-        "types": ('69'),
+        "types": ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '69'),
         "index": 1
     },
     {
@@ -85,20 +81,20 @@ category_indexes = [
     },
     {
         "colours": (),
-        "types": ('+2', '+10', '+4', 'x2'),
+        "types": ('+2', '+4', '+10', '+100', 'x2', '^2'),
         "index": 6
     },
     {
-        "colours": ('black'),
-        "types": (),
+        "colours": (),
+        "types": ('Atomic Bomb', 'Fuck You', 'Plus', 'Pawn'),
         "index": 7
     },
     {
-        "colours": ('white'),
+        "colours": ('black', 'white'),
         "types": (),
         "index": 8
-    },
-]
+    }
+)
 
 
 def get_card_index(card):
@@ -111,9 +107,11 @@ def get_card_index(card):
     """
     for category_index in category_indexes:
         if card.get_type() in category_index["types"]:
-            return category_index["index"]
+            point = category_index["types"].index(card.get_type()) / len(category_index["types"])
+            return category_index["index"] + point
         if card.get_colour() in category_index["colours"]:
-            return category_index["index"]
+            point = category_index["colours"].index(card.get_colour()) / len(category_index["colours"])
+            return category_index["index"] + point
     return miscellaneous_category_index
 
 
