@@ -5,17 +5,17 @@ import cards
 class NumberCard(AbstractCard):
     NUMBER_IN_DECK = 2
 
-    def prepare_card(self, player, played_on, planning_pile):
-        if len(planning_pile) == 0:
+    def prepare_card(self, player):
+        if len(self.game.planning_pile) == 0:
             return
-        if planning_pile[0].get_type() == "EA":
-            planning_pile[0].still_needs -= int(self.get_type())
+        if self.game.planning_pile[0].get_type() == "EA":
+            self.game.planning_pile[0].still_needs -= int(self.get_type())
 
-    def undo_prepare_card(self, player, played_on, planning_pile):
-        if len(planning_pile) == 0:
+    def undo_prepare_card(self, player):
+        if len(self.game.planning_pile) == 0:
             return
-        if planning_pile[0].get_type() == "EA":
-            planning_pile[0].still_needs += int(self.get_type())
+        if self.game.planning_pile[0].get_type() == "EA":
+            self.game.planning_pile[0].still_needs += int(self.get_type())
 
 # ~~~~~~~~~~~~~~
 #     Zeros

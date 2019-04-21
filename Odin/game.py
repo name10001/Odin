@@ -24,6 +24,7 @@ class Game:
         self.deck = cards.Deck(self)
         self.played_cards = CardCollection()
         self.played_cards.add_card(self.deck.pickup(1)[0](self))
+        self.planning_pile = CardCollection()
         self.pickup = 0
 
         # setup players and turn system
@@ -158,6 +159,12 @@ class Game:
         self.get_player(session['player_id']).set_sid(request.sid)
         join_room(self.game_id + "_game")
         self.get_player(session['player_id']).card_update()
+
+    def get_card_below(self, card):
+        card_below = self.planning_pile.card_below(card)
+        if card_below is None:
+            card_below = self.played_cards.get_top_card()
+        return card_below
 
     def get_id(self):
         return self.game_id

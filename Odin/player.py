@@ -11,9 +11,7 @@ class Player:
         self.player_id = player_id
         self.hand = CardCollection(sort=True)
         self.name = name
-        self.picked_up_this_turn = False
         self.sid = None
-        self.planning_pile = CardCollection()
         self.turns_left = 1
         self.state = "not turn"
 
@@ -41,14 +39,8 @@ class Player:
         if self._can_be_played(card):
             self.hand.remove_card(card)
             card.set_option(chosen_option)
-            self.planning_pile.add_card(card)
-
-            # get the card below
-            card_below = self.planning_pile.card_below(card)
-            if card_below is None:
-                card_below = self.game.played_cards.get_top_card()
-
-            card.prepare_card(self, card_below, self.planning_pile)
+            self.game.planning_pile.add_card(card)
+            card.prepare_card(self)
 
     def finish_turn(self):
         """
@@ -56,32 +48,24 @@ class Player:
         :return: boolean, False of the player should have another turn
         """
         # checks if cards can be played:
-        for card in self.planning_pile:
+        for card in self.game.planning_pile:
             can_play, reason = card.ready_to_play()
             if can_play is False:
                 return False
         # play cards from planing pile
-        for card in self.planning_pile:
-            # get the card below
-            card_below = self.planning_pile.card_below(card)
-            if card_below is None:
-                card_below = self.game.played_cards.get_top_card()
-
-            card.play_card(self, card_below, self.planning_pile)
-
+        for card in self.game.planning_pile:
+            card.play_card(self)
             self.game.played_cards.add_card(card)
 
         # if there is a pickup and the player did not play, make them pick it up
-        if len(self.planning_pile) == 0:
+        if len(self.game.planning_pile) == 0:
             self.pickup()
 
-        self.planning_pile.clear()
+        self.game.planning_pile.clear()
 
         # send wining message to everyone but this player
         if self.had_won():
             self.game.send_to_all_players("message for player", self.name + " has won!")
-
-        self.picked_up_this_turn = False
 
         # check if player has any more turns left.
         self.turns_left -= 1
@@ -112,9 +96,7 @@ class Player:
         }
 
         # get first 4 cards from deck that are not in planning pile
-        number_of_cards = len(self.game.played_cards)
-        for card_index in range(max(number_of_cards - settings.played_cards_to_show, 0), number_of_cards):
-            card = self.game.played_cards[card_index]
+        for card in self.game.played_cards[-settings.played_cards_to_show:]:
             json_to_send["cards on deck"].append(
                 {
                     "card image url": card.get_url(),
@@ -124,9 +106,8 @@ class Player:
             )
 
         # get cards from planning pile
-        for card in self.planning_pile:
+        for card in self.game.planning_pile:
             can_play, reason = card.ready_to_play()
-
             if can_play is False:
                 json_to_send["cant play reason"] = reason
             
@@ -136,8 +117,6 @@ class Player:
                     "card id": card.get_id()
                 }
             )
-        
-
 
         # get player cards
         for card in self.hand:
@@ -172,8 +151,6 @@ class Player:
         only runs if its the players turn
         :return: None
         """
-        if self.picked_up_this_turn is True:
-            return
         if self.is_turn() is False:
             return
         if self.game.pickup == 0:
@@ -181,21 +158,18 @@ class Player:
         else:
             self.add_new_cards(self.game.pickup)
             self.game.pickup = 0
-        self.picked_up_this_turn = True
 
     def undo(self):
         """
         If the player has put down a card this turn it will undo the latest one
         :return:
         """
-        if len(self.planning_pile) == 0 or not self.is_turn():
+        if len(self.game.planning_pile) == 0 or not self.is_turn():
             return
-        card_to_remove = self.planning_pile.get_top_card()
-        self.planning_pile.remove_card(card_to_remove)
+        card_to_remove = self.game.planning_pile.get_top_card()
+        self.game.planning_pile.remove_card(card_to_remove)
         self.hand.add_card(card_to_remove)
-
-        played_on = self.game.played_cards[len(self.game.played_cards)-1]
-        card_to_remove.undo_prepare_card(self, played_on, self.planning_pile)
+        card_to_remove.undo_prepare_card(self)
 
     def undo_all(self):
         """
@@ -204,7 +178,7 @@ class Player:
         """
         if not self.is_turn():
             return
-        for i in range(0, len(self.planning_pile)):
+        for i in range(0, len(self.game.planning_pile)):
             self.undo()
 
     def _can_be_played(self, card):
@@ -213,11 +187,11 @@ class Player:
         :return:
         """
         top_card = self.game.played_cards[-1]
-        is_first_card = len(self.planning_pile) == 0
+        is_first_card = len(self.game.planning_pile) == 0
 
         if self.is_turn() and not is_first_card:
-            return card.can_be_played_with(self.planning_pile, self)
-        elif card.can_be_played_on(top_card, self):
+            return card.can_be_played_with(self)
+        elif card.can_be_played_on(self, top_card):
             return True
         else:
             return False

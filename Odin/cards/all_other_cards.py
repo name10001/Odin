@@ -16,10 +16,10 @@ class Reverse(AbstractCard):
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Reverses the direction of play."
 
-    def prepare_card(self, player, played_on, planning_pile):
+    def prepare_card(self, player):
         self.game.direction *= -1
     
-    def undo_prepare_card(self, player, played_on, planning_pile):
+    def undo_prepare_card(self, player):
         self.game.direction *= -1
 
 
@@ -77,10 +77,10 @@ class Pickup2(AbstractCard):
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 2 to the pickup chain value."
 
-    def prepare_card(self, player, played_on, planning_pile):
+    def prepare_card(self, player):
         self.game.pickup += 2
     
-    def undo_prepare_card(self, player, played_on, planning_pile):
+    def undo_prepare_card(self, player):
         self.game.pickup -= 2
 
 
@@ -142,10 +142,10 @@ class Pickup10(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 10 to the pickup chain value."
 
-    def prepare_card(self, player, played_on, planning_pile):
+    def prepare_card(self, player):
         self.game.pickup += 10
     
-    def undo_prepare_card(self, player, played_on, planning_pile):
+    def undo_prepare_card(self, player):
         self.game.pickup -= 10
 
 
@@ -159,10 +159,10 @@ class Pickup100(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 100 to the pickup chain value."
 
-    def prepare_card(self, player, played_on, planning_pile):
+    def prepare_card(self, player):
         self.game.pickup += 100
 
-    def undo_prepare_card(self, player, played_on, planning_pile):
+    def undo_prepare_card(self, player):
         self.game.pickup -= 100
 
 
@@ -176,10 +176,10 @@ class Pickup4(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 4 to the pickup chain value."
 
-    def prepare_card(self, player, played_on, planning_pile):
+    def prepare_card(self, player):
         self.game.pickup += 4
     
-    def undo_prepare_card(self, player, played_on, planning_pile):
+    def undo_prepare_card(self, player):
         self.game.pickup -= 4
 
 
@@ -194,10 +194,10 @@ class PickupTimes2(AbstractCard):
     EFFECT_DESCRIPTION = "If a pickup chain is active, this card will double the pickup chain's value. " \
                          + "If played outside of a pickup chain this will do nothing."
 
-    def prepare_card(self, player, played_on, planning_pile):
+    def prepare_card(self, player):
         self.game.pickup *= 2
     
-    def undo_prepare_card(self, player, played_on, planning_pile):
+    def undo_prepare_card(self, player):
         self.game.pickup /= 2
 
 
@@ -212,10 +212,10 @@ class PickupPower2(AbstractCard):
     EFFECT_DESCRIPTION = "If a pickup chain is active, this card will square the pickup chain's value. " \
                          + "If played outside of a pickup chain this will do nothing."
 
-    def prepare_card(self, player, played_on, planning_pile):
+    def prepare_card(self, player):
         self.game.pickup **= 2
 
-    def undo_prepare_card(self, player, played_on, planning_pile):
+    def undo_prepare_card(self, player):
         self.game.pickup = int(self.game.pickup ** 0.5)
 
 
@@ -230,10 +230,10 @@ class Skip(AbstractCard):
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Skips the next person's turn."
     
-    def prepare_card(self, player, played_on, planning_pile):
+    def prepare_card(self, player):
         self.game.iterate_turn_by += 1
     
-    def undo_prepare_card(self, player, played_on, planning_pile):
+    def undo_prepare_card(self, player):
         self.game.iterate_turn_by -= 1
 
 
@@ -311,14 +311,15 @@ class EA(AbstractCard):
     NUMBER_IN_DECK = 1
     CARD_TYPE = "EA"
     NUMBER_NEEDED = 0
-    EFFECT_DESCRIPTION = "Requires a fee to be able to play. You must pay the fee when you pay this card with any number cards such that they all add up to {cls.NUMBER_NEEDED}."
+    EFFECT_DESCRIPTION = "Requires a fee to be able to play. You must pay the fee when you pay this card with " \
+                         + "any number cards such that they all add up to {cls.NUMBER_NEEDED}."
     MULTI_COLOURED = False
 
     def __init__(self, game):
         self.still_needs = self.NUMBER_NEEDED
         super().__init__(game)
 
-    def can_play_with(self, card, player, is_first_card):
+    def can_play_with(self, player, card, is_first_card):
         if is_first_card is False:
             return False
         if card.get_type() == 'EA':
@@ -336,20 +337,19 @@ class EA(AbstractCard):
         else:
             return True, None
 
-    def prepare_card(self, player, played_on, planning_pile):
-        if len(planning_pile) == 0:
+    def prepare_card(self, player):
+        if len(self.game.planning_pile) == 0:
             return
-        if planning_pile[0].get_type() == 'EA' and planning_pile[0] is not self:
-            planning_pile[0].still_needs += self. NUMBER_NEEDED
+        if self.game.planning_pile[0].get_type() == 'EA' and self.game.planning_pile[0] is not self:
+            self.game.planning_pile[0].still_needs += self.NUMBER_NEEDED
             self.still_needs = 0
 
-    def undo_prepare_card(self, player, played_on, planning_pile):
-        if len(planning_pile) == 0:
+    def undo_prepare_card(self, player):
+        if len(self.game.planning_pile) == 0:
             return
-        if len(planning_pile) != 0:
-            if planning_pile[0].get_type() == 'EA' and planning_pile[0] is not self:
-                planning_pile[0].still_needs -= self. NUMBER_NEEDED
-                self.still_needs = self. NUMBER_NEEDED
+        if self.game.planning_pile[0].get_type() == 'EA' and self.game.planning_pile[0] is not self:
+            self.game.planning_pile[0].still_needs -= self. NUMBER_NEEDED
+            self.still_needs = self. NUMBER_NEEDED
 
 
 class EA15(EA):
@@ -382,7 +382,7 @@ class Fuck(AbstractCard):
     COMPATIBILITY_DESCRIPTION = "This card is only compatible with other {cls.CARD_COLOUR} cards or " \
                                 + "other Fuckin' M8 cards."
 
-    def is_compatible_with(self, card, player):
+    def is_compatible_with(self, player, card):
         if card.get_colour() == "colour swapper":
             return card.COLOUR_1 == self.get_colour() or card.COLOUR_2 == self.get_colour()
         return card.get_colour() == self.get_colour() or card.get_type() == self.get_type()
@@ -427,7 +427,7 @@ class AllOfSameColour(AbstractCard):
     NUMBER_IN_DECK = 1
     MULTI_COLOURED = False
 
-    def can_play_with(self, card, player, is_first_card):
+    def can_play_with(self, player, card, is_first_card):
         return card.get_colour() == self.get_colour()
 
 
@@ -487,14 +487,14 @@ class Nazi(AbstractCard):
                                 + "After play: Regular white card rules apply, such that it is compatible with " \
                                 + "any red, green, yellow, blue, purple or white cards."
 
-    def can_be_played_on(self, card, player):
+    def can_be_played_on(self, player, card):
         if player.is_turn() is False:
             return False
         if self.game.pickup != 0 and self.can_be_on_pickup() is False:
             return False
         return card.get_colour() == "white"
 
-    def can_play_with(self, card, player, is_first_card):
+    def can_play_with(self, player, card, is_first_card):
         return card.get_type() == self.get_type() or card.get_colour() == "black"
 
 
@@ -509,7 +509,7 @@ class AtomicBomb(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Allows you to place as many pickup cards as you like with this card on your turn."
 
-    def can_play_with(self, card, player, is_first_card):
+    def can_play_with(self, player, card, is_first_card):
         return card.get_type() in self.PICKUPCARDS
 
 
@@ -529,19 +529,19 @@ class Pawn(AbstractCard):
         self.old_pickup = 0
         super().__init__(game)
 
-    def can_be_played_on(self, card, player):
+    def can_be_played_on(self, player, card):
         """
         Update method which only lets you place when it's a pickup chain
         """
         if self.game.pickup == 0:  # won't let you place outside of pickup chain
             return False
-        return super().can_be_played_on(card, player)
+        return super().can_be_played_on(player, card)
 
-    def prepare_card(self, player, played_on, planning_pile):
+    def prepare_card(self, player):
         self.old_pickup = self.game.pickup
         self.game.pickup = 0
     
-    def undo_prepare_card(self, player, played_on, planning_pile):
+    def undo_prepare_card(self, player):
         self.game.pickup = self.old_pickup
 
 
@@ -554,9 +554,9 @@ class Communist(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded."
 
-    def play_card(self, player, played_on, played_with):
+    def play_card(self, player):
         # stop the card from playing multiple times
-        card_below = played_with.card_below(self)
+        card_below = self.game.planning_pile.card_below(self)
         if card_below is not None and card_below.get_type() == "Communist":
             return
 
@@ -587,7 +587,7 @@ class Capitalist(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "The player with the most cards has the amount of cards in their hand doubled."
 
-    def play_card(self, player, played_on, played_with):
+    def play_card(self, player):
         """
         finds the player with the most cards and doubles it
         """
@@ -618,7 +618,7 @@ class SwapHand(AbstractCard):
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
         return options
 
-    def play_card(self, player, played_on, played_with):
+    def play_card(self, player):
         if self.is_option_valid(player, self.option, is_player=True) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
@@ -641,7 +641,7 @@ class FeelingBlue(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon playing this card, you will be forced to pickup 5 cards."
 
-    def play_card(self, player, played_on, played_with):
+    def play_card(self, player):
         player.add_new_cards(5)
 
 
@@ -662,9 +662,11 @@ class Plus(AbstractCard):
         self.old_pickup = 0
         super().__init__(game)
 
-    def prepare_card(self, player, played_on, planning_pile):
+    def prepare_card(self, player):
         self.old_pickup = self.game.pickup
         self.pickup_amount = self.game.pickup
+
+        played_on = self.game.get_card_below(self)
 
         if hasattr(played_on, 'pickup_amount'):  # allows you to place multiple and duplicate the effects
             self.pickup_amount = played_on.pickup_amount
@@ -674,10 +676,10 @@ class Plus(AbstractCard):
         
         self.game.pickup = 0
     
-    def undo_prepare_card(self, player, played_on, planning_pile):
+    def undo_prepare_card(self, player):
         self.game.pickup = self.old_pickup
 
-    def play_card(self, player, played_on, played_with):
+    def play_card(self, player):
         for other_player in self.game.players:
             if other_player != player:
                 other_player.add_new_cards(self.pickup_amount)
@@ -709,9 +711,11 @@ class FuckYou(AbstractCard):
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
         return options
 
-    def prepare_card(self, player, played_on, planning_pile):
+    def prepare_card(self, player):
         self.old_pickup = self.game.pickup
         self.pickup_amount = self.game.pickup
+
+        played_on = self.game.get_card_below(self)
 
         if hasattr(played_on, 'pickup_amount'):  # allows you to place multiple and duplicate the effects
             self.pickup_amount = played_on.pickup_amount
@@ -721,10 +725,10 @@ class FuckYou(AbstractCard):
         
         self.game.pickup = 0
     
-    def undo_prepare_card(self, player, played_on, planning_pile):
+    def undo_prepare_card(self, player):
         self.game.pickup = self.old_pickup
 
-    def play_card(self, player, played_on, played_with):
+    def play_card(self, player):
         if self.is_option_valid(player, self.option, is_player=True) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
@@ -757,7 +761,7 @@ class Genocide(AbstractCard):
                 options["type " + card_type] = "Type: " + card_type
         return options
 
-    def play_card(self, player, played_on, played_with):
+    def play_card(self, player):
         if self.is_option_valid(player, self.option) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
@@ -801,7 +805,7 @@ class Jesus(AbstractCard):
 
         return options
 
-    def play_card(self, player, played_on, played_with):
+    def play_card(self, player):
         if self.is_option_valid(player, self.option, is_player=True) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
@@ -822,10 +826,10 @@ class FreeTurn(AbstractCard):
     EFFECT_DESCRIPTION = "Gain an extra turn. If you play multiple Free Turn cards together " \
                          + "you will gain multiple extra turns."
 
-    def prepare_card(self, player, played_on, planning_pile):
+    def prepare_card(self, player):
         player.turns_left += 1
 
-    def undo_prepare_card(self, player, played_on, planning_pile):
+    def undo_prepare_card(self, player):
         player.turns_left -= 1
 
 
@@ -838,7 +842,7 @@ class Thanos(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon play, half of the cards in your hand will randomly disappear."
 
-    def play_card(self, player, played_on, played_with):
+    def play_card(self, player):
         """
         removes half the players cards at random
         """
@@ -867,7 +871,7 @@ class ColourChooser(AbstractCard):
             "yellow": "Yellow"
         }
     
-    def is_compatible_with(self, card, player):
+    def is_compatible_with(self, player, card):
         """
         This compatibility method is used to prevent white cards from being able to be played on top
         """
@@ -876,7 +880,7 @@ class ColourChooser(AbstractCard):
         
         return True
 
-    def play_card(self, player, played_on, played_with):
+    def play_card(self, player):
         if self.is_option_valid(player, self.option) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
@@ -909,10 +913,11 @@ class ColourSwapper(AbstractCard):
     def get_options(self, player):
         # get the top card
         top_card = self.game.played_cards.get_top_card()
-        if len(player.planning_pile) > 0:
-            top_card = player.planning_pile.get_top_card()
+        if len(self.game.planning_pile) > 0:
+            top_card = self.game.planning_pile.get_top_card()
 
-        if cards.colours_are_compatible(top_card.get_colour(), self.COLOUR_1) and cards.colours_are_compatible(top_card.get_colour(), self.COLOUR_2):
+        if cards.colours_are_compatible(top_card.get_colour(), self.COLOUR_1) \
+                and cards.colours_are_compatible(top_card.get_colour(), self.COLOUR_2):
             # if both colours are compatible with the bottom, then you get to choose the outcome
             return {
                 self.COLOUR_1: self.COLOUR_1.capitalize(),
@@ -921,15 +926,17 @@ class ColourSwapper(AbstractCard):
         else:
             return None
 
-    def is_compatible_with(self, card, player):
+    def is_compatible_with(self, player, card):
         if self.colour == "colour swapper":  # compatible if either of the card colours are compatible
             if cards.colours_are_compatible(card.get_colour(), self.COLOUR_1) \
                     or cards.colours_are_compatible(card.get_colour(), self.COLOUR_2):
                 return True
         else:
-            return super().is_compatible_with(card, player)
+            return super().is_compatible_with(player, card)
 
-    def prepare_card(self, player, played_on, planning_pile):
+    def prepare_card(self, player):
+        played_on = self.game.get_card_below(self)
+
         # change colour to the opposite of the one you played on
         first_compatible = cards.colours_are_compatible(played_on.get_colour(), self.COLOUR_1)
         second_compatible = cards.colours_are_compatible(played_on.get_colour(), self.COLOUR_2)
@@ -943,23 +950,23 @@ class ColourSwapper(AbstractCard):
                 return
             self.colour = self.option
     
-    def undo_prepare_card(self, player, played_on, planning_pile):
+    def undo_prepare_card(self, player):
         self.colour = "colour swapper"
 
     def get_colour(self):
         return self.colour
     
-    def can_be_played_with(self, planning_pile, player):
+    def can_be_played_with(self, player):
         """
         can only play multiple if the card is compatible with the top card in the planning pile
         """
-        card = planning_pile.get_top_card()
+        card = self.game.planning_pile.get_top_card()
 
         if card.get_type() != self.get_type():
             return False
         
         return cards.colours_are_compatible(card.get_colour(), self.COLOUR_1) \
-               or cards.colours_are_compatible(card.get_colour(), self.COLOUR_2)
+            or cards.colours_are_compatible(card.get_colour(), self.COLOUR_2)
 
 
 class RedBlueSwapper(ColourSwapper):

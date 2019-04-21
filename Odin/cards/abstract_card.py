@@ -27,16 +27,16 @@ class AbstractCard:
         """
         return True, None
 
-    def prepare_card(self, player, played_on, planing_pile):
+    def prepare_card(self, player):
         pass
     
-    def undo_prepare_card(self, player, played_on, planing_pile):
+    def undo_prepare_card(self, player):
         pass
 
-    def play_card(self, player, played_on, planing_pile):
+    def play_card(self, player):
         pass
     
-    def is_compatible_with(self, card, player):
+    def is_compatible_with(self, player, card):
         """
         Can these 2 cards be played together
         :param card:
@@ -63,7 +63,7 @@ class AbstractCard:
         else:
             return card.get_colour() == "black" or card.get_colour() == "white"
 
-    def can_be_played_on(self, card, player):
+    def can_be_played_on(self, player, card):
         """
         Can this card be played on the given card
         :param card:
@@ -74,9 +74,9 @@ class AbstractCard:
             return False
         if self.game.pickup != 0 and self.can_be_on_pickup() is False:
             return False
-        return card.is_compatible_with(self, player) and self.is_compatible_with(card, player)
+        return card.is_compatible_with(player, self) and self.is_compatible_with(player, card)
 
-    def can_play_with(self, card, player, is_first_card):
+    def can_play_with(self, player, card, is_first_card):
         """
         Can this additional card be played with this card? Considers if this is the first card in the planning pile
         :param card:
@@ -89,17 +89,16 @@ class AbstractCard:
         
         return False
 
-    def can_be_played_with(self, planning_pile, player):
+    def can_be_played_with(self, player):
         """
         Can this card be played on the given planning pile?
         By default this checks if you can play with ANY of the cards in the planning pile
-        :param planning_pile:
         :param player:
         :return:
         """
         is_first_card = True
-        for card in planning_pile:
-            if card.can_play_with(self, player, is_first_card):
+        for card in self.game.planning_pile:
+            if card.can_play_with(player, self, is_first_card):
                 return True
             is_first_card = False
         return False
@@ -108,21 +107,7 @@ class AbstractCard:
         """
         makes and ID that is unique to itself and is human readable
         """
-        the_id = self.NAME.replace(" ", "_") + "_card"
-
-        # remove all HTML unsafe characters
-        id_safe = ""
-        for character in the_id:
-            # if character is a-z, A-Z, 1-9 or is _
-            if ord(character) in range(ord("a"), ord("z") + 1)\
-                    or ord(character) in range(ord("A"), ord("Z") + 1)\
-                    or ord(character) in range(ord("1"), ord("9") + 1)\
-                    or character in ("_",):
-                id_safe += character
-
-        id_safe += "_" + str(id(self))
-
-        return id_safe
+        return extended_formatter.format("{cls.NAME!h}_card_{id}", cls=self, id=id(self))
 
     def get_options(self, player):
         """
