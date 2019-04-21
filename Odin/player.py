@@ -26,8 +26,6 @@ class Player:
         """
         for card in cards:
             self.play_card(card[0], card[1])
-        print("from play cards")
-        self.card_update()
 
     def play_card(self, card_id, chosen_option):
         """
@@ -116,7 +114,7 @@ class Player:
 
         # get first 4 cards from deck that are not in planning pile
         number_of_cards = len(self.game.played_cards)
-        for card_index in range(max(number_of_cards - 4, 0), number_of_cards):
+        for card_index in range(max(number_of_cards - settings.played_cards_to_show, 0), number_of_cards):
             card = self.game.played_cards[card_index]
             json_to_send["cards on deck"].append(
                 {

@@ -7,11 +7,11 @@ class NumberCard(AbstractCard):
 
     def prepare_card(self, player, played_on, planing_pile):
         if planing_pile[0].get_type() == "EA":
-            planing_pile[0].up_to += int(self.get_type())
+            planing_pile[0].still_needs -= int(self.get_type())
 
     def undo_prepare_card(self, player, played_on, planing_pile):
         if planing_pile[0].get_type() == "EA":
-            planing_pile[0].up_to -= int(self.get_type())
+            planing_pile[0].still_needs += int(self.get_type())
 
 # ~~~~~~~~~~~~~~
 #     Zeros

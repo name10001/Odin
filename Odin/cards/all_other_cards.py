@@ -149,6 +149,23 @@ class Pickup10(AbstractCard):
         self.game.pickup -= 10
 
 
+class Pickup100(AbstractCard):
+    NUMBER_IN_DECK = 0.1
+    CARD_TYPE = "+100"
+    NAME = "Pickup 100"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/pickup100_wild.png'
+    CAN_BE_ON_PICKUP = True
+    MULTI_COLOURED = False
+    EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 100 to the pickup chain value."
+
+    def prepare_card(self, player, played_on, planing_pile):
+        self.game.pickup += 100
+
+    def undo_prepare_card(self, player, played_on, planing_pile):
+        self.game.pickup -= 100
+
+
 class Pickup4(AbstractCard):
     NUMBER_IN_DECK = 4
     CARD_TYPE = "+4"
@@ -182,6 +199,24 @@ class PickupTimes2(AbstractCard):
     
     def undo_prepare_card(self, player, played_on, planing_pile):
         self.game.pickup /= 2
+
+
+class PickupPower2(AbstractCard):
+    NUMBER_IN_DECK = 0.001
+    CARD_TYPE = "^2"
+    NAME = "Pickup ^2"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/power2_wild.png'
+    CAN_BE_ON_PICKUP = True
+    MULTI_COLOURED = False
+    EFFECT_DESCRIPTION = "If a pickup chain is active, this card will square the pickup chain's value. " \
+                         + "If played outside of a pickup chain this will do nothing."
+
+    def prepare_card(self, player, played_on, planing_pile):
+        self.game.pickup **= 2
+
+    def undo_prepare_card(self, player, played_on, planing_pile):
+        self.game.pickup = int(self.game.pickup ** 0.5)
 
 
 # ~~~~~~~~~~~~~~
@@ -280,25 +315,37 @@ class EA(AbstractCard):
     MULTI_COLOURED = False
 
     def __init__(self, game):
-        self.up_to = 0
+        self.still_needs = self.NUMBER_NEEDED
         super().__init__(game)
 
     def can_play_with(self, card, player, is_first_card):
         if is_first_card is False:
             return False
+        if card.get_type() == 'EA':
+            return True
         if card.get_type().isnumeric() is False:
             return False
         num = int(card.get_type())
-        if num + self.up_to > self.NUMBER_NEEDED:
+        if self.still_needs - num < 0:
             return False
         return True
 
     def ready_to_play(self):
-        if self.up_to != self.NUMBER_NEEDED:
-            return False, "You must put cards that total up to " + str(self.NUMBER_NEEDED) + " on top of the EA card. " \
-                   + "currently the cards on top of the EA card total up to " + str(self.up_to) + ". "
+        if self.still_needs != 0:
+            return False, "You need " + str(self.still_needs) + " more cards on top of the EA card. "
         else:
             return True, None
+
+    def prepare_card(self, player, played_on, planing_pile):
+        if planing_pile[0].get_type() == 'EA' and planing_pile[0] is not self:
+            planing_pile[0].still_needs += self. NUMBER_NEEDED
+            self.still_needs = 0
+
+    def undo_prepare_card(self, player, played_on, planing_pile):
+        if len(planing_pile) != 0:
+            if planing_pile[0].get_type() == 'EA' and planing_pile[0] is not self:
+                planing_pile[0].still_needs -= self. NUMBER_NEEDED
+                self.still_needs = self. NUMBER_NEEDED
 
 
 class EA15(EA):
@@ -453,7 +500,7 @@ class AtomicBomb(AbstractCard):
     CARD_TYPE = "Atomic Bomb"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = "cards/explosion.png"
-    PICKUPCARDS = ["Atomic Bomb", "+2", "+4", "+10", "x2", "Plus", "Fuck You", "Pawn"]
+    PICKUPCARDS = ["Atomic Bomb", "^2", "+2", "+4", "+10", "+100", "x2", "Plus", "Fuck You", "Pawn"]
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Allows you to place as many pickup cards as you like with this card on your turn."
