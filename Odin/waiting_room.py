@@ -4,6 +4,7 @@ from flask_socketio import *
 import flask_server as fs
 from time import time
 import settings
+from util.extended_formatter import extended_formatter
 
 
 class WaitingRoom:
@@ -83,17 +84,7 @@ class WaitingRoom:
         """
         makes and ID that is unique to itself and is human readable
         """
-        the_id = player_name.replace(" ", "_") + "_player"
-
-        # remove all HTML unsafe characters
-        id_safe = ""
-        for character in the_id:
-            # if character is a-z, A-Z, 1-9 or is _
-            if ord(character) in range(ord("a"), ord("z") + 1)\
-                    or ord(character) in range(ord("A"), ord("Z") + 1)\
-                    or ord(character) in range(ord("1"), ord("9") + 1)\
-                    or character in ("_",):
-                id_safe += character
+        id_safe = extended_formatter.format("{player_name!h}_player", player_name=player_name)
 
         # if its ID is already in use, add a number to it
         if id_safe in self._players:

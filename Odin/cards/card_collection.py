@@ -1,5 +1,4 @@
 import bisect
-from time import time
 
 
 class CardCollection:
@@ -55,6 +54,11 @@ class CardCollection:
         self.add_cards(cards)
 
     def remove_card(self, card):
+        """
+        Removes the given card from the collection
+        :param card:
+        :return:
+        """
         index = self.index(card)
         self.cards_list.pop(index)
         del self.cards_dict[card.get_id()]
@@ -69,10 +73,19 @@ class CardCollection:
             return self.cards_dict[card_id]
 
     def clear(self):
+        """
+        Removes all the cards
+        :return:
+        """
         self.cards_list.clear()
         self.cards_dict.clear()
 
     def index(self, card):
+        """
+        Gets the index of the given card
+        :param card:
+        :return:
+        """
         if self.should_sort:
             card_index = bisect.bisect_right(self.cards_list, card)
             if self.cards_list[card_index] is card:
