@@ -903,9 +903,12 @@ class ColourSwapper(AbstractCard):
         self.colour = "colour swapper"  # gets changed to a particular colour after being played
 
     def get_options(self, player):
-        top_colour = self.game.played_cards.get_top_card().get_colour()
+        # get the top card
+        top_card = self.game.played_cards.get_top_card()
+        if len(player.planning_pile) > 0:
+            top_card = player.planning_pile.get_top_card()
 
-        if cards.colours_are_compatible(top_colour, self.COLOUR_1) and cards.colours_are_compatible(top_colour, self.COLOUR_2):
+        if cards.colours_are_compatible(top_card.get_colour(), self.COLOUR_1) and cards.colours_are_compatible(top_card.get_colour(), self.COLOUR_2):
             # if both colours are compatible with the bottom, then you get to choose the outcome
             return {
                 self.COLOUR_1: self.COLOUR_1.capitalize(),
