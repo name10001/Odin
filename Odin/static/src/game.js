@@ -145,7 +145,7 @@ class Game {
                 this.turn = this.players.length;
                 this.turnsLeft = player['turns left'];
                 if(player['is you']) {
-                    this.turnString = "Pick Cards: " + canPlay + "/" + player['number of cards'];
+                    this.turnString = "Your Turn! Cards Avaliable: " + canPlay + "/" + player['number of cards'];
                     this.yourTurn = true;
                 }else {
                     this.turnString = player['name'] + "'s Turn";

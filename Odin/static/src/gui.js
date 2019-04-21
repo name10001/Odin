@@ -25,7 +25,7 @@ class Gui {
         //finish
         this.finishButton = new Button(CARD_WIDTH*2+1, 4, 2, "+1");
         this.finishButton.x = function() {
-            return gui.getLeftX() + GUI_SCALE*18;
+            return gui.getButtonX();
         }
         this.finishButton.y = function() {
             return gui.getBottomY() - GUI_SCALE*12;
@@ -33,7 +33,7 @@ class Gui {
         //undo
         this.undoButton = new Button(CARD_WIDTH, 3, 1, "UNDO");
         this.undoButton.x = function() {
-            return gui.getLeftX() + GUI_SCALE*18;
+            return gui.getButtonX();
         }
         this.undoButton.y = function() {
             return gui.getBottomY() - GUI_SCALE*7;
@@ -41,7 +41,7 @@ class Gui {
         //undo all
         this.undoAllButton = new Button(CARD_WIDTH, 3, 1, "UNDO ALL");
         this.undoAllButton.x = function() {
-            return gui.getLeftX() + GUI_SCALE*(19+CARD_WIDTH);
+            return gui.getButtonX() + GUI_SCALE*(1+CARD_WIDTH);
         }
         this.undoAllButton.y = function() {
             return gui.getBottomY() - GUI_SCALE*7;
@@ -64,20 +64,59 @@ class Gui {
         this.CARD_HEIGHT = CARD_HEIGHT*GUI_SCALE;
     }
 
-    getLeftX() {
-        return (canvas.width/2-GUI_SCALE*22)*0.8;
-    }
-
     getBottomY() {
         let y = canvas.height - GUI_SCALE*(CARD_HEIGHT+13);
         return y;
     }
 
+    getDiscardWidth() {
+        return GUI_SCALE*(15+CARD_WIDTH);
+    }
+
+    getButtonsWidth() {
+        return GUI_SCALE*(1+2*CARD_WIDTH);
+    }
+
+    /**
+     * Free horizontal space on the screen after adding together the width of the buttons and the width of the discard pile
+     */
+    getFreeSpace() {
+        let taken = this.getDiscardWidth() + GUI_SCALE*6 + this.getButtonsWidth();
+        return canvas.width - taken;
+    }
+
+    /**
+     * Get the total width of all components on the screen: discard pile, buttons and player list
+     * Player list is shifted right if there's enough horizontal space to add it.
+     */
+    getTotalWidth() {
+        let freeSpace = this.getFreeSpace();
+        if(freeSpace > GUI_SCALE + this.getButtonsWidth()) freeSpace -= GUI_SCALE + this.getButtonsWidth();
+        return canvas.width - freeSpace;
+    }
+
+    /**
+     * X position of the discard pile on screen
+     * (Far left)
+     */
+    getDiscardX() {
+        return (canvas.width - this.getTotalWidth())/2 + GUI_SCALE * 2;
+    }
+
+    /**
+     * X position of the buttons on screen
+     * (right of discard pile)
+     */
+    getButtonX() { 
+        return this.getDiscardX() + this.getDiscardWidth() + GUI_SCALE*2;
+    }
+
+    /**
+     * X position of the player list (left of the smaller player rectangles)
+     * (Far right)
+     */
     getPlayerX() {
-        let x = canvas.width - GUI_SCALE*(2+2*CARD_WIDTH);
-        let maxX = this.getLeftX() + GUI_SCALE*(22+CARD_WIDTH*2);
-        if(x>maxX) x = maxX;
-        return x;
+        return canvas.width - (canvas.width - this.getTotalWidth())/2 - GUI_SCALE * 2 - this.getButtonsWidth();
     }
     
     /**
@@ -94,17 +133,17 @@ class Gui {
         ctx.globalAlpha = 1;
 
         let bottomY = this.getBottomY();
-        if(LAYOUT_TYPE == 0) bottomY -= GUI_SCALE*3;
-        let leftX = this.getLeftX();
+        let leftX = this.getDiscardX();
 
         //draw discard pile
         if(game.topCards.length>0) {
-            let x = leftX + (game.topCards.length-1)*GUI_SCALE*2;
+            let gap = (this.getDiscardWidth()-this.CARD_WIDTH)/game.topCards.length;
+            let x = leftX + (game.topCards.length-1)*gap;
             let y = bottomY-this.CARD_HEIGHT;
             for(let image of game.topCards) {
                 ctx.drawImage(image, x, y, this.CARD_WIDTH, this.CARD_HEIGHT);
                 ctx.drawImage(this.transparentImage,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
-                x-=GUI_SCALE*2;
+                x-=gap;
             }
         }
         //draw planning cards
@@ -122,17 +161,10 @@ class Gui {
 
         //draw the number of cards you have
         let bigFontSize = Math.round(GUI_SCALE*2);
-        leftX += GUI_SCALE*18;
-
-        if(LAYOUT_TYPE == 0) {
-            drawText(game.turnString,canvas.width/2,bottomY+GUI_SCALE*3,"center",bigFontSize,undefined,true);
-        }
-        else {
-            drawText(game.turnString,leftX,bottomY-GUI_SCALE/2,"left",bigFontSize,undefined,true);
-        }
+        drawText(game.turnString,canvas.width/2,bottomY+GUI_SCALE*3,"center",bigFontSize);
 
         //DRAW BUTTONS
-
+        leftX = this.getButtonX();
         //finish button
         if(game.planningCards.length==0) {
             let pickupAmount = 1;
@@ -159,14 +191,14 @@ class Gui {
             let py = GUI_SCALE;
             let pheight = GUI_SCALE*5;
             let pgap = GUI_SCALE;
-            let pwidth = this.CARD_WIDTH*3+GUI_SCALE;
+            let pwidth = this.CARD_WIDTH + this.getButtonsWidth();
 
             let i = game.turn;
             let skip = game.skip;
             do {
                 let player = game.players[i];
                 //box
-                ctx.fillStyle = i==game.yourId ? "#fdf10b" : "#038cde";
+                ctx.fillStyle = i==game.yourId ? "#06cbbf" : "#038cde";
                 ctx.strokeStyle = "#fff";
                 ctx.lineJoin = "round";
                 ctx.lineWidth = pheight*0.1;
@@ -177,14 +209,15 @@ class Gui {
                 ctx.strokeRect(px, py, pwidth, pheight);
                 
                 //name
-                drawText(player.name,px+fontSize/2,py+pheight/2+fontSize/3,"left",fontSize,fontSize*5,true);
-                drawText(player.nCards,px+pwidth-fontSize/2,py+pheight/2+fontSize/3,"right",fontSize,fontSize*4,true);
+                drawText(player.name,px+fontSize/2,py+pheight/2+fontSize/3,"left",fontSize,fontSize*5,"#fff");
+                drawText(player.nCards,px+pwidth-fontSize/2,py+pheight/2+fontSize/3,"right",fontSize,fontSize*4,"#fff");
 
                 //adjust size for non-turn players
                 if(i==game.turn) {
                     //draw extra details about the person's turn
                     if(game.turnsLeft>1) {
-                        drawText(game.turnsLeft + " turns", px+fontSize*6,py+pheight*0.3,"left",fontSize/2,undefined,true);
+                        console.log("got here");
+                        drawText(game.turnsLeft + " turns", px+fontSize*6,py+pheight*0.3,"left",fontSize/2,undefined,"#fff");
                     }
 
 
@@ -219,7 +252,7 @@ class Gui {
         //draw pickup amount
         if(game.pickupAmount>0) {
             drawText("+" + game.pickupAmount, this.getPlayerX()-GUI_SCALE, GUI_SCALE*8.75, 
-                    "right", bigFontSize, this.CARD_WIDTH,true);
+                    "right", bigFontSize, this.CARD_WIDTH);
         }
 
         //DRAW CARD SCROLLER
@@ -250,7 +283,7 @@ class Gui {
         let bottomY = this.getBottomY();
         if(LAYOUT_TYPE == 0) bottomY -= GUI_SCALE*3;
         bottomY-=this.CARD_HEIGHT;
-        let leftX = this.getLeftX();
+        let leftX = this.getDiscardX();
 
         let wait = 0;
         let maxWaitTime = 1200;

@@ -263,7 +263,7 @@ class OptionsWindow {
         ctx.strokeRect(x,y,width,height);
 
         //draw text
-        drawText("Choose option",x + GUI_SCALE*(CARD_WIDTH+2),y+GUI_SCALE*3,"center",GUI_SCALE*2,undefined,true);
+        drawText("Choose option",x + GUI_SCALE*(CARD_WIDTH+2),y+GUI_SCALE*3,"center",GUI_SCALE*2);
     }
 
     click() {

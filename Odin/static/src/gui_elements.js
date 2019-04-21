@@ -1,20 +1,20 @@
-function drawText(text, x, y, textAlign, fontSize, maxWidth, outline, colour) {
-    if(outline == undefined) {
+function drawText(text, x, y, textAlign, fontSize, maxWidth, colour) {
+    /*if(outline == undefined) {
         outline = false;
-    }
+    }*/
     if(colour == undefined) {
         colour = "#fff";
     }
     ctx.font = "bold italic " + Math.round(fontSize) + "px Arial";
     ctx.textAlign = textAlign;
-
-    if(outline){
-        ctx.strokeStyle = "#000";
-        ctx.lineWidth = GUI_SCALE*0.2;
-        ctx.strokeText(text,x,y,maxWidth);
-    }
     ctx.fillStyle = colour;
-    ctx.fillText(text,x,y,maxWidth);
+    ctx.fillText(text,Math.floor(x),Math.floor(y),maxWidth);
+
+    /*if(outline){
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = GUI_SCALE*0.1;
+        ctx.strokeText(text,Math.floor(x),Math.floor(y),maxWidth);
+    }*/
 }
 
 class Button {
@@ -49,7 +49,7 @@ class Button {
         ctx.fillRect(x,y,this.width * GUI_SCALE,this.height * GUI_SCALE);
         ctx.strokeRect(x,y,this.width * GUI_SCALE,this.height * GUI_SCALE);
         drawText(this.text,x+this.width*GUI_SCALE/2,y+this.height*GUI_SCALE/2+GUI_SCALE*this.fontSize*0.38,"center",
-                this.fontSize*GUI_SCALE,this.width*GUI_SCALE-GUI_SCALE*this.fontSize, false, ctx.strokeStyle);
+                this.fontSize*GUI_SCALE,this.width*GUI_SCALE-GUI_SCALE*this.fontSize, ctx.strokeStyle);
     }
 }
 
@@ -133,7 +133,7 @@ class CardStackPanel {
         if(stackSize>1) {
             ctx.fillStyle = "#fff";
             ctx.fillRect(x+GUI_SCALE/2, y+GUI_SCALE*CARD_HEIGHT-GUI_SCALE*2,GUI_SCALE*5,GUI_SCALE*2.5);
-            drawText("x" + stackSize, x+GUI_SCALE, y + GUI_SCALE*CARD_HEIGHT, "left", GUI_SCALE * 2, undefined, false, "#000");
+            drawText("x" + stackSize, x+GUI_SCALE, y + GUI_SCALE*CARD_HEIGHT, "left", GUI_SCALE * 2, undefined, "#000");
         }
 
         //draw transparent overlay if you aren't allowed to play
