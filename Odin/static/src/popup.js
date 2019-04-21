@@ -268,7 +268,7 @@ class OptionsWindow {
 
     click() {
         this.optionsScroller.click();
-        if(this.cancelButton.isMouseOverThis() || mousePosition.x < this.getX() || mousePosition.x > this.getX()+this.getWidth() || mousePosition.y < this.getY() || mousePosition.y > this.getY()+this.getHeight()) {
+        if(this.cancelButton.isMouseOverThis() || mousePosition.x < this.getX() || mousePosition.x > this.getX()+this.getWidth() || mousePosition.y < this.getY() || mousePosition.y > this.getY()+canvas.height/2) {
             gui.cancelOptions();
         }
     }

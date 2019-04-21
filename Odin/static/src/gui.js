@@ -49,7 +49,7 @@ class Gui {
 
 
         //SCROLLER
-        this.cardScroller = new ScrollArea(new Container(),CARD_WIDTH+1,CARD_HEIGHT+9,3,0);
+        this.cardScroller = new ScrollArea(new Container(),CARD_WIDTH+1,CARD_HEIGHT+6,3,0);
     }
 
     updateCards(cardPanels) {
