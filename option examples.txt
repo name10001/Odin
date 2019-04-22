@@ -13,7 +13,7 @@ card options:
 		"title": "-3 card",
 		"number to pick": 3,
 		"display time": -1,  # display time in seconds. -1 if infinite
-		"show at end of turn": false,
+		"show at end of turn": true,
 	}
 }
 
@@ -64,7 +64,7 @@ Thanos card:
 			"title": "Thanos card, pick half your cards to be discarded",
 			"number to pick": 2,
 			"display time": -1,
-			"show at end of turn": false,
+			"show at end of turn": true,
 		}
 	]
 }
@@ -84,7 +84,7 @@ Do justly card:
 			"title": "Pick a card to give",
 			"number to pick": 1,
 			"display time": -1,
-			"show at end of turn": false,
+			"show at end of turn": true,
 		}
 	],
 	[
@@ -98,7 +98,7 @@ Do justly card:
 			"title": "Pick who to give it to",
 			"number to pick": 1,
 			"display time": -1,
-			"show at end of turn": false,
+			"show at end of turn": true,
 		}
 	]
 }
