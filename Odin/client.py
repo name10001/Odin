@@ -8,6 +8,7 @@ class Client:
         self.sid = sid
         self.waiting_room = waiting_room
         self.connected = True
+        self.listeners = []
 
     def send_message(self, message_type, data):
         """
@@ -19,16 +20,13 @@ class Client:
         with fs.app.app_context():
             fs.socket_io.emit(message_type, data, room=self.sid)
 
-    def give_message(self, message_type, data):
+    def give_message(self, *args, **keyword_args):
         """
         When a client sends a message to the back-end, it should come here to be processed
-        :param message_type: the type of message sent to the server, e.g. "pickup" or "uno"
-        :param data: data that gone along with it, e.g. message="play card", data=("swap_hand_card_15", "Jeff").
-        This is not always used.
         :return: None
         """
-        # idk what to do here
-        pass
+        for listener in self.listeners:
+            listener(*args, **keyword_args)
 
     def is_connected(self):
         """
@@ -38,4 +36,4 @@ class Client:
         return self.connected
 
     def get_sid(self):
-        return sid
+        return self.sid

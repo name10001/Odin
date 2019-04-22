@@ -1,5 +1,4 @@
 from cards.abstract_card import AbstractCard
-import cards
 import random
 import math
 import settings
@@ -666,7 +665,7 @@ class Plus(AbstractCard):
         self.old_pickup = self.game.pickup
         self.pickup_amount = self.game.pickup
 
-        played_on = self.game.get_underlying_card()
+        played_on = self.game.get_top_card()
 
         if hasattr(played_on, 'pickup_amount'):  # allows you to place multiple and duplicate the effects
             self.pickup_amount = played_on.pickup_amount
@@ -715,7 +714,7 @@ class FuckYou(AbstractCard):
         self.old_pickup = self.game.pickup
         self.pickup_amount = self.game.pickup
 
-        played_on = self.game.get_underlying_card()
+        played_on = self.game.get_top_card()
 
         if hasattr(played_on, 'pickup_amount'):  # allows you to place multiple and duplicate the effects
             self.pickup_amount = played_on.pickup_amount
@@ -768,21 +767,17 @@ class Genocide(AbstractCard):
 
         category, to_ban = self.option.split(' ', 1)
 
-        # remove from deck
+        # remove from deck and players hands
         if category == "type":
             self.game.deck.ban_type(to_ban)
+            for game_player in self.game.players:
+                game_player.hand.remove_type(to_ban)
         elif category == "colour":
             self.game.deck.ban_colour(to_ban)
-
-        # remove from players
-        for game_player in self.game.players:
-            to_remove = []
-            for card in game_player.hand:
-                if (category == "colour" and card.get_colour() == to_ban) \
-                        or (category == "type" and card.get_type() == to_ban):
-                    to_remove.append(card)
-            for card in to_remove:
-                game_player.hand.remove_card(card)
+            for game_player in self.game.players:
+                game_player.hand.remove_colour(to_ban)
+        else:
+            print("Warning: got unknown category:", category)
 
 
 class Jesus(AbstractCard):
@@ -851,10 +846,8 @@ class Thanos(AbstractCard):
 
 class CopyCat(AbstractCard):
     NAME = "COPYCAT"
-    CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/copy_cat.png'
     NUMBER_IN_DECK = 10
-    CARD_TYPE = "Copy Cat"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "When you play this card, it becomes whatever card it is placed on and all effects apply for that card."
     COMPATIBILITY_DESCRIPTION = "Can be played on any card. After play, the compatibility rules of the card below are copied."
@@ -870,13 +863,13 @@ class CopyCat(AbstractCard):
         return player.is_turn()
     
     def prepare_card(self, player):
-        card_below = self.game.get_underlying_card()
-        copy_class = card_below.__class__
-        if(hasattr(card_below, 'copied')):
-            copy_class = card_below.copied.__class__
+        top_card = self.game.get_top_card()
+        if isinstance(top_card, CopyCat):
+            copy_class = top_card.copied.__class__
+        else:
+            copy_class = top_card.__class__
         self.copied = copy_class(self.game)  # copied card is re-initialized
-        self.copied.option = self.option
-        self.copied.id = self.id
+        self.copied.set_option(self.option)
         self.copied.prepare_card(player)
 
     def undo_prepare_card(self, player):
@@ -892,39 +885,30 @@ class CopyCat(AbstractCard):
         return self.copied.ready_to_play()
     
     def can_play_with(self, player, card, is_first_card):
-        if self.copied != None:
-            return self.copied.can_play_with(player, card, is_first_card)
-        else:
-            return super.can_play_with(player, card, is_first_card)
+        """
+        Can play with other copycats and whatever the copyed card can be played with
+        """
+        return isinstance(card, CopyCat) or self.copied.can_play_with(player, card, is_first_card)
     
     def is_compatible_with(self, player, card):
-        if self.copied == None:
+        if self.copied is None:
             return True
         else:
             return self.copied.is_compatible_with(player, card)
 
+    def get_options(self, player):
+        if self.copied is not None:
+            return self.copied.get_options(player)
+        elif self.game.get_top_card() is self:  # needed for when game starts with a copy cat card on the played pile
+            return None
+        else:
+            return self.game.get_top_card().get_options(player)
+
     def get_colour(self):
         return self.colour
-    
+
     def get_type(self):
         return self.type
-
-    def get_options(self, player):
-        # get the top card
-        top_card = self.game.played_cards.get_top_card()
-        if len(self.game.planning_pile) > 0:
-            top_card = self.game.planning_pile.get_top_card()
-        
-        top_class = top_card.__class__
-        if(hasattr(top_card,'copied')):
-            top_class = top_card.copied.__class__
-        
-        if top_class == None:
-            return None
-        
-        duplicate_top = top_class(self.game)
-
-        return duplicate_top.get_options(player)
 
 
 class ColourChooser(AbstractCard):
@@ -955,8 +939,8 @@ class ColourChooser(AbstractCard):
         """
         if card.get_colour() == "white" or card.get_colour() == "purple":
             return False
-        
-        return True
+        else:
+            return True
 
     def play_card(self, player):
         if self.is_option_valid(player, self.option) is False:
@@ -990,12 +974,10 @@ class ColourSwapper(AbstractCard):
 
     def get_options(self, player):
         # get the top card
-        top_card = self.game.played_cards.get_top_card()
-        if len(self.game.planning_pile) > 0:
-            top_card = self.game.planning_pile.get_top_card()
+        top_card = self.game.get_top_card()
 
-        if cards.colours_are_compatible(top_card.get_colour(), self.COLOUR_1) \
-                and cards.colours_are_compatible(top_card.get_colour(), self.COLOUR_2):
+        if self.colours_are_compatible(top_card.get_colour(), self.COLOUR_1) \
+                and self.colours_are_compatible(top_card.get_colour(), self.COLOUR_2):
             # if both colours are compatible with the bottom, then you get to choose the outcome
             return {
                 self.COLOUR_1: self.COLOUR_1.capitalize(),
@@ -1006,18 +988,18 @@ class ColourSwapper(AbstractCard):
 
     def is_compatible_with(self, player, card):
         if self.colour == "colour swapper":  # compatible if either of the card colours are compatible
-            if cards.colours_are_compatible(card.get_colour(), self.COLOUR_1) \
-                    or cards.colours_are_compatible(card.get_colour(), self.COLOUR_2):
+            if self.colours_are_compatible(card.get_colour(), self.COLOUR_1) \
+                    or self.colours_are_compatible(card.get_colour(), self.COLOUR_2):
                 return True
         else:
             return super().is_compatible_with(player, card)
 
     def prepare_card(self, player):
-        played_on = self.game.get_underlying_card()
+        played_on = self.game.get_top_card()
 
         # change colour to the opposite of the one you played on
-        first_compatible = cards.colours_are_compatible(played_on.get_colour(), self.COLOUR_1)
-        second_compatible = cards.colours_are_compatible(played_on.get_colour(), self.COLOUR_2)
+        first_compatible = self.colours_are_compatible(played_on.get_colour(), self.COLOUR_1)
+        second_compatible = self.colours_are_compatible(played_on.get_colour(), self.COLOUR_2)
         if first_compatible and not second_compatible:
             self.colour = self.COLOUR_2
         elif second_compatible and not first_compatible:
@@ -1036,15 +1018,28 @@ class ColourSwapper(AbstractCard):
     
     def can_be_played_with(self, player):
         """
-        can only play multiple if the card is compatible with the top card in the planning pile
+        Can only play multiple if the card is compatible with the top card in the planning pile
         """
         card = self.game.planning_pile.get_top_card()
 
         if card.get_type() != self.get_type():
             return False
         
-        return cards.colours_are_compatible(card.get_colour(), self.COLOUR_1) \
-            or cards.colours_are_compatible(card.get_colour(), self.COLOUR_2)
+        return self.colours_are_compatible(card.get_colour(), self.COLOUR_1) \
+            or self.colours_are_compatible(card.get_colour(), self.COLOUR_2)
+
+    @staticmethod
+    def colours_are_compatible(colour_1, colour_2):
+        if colour_1 == colour_2:
+            return True
+        elif colour_1 == "white":
+            return colour_2 != "black"
+        elif colour_1 == "black":
+            return colour_2 != "white" and colour_2 != "purple"
+        elif colour_1 == "purple":
+            return colour_2 == "white"
+        else:
+            return colour_2 == "white" or colour_2 == "black"
 
 
 class RedBlueSwapper(ColourSwapper):

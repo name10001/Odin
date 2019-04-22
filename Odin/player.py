@@ -1,4 +1,3 @@
-import cards
 import flask_server as fs
 from cards.card_collection import CardCollection
 import settings
@@ -15,16 +14,6 @@ class Player:
         self.turns_left = 1
         self.state = "not turn"
 
-    def play_cards(self, cards):
-        """
-        Takes cards out of players hand and adds it to the games played cards
-        Also preforms all actions of the card and checks if its allowed to be played
-        :param cards: array of card to play. 2d array. e.g. [["id", "option"], ["id", "option"], etc]
-        :return: None
-        """
-        for card in cards:
-            self.play_card(card[0], card[1])
-
     def play_card(self, card_id, chosen_option):
         """
         Takes card out of players hand and adds it to the games played cards
@@ -37,14 +26,15 @@ class Player:
         if card is None:
             return
         if self._can_be_played(card):
+            # do not change order
             self.hand.remove_card(card)
             card.set_option(chosen_option)
-            self.game.planning_pile.add_card(card)
             card.prepare_card(self)
+            self.game.planning_pile.add_card(card)
 
     def finish_turn(self):
         """
-
+        Call this to finish the players turn
         :return: boolean, False of the player should have another turn
         """
         # checks if cards can be played:
@@ -65,7 +55,7 @@ class Player:
 
         # send wining message to everyone but this player
         if self.had_won():
-            self.game.send_to_all_players("message for player", self.name + " has won!")
+            self.game.send_to_all_players("popup message", self.name + " has won!")
 
         # check if player has any more turns left.
         self.turns_left -= 1
@@ -83,7 +73,6 @@ class Player:
         It is sent in the form of JSON to the client where the information is rendered using javascript
         :return: None
         """
-        print("updating player!")
         json_to_send = {
             "cards on deck": [],
             "your cards": [],
@@ -141,9 +130,17 @@ class Player:
                 }
             )
 
-        # send players client
+        self.send_message("card update", json_to_send)
+
+    def send_message(self, message_type, data):
+        """
+        Sends the players web browser a message
+        :param message_type: e.g. "card update" or "popup message"
+        :param data: data to send the client with the message. Can be None
+        :return: None
+        """
         with fs.app.app_context():
-            fs.socket_io.emit("card update", json_to_send, room=self.sid)
+            fs.socket_io.emit(message_type, data, room=self.sid)
 
     def pickup(self):
         """
@@ -222,9 +219,6 @@ class Player:
         :return:
         """
         self.state = "playing turn"
-
-    # def is_uno(self):
-    #    return self.said_uno_previous_turn or self.said_uno_this_turn
 
     def set_sid(self, sid):
         self.sid = sid

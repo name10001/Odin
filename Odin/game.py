@@ -104,7 +104,6 @@ class Game:
         """
         for player in self.players:
             if player != exclude:
-                print("from update players in game")
                 player.card_update()
 
     def message(self, message, data):
@@ -124,7 +123,10 @@ class Game:
         start_time = time()
 
         if message == "play card":
-            player.play_cards(data)
+            player.play_card(data[0], data[0])
+        elif message == "play cards":
+            for card in data:
+                player.play_card(card[0], card[1])
         elif message == "finished turn":
             if player == self.turn:
                 self.next_turn()
@@ -140,31 +142,15 @@ class Game:
         self.update_players()
         print("updated player, took: " + str(time() - start_time) + "s")
 
-    def send_to_all_players(self, message_type, data):
-        # for player in self.players:
-        #     player.client.send_message(message_type, data)
-        with fs.app.app_context():
-            fs.socket_io.emit(
-                message_type,
-                data,
-                room=self.game_id + "_game"
-            )
-
-    def initial_connection(self):
+    def get_top_card(self):
         """
-        subscribes the player to game updates
-        :return: None
+        Gets the top card from the planning pile.
+        If there is no card there, then it gets the top card from the played cards pile
+        :return:
         """
-        self.waiting_room.modify()
-        self.get_player(session['player_id']).set_sid(request.sid)
-        join_room(self.game_id + "_game")
-        self.get_player(session['player_id']).card_update()
-
-    def get_underlying_card(self):
-        card_below = self.planning_pile.get_underlying_card()
-        if card_below is None:
-            card_below = self.played_cards.get_top_card()
-        return card_below
+        if len(self.planning_pile) > 0:
+            return self.planning_pile[-1]
+        return self.played_cards[-1]
 
     def get_card_below(self, card):
         card_below = self.planning_pile.card_below(card)
@@ -174,3 +160,20 @@ class Game:
 
     def get_id(self):
         return self.game_id
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # NETWORKING STUFF
+
+    def send_to_all_players(self, message_type, data):
+        for player in self.players:
+            player.send_message(message_type, data)
+
+    def initial_connection(self):
+        """
+        subscribes the player to game updates
+        :return: None
+        """
+        self.waiting_room.modify()
+        player = self.get_player(session['player_id'])
+        player.set_sid(request.sid)
+        player.card_update()

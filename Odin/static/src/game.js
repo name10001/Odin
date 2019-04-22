@@ -161,7 +161,7 @@ class Game {
 
     playCard(card_array){
         // leave picked_option as null unless needed
-        socket.emit("game message", GAME_ID, "play card", card_array);
+        socket.emit("game message", GAME_ID, "play cards", card_array);
     }
 
     /*sayUno(){

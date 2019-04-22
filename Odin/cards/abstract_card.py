@@ -122,8 +122,9 @@ class AbstractCard:
     def is_option_valid(self, player, option, is_player=False):
         """
         Is the given option valid
+        :param player: the player who owns the card
         :param option: option to test
-        :param is_player: Is the given option supposed to be a player id
+        :param is_player: (only used internally) Is the given option supposed to be a player id
         :return: True if it is valid, False if its not
         """
         if option is 0:
