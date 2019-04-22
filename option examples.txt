@@ -103,26 +103,6 @@ Do justly card:
 	]
 }
 
-Slavery card:
-{
-	"options" [
-		{
-			"type": "cards",  # or "string"
-			"choices":
-				{
-					"blue1": "/static/cards/1_blue.png",
-					"blue5": "/static/cards/5_blue.png",
-					"green6": "/static/cards/6_green.png",
-					"green7": "/static/cards/7_green.png",
-				}
-			"title": "Slavery card, pick a card to play",
-			"number to pick": 1,
-			"display time": -1,
-			"show at end of turn": true,
-		}
-	]
-}
-
 Jew card:
 {
 	"options" [
