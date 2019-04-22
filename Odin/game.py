@@ -160,6 +160,12 @@ class Game:
         join_room(self.game_id + "_game")
         self.get_player(session['player_id']).card_update()
 
+    def get_underlying_card(self):
+        card_below = self.planning_pile.get_underlying_card()
+        if card_below is None:
+            card_below = self.played_cards.get_top_card()
+        return card_below
+
     def get_card_below(self, card):
         card_below = self.planning_pile.card_below(card)
         if card_below is None:

@@ -101,6 +101,11 @@ class CardCollection:
             return self[index-1]
         else:
             return None
+    
+    def get_underlying_card(self):
+        if len(self) < 2:
+            return None
+        return self.cards_list[-2]
 
     def get_cards(self):
         return self.cards_list

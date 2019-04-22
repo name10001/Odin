@@ -666,7 +666,7 @@ class Plus(AbstractCard):
         self.old_pickup = self.game.pickup
         self.pickup_amount = self.game.pickup
 
-        played_on = self.game.get_card_below(self)
+        played_on = self.game.get_underlying_card()
 
         if hasattr(played_on, 'pickup_amount'):  # allows you to place multiple and duplicate the effects
             self.pickup_amount = played_on.pickup_amount
@@ -715,7 +715,7 @@ class FuckYou(AbstractCard):
         self.old_pickup = self.game.pickup
         self.pickup_amount = self.game.pickup
 
-        played_on = self.game.get_card_below(self)
+        played_on = self.game.get_underlying_card()
 
         if hasattr(played_on, 'pickup_amount'):  # allows you to place multiple and duplicate the effects
             self.pickup_amount = played_on.pickup_amount
@@ -849,6 +849,84 @@ class Thanos(AbstractCard):
         player.hand.set_cards(random.choices(player.hand.get_cards(), k=int(math.ceil(len(player.hand) / 2))))
 
 
+class CopyCat(AbstractCard):
+    NAME = "COPYCAT"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/copy_cat.png'
+    NUMBER_IN_DECK = 10
+    CARD_TYPE = "Copy Cat"
+    MULTI_COLOURED = False
+    EFFECT_DESCRIPTION = "When you play this card, it becomes whatever card it is placed on and all effects apply for that card."
+    COMPATIBILITY_DESCRIPTION = "Can be played on any card. After play, the compatibility rules of the card below are copied."
+    CAN_BE_ON_PICKUP = True
+
+    def __init__(self, game):
+        super().__init__(game)
+        self.copied = None
+        self.colour = "black"
+        self.type = "Copy Cat"
+
+    def can_be_played_on(self, player, card):
+        return player.is_turn()
+    
+    def prepare_card(self, player):
+        card_below = self.game.get_underlying_card()
+        copy_class = card_below.__class__
+        if(hasattr(card_below, 'copied')):
+            copy_class = card_below.copied.__class__
+        self.copied = copy_class(self.game)  # copied card is re-initialized
+        self.copied.option = self.option
+        self.copied.id = self.id
+        self.copied.prepare_card(player)
+
+    def undo_prepare_card(self, player):
+        self.copied.undo_prepare_card(player)
+        self.copied = None
+    
+    def play_card(self, player):
+        self.copied.play_card(player)
+        self.colour = self.copied.get_colour()
+        self.type = self.copied.get_type()
+    
+    def ready_to_play(self):
+        return self.copied.ready_to_play()
+    
+    def can_play_with(self, player, card, is_first_card):
+        if self.copied != None:
+            return self.copied.can_play_with(player, card, is_first_card)
+        else:
+            return super.can_play_with(player, card, is_first_card)
+    
+    def is_compatible_with(self, player, card):
+        if self.copied == None:
+            return True
+        else:
+            return self.copied.is_compatible_with(player, card)
+
+    def get_colour(self):
+        return self.colour
+    
+    def get_type(self):
+        return self.type
+
+    def get_options(self, player):
+        # get the top card
+        top_card = self.game.played_cards.get_top_card()
+        if len(self.game.planning_pile) > 0:
+            top_card = self.game.planning_pile.get_top_card()
+        
+        top_class = top_card.__class__
+        if(hasattr(top_card,'copied')):
+            top_class = top_card.copied.__class__
+        
+        if top_class == None:
+            return None
+        
+        duplicate_top = top_class(self.game)
+
+        return duplicate_top.get_options(player)
+
+
 class ColourChooser(AbstractCard):
     NAME = "Colour Chooser"
     CARD_IMAGE_URL = 'cards/color_swapper.png'
@@ -935,7 +1013,7 @@ class ColourSwapper(AbstractCard):
             return super().is_compatible_with(player, card)
 
     def prepare_card(self, player):
-        played_on = self.game.get_card_below(self)
+        played_on = self.game.get_underlying_card()
 
         # change colour to the opposite of the one you played on
         first_compatible = cards.colours_are_compatible(played_on.get_colour(), self.COLOUR_1)

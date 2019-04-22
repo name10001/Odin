@@ -24,7 +24,7 @@ all_cards = [
     Pickup10, Pickup4, PickupTimes2, Pawn, FeelingBlue, Plus, FuckYou, AtomicBomb, PickupPower2, Pickup100,
     EA15, EA20, EA30,
     BlankBro, Happiness,
-    SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos,
+    SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos, CopyCat,
     ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, Nazi, 
     ColourChooser, RedBlueSwapper, RedGreenSwapper, RedYellowSwapper, GreenBlueSwapper,
     BlueYellowSwapper, YellowGreenSwapper, BlackWhiteSwapper
