@@ -22,7 +22,7 @@ all_cards = [
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
     BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck,
     Pickup10, Pickup4, PickupTimes2, Pawn, FeelingBlue, Plus, FuckYou, AtomicBomb, PickupPower2, Pickup100,
-    EA15, EA20, EA30,
+    EA15, EA20, EA30, EA100,
     BlankBro, Happiness,
     SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos, CopyCat,
     ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, Nazi, 

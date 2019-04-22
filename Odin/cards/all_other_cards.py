@@ -352,6 +352,7 @@ class EA(AbstractCard):
 
 
 class EA15(EA):
+    NUMBER_IN_DECK = 1.5
     NAME = "EA $15"
     CARD_IMAGE_URL = 'cards/ea_15.png'
     NUMBER_NEEDED = 15
@@ -367,6 +368,13 @@ class EA30(EA):
     NAME = "EA $30"
     CARD_IMAGE_URL = 'cards/ea_30.png'
     NUMBER_NEEDED = 30
+
+
+class EA100(EA):
+    NUMBER_IN_DECK = 0.1
+    NAME = "EA $100"
+    CARD_IMAGE_URL = 'cards/ea_100.png'
+    NUMBER_NEEDED = 100
 
 
 # ~~~~~~~~~~~~~~
@@ -516,7 +524,7 @@ class Pawn(AbstractCard):
     NAME = "Pawn"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pawn.png'
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 0.1
     CARD_TYPE = "Pawn"
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Ends a pickup chain and causes no one to pickup."
@@ -581,7 +589,7 @@ class Capitalist(AbstractCard):
     NAME = "Capitalist"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/capitalist.png'
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 0.8
     CARD_TYPE = "Capitalist"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "The player with the most cards has the amount of cards in their hand doubled."
@@ -635,7 +643,7 @@ class FeelingBlue(AbstractCard):
     NAME = "Feeling Blue"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/feeling_blue.png'
-    NUMBER_IN_DECK = 1
+    NUMBER_IN_DECK = 2
     CARD_TYPE = "Feeling Blue"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon playing this card, you will be forced to pickup 5 cards."
@@ -648,7 +656,7 @@ class Plus(AbstractCard):
     NAME = "Plus"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/plus_wild.png'
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 0.5
     CARD_TYPE = "Plus"
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
@@ -690,7 +698,7 @@ class FuckYou(AbstractCard):
     NAME = "Fuck You"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/fuck_you.png'
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 1
     CARD_TYPE = "Fuck You"
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
@@ -784,7 +792,7 @@ class Jesus(AbstractCard):
     NAME = "Jesus"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/jesus.png'
-    NUMBER_IN_DECK = 2
+    NUMBER_IN_DECK = 0.5
     CARD_TYPE = "Jesus"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose any person (including yourself) to reset their entire hand " \
@@ -847,7 +855,7 @@ class Thanos(AbstractCard):
 class CopyCat(AbstractCard):
     NAME = "COPYCAT"
     CARD_IMAGE_URL = 'cards/copy_cat.png'
-    NUMBER_IN_DECK = 10
+    NUMBER_IN_DECK = 1
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "When you play this card, it becomes whatever card it is placed on and all effects apply for that card."
     COMPATIBILITY_DESCRIPTION = "Can be played on any card. After play, the compatibility rules of the card below are copied."

@@ -90,6 +90,7 @@ class Player:
                 {
                     "card image url": card.get_url(),
                     "card id": card.get_id(),
+                    "name": card.get_name(),
                     "card can be undone": False
                 }
             )
@@ -103,6 +104,7 @@ class Player:
             json_to_send["planning pile"].append(
                 {
                     "card image url": card.get_url(),
+                    "name": card.get_name(),
                     "card id": card.get_id()
                 }
             )
@@ -113,6 +115,7 @@ class Player:
                 {
                     "card id": card.get_id(),
                     "card image url": card.get_url(),
+                    "name": card.get_name(),
                     "can be played": self._can_be_played(card),
                     "options": card.get_options(self)
                 }
