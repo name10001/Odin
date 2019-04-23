@@ -9,11 +9,13 @@ class Player {
  * A stack of cards in your hand
  */
 class CardStack {
-    constructor(id, name, url, allowedToPlay, options) {
+    constructor(id, name, url, allowedToPlay, pickOptionsSeparately, options) {
         this.allowedToPlay = allowedToPlay;
         this.options = options;
         this.url = url;
         this.name = name;
+        console.log(this.name + ": " + pickOptionsSeparately);
+        this.pickOptionsSeparately = pickOptionsSeparately;
         this.card = game.allCards[name];
         this.image = game.allImages[url];
         this.optionStrings = [];
@@ -113,7 +115,7 @@ class Game {
                     continue;
                 }
             }
-            lastStack = new CardStack(card['card id'], card['name'], card['card image url'], card['can be played'], card['options']);
+            lastStack = new CardStack(card['card id'], card['name'], card['card image url'], card['can be played'], card['pick options separately'], card['options']);
             this.yourStacks.push(lastStack);
             cardStackPanels.push(new CardStackPanel(lastStack));
         }
@@ -127,7 +129,7 @@ class Game {
         //update planning cards
         this.planningCards.length = 0;
         for(let card of update['planning pile']) {
-            this.planningCards.push(new CardStack(card['card id'], card['name'], card['card image url'], true,null));
+            this.planningCards.push(new CardStack(card['card id'], card['name'], card['card image url'], true, false, null));
         }
 
         //update pickup

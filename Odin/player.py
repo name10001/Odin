@@ -117,6 +117,7 @@ class Player:
                     "card image url": card.get_url(),
                     "name": card.get_name(),
                     "can be played": self._can_be_played(card),
+                    "pick options separately": card.pick_options_separately(),
                     "options": card.get_options(self)
                 }
             )

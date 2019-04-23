@@ -200,3 +200,9 @@ class AbstractCard:
 
     def can_be_on_pickup(self):
         return self.CAN_BE_ON_PICKUP
+    
+    def pick_options_separately(self):
+        """
+        Should the player pick a separate option for each card? If so, the play all button will be disabled
+        """
+        return False

@@ -126,7 +126,7 @@ class CardStackPanel {
             GUI_SCALE*CARD_WIDTH, GUI_SCALE*CARD_HEIGHT);
         
         this.helpButton.draw(x+GUI_SCALE, y + (CARD_HEIGHT+1.5)*GUI_SCALE, true);
-        this.playallButton.draw(x+GUI_SCALE*4.5, y + (CARD_HEIGHT+1.5)*GUI_SCALE, this.cardStack.allowedToPlay);
+        this.playallButton.draw(x+GUI_SCALE*4.5, y + (CARD_HEIGHT+1.5)*GUI_SCALE, this.cardStack.allowedToPlay && !this.cardStack.pickOptionsSeparately);
         //draw stack size
         if(stackSize>1) {
             ctx.fillStyle = "#fff";
@@ -159,7 +159,7 @@ class CardStackPanel {
         }
         //clicked the play all button
         else if(x > GUI_SCALE*4.5 && x<GUI_SCALE*CARD_WIDTH &&
-            y > GUI_SCALE*(CARD_HEIGHT+1.5) && y<GUI_SCALE*(CARD_HEIGHT+4.5)) {
+            y > GUI_SCALE*(CARD_HEIGHT+1.5) && y<GUI_SCALE*(CARD_HEIGHT+4.5) && !this.cardStack.pickOptionsSeparately) {
             gui.playAllCards(this.cardStack, cardX, cardY);
         }
     }
