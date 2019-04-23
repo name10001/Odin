@@ -10,7 +10,6 @@ Example of protocol in 'options example.txt' - Isaac
 * Slavery card - Isaac
 
 ### Thomas:
-* fix EA card on nazi card
 * Separate URLs from card_info. This can be used for cards that change there image as they are being played
 * More dynamic random card selection. The probabilities depend on how many cards you already have in your hand, and there can be a maximum amount of a particular type of card before it won't be added to your hand again (EG: max 5 free turn cards, max 1 communist card).
 
