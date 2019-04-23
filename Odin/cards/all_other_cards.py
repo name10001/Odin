@@ -1,6 +1,7 @@
 from cards.abstract_card import AbstractCard
 import random
 import math
+from flask import *
 from decimal import Decimal
 import settings
 
@@ -956,10 +957,12 @@ class ColourChooser(AbstractCard):
     EFFECT_DESCRIPTION = "Allows you to change the colour to any of the 4 given colours: red, green, yellow or blue."
     COMPATIBILITY_DESCRIPTION = "Before play: Regular black card, compatible with any black, red, green, blue or " \
                                 + "yellow cards. After play: Compatible any cards of the colour picked and black cards."
+    ADDITIONAL_URLS = ['cards/choose_yellow.png','cards/choose_blue.png','cards/choose_red.png','cards/choose_green.png']
 
     def __init__(self, game):
         super().__init__(game)
         self.colour = "black"
+        self.url = self.CARD_IMAGE_URL
 
     def get_options(self, player):
         return {
@@ -978,14 +981,22 @@ class ColourChooser(AbstractCard):
         else:
             return True
 
-    def play_card(self, player):
+    def prepare_card(self, player):
         if self.is_option_valid(player, self.option) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
         self.colour = self.option
+        self.url = 'cards/choose_' + self.option + '.png'
+
+    def undo_prepare_card(self, player):
+        self.url = self.CARD_IMAGE_URL
+        self.colour = "black"
 
     def get_colour(self):
         return self.colour
+    
+    def get_url(self):
+        return url_for('static', filename=escape(self.url))
     
 
 class ColourSwapper(AbstractCard):
@@ -1007,6 +1018,7 @@ class ColourSwapper(AbstractCard):
     def __init__(self, game):
         super().__init__(game)
         self.colour = "colour swapper"  # gets changed to a particular colour after being played
+        self.url = self.CARD_IMAGE_URL
 
     def get_options(self, player):
         # get the top card
@@ -1045,9 +1057,12 @@ class ColourSwapper(AbstractCard):
                 print(self.option, "is not a valid option for", self.get_name())
                 return
             self.colour = self.option
+        
+        self.url = 'cards/switch_' + self.colour + '.png'
     
     def undo_prepare_card(self, player):
         self.colour = "colour swapper"
+        self.url = self.CARD_IMAGE_URL
 
     def get_colour(self):
         return self.colour
@@ -1063,6 +1078,9 @@ class ColourSwapper(AbstractCard):
         
         return self.colours_are_compatible(card.get_colour(), self.COLOUR_1) \
             or self.colours_are_compatible(card.get_colour(), self.COLOUR_2)
+    
+    def get_url(self):
+        return url_for('static', filename=escape(self.url))
 
     @staticmethod
     def colours_are_compatible(colour_1, colour_2):
@@ -1130,3 +1148,4 @@ class BlackWhiteSwapper(ColourSwapper):
                                 + "After play: Depends on the colour you selected. Black is compatible with any red, " \
                                 + "blue, green, yellow and black cards. " \
                                 + "White is compatible with any red, blue, green, yellow, purple and white cards. "
+    ADDITIONAL_URLS = ['cards/switch_black.png','cards/switch_white.png','cards/switch_red.png','cards/switch_yellow.png','cards/switch_green.png','cards/switch_blue.png']

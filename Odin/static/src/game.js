@@ -9,12 +9,13 @@ class Player {
  * A stack of cards in your hand
  */
 class CardStack {
-    constructor(id, url, allowedToPlay, options) {
+    constructor(id, name, url, allowedToPlay, options) {
         this.allowedToPlay = allowedToPlay;
         this.options = options;
         this.url = url;
-        this.card = game.allCards[url];
-        this.image = game.allCards[url].image;
+        this.name = name;
+        this.card = game.allCards[name];
+        this.image = game.allImages[url];
         this.optionStrings = [];
         this.optionIds = [];
         this.cardIds = [id];
@@ -52,15 +53,14 @@ class CardStack {
  * Represents a card type. Has a name, image and some info to be used for its description
  */
 class Card {
-    constructor(card) {
+    constructor(card, image) {
         this.name = card["name"];
         this.colour = card["colour"];
         this.type = card["type"];
         this.compatiblePickup = card["can be on pickup"];
         this.compatibilityDescription = card["compatibility description"];
         this.effectDescription = card["effect description"];
-        this.image = new Image;
-        this.image.src = card["url"];
+        this.image = image;
     }
 }
 
@@ -84,9 +84,14 @@ class Game {
         this.cantPlayReason = null;  // is null if you are allowed to have your turn with the cards you have played
 
         //build a list of all cards - use the url as the key
+        this.allImages = [];
+        for(let url of ALL_URLS) {
+            this.allImages[url] = new Image;
+            this.allImages[url].src = url;
+        }
         this.allCards = [];
         for(let card of ALL_CARDS) {
-            this.allCards[card["url"]] = new Card(card); 
+            this.allCards[card["name"]] = new Card(card, this.allImages[card["url"]]); 
         }
     }
 
@@ -103,12 +108,12 @@ class Game {
             if(card['can be played']) canPlay++;
             //this.yourCards.push(new CardStack(card['card id'], card['card image url'], card['can be played'], card['options']));
             if(lastStack != null) {
-                if(lastStack.url == card['card image url']) {
+                if(lastStack.name == card['name']) {
                     lastStack.addCard(card['card id']);
                     continue;
                 }
             }
-            lastStack = new CardStack(card['card id'], card['card image url'], card['can be played'], card['options']);
+            lastStack = new CardStack(card['card id'], card['name'], card['card image url'], card['can be played'], card['options']);
             this.yourStacks.push(lastStack);
             cardStackPanels.push(new CardStackPanel(lastStack));
         }
@@ -117,12 +122,12 @@ class Game {
         //update cards at the top
         this.topCards.length = 0;
         for(let card of update['cards on deck']) {
-            this.topCards.push(this.allCards[card['card image url']].image);
+            this.topCards.push(this.allImages[card['card image url']]);
         }
         //update planning cards
         this.planningCards.length = 0;
         for(let card of update['planning pile']) {
-            this.planningCards.push(new CardStack(card['card id'], card['card image url'], true,null));
+            this.planningCards.push(new CardStack(card['card id'], card['name'], card['card image url'], true,null));
         }
 
         //update pickup
