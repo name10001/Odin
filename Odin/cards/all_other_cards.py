@@ -907,19 +907,13 @@ class Odin(AbstractCard):
                                 "yellow blue and black cards."
 
     def can_be_played_on(self, player, card):
-        return len(player.hand) == 1 and super().can_be_played_on(player, card)
+        if super().can_be_played_on(player, card) is False:
+            return False
 
-    def can_be_played_on(self, player, card):
-        if player.is_turn() is False:
-            return False
-        if self.game.pickup != 0 and self.can_be_on_pickup() is False:
-            return False
-        
         for your_card in player.hand:
             if not isinstance(your_card, Odin):
                 return False
-
-        return card.is_compatible_with(player, self) and self.is_compatible_with(player, card)
+        return True
 
 
 class Thanos(AbstractCard):
