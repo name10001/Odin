@@ -1,6 +1,7 @@
 from cards.abstract_card import AbstractCard
 import random
 import math
+from decimal import Decimal
 import settings
 
 # ~~~~~~~~~~~~~~
@@ -212,10 +213,14 @@ class PickupPower2(AbstractCard):
                          + "If played outside of a pickup chain this will do nothing."
 
     def prepare_card(self, player):
-        self.game.pickup **= 2
+        self.old_pickup = self.game.pickup
+        print('%.2E' % Decimal(self.game.pickup))
+        if '%.2E' % Decimal(self.game.pickup) == "INF":
+            return  # for some reason python still wants to calculate the square when it's a massive af number so I gotta add this in to prevent crashes
+        self.game.pickup *= self.game.pickup
 
     def undo_prepare_card(self, player):
-        self.game.pickup = int(self.game.pickup ** 0.5)
+        self.game.pickup = self.old_pickup  # float conversion doesn't work on very large numbers so we have to do this
 
 class PickupFactorial(AbstractCard):
     NUMBER_IN_DECK = 0.01
@@ -532,7 +537,7 @@ class AtomicBomb(AbstractCard):
     CARD_TYPE = "Atomic Bomb"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = "cards/explosion.png"
-    PICKUPCARDS = ["Atomic Bomb", "^2", "+2", "+4", "+10", "+100", "x2", "Plus", "Fuck You", "Pawn"]
+    PICKUPCARDS = ["Atomic Bomb", "^2", "+2", "+4", "+10", "+100", "x2", "x Squared", "Factorial", "Plus", "Fuck You", "Pawn"]
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Allows you to place as many pickup cards as you like with this card on your turn."

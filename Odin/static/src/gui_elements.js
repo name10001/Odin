@@ -118,9 +118,7 @@ class CardStackPanel {
     }
 
     draw(x,y,width,height) {
-
         let stackSize = this.cardStack.size();
-        if(stackSize>=100) stackSize = 99;//if you have >=100 of one type, just say 99
 
         //draw card
         ctx.drawImage(this.cardStack.image,
@@ -133,7 +131,7 @@ class CardStackPanel {
         if(stackSize>1) {
             ctx.fillStyle = "#fff";
             ctx.fillRect(x+GUI_SCALE/2, y+GUI_SCALE*CARD_HEIGHT-GUI_SCALE*2,GUI_SCALE*5,GUI_SCALE*2.5);
-            drawText("x" + stackSize, x+GUI_SCALE, y + GUI_SCALE*CARD_HEIGHT, "left", GUI_SCALE * 2, undefined, "#000");
+            drawText("x" + stackSize, x+GUI_SCALE, y + GUI_SCALE*CARD_HEIGHT, "left", GUI_SCALE * 2, GUI_SCALE*4, "#000");
         }
 
         //draw transparent overlay if you aren't allowed to play
