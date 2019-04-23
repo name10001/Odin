@@ -200,18 +200,13 @@ class Player:
     def add_new_cards(self, number):
         """
         gets new cards from deck and adds them to hand
-        Does not update player
         Does not check for pickup chains of weather its the players turn
         if you want that, use pickup(self) instead
         :param number: number of cards to add
         :return: None
         """
         number = min(settings.player_card_limit - len(self.hand), int(number))
-
-        for i in range(0, number):
-            weights = self.game.deck.calculate_weights(self)
-            card = self.game.deck.get_random_card(weights)
-            self.hand.add_card(card(self.game))
+        self.game.deck.add_random_cards_to(self.hand, number)
 
     def had_won(self):
         """
