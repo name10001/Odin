@@ -68,7 +68,11 @@ class CardCollection:
             if self.cards_list[card_index] is card:
                 return card_index
             else:
-                raise RuntimeError("Can't find the given card, ether card is not in collection or it changes its order")
+                if card in self.cards_list.index:
+                    print("WARNING! card changed its location while in the card collection")
+                    return self.cards_list.index(card)
+                else:
+                    raise RuntimeError("Can't find the given card")
         return self.cards_list.index(card)
 
     def remove_card(self, card, remove_type=True, remove_colour=True):

@@ -863,6 +863,15 @@ class FreeTurn(AbstractCard):
         player.turns_left -= 1
 
 
+class Odin(AbstractCard):
+    NAME = "Thanos"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/back.png'
+    NUMBER_IN_DECK = 0.5
+    CARD_TYPE = "Odin"
+    MULTI_COLOURED = False
+
+
 class Thanos(AbstractCard):
     NAME = "Thanos"
     CARD_COLOUR = "purple"

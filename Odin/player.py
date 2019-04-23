@@ -167,6 +167,7 @@ class Player:
         if len(self.game.planning_pile) == 0 or not self.is_turn():
             return
         card_to_remove = self.game.planning_pile.get_top_card()
+        # do not change order
         self.game.planning_pile.remove_card(card_to_remove)
         card_to_remove.undo_prepare_card(self)
         self.hand.add_card(card_to_remove)

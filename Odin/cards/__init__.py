@@ -15,8 +15,9 @@ all_cards = [
     BlueSix, GreenSix, PurpleSix, RedSix, YellowSix, 
     BlueSeven, GreenSeven, PurpleSeven, RedSeven, YellowSeven, 
     BlueEight, GreenEight, PurpleEight, RedEight, YellowEight, 
-    BlueNine, GreenNine, PurpleNine, RedNine, YellowNine, 
-    BlueSixtyNine, GreenSixtyNine, PurpleSixtyNine, RedSixtyNine, YellowSixtyNine, 
+    BlueNine, GreenNine, PurpleNine, RedNine, YellowNine,
+    BlueSixtyNine, GreenSixtyNine, PurpleSixtyNine, RedSixtyNine, YellowSixtyNine,
+
     BlueSkip, GreenSkip, PurpleSkip, RedSkip, YellowSkip, WhiteSkip, BlackSkip,
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
     BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck,
@@ -24,7 +25,7 @@ all_cards = [
     Pickup10, Pickup4, PickupTimes2, Pawn, FeelingBlue, Plus, FuckYou, AtomicBomb, PickupPower2, Pickup100, PickupFactorial,
     EA15, EA20, EA30, EA100,
     BlankBro, Happiness,
-    SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos, CopyCat,
+    SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos, Odin, CopyCat,
     ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, Nazi, 
     ColourChooser, RedBlueSwapper, RedGreenSwapper, RedYellowSwapper, GreenBlueSwapper,
     BlueYellowSwapper, YellowGreenSwapper, BlackWhiteSwapper
