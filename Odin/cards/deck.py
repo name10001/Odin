@@ -16,12 +16,14 @@ class Deck:
         card_weights = []
         if player is None:
             for card in self.cards:
-                card_weights.append(card.CARD_FREQUENCY.medium_hand)  # null player just use the medium hand size by default
+                # None player just use the medium hand size by default
+                card_weights.append(card.CARD_FREQUENCY.medium_hand)
         else:
             n_cards = len(player.hand)
             for card in self.cards:
                 n_this_type = player.hand.number_of_type(card.CARD_TYPE)
                 card_weights.append(card.CARD_FREQUENCY.get_frequency(n_cards, n_this_type))
+
         return card_weights
 
     def get_random_card(self, weights):
@@ -50,6 +52,7 @@ class Deck:
         for card in self.cards.copy():
             if card.CARD_COLOUR == card_color:
                 self.cards.remove(card)
+
         self.calculate_weights()
 
     def ban_type(self, card_type):
@@ -66,4 +69,5 @@ class Deck:
         for card in self.cards.copy():
             if card.CARD_TYPE == card_type:
                 self.cards.remove(card)
+
         self.calculate_weights()

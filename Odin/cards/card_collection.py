@@ -36,7 +36,8 @@ class CardCollection:
         :param card: card to add
         :return: None
         """
-        # O(log n)
+        # if sorted: O(n * log n)
+        # if not sorted: O(1)
         # n = number of cards already in deck
 
         if self.should_sort:
@@ -137,7 +138,6 @@ class CardCollection:
             return len(self.card_types[card_type])
         else:
             return 0
-        
 
     def set_cards(self, cards):
         """

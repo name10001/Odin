@@ -210,8 +210,8 @@ class Player:
 
         for i in range(0, number):
             weights = self.game.deck.calculate_weights(self)
-            card_type = self.game.deck.get_random_card(weights)
-            self.hand.add_card(card_type(self.game))
+            card = self.game.deck.get_random_card(weights)
+            self.hand.add_card(card(self.game))
 
     def had_won(self):
         """
