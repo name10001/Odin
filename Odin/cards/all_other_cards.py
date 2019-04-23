@@ -343,7 +343,7 @@ class EA(AbstractCard):
     MULTI_COLOURED = False
 
     def __init__(self, game):
-        self.still_needs = self.NUMBER_NEEDED
+        self.still_needs = 0
         super().__init__(game)
 
     def can_play_with(self, player, card, is_first_card):
@@ -351,33 +351,28 @@ class EA(AbstractCard):
             return True
         if card.get_type().isnumeric() is False:
             return False
-        num = int(card.get_type())
-        if self.game.planning_pile[0].still_needs - num < 0:
-            return False
+        if isinstance(self.game.planning_pile[0], EA):
+            num = int(card.get_type())
+            if self.game.planning_pile[0].still_needs - num < 0:
+                return False
         return True
 
     def ready_to_play(self):
-        if self.game.planning_pile[0].still_needs != 0:
+        if isinstance(self.game.planning_pile[0], EA) and self.game.planning_pile[0].still_needs != 0:
             return False, "$" + str(self.game.planning_pile[0].still_needs) + " remaining..."
         else:
             return True, None
 
     def prepare_card(self, player):
         if len(self.game.planning_pile) == 0:
-            return
-        if hasattr(self.game.planning_pile[0], 'still_needs'):
+            self.still_needs = self.NUMBER_NEEDED
+        elif isinstance(self.game.planning_pile[0], EA):
             self.game.planning_pile[0].still_needs += self.NUMBER_NEEDED
-        else:
-            # In this case it's either a nazi card or a filthy sharon card.
-            # Give the bottom card the "still_needs" attribute.
-            self.game.planning_pile[0].still_needs = self.NUMBER_NEEDED
-        self.still_needs = 0
+            self.still_needs = 0
 
     def undo_prepare_card(self, player):
-        if len(self.game.planning_pile) == 0:
-            return
-        self.game.planning_pile[0].still_needs -= self. NUMBER_NEEDED
-        self.still_needs = self.NUMBER_NEEDED
+        if len(self.game.planning_pile) != 0 and isinstance(self.game.planning_pile[0], EA):
+            self.game.planning_pile[0].still_needs -= self.NUMBER_NEEDED
 
 
 class EA15(EA):
