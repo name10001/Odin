@@ -168,8 +168,8 @@ class Player:
             return
         card_to_remove = self.game.planning_pile.get_top_card()
         self.game.planning_pile.remove_card(card_to_remove)
-        self.hand.add_card(card_to_remove)
         card_to_remove.undo_prepare_card(self)
+        self.hand.add_card(card_to_remove)
 
     def undo_all(self):
         """
