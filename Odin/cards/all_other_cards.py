@@ -645,12 +645,16 @@ class SwapHand(AbstractCard):
     NAME = "Swap Hand"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/swap_hand.png'
-    CARD_FREQUENCY = CardFrequency(0, 1, max_cards=1)
+    CARD_FREQUENCY = CardFrequency(0, 10, max_cards=2)
     CARD_TYPE = "Swap Hand"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a player and you will swap your entire hand with theirs upon play."
 
     def get_options(self, player):
+        for card in self.game.planning_pile:
+            if isinstance(card, SwapHand):
+                return None
+
         options = {}
         for other_player in self.game.players:
             if other_player != player:
@@ -658,6 +662,9 @@ class SwapHand(AbstractCard):
         return options
 
     def play_card(self, player):
+        if self.option is None:
+            return
+        
         if self.is_option_valid(player, self.option, is_player=True) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
@@ -892,7 +899,7 @@ class Odin(AbstractCard):
     NAME = "Odin"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/back.png'
-    CARD_FREQUENCY = CardFrequency(0.5, max_cards=1)
+    CARD_FREQUENCY = CardFrequency(1, max_cards=1)
     CARD_TYPE = "Odin"
     MULTI_COLOURED = False
     COMPATIBILITY_DESCRIPTION = "Can only be played as your last card. When it becomes your last card, " \
@@ -901,6 +908,18 @@ class Odin(AbstractCard):
 
     def can_be_played_on(self, player, card):
         return len(player.hand) == 1 and super().can_be_played_on(player, card)
+
+    def can_be_played_on(self, player, card):
+        if player.is_turn() is False:
+            return False
+        if self.game.pickup != 0 and self.can_be_on_pickup() is False:
+            return False
+        
+        for your_card in player.hand:
+            if not isinstance(your_card, Odin):
+                return False
+
+        return card.is_compatible_with(player, self) and self.is_compatible_with(player, card)
 
 
 class Thanos(AbstractCard):
