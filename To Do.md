@@ -21,6 +21,7 @@ Example of protocol in 'options example.txt' - Isaac
 * update card options. Example of protocol in 'options example.txt'
 * Add more documentation
 * Add settings to the waiting room for things like the starting number of cards
+* Make a proper end screen
 * Trash cards
 * Elevator card
 * Jew card
