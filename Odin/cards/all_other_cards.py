@@ -890,6 +890,7 @@ class Odin(AbstractCard):
     CARD_FREQUENCY = CardFrequency(0.5, max_cards=1)
     CARD_TYPE = "Odin"
     MULTI_COLOURED = False
+    COMPATIBILITY_DESCRIPTION = "Can only be played as your last card. When it becomes your last card, regular black card rules apply, such that it can be played on red, green, yellow blue and black cards."
 
 
 class Thanos(AbstractCard):
@@ -905,14 +906,11 @@ class Thanos(AbstractCard):
         """
         removes half the players cards at random
         """
-        i = 0
-        total = len(player.hand)
-        while i < total:
-            if random.choice((True, False)):
-                player.hand.remove_card(index=i)
-                total -= 1
-            else:
-                i += 1
+        num_to_remove = math.ceil(len(player.hand)/2)
+        for i in range(0, num_to_remove):
+            index = random.randrange(0, total)
+            player.hand.remove_card(index=index)
+            total -= 1
 
 
 class CopyCat(AbstractCard):
