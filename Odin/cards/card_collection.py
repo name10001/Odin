@@ -87,6 +87,7 @@ class CardCollection:
         """
         # if sorted: O(log n)
         # if not sorted: O(n)
+        # if removing from index: O(1)
         # n = number of cards already in deck
 
         if card is None and index is None:
