@@ -149,7 +149,7 @@ class Pickup10(AbstractCard):
 
 
 class Pickup100(AbstractCard):
-    NUMBER_IN_DECK = 0.1
+    NUMBER_IN_DECK = 0.05
     CARD_TYPE = "+100"
     NAME = "Pickup 100"
     CARD_COLOUR = "black"
@@ -201,9 +201,9 @@ class PickupTimes2(AbstractCard):
 
 
 class PickupPower2(AbstractCard):
-    NUMBER_IN_DECK = 0.001
-    CARD_TYPE = "^2"
-    NAME = "Pickup ^2"
+    NUMBER_IN_DECK = 0.05
+    CARD_TYPE = "x Squared"
+    NAME = "Pickup x Squared"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/power2_wild.png'
     CAN_BE_ON_PICKUP = True
@@ -216,6 +216,28 @@ class PickupPower2(AbstractCard):
 
     def undo_prepare_card(self, player):
         self.game.pickup = int(self.game.pickup ** 0.5)
+
+class PickupFactorial(AbstractCard):
+    NUMBER_IN_DECK = 0.01
+    CARD_TYPE = "Factorial"
+    NAME = "Pickup Factorial"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'cards/factorial.png'
+    CAN_BE_ON_PICKUP = True
+    MULTI_COLOURED = False
+    EFFECT_DESCRIPTION = "If a pickup chain is active, this card will take the factorial of the pickup chain's value. " \
+                         + "If played outside of a pickup chain this will begin a pickup chain of value 1, since 0! = 1."
+    MAX_FACTORIAL = 171  # 171! is when it reaches infinity
+
+    def prepare_card(self, player):
+        self.old_pickup = self.game.pickup
+        if self.game.pickup > self.MAX_FACTORIAL:
+            self.game.pickup = self.MAX_FACTORIAL
+        
+        self.game.pickup = math.factorial(self.game.pickup)
+
+    def undo_prepare_card(self, player):
+        self.game.pickup = self.old_pickup
 
 
 # ~~~~~~~~~~~~~~
@@ -319,36 +341,35 @@ class EA(AbstractCard):
         super().__init__(game)
 
     def can_play_with(self, player, card, is_first_card):
-        if is_first_card is False:
-            return False
         if card.get_type() == 'EA':
             return True
         if card.get_type().isnumeric() is False:
             return False
         num = int(card.get_type())
-        if self.still_needs - num < 0:
+        if self.game.planning_pile[0].still_needs - num < 0:
             return False
         return True
 
     def ready_to_play(self):
-        if self.still_needs != 0:
-            return False, "$" + str(self.still_needs) + " remaining..."
+        if self.game.planning_pile[0].still_needs != 0:
+            return False, "$" + str(self.game.planning_pile[0].still_needs) + " remaining..."
         else:
             return True, None
 
     def prepare_card(self, player):
         if len(self.game.planning_pile) == 0:
             return
-        if self.game.planning_pile[0].get_type() == 'EA' and self.game.planning_pile[0] is not self:
+        if hasattr(self.game.planning_pile[0], 'still_needs'):
             self.game.planning_pile[0].still_needs += self.NUMBER_NEEDED
-            self.still_needs = 0
+        else:  # In this case it's either a nazi card or a filthy sharon card. Give the bottom card the "still_needs" attribute.
+            self.game.planning_pile[0].still_needs = self.NUMBER_NEEDED
+        self.still_needs = 0
 
     def undo_prepare_card(self, player):
         if len(self.game.planning_pile) == 0:
             return
-        if self.game.planning_pile[0].get_type() == 'EA' and self.game.planning_pile[0] is not self:
-            self.game.planning_pile[0].still_needs -= self. NUMBER_NEEDED
-            self.still_needs = self. NUMBER_NEEDED
+        self.game.planning_pile[0].still_needs -= self. NUMBER_NEEDED
+        self.still_needs = self.NUMBER_NEEDED
 
 
 class EA15(EA):
@@ -853,10 +874,12 @@ class Thanos(AbstractCard):
 
 
 class CopyCat(AbstractCard):
-    NAME = "COPYCAT"
+    NAME = "Copy Cat"
     CARD_IMAGE_URL = 'cards/copy_cat.png'
     NUMBER_IN_DECK = 1
     MULTI_COLOURED = False
+    CARD_COLOUR = "black"  # keep this as black, otherwise it shows up as Abstract in the genocide card
+    CARD_TYPE = "Copy Cat"
     EFFECT_DESCRIPTION = "When you play this card, it becomes whatever card it is placed on and all effects apply for that card."
     COMPATIBILITY_DESCRIPTION = "Can be played on any card. After play, the compatibility rules of the card below are copied."
     CAN_BE_ON_PICKUP = True

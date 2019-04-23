@@ -8,13 +8,13 @@ class NumberCard(AbstractCard):
     def prepare_card(self, player):
         if len(self.game.planning_pile) == 0:
             return
-        if self.game.planning_pile[0].get_type() == "EA":
+        if hasattr(self.game.planning_pile[0], 'still_needs'):
             self.game.planning_pile[0].still_needs -= int(self.get_type())
 
     def undo_prepare_card(self, player):
         if len(self.game.planning_pile) == 0:
             return
-        if self.game.planning_pile[0].get_type() == "EA":
+        if hasattr(self.game.planning_pile[0], 'still_needs'):
             self.game.planning_pile[0].still_needs += int(self.get_type())
 
 # ~~~~~~~~~~~~~~
