@@ -683,7 +683,7 @@ class Plus(AbstractCard):
     NAME = "Plus"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/plus_wild.png'
-    CARD_FREQUENCY = CardFrequency(1.5, 1, 0.5, 0.2)
+    CARD_FREQUENCY = CardFrequency(1, 1, 0.5, 0.1)
     CARD_TYPE = "Plus"
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
@@ -725,7 +725,7 @@ class FuckYou(AbstractCard):
     NAME = "Fuck You"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/fuck_you.png'
-    CARD_FREQUENCY = CardFrequency(1.5, 1, 0.5, 0.2)
+    CARD_FREQUENCY = CardFrequency(2, 1.5, 0.75, 0.15)
     CARD_TYPE = "Fuck You"
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
@@ -776,26 +776,31 @@ class Genocide(AbstractCard):
     NAME = "Genocide"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/genocide.png'
-    CARD_FREQUENCY = CardFrequency(0.5, max_cards=3)
+    CARD_FREQUENCY = CardFrequency(0.4, max_cards=2)
     MULTI_COLOURED = False
     CARD_TYPE = "Genocide"
     EFFECT_DESCRIPTION = "Pick any colour or type of card to entirely removed from the game. " \
                          + "All cards of this colour/type will be removed from everyone's hand " \
                          + "and will never be able to be picked up in the future of this game."
-    UNBANNABLE_COLOURS = ["black"]
+    UNBANNABLE_COLOURS = ["black","colour swapper"]  # colour swapper is banned by type instead
     UNBANNABLE_TYPES = []
 
     def get_options(self, player):
         options = {}
-        for card_colour in self.game.deck.not_banned_colours:
+        for card_colour in self.game.deck.all_colours:
             if card_colour not in self.UNBANNABLE_COLOURS:
                 options["colour " + card_colour] = "Colour: " + card_colour.capitalize()
-        for card_type in self.game.deck.not_banned_types:
+        for card_type in self.game.deck.all_types:
             if card_type not in self.UNBANNABLE_TYPES:
                 options["type " + card_type] = "Type: " + card_type
         return options
 
-    def play_card(self, player):
+    def prepare_card(self, player):
+        """
+        This will update the list of avaliable cards
+        """
+        self.old_cards = self.game.deck.cards.copy()
+
         if self.is_option_valid(player, self.option) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
@@ -805,14 +810,30 @@ class Genocide(AbstractCard):
         # remove from deck and players hands
         if category == "type":
             self.game.deck.ban_type(to_ban)
+        elif category == "colour":
+            self.game.deck.ban_colour(to_ban)
+        else:
+            print("Warning: got unknown category:", category)
+    
+    def undo_prepare_card(self, player):        
+        self.game.deck.set_cards(self.old_cards)
+    
+    def play_card(self, player):
+        """
+        On play this will remove all the types from everyone's hands
+        """
+        category, to_ban = self.option.split(' ', 1)
+
+        # remove from deck and players hands
+        if category == "type":
             for game_player in self.game.players:
                 game_player.hand.remove_type(to_ban)
         elif category == "colour":
-            self.game.deck.ban_colour(to_ban)
             for game_player in self.game.players:
                 game_player.hand.remove_colour(to_ban)
         else:
             print("Warning: got unknown category:", category)
+
 
 
 class Jesus(AbstractCard):
@@ -846,7 +867,7 @@ class Jesus(AbstractCard):
 
 
 class FreeTurn(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(5, 4, 2, 1, max_cards=5)
+    CARD_FREQUENCY = CardFrequency(4, 3, 1, 1, max_cards=4)
     CARD_TYPE = "Free Turn"
     NAME = "Free Turn"
     CARD_COLOUR = "black"
@@ -864,10 +885,10 @@ class FreeTurn(AbstractCard):
 
 
 class Odin(AbstractCard):
-    NAME = "Thanos"
+    NAME = "Odin"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/back.png'
-    NUMBER_IN_DECK = 0.5
+    CARD_FREQUENCY = CardFrequency(0.5, max_cards=1)
     CARD_TYPE = "Odin"
     MULTI_COLOURED = False
 
@@ -876,7 +897,7 @@ class Thanos(AbstractCard):
     NAME = "Thanos"
     CARD_COLOUR = "purple"
     CARD_IMAGE_URL = 'cards/thanos.png'
-    CARD_FREQUENCY = CardFrequency(0, 0, 1, 1, max_cards=3)
+    CARD_FREQUENCY = CardFrequency(0, 0, 1, 1, max_cards=2)
     CARD_TYPE = "Thanos"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon play, half of the cards in your hand will randomly disappear."
@@ -891,7 +912,7 @@ class Thanos(AbstractCard):
 class CopyCat(AbstractCard):
     NAME = "Copy Cat"
     CARD_IMAGE_URL = 'cards/copy_cat.png'
-    CARD_FREQUENCY = CardFrequency(3, 2, 2, 2, max_cards=3)
+    CARD_FREQUENCY = CardFrequency(3, 2, 1, 1, max_cards=3)
     MULTI_COLOURED = False
     CARD_COLOUR = "black"  # keep this as black, otherwise it shows up as Abstract in the genocide card
     CARD_TYPE = "Copy Cat"
@@ -1149,7 +1170,7 @@ class YellowGreenSwapper(ColourSwapper):
 
 class BlackWhiteSwapper(ColourSwapper):
     NAME = "Black/White Colour Swapper"
-    CARD_FREQUENCY = CardFrequency(2)
+    CARD_FREQUENCY = CardFrequency(1.5)
     CARD_IMAGE_URL = 'cards/black_white.png'
     COLOUR_1 = "black"
     COLOUR_2 = "white"
