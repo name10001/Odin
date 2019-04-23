@@ -347,6 +347,9 @@ class EA(AbstractCard):
         super().__init__(game)
 
     def can_play_with(self, player, card, is_first_card):
+        """
+        Can only be played with numbers that are less than self.still_needs and other EA cards
+        """
         if card.get_type() == 'EA':
             return True
         if card.get_type().isnumeric() is False:
@@ -358,12 +361,22 @@ class EA(AbstractCard):
         return True
 
     def ready_to_play(self):
-        if isinstance(self.game.planning_pile[0], EA) and self.game.planning_pile[0].still_needs != 0:
-            return False, "$" + str(self.game.planning_pile[0].still_needs) + " remaining..."
+        """
+        If the player still needs to play more cards on top,
+        this will return a message telling them how much more they need
+        This will only return False on the bottom card since all other cards set there still_needs to zero
+        """
+        if self.still_needs != 0:
+            return False, "$" + str(self.still_needs) + " remaining..."
         else:
             return True, None
 
     def prepare_card(self, player):
+        """
+        If this is the first card played this turn, the amount will be NUMBER_NEEDED
+        If not it checks if the first card is an EA card, if it is it adds NUMBER_NEEDED to that card's still_needs
+        If both of the above are untrue it does nothing
+        """
         if len(self.game.planning_pile) == 0:
             self.still_needs = self.NUMBER_NEEDED
         elif isinstance(self.game.planning_pile[0], EA):
@@ -371,6 +384,10 @@ class EA(AbstractCard):
             self.still_needs = 0
 
     def undo_prepare_card(self, player):
+        """
+        Removes self.NUMBER_NEEDED from bottom_card.still_needed
+        If there is not bottom card or the bottom card is not an EA card it does nothing
+        """
         if len(self.game.planning_pile) != 0 and isinstance(self.game.planning_pile[0], EA):
             self.game.planning_pile[0].still_needs -= self.NUMBER_NEEDED
 
