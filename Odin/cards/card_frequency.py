@@ -1,0 +1,52 @@
+import cards
+
+class CardFrequency:
+    SMALL_HAND = 10  # Hand size between 0 - SMALL_HAND has frequency small_hand
+    MEDIUM_HAND = 40  # Hand size between SMALL_HAND+1 - MEDIUM_HAND has frequency medium_hand
+    LARGE_HAND = 120  # Hand size between MEDIUM_HAND+1 - LARGE_HAND has frequency large_hand
+    # Hand size of at least LARGE_HAND+1 has frequency massive_hand
+
+    #Frequency is automatically set to zero if you have at least max_cards of this card in your hand
+
+    def __init__(self, small_hand, medium_hand=-1, large_hand=-1, massive_hand=-1, max_cards=-1):
+        """
+        Card Frequency.
+        If you call CardFrequency(n), then all frequencies will be set n,
+        otherwise you can specify individual frequencies for all the hand sizes
+        You can also specify a max_cards, where you will no longer be able to randomly draw this card if you have at least the max number of cards of that type.
+        Set to -1 if you are allowed to draw as many cards as you like
+        """
+        self.small_hand = small_hand
+
+        if medium_hand == -1:
+            self.medium_hand = self.small_hand
+        else:
+            self.medium_hand = medium_hand
+        
+        if large_hand == -1:
+            self.large_hand = self.medium_hand
+        else:
+            self.large_hand = large_hand
+        
+        if massive_hand == -1:
+            self.massive_hand = self.large_hand
+        else:
+            self.massive_hand = massive_hand
+        
+        self.max_cards = max_cards
+    
+    def get_frequency(self, n_cards, n_this_type):
+        """
+        Get the frequency of this card in the deck, given you have n_cards in your hand and n_this_type of this type of card
+        """
+        if n_this_type >= self.max_cards and self.max_cards != -1:
+            return 0
+
+        if n_cards <= CardFrequency.SMALL_HAND:
+            return self.small_hand
+        elif n_cards <= CardFrequency.MEDIUM_HAND:
+            return self.medium_hand
+        elif n_cards <= CardFrequency.LARGE_HAND:
+            return self.large_hand
+        else:
+            return self.massive_hand

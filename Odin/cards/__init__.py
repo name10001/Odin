@@ -1,6 +1,7 @@
-from random import choices
+from random import choice
 from cards.the_boring_cards import *
 from cards.all_other_cards import *
+from cards.card_frequency import *
 from cards.deck import Deck
 from flask import url_for
 
@@ -30,15 +31,11 @@ all_cards = [
     BlueYellowSwapper, YellowGreenSwapper, BlackWhiteSwapper
 ]
 
-
-card_weights = [card.NUMBER_IN_DECK for card in all_cards]
-
 # find information about all cards
 all_card_info = []
 all_urls = []
 all_types = []
 all_colours = []
-size_of_deck = 0
 for card in all_cards:
     card_info = {
         "url": '/static/' + card.CARD_IMAGE_URL,  # default url
@@ -54,7 +51,6 @@ for card in all_cards:
         all_urls.append('/static/' + url)
 
     all_card_info.append(card_info)
-    size_of_deck += card.NUMBER_IN_DECK
     if card.CARD_TYPE not in all_types:
         all_types.append(card.CARD_TYPE)
     if card.CARD_COLOUR not in all_colours:
@@ -120,22 +116,10 @@ def get_card_index(card):
     return miscellaneous_category_index
 
 
-def get_random_cards(number):
-    """
-    gets a new random card and returns it
-    This does not take into account that it may be a banned type
-    use a Deck class for that
-    :param number: the number of cards to return
-    :return: an uninitiated card array
-    """
-    return choices(all_cards, weights=card_weights, k=number)
-
-
 def get_random_card():
     """
-    gets a new random card and returns it
-    This does not take into account that it may be a banned type
-    use a Deck class for that
+    gets a random card with no weights.
+    This shouldn't really occur because you should win the game if you can't pick anything up
     :return:
     """
-    return choices(all_cards, weights=card_weights)
+    return choice(all_cards)

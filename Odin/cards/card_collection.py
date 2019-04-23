@@ -126,6 +126,18 @@ class CardCollection:
             for card in self.card_colours[card_colour]:
                 self.remove_card(card, remove_colour=False)
             self.card_colours[card_colour].clear()
+    
+    def number_of_type(self, card_type):
+        """
+        Number of cards of a particular type in a collection
+        :param card_type: Type to count
+        :return: The number of that type
+        """
+        if card_type in self.card_types:
+            return len(self.card_types[card_type])
+        else:
+            return 0
+        
 
     def set_cards(self, cards):
         """
@@ -133,7 +145,7 @@ class CardCollection:
         :param cards: collection of cards to add
         :return:
         """
-        # if sorted: O(log n)
+        # if sorted: O(n log n)
         # if not sorted: O(n)
         # n = number of cards already in deck
 
