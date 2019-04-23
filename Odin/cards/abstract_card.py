@@ -145,11 +145,13 @@ class AbstractCard:
         elif cls.CARD_COLOUR == "black":
             to_return = "This is a regular black card. Compatible with all black, red, green, yellow and blue cards."
         elif cls.CARD_COLOUR == "white":
-            to_return = "This is a regular white card. Compatible with all white, purple, red, green, yellow and blue cards."
+            to_return = "This is a regular white card. Compatible with all white, " \
+                        "purple, red, green, yellow and blue cards."
         elif cls.CARD_COLOUR == "purple":
             to_return = "This is a regular purple card. Compatible with all purple and white cards."
         else:
-            to_return = "This is a regular {cls.CARD_COLOUR} card. Compatible with all {cls.CARD_COLOUR}, black and white cards."
+            to_return = "This is a regular {cls.CARD_COLOUR} card. " \
+                        "Compatible with all {cls.CARD_COLOUR}, black and white cards."
 
         if cls.MULTI_COLOURED:
             to_return += " Also compatible with {cls.CARD_TYPE} cards of any colour."
@@ -158,8 +160,9 @@ class AbstractCard:
 
     def __gt__(self, other):
         """
-        is this card goes after (is greater than) the given other card
-        sorts by card category index, then type, then color then name then id
+        Is this card greater than (goes after) the given other card.
+        This is used for sorting.
+        Sorts by card category index, then type, then color then name then id
         :param other: other card
         :return: True if this card is grater
         """
