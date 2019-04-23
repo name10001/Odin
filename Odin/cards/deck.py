@@ -5,12 +5,7 @@ import random
 class Deck:
     def __init__(self, game):
         self.game = game
-        self.banned_types = []
-        self.not_banned_types = cards.all_types
-        self.banned_colours = []
-        self.not_banned_colours = cards.all_colours
-        self.cards = cards.all_cards.copy()
-        self.card_weights = []
+        self.set_cards(cards.all_cards.copy())
     
     def calculate_weights(self, player=None):
         card_weights = []
@@ -25,6 +20,26 @@ class Deck:
                 card_weights.append(card.CARD_FREQUENCY.get_frequency(n_cards, n_this_type))
 
         return card_weights
+    
+    def calculate_remaining_cards(self):
+        """
+        After banning cards, calculate the remaining types and colours left
+        """
+        self.all_types = []
+        self.all_colours = []
+        for card in self.cards:
+            if card.CARD_TYPE not in self.all_types:
+                self.all_types.append(card.CARD_TYPE)
+            if card.CARD_COLOUR not in self.all_colours:
+                self.all_colours.append(card.CARD_COLOUR)
+
+    def set_cards(self, cards):
+        """
+        Set the list of all cards
+        Used when undoing a genocide card or initialization
+        """
+        self.cards = cards
+        self.calculate_remaining_cards()
 
     def get_random_card(self, weights):
         """
@@ -38,22 +53,17 @@ class Deck:
         else:
             return random.choices(self.cards, weights=weights)[0]
 
-    def ban_colour(self, card_color):
+    def ban_colour(self, card_colour):
         """
         removes a color from the deck
         :param card_color: color to remove
         :return:
         """
-        if card_color in self.banned_colours:
-            return
-        self.banned_colours.append(card_color)
-        self.not_banned_colours.remove(card_color)
-
         for card in self.cards.copy():
-            if card.CARD_COLOUR == card_color:
+            if card.CARD_COLOUR == card_colour:
                 self.cards.remove(card)
 
-        self.calculate_weights()
+        self.calculate_remaining_cards()
 
     def ban_type(self, card_type):
         """
@@ -61,13 +71,9 @@ class Deck:
         :param card_type: type to remove
         :return:
         """
-        if card_type in self.banned_types:
-            return
-        self.banned_types.append(card_type)
-        self.not_banned_types.remove(card_type)
-
         for card in self.cards.copy():
             if card.CARD_TYPE == card_type:
                 self.cards.remove(card)
 
-        self.calculate_weights()
+        self.calculate_remaining_cards()
+
