@@ -4,7 +4,7 @@ from string import Formatter
 class ExtendedFormatter(Formatter):
     HTML_SAFE_RANGES = (range(ord("a"), ord("z") + 1),
                         range(ord("A"), ord("Z") + 1),
-                        range(ord("1"), ord("9") + 1))
+                        range(ord("0"), ord("9") + 1))
     HTML_SAFE = ("_", "-")
 
     def convert_field(self, value, conversion):
@@ -34,7 +34,7 @@ class ExtendedFormatter(Formatter):
         elif conversion == "h":
             value_safe = ""
             for character in str(value).replace(" ", "_"):
-                # if character is a-z, A-Z, 1-9 or is _
+                # if character is a-z, A-Z, 0-9 or is _
                 safe = False
                 for i in self.HTML_SAFE_RANGES:
                     if ord(character) in i:
