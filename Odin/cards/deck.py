@@ -56,7 +56,7 @@ class Deck:
     def ban_colour(self, card_colour):
         """
         removes a color from the deck
-        :param card_color: color to remove
+        :param card_colour: color to remove
         :return:
         """
         for card in self.cards.copy():
