@@ -195,10 +195,11 @@ class PickupTimes2(AbstractCard):
                          + "If played outside of a pickup chain this will do nothing."
 
     def prepare_card(self, player):
+        self.old_pickup = self.game.pickup
         self.game.pickup *= 2
     
     def undo_prepare_card(self, player):
-        self.game.pickup /= 2
+        self.game.pickup = self.old_pickup
 
 
 class PickupPower2(AbstractCard):
@@ -214,9 +215,8 @@ class PickupPower2(AbstractCard):
 
     def prepare_card(self, player):
         self.old_pickup = self.game.pickup
-        print('%.2E' % Decimal(self.game.pickup))
-        if '%.2E' % Decimal(self.game.pickup) == "INF":
-            return  # for some reason python still wants to calculate the square when it's a massive af number so I gotta add this in to prevent crashes
+        if '%.2E' % Decimal(self.game.pickup) == "INF":  # Only way of checking for "infinite" numbers that seemed to work
+            return
         self.game.pickup *= self.game.pickup
 
     def undo_prepare_card(self, player):
