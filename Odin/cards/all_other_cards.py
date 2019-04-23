@@ -1,4 +1,5 @@
 from cards.abstract_card import AbstractCard
+from cards.card_frequency import CardFrequency
 import random
 import math
 from flask import *
@@ -11,7 +12,7 @@ import settings
 
 
 class Reverse(AbstractCard):
-    NUMBER_IN_DECK = 2
+    CARD_FREQUENCY = CardFrequency(2.2, 2)
     CARD_COLOUR = "blue"
     CARD_TYPE = "Reverse"
     CAN_BE_ON_PICKUP = True
@@ -58,7 +59,6 @@ class BlackReverse(Reverse):
     NAME = "Black Reverse"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/reverse_wild.png'
-    NUMBER_IN_DECK = 1
 
 
 class YellowReverse(Reverse):
@@ -73,7 +73,7 @@ class YellowReverse(Reverse):
 
 
 class Pickup2(AbstractCard):
-    NUMBER_IN_DECK = 2
+    CARD_FREQUENCY = CardFrequency(2.5, 2, 1.5, 0.5)
     CARD_TYPE = "+2"
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 2 to the pickup chain value."
@@ -119,7 +119,6 @@ class BlackPickup2(Pickup2):
     NAME = "Black Pickup 2"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pickup2_wild.png'
-    NUMBER_IN_DECK = 3
 
 
 class YellowPickup2(Pickup2):
@@ -134,7 +133,7 @@ class YellowPickup2(Pickup2):
 
 
 class Pickup10(AbstractCard):
-    NUMBER_IN_DECK = 2
+    CARD_FREQUENCY = CardFrequency(3, 2, 1.5, 0.5)
     CARD_TYPE = "+10"
     NAME = "Pickup 10"
     CARD_COLOUR = "black"
@@ -151,7 +150,7 @@ class Pickup10(AbstractCard):
 
 
 class Pickup100(AbstractCard):
-    NUMBER_IN_DECK = 0.05
+    CARD_FREQUENCY = CardFrequency(0.1, 0.05, 0.05, 0.01)
     CARD_TYPE = "+100"
     NAME = "Pickup 100"
     CARD_COLOUR = "black"
@@ -168,7 +167,7 @@ class Pickup100(AbstractCard):
 
 
 class Pickup4(AbstractCard):
-    NUMBER_IN_DECK = 4
+    CARD_FREQUENCY = CardFrequency(5, 3, 2, 1)
     CARD_TYPE = "+4"
     NAME = "Pickup 4"
     CARD_COLOUR = "black"
@@ -185,7 +184,7 @@ class Pickup4(AbstractCard):
 
 
 class PickupTimes2(AbstractCard):
-    NUMBER_IN_DECK = 4
+    CARD_FREQUENCY = CardFrequency(5, 3, 2, 1)
     CARD_TYPE = "x2"
     NAME = "Pickup x2"
     CARD_COLOUR = "black"
@@ -204,7 +203,7 @@ class PickupTimes2(AbstractCard):
 
 
 class PickupPower2(AbstractCard):
-    NUMBER_IN_DECK = 0.05
+    CARD_FREQUENCY = CardFrequency(0.1, 0.05, 0.05, 0.01)
     CARD_TYPE = "x Squared"
     NAME = "Pickup x Squared"
     CARD_COLOUR = "black"
@@ -224,7 +223,7 @@ class PickupPower2(AbstractCard):
         self.game.pickup = self.old_pickup  # float conversion doesn't work on very large numbers so we have to do this
 
 class PickupFactorial(AbstractCard):
-    NUMBER_IN_DECK = 0.01
+    CARD_FREQUENCY = CardFrequency(0.01, 0.005, 0.005, 0.001)
     CARD_TYPE = "Factorial"
     NAME = "Pickup Factorial"
     CARD_COLOUR = "black"
@@ -252,7 +251,7 @@ class PickupFactorial(AbstractCard):
 
 
 class Skip(AbstractCard):
-    NUMBER_IN_DECK = 2
+    CARD_FREQUENCY = CardFrequency(2.2, 2)
     CARD_TYPE = "Skip"
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Skips the next person's turn."
@@ -313,7 +312,7 @@ class YellowSkip(Skip):
 
 class BlankBro(AbstractCard):
     NAME = "Just A Blank Bro"
-    NUMBER_IN_DECK = 3
+    CARD_FREQUENCY = CardFrequency(3)
     CARD_TYPE = "Just A Blank Bro"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/black.png'
@@ -322,7 +321,7 @@ class BlankBro(AbstractCard):
 
 class Happiness(AbstractCard):
     NAME = "Happiness"
-    NUMBER_IN_DECK = 3
+    CARD_FREQUENCY = CardFrequency(3)
     CARD_TYPE = "Happiness"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/white.png'
@@ -335,7 +334,6 @@ class Happiness(AbstractCard):
 
 class EA(AbstractCard):
     CARD_COLOUR = "black"
-    NUMBER_IN_DECK = 1
     CARD_TYPE = "EA"
     NUMBER_NEEDED = 0
     EFFECT_DESCRIPTION = "Requires a fee to be able to play. You must pay the fee when you pay this card with " \
@@ -379,26 +377,28 @@ class EA(AbstractCard):
 
 
 class EA15(EA):
-    NUMBER_IN_DECK = 1.5
+    CARD_FREQUENCY = CardFrequency(2,1)
     NAME = "EA $15"
     CARD_IMAGE_URL = 'cards/ea_15.png'
     NUMBER_NEEDED = 15
 
 
 class EA20(EA):
+    CARD_FREQUENCY = CardFrequency(1)
     NAME = "EA $20"
     CARD_IMAGE_URL = 'cards/ea_20.png'
     NUMBER_NEEDED = 20
 
 
 class EA30(EA):
+    CARD_FREQUENCY = CardFrequency(1)
     NAME = "EA $30"
     CARD_IMAGE_URL = 'cards/ea_30.png'
     NUMBER_NEEDED = 30
 
 
 class EA100(EA):
-    NUMBER_IN_DECK = 0.1
+    CARD_FREQUENCY = CardFrequency(0.05)
     NAME = "EA $100"
     CARD_IMAGE_URL = 'cards/ea_100.png'
     NUMBER_NEEDED = 100
@@ -410,7 +410,7 @@ class EA100(EA):
 
 
 class Fuck(AbstractCard):
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_TYPE = "Fuckin' M8"
     CARD_COLOUR = "Abstract"
     COMPATIBILITY_DESCRIPTION = "This card is only compatible with other {cls.CARD_COLOUR} cards or " \
@@ -458,7 +458,7 @@ class YellowFuck(Fuck):
 
 
 class AllOfSameColour(AbstractCard):
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1, max_cards=1)
     MULTI_COLOURED = False
 
     def can_play_with(self, player, card, is_first_card):
@@ -511,7 +511,7 @@ class FilthySharon(AllOfSameColour):
 
 
 class Nazi(AbstractCard):
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(0.5, max_cards=1)
     NAME = "Nazi"
     CARD_TYPE = "Nazi"
     CARD_COLOUR = "white"
@@ -533,7 +533,7 @@ class Nazi(AbstractCard):
 
 
 class AtomicBomb(AbstractCard):
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(0, 0.5, 1, 1, max_cards=1)
     NAME = "Atomic Bomb"
     CARD_TYPE = "Atomic Bomb"
     CARD_COLOUR = "black"
@@ -551,7 +551,7 @@ class Pawn(AbstractCard):
     NAME = "Pawn"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/pawn.png'
-    NUMBER_IN_DECK = 0.1
+    CARD_FREQUENCY = CardFrequency(0.5, max_cards=1)
     CARD_TYPE = "Pawn"
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Ends a pickup chain and causes no one to pickup."
@@ -583,7 +583,7 @@ class Communist(AbstractCard):
     NAME = "Communist"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/communist.png'
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(0, 1, max_cards=1)
     CARD_TYPE = "Communist"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded."
@@ -616,7 +616,7 @@ class Capitalist(AbstractCard):
     NAME = "Capitalist"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/capitalist.png'
-    NUMBER_IN_DECK = 0.8
+    CARD_FREQUENCY = CardFrequency(1, 0.8, 0.1, 0, max_cards=2)
     CARD_TYPE = "Capitalist"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "The player with the most cards has the amount of cards in their hand doubled."
@@ -640,7 +640,7 @@ class SwapHand(AbstractCard):
     NAME = "Swap Hand"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/swap_hand.png'
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(0, 1, max_cards=1)
     CARD_TYPE = "Swap Hand"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a player and you will swap your entire hand with theirs upon play."
@@ -670,7 +670,7 @@ class FeelingBlue(AbstractCard):
     NAME = "Feeling Blue"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/feeling_blue.png'
-    NUMBER_IN_DECK = 2
+    CARD_FREQUENCY = CardFrequency(2)
     CARD_TYPE = "Feeling Blue"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon playing this card, you will be forced to pickup 5 cards."
@@ -683,7 +683,7 @@ class Plus(AbstractCard):
     NAME = "Plus"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/plus_wild.png'
-    NUMBER_IN_DECK = 0.5
+    CARD_FREQUENCY = CardFrequency(1.5, 1, 0.5, 0.2)
     CARD_TYPE = "Plus"
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
@@ -725,7 +725,7 @@ class FuckYou(AbstractCard):
     NAME = "Fuck You"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/fuck_you.png'
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1.5, 1, 0.5, 0.2)
     CARD_TYPE = "Fuck You"
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
@@ -776,7 +776,7 @@ class Genocide(AbstractCard):
     NAME = "Genocide"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/genocide.png'
-    NUMBER_IN_DECK = 0.5
+    CARD_FREQUENCY = CardFrequency(0.5, max_cards=3)
     MULTI_COLOURED = False
     CARD_TYPE = "Genocide"
     EFFECT_DESCRIPTION = "Pick any colour or type of card to entirely removed from the game. " \
@@ -819,7 +819,7 @@ class Jesus(AbstractCard):
     NAME = "Jesus"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/jesus.png'
-    NUMBER_IN_DECK = 0.5
+    CARD_FREQUENCY = CardFrequency(1, 1, 0.5, 0.5, max_cards=2)
     CARD_TYPE = "Jesus"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose any person (including yourself) to reset their entire hand " \
@@ -846,7 +846,7 @@ class Jesus(AbstractCard):
 
 
 class FreeTurn(AbstractCard):
-    NUMBER_IN_DECK = 4
+    CARD_FREQUENCY = CardFrequency(5, 4, 2, 1, max_cards=5)
     CARD_TYPE = "Free Turn"
     NAME = "Free Turn"
     CARD_COLOUR = "black"
@@ -867,7 +867,7 @@ class Thanos(AbstractCard):
     NAME = "Thanos"
     CARD_COLOUR = "purple"
     CARD_IMAGE_URL = 'cards/thanos.png'
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(0, 0, 1, 1, max_cards=3)
     CARD_TYPE = "Thanos"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon play, half of the cards in your hand will randomly disappear."
@@ -882,7 +882,7 @@ class Thanos(AbstractCard):
 class CopyCat(AbstractCard):
     NAME = "Copy Cat"
     CARD_IMAGE_URL = 'cards/copy_cat.png'
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(3, 2, 2, 2, max_cards=3)
     MULTI_COLOURED = False
     CARD_COLOUR = "black"  # keep this as black, otherwise it shows up as Abstract in the genocide card
     CARD_TYPE = "Copy Cat"
@@ -952,7 +952,7 @@ class ColourChooser(AbstractCard):
     NAME = "Colour Chooser"
     CARD_IMAGE_URL = 'cards/color_swapper.png'
     CARD_COLOUR = "black"
-    NUMBER_IN_DECK = 4
+    CARD_FREQUENCY = CardFrequency(4)
     CARD_TYPE = "Colour Chooser"
     EFFECT_DESCRIPTION = "Allows you to change the colour to any of the 4 given colours: red, green, yellow or blue."
     COMPATIBILITY_DESCRIPTION = "Before play: Regular black card, compatible with any black, red, green, blue or " \
@@ -1003,7 +1003,7 @@ class ColourSwapper(AbstractCard):
     """
     Abstract double-colour swapper card
     """
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_TYPE = "Colour Swapper"
     COLOUR_1 = "black"
     COLOUR_2 = "black"
@@ -1140,7 +1140,7 @@ class YellowGreenSwapper(ColourSwapper):
 
 class BlackWhiteSwapper(ColourSwapper):
     NAME = "Black/White Colour Swapper"
-    NUMBER_IN_DECK = 2
+    CARD_FREQUENCY = CardFrequency(2)
     CARD_IMAGE_URL = 'cards/black_white.png'
     COLOUR_1 = "black"
     COLOUR_2 = "white"

@@ -1,9 +1,10 @@
 from cards.abstract_card import AbstractCard
 import cards
+from cards.card_frequency import CardFrequency
 
 
 class NumberCard(AbstractCard):
-    NUMBER_IN_DECK = 2
+    CARD_FREQUENCY = CardFrequency(2)
 
     def prepare_card(self, player):
         if len(self.game.planning_pile) == 0:
@@ -24,7 +25,7 @@ class NumberCard(AbstractCard):
 
 class BlueZero(NumberCard):
     NAME = "Blue Zero"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "blue"
     CARD_TYPE = "0"
     CARD_IMAGE_URL = 'cards/0_blue.png'
@@ -32,7 +33,7 @@ class BlueZero(NumberCard):
 
 class GreenZero(NumberCard):
     NAME = "Green Zero"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "green"
     CARD_TYPE = "0"
     CARD_IMAGE_URL = 'cards/0_green.png'
@@ -40,7 +41,7 @@ class GreenZero(NumberCard):
 
 class PurpleZero(NumberCard):
     NAME = "Purple Zero"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "0"
     CARD_IMAGE_URL = 'cards/0_purple.png'
@@ -48,7 +49,7 @@ class PurpleZero(NumberCard):
 
 class RedZero(NumberCard):
     NAME = "Red Zero"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "red"
     CARD_TYPE = "0"
     CARD_IMAGE_URL = 'cards/0_red.png'
@@ -56,7 +57,7 @@ class RedZero(NumberCard):
 
 class YellowZero(NumberCard):
     NAME = "Yellow Zero"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "yellow"
     CARD_TYPE = "0"
     CARD_IMAGE_URL = 'cards/0_yellow.png'
@@ -83,7 +84,7 @@ class GreenOne(NumberCard):
 
 class PurpleOne(NumberCard):
     NAME = "Purple One"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "1"
     CARD_IMAGE_URL = 'cards/1_purple.png'
@@ -124,6 +125,7 @@ class GreenTwo(NumberCard):
 
 class PurpleTwo(NumberCard):
     NAME = "Purple Two"
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "2"
     CARD_IMAGE_URL = 'cards/2_purple.png'
@@ -164,7 +166,7 @@ class GreenThree(NumberCard):
 
 class PurpleThree(NumberCard):
     NAME = "Purple Three"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "3"
     CARD_IMAGE_URL = 'cards/3_purple.png'
@@ -206,7 +208,7 @@ class GreenFour(NumberCard):
 
 class PurpleFour(NumberCard):
     NAME = "Purple Four"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "4"
     CARD_IMAGE_URL = 'cards/4_purple.png'
@@ -247,7 +249,7 @@ class GreenFive(NumberCard):
 
 class PurpleFive(NumberCard):
     NAME = "Purple Five"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "5"
     CARD_IMAGE_URL = 'cards/5_purple.png'
@@ -288,7 +290,7 @@ class GreenSix(NumberCard):
 
 class PurpleSix(NumberCard):
     NAME = "Purple Six"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "6"
     CARD_IMAGE_URL = 'cards/6_purple.png'
@@ -329,7 +331,7 @@ class GreenSeven(NumberCard):
 
 class PurpleSeven(NumberCard):
     NAME = "Purple Seven"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "7"
     CARD_IMAGE_URL = 'cards/7_purple.png'
@@ -370,7 +372,7 @@ class GreenEight(NumberCard):
 
 class PurpleEight(NumberCard):
     NAME = "Purple Eight"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "8"
     CARD_IMAGE_URL = 'cards/8_purple.png'
@@ -411,7 +413,7 @@ class GreenNine(NumberCard):
 
 class PurpleNine(NumberCard):
     NAME = "Purple Nine"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "9"
     CARD_IMAGE_URL = 'cards/9_purple.png'
@@ -438,7 +440,7 @@ class YellowNine(NumberCard):
 
 class BlueSixtyNine(NumberCard):
     NAME = "Blue Sixty Nine"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "blue"
     CARD_TYPE = "69"
     CARD_IMAGE_URL = 'cards/69_blue.png'
@@ -447,7 +449,7 @@ class BlueSixtyNine(NumberCard):
 
 class GreenSixtyNine(NumberCard):
     NAME = "Green Sixty Nine"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "green"
     CARD_TYPE = "69"
     CARD_IMAGE_URL = 'cards/69_green.png'
@@ -456,7 +458,7 @@ class GreenSixtyNine(NumberCard):
 
 class PurpleSixtyNine(NumberCard):
     NAME = "Purple Sixty Nine"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "69"
     CARD_IMAGE_URL = 'cards/69_purple.png'
@@ -465,7 +467,7 @@ class PurpleSixtyNine(NumberCard):
 
 class RedSixtyNine(NumberCard):
     NAME = "Red Sixty Nine"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "red"
     CARD_TYPE = "69"
     CARD_IMAGE_URL = 'cards/69_red.png'
@@ -474,7 +476,7 @@ class RedSixtyNine(NumberCard):
 
 class YellowSixtyNine(NumberCard):
     NAME = "Yellow Sixty Nine"
-    NUMBER_IN_DECK = 1
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "yellow"
     CARD_TYPE = "69"
     CARD_IMAGE_URL = 'cards/69_yellow.png'

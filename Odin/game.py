@@ -23,7 +23,10 @@ class Game:
         # setting up cards
         self.deck = cards.Deck(self)
         self.played_cards = CardCollection()
-        self.played_cards.add_card(self.deck.pickup(1)[0](self))
+
+        weights = self.deck.calculate_weights()
+        card_type = self.deck.get_random_card(weights)
+        self.played_cards.add_card(card_type(self))
         self.planning_pile = CardCollection()
         self.pickup = 0
 

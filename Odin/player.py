@@ -206,8 +206,11 @@ class Player:
         :return: None
         """
         number = min(settings.player_card_limit - len(self.hand), int(number))
-        cards_to_add = [card(self.game) for card in self.game.deck.pickup(number)]
-        self.hand.add_cards(cards_to_add)
+
+        for i in range(0, number):
+            weights = self.game.deck.calculate_weights(self)
+            card_type = self.game.deck.get_random_card(weights)
+            self.hand.add_card(card_type(self.game))
 
     def had_won(self):
         """
