@@ -907,14 +907,12 @@ class Thanos(AbstractCard):
         """
         i = 0
         total = len(player.hand)
-        while True:
+        while i < total:
             if random.choice((True, False)):
                 player.hand.remove_card(index=i)
                 total -= 1
             else:
                 i += 1
-            if i >= total:
-                break
 
 
 class CopyCat(AbstractCard):
