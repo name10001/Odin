@@ -126,10 +126,9 @@ class Game:
         start_time = time()
 
         if message == "play card":
-            player.play_card(data[0], data[0])
+            player.play_cards([data])
         elif message == "play cards":
-            for card in data:
-                player.play_card(card[0], card[1])
+            player.play_cards(data)
         elif message == "finished turn":
             if player == self.turn:
                 self.next_turn()

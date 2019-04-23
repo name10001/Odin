@@ -13,6 +13,32 @@ class Player:
         self.sid = None
         self.turns_left = 1
         self.state = "not turn"
+    
+    def play_cards(self, data):
+        """
+        Plays a list of cards as given by a message
+        Sends a list of all the successfully played cards to all players to show an animation
+        """
+        played_cards = []
+        for card_data in data:
+            card = self.play_card(card_data[0], card_data[1])
+            if card is not None:
+                played_cards.append(card)
+        
+        # send a message to all players
+        json_to_send = {
+            "type": "play cards",
+            "data": []
+        }
+
+        for card in played_cards:
+            json_to_send["data"].append({
+                "id": card.get_id(),
+                "card image url": card.get_url()
+            })
+        
+        self.game.send_to_all_players("animate", json_to_send)
+
 
     def play_card(self, card_id, chosen_option):
         """
@@ -20,18 +46,21 @@ class Player:
         Also preforms all actions of the card and checks if its allowed to be played
         :param card_id:
         :param chosen_option:
-        :return: None
+        :return: Returns the card object that was played
         """
         card = self.hand.find_card(card_id)
         if card is None:
-            return
+            return None
+        
         if self._can_be_played(card):
             # do not change order
             self.hand.remove_card(card)
             card.set_option(chosen_option)
             card.prepare_card(self)
             self.game.planning_pile.add_card(card)
-
+            return card
+        return None
+        
     def finish_turn(self):
         """
         Call this to finish the players turn

@@ -14,7 +14,6 @@ class CardStack {
         this.options = options;
         this.url = url;
         this.name = name;
-        console.log(this.name + ": " + pickOptionsSeparately);
         this.pickOptionsSeparately = pickOptionsSeparately;
         this.card = game.allCards[name];
         this.image = game.allImages[url];
@@ -164,6 +163,14 @@ class Game {
 
         
         this.skip = (update['iteration']-1) % this.players.length; //tells you how many players will be skipped
+    }
+
+    animate(animationType, data) {
+        switch(animationType) {
+        case "play cards":
+            gui.animateCards(data);
+            break;
+        }
     }
 
     playCard(card_array){

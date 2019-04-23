@@ -347,6 +347,15 @@ class Gui {
     }
 
     /**
+     * Animate a list of cards being played
+     */
+    animateCards(cards) {
+        for(let card of cards) {
+            console.log(card["id"] + ": " + card["card image url"]);
+        }
+    }
+
+    /**
      * When you drag the mouse/touch 
      */
     drag() {
