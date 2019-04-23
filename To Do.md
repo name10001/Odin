@@ -4,10 +4,10 @@ Here are all the tasks that are being planned
 ## Current Tasks
 
 ### Isaac:
-* Separated out networking stuff from Player into Client class - Isaac
+* Separated out networking stuff from Player into Client class
 * Add the ability for cards to ask the player questions as they are being played.
-Example of protocol in 'options example.txt' - Isaac
-* Slavery card - Isaac
+Example of protocol in 'options example.txt'
+* Slavery card
 
 ### Thomas:
 * Separate URLs from card_info. This can be used for cards that change there image as they are being played

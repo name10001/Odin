@@ -5,9 +5,9 @@ class CardCollection:
     """
     This is meant to be a fast way to store cards.
     It uses a binary search tree and multiple kinds of data types in order to get maximum performance.
-    It is not memory efferent however is fast.
+    It is not memory efferent however it is fast.
     Cards should not change color or type while in this collection.
-    If this is a sorted, it cant change its soring method ether
+    If this is sorted, it cant change its soring method ether
     """
 
     def __init__(self, sort=False):
@@ -104,7 +104,6 @@ class CardCollection:
         # m = number of cards to ban
 
         if card_type in self.card_types:
-            print(self.card_types[card_type])
             for card in self.card_types[card_type]:
                 self.remove_card(card, remove_type=False)
             self.card_types[card_type].clear()
