@@ -797,7 +797,7 @@ class Genocide(AbstractCard):
 
     def prepare_card(self, player):
         """
-        This will update the list of avaliable cards
+        This will update the list of available cards
         """
         self.old_cards = self.game.deck.cards.copy()
 
@@ -833,7 +833,6 @@ class Genocide(AbstractCard):
                 game_player.hand.remove_colour(to_ban)
         else:
             print("Warning: got unknown category:", category)
-
 
 
 class Jesus(AbstractCard):
@@ -906,7 +905,14 @@ class Thanos(AbstractCard):
         """
         removes half the players cards at random
         """
-        player.hand.set_cards(random.choices(player.hand.get_cards(), k=int(math.ceil(len(player.hand) / 2))))
+        i = 0
+        total = len(player.hand)
+        while i < total:
+            if random.choice((True, False)):
+                player.hand.remove_card(index=i)
+                total -= 1
+            else:
+                i += 1
 
 
 class CopyCat(AbstractCard):

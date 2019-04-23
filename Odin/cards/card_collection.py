@@ -36,7 +36,8 @@ class CardCollection:
         :param card: card to add
         :return: None
         """
-        # O(log n)
+        # if sorted: O(n * log n)
+        # if not sorted: O(1)
         # n = number of cards already in deck
 
         if self.should_sort:
@@ -75,19 +76,29 @@ class CardCollection:
                     raise RuntimeError("Can't find the given card")
         return self.cards_list.index(card)
 
-    def remove_card(self, card, remove_type=True, remove_colour=True):
+    def remove_card(self, card=None, remove_type=True, remove_colour=True, index=None):
         """
         Removes the given card from the collection
-        :param card: card to remove
+        :param card: card to remove. If this is None, index must be specified
         :param remove_type: Only for internal use! Should the card be removed from card_types
         :param remove_colour: Only for internal use! Should the card be removed from card_colours
+        :param index: The index of the card to remove
         :return: None
         """
         # if sorted: O(log n)
         # if not sorted: O(n)
+        # if removing from index: O(1)
         # n = number of cards already in deck
 
-        self.cards_list.pop(self.index(card))
+        if card is None and index is None:
+            raise RuntimeError("If Card is None, index must be specified and vice versa")
+
+        if index is None:
+            index = self.index(card)
+        if card is None:
+            card = self.cards_list[index]
+
+        self.cards_list.pop(index)
         del self.cards_dict[card.get_id()]
         try:
             if remove_type:
@@ -137,7 +148,6 @@ class CardCollection:
             return len(self.card_types[card_type])
         else:
             return 0
-        
 
     def set_cards(self, cards):
         """
