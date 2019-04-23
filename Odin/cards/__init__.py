@@ -34,12 +34,13 @@ card_weights = [card.NUMBER_IN_DECK for card in all_cards]
 
 # find information about all cards
 all_card_info = []
+all_urls = []
 all_types = []
 all_colours = []
 size_of_deck = 0
 for card in all_cards:
     card_info = {
-        "url": '/static/' + card.CARD_IMAGE_URL,
+        "url": '/static/' + card.CARD_IMAGE_URL,  # default url
         "name": card.NAME,
         "type": card.CARD_TYPE,
         "colour": card.CARD_COLOUR,
@@ -47,6 +48,10 @@ for card in all_cards:
         "effect description": card.EFFECT_DESCRIPTION,
         "compatibility description": card.get_compatibility_description()
     }
+    all_urls.append('/static/' + card.CARD_IMAGE_URL)
+    for url in card.ADDITIONAL_URLS:
+        all_urls.append('/static/' + url)
+
     all_card_info.append(card_info)
     size_of_deck += card.NUMBER_IN_DECK
     if card.CARD_TYPE not in all_types:

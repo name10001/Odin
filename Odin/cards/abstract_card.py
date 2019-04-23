@@ -11,6 +11,7 @@ class AbstractCard:
     NAME = "Abstract card"
     CARD_COLOUR = "Abstract"
     CARD_TYPE = "Abstract"
+    ADDITIONAL_URLS = []  # if any card additional urls need to be loaded, add these here 
     CAN_BE_ON_PICKUP = False
     # Used for generating compatibility description, set to False if there's only 1 colour of this type.
     MULTI_COLOURED = True
