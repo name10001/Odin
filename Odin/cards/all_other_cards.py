@@ -894,7 +894,7 @@ class Odin(AbstractCard):
     NAME = "Odin"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/back.png'
-    CARD_FREQUENCY = CardFrequency(20, max_cards=3)
+    CARD_FREQUENCY = CardFrequency(1, max_cards=1)
     CARD_TYPE = "Odin"
     MULTI_COLOURED = False
     COMPATIBILITY_DESCRIPTION = "Can only be played as your last card. When it becomes your last card, regular black card rules apply, such that it can be played on red, green, yellow blue and black cards."
