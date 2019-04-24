@@ -171,7 +171,13 @@ class Game {
     animate(animationType, data) {
         switch(animationType) {
         case "play cards":
-            gui.animateCards(data);
+            gui.animatePlayCards(data);
+            break;
+        case "undo":
+            gui.animateUndo();
+            break;
+        case "undo all":
+            gui.animateUndoAll();
             break;
         }
     }

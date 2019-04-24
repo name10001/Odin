@@ -189,7 +189,7 @@ class Player:
             self.add_new_cards(self.game.pickup)
             self.game.pickup = 0
 
-    def undo(self):
+    def undo(self, send_message=True):
         """
         If the player has put down a card this turn it will undo the latest one
         :return:
@@ -202,6 +202,14 @@ class Player:
         card_to_remove.undo_prepare_card(self)
         self.hand.add_card(card_to_remove)
 
+        if send_message is True:
+            # send a message to all players
+            json_to_send = {
+                "type": "undo"
+            }
+
+            self.game.send_to_all_players("animate", json_to_send)
+
     def undo_all(self):
         """
         If the player has put down a card this turn it will undo the latest one
@@ -210,7 +218,14 @@ class Player:
         if not self.is_turn():
             return
         for i in range(0, len(self.game.planning_pile)):
-            self.undo()
+            self.undo(False)
+        
+        # send a message to all players
+        json_to_send = {
+            "type": "undo all"
+        }
+
+        self.game.send_to_all_players("animate", json_to_send)
 
     def _can_be_played(self, card):
         """

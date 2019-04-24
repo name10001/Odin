@@ -54,7 +54,7 @@ class Button {
 }
 
 class AnimatedCard {
-    constructor(startPosition, endPosition, speed, wait, image, width, height) {
+    constructor(startPosition, endPosition, speed, wait, image, width, height, displayWhileWaiting=false) {
         let dx = endPosition.x-startPosition.x;
         let dy = endPosition.y-startPosition.y;
         let len = Math.sqrt(dx*dx+dy*dy);
@@ -72,6 +72,7 @@ class AnimatedCard {
         this.wait = wait;
         this.end = len/speed + wait;
         this.current = 0;
+        this.displayWhileWaiting = displayWhileWaiting;
     }
 
     move(dt) {
@@ -91,7 +92,7 @@ class AnimatedCard {
     }
 
     draw() {
-        if(this.current >= this.wait) {
+        if(this.current >= this.wait || this.displayWhileWaiting) {
             ctx.drawImage(this.image,this.position.x,this.position.y,this.width,this.height);
         }
     }

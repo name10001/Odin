@@ -338,7 +338,7 @@ class Gui {
     /**
      * Animate a list of cards being played
      */
-    animateCards(cards) {
+    animatePlayCards(cards) {
         if(game.yourTurn) {
             // cards from your hand
             let wait = 0;
@@ -366,6 +366,56 @@ class Gui {
                 wait += waitIncr;
             }
         }
+    }
+
+    /**
+     * Animate the top card being undone
+     */
+    animateUndo() {
+        let position = this.getPlanningPilePosition();
+        let gap = GUI_SCALE*2;
+        let maxGap = (position.y-GUI_SCALE)/(game.planningCards.length-1);
+        if(maxGap < gap) gap = maxGap;
+        position.y -= gap * (game.planningCards.length-1);
+
+        let card = game.planningCards.pop();
+        
+        let endPosition = game.yourTurn ? {x:canvas.width/2, y:this.getBottomY()+GUI_SCALE*3.5} : {x:canvas.width/2, y:-this.CARD_HEIGHT};
+        
+        let image = card.image;
+        
+        let movingCard = new AnimatedCard(position, endPosition, 3, 0, image, this.CARD_WIDTH, this.CARD_HEIGHT);
+        this.movingCards.push(movingCard);
+    }
+
+    /**
+     * Animate all cards being undone
+     */
+    animateUndoAll() {
+        //begin position
+        let position = this.getPlanningPilePosition();
+        let gap = GUI_SCALE*2;
+        let maxGap = (position.y-GUI_SCALE)/(game.planningCards.length-1);
+        if(maxGap < gap) gap = maxGap;
+        position.y -= gap * (game.planningCards.length-1);
+
+        //end position
+        let endPosition = game.yourTurn ? {x:canvas.width/2, y:this.getBottomY()+GUI_SCALE*3.5} : {x:canvas.width/2, y:-this.CARD_HEIGHT};
+
+        let wait = 0;
+        let waitIncr = this.getCardWaitIncrement(game.planningCards.length);
+
+        // loop
+        while(game.planningCards.length > 0) {
+            let card = game.planningCards.pop();
+            let image = card.image;
+            
+            let movingCard = new AnimatedCard(position, endPosition, 3, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, true);
+            this.movingCards.push(movingCard);
+            wait+=waitIncr;
+            position.y += gap;
+        }
+        this.movingCards.reverse();
     }
 
     /**
