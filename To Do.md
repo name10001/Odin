@@ -25,4 +25,3 @@ Example of protocol in 'options example.txt'
 * Snowden card
 * Do justly
 * Swap card
-* Odin card??
