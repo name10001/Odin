@@ -13,6 +13,32 @@ class Player:
         self.sid = None
         self.turns_left = 1
         self.state = "not turn"
+    
+    def play_cards(self, data):
+        """
+        Plays a list of cards as given by a message
+        Sends a list of all the successfully played cards to all players to show an animation
+        """
+        played_cards = []
+        for card_data in data:
+            card = self.play_card(card_data[0], card_data[1])
+            if card is not None:
+                played_cards.append(card)
+        
+        # send a message to all players
+        json_to_send = {
+            "type": "play cards",
+            "data": []
+        }
+
+        for card in played_cards:
+            json_to_send["data"].append({
+                "id": card.get_id(),
+                "card image url": card.get_url()
+            })
+        
+        self.game.send_to_all_players("animate", json_to_send)
+
 
     def play_card(self, card_id, chosen_option):
         """
@@ -20,18 +46,21 @@ class Player:
         Also preforms all actions of the card and checks if its allowed to be played
         :param card_id:
         :param chosen_option:
-        :return: None
+        :return: Returns the card object that was played
         """
         card = self.hand.find_card(card_id)
         if card is None:
-            return
+            return None
+        
         if self._can_be_played(card):
             # do not change order
             self.hand.remove_card(card)
             card.set_option(chosen_option)
             card.prepare_card(self)
             self.game.planning_pile.add_card(card)
-
+            return card
+        return None
+        
     def finish_turn(self):
         """
         Call this to finish the players turn
@@ -117,6 +146,7 @@ class Player:
                     "card image url": card.get_url(),
                     "name": card.get_name(),
                     "can be played": self._can_be_played(card),
+                    "pick options separately": card.pick_options_separately(),
                     "options": card.get_options(self)
                 }
             )
@@ -159,7 +189,7 @@ class Player:
             self.add_new_cards(self.game.pickup)
             self.game.pickup = 0
 
-    def undo(self):
+    def undo(self, send_message=True):
         """
         If the player has put down a card this turn it will undo the latest one
         :return:
@@ -172,6 +202,14 @@ class Player:
         card_to_remove.undo_prepare_card(self)
         self.hand.add_card(card_to_remove)
 
+        if send_message is True:
+            # send a message to all players
+            json_to_send = {
+                "type": "undo"
+            }
+
+            self.game.send_to_all_players("animate", json_to_send)
+
     def undo_all(self):
         """
         If the player has put down a card this turn it will undo the latest one
@@ -180,7 +218,14 @@ class Player:
         if not self.is_turn():
             return
         for i in range(0, len(self.game.planning_pile)):
-            self.undo()
+            self.undo(False)
+        
+        # send a message to all players
+        json_to_send = {
+            "type": "undo all"
+        }
+
+        self.game.send_to_all_players("animate", json_to_send)
 
     def _can_be_played(self, card):
         """
@@ -197,7 +242,7 @@ class Player:
         else:
             return False
 
-    def add_new_cards(self, number):
+    def add_new_cards(self, number, display_pickup=True):
         """
         gets new cards from deck and adds them to hand
         Does not check for pickup chains of weather its the players turn
@@ -206,7 +251,19 @@ class Player:
         :return: None
         """
         number = min(settings.player_card_limit - len(self.hand), int(number))
-        self.game.deck.add_random_cards_to(self.hand, number)
+        cards = self.game.deck.add_random_cards_to(self.hand, number)
+
+        # send you an animation message to show you picking up the cards
+        json_to_send = {
+            "type": "pickup",
+            "from": None,  # use this same message for picking up cards from other players
+            "data": []
+        }
+
+        for card in cards:
+            json_to_send["data"].append(card.get_url())
+        
+        self.send_message("animate", json_to_send)
 
     def had_won(self):
         """

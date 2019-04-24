@@ -33,7 +33,7 @@ class Game:
         for player in players:
             new_player = Player(self, players[player], player)
             self.players.append(new_player)
-            new_player.add_new_cards(self.starting_number_of_cards)
+            new_player.add_new_cards(self.starting_number_of_cards, False)
         self.player_turn_index = random.randint(0, len(self.players) - 1)
         self.turn = self.players[self.player_turn_index]
         self.turn.start_turn()
@@ -123,10 +123,9 @@ class Game:
         start_time = time()
 
         if message == "play card":
-            player.play_card(data[0], data[0])
+            player.play_cards([data])
         elif message == "play cards":
-            for card in data:
-                player.play_card(card[0], card[1])
+            player.play_cards(data)
         elif message == "finished turn":
             if player == self.turn:
                 self.next_turn()

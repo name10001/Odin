@@ -645,7 +645,7 @@ class SwapHand(AbstractCard):
     NAME = "Swap Hand"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/swap_hand.png'
-    CARD_FREQUENCY = CardFrequency(0, 10, max_cards=2)
+    CARD_FREQUENCY = CardFrequency(0, 1, max_cards=1)
     CARD_TYPE = "Swap Hand"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a player and you will swap your entire hand with theirs upon play."
@@ -676,6 +676,9 @@ class SwapHand(AbstractCard):
         hand = player.hand
         player.hand = other_player.hand
         other_player.hand = hand
+    
+    def pick_options_separately(self):
+        return True
 
 
 class FeelingBlue(AbstractCard):
@@ -806,6 +809,9 @@ class Genocide(AbstractCard):
             if card_type not in self.UNBANNABLE_TYPES:
                 options["type " + card_type] = "Type: " + card_type
         return options
+    
+    def pick_options_separately(self):
+        return True
 
     def prepare_card(self, player):
         """
@@ -866,6 +872,9 @@ class Jesus(AbstractCard):
                 options[other_player.get_id()] = other_player.get_name() + "(You)"
 
         return options
+    
+    def pick_options_separately(self):
+        return True
 
     def play_card(self, player):
         if self.is_option_valid(player, self.option, is_player=True) is False:
@@ -1006,6 +1015,14 @@ class CopyCat(AbstractCard):
 
     def get_type(self):
         return self.type
+    
+    def pick_options_separately(self):
+        if self.copied is not None:
+            return self.copied.pick_options_separately()
+        elif self.game.get_top_card() is self:  # needed for when game starts with a copy cat card on the played pile
+            return False
+        else:
+            return self.game.get_top_card().pick_options_separately()
 
 
 class ColourChooser(AbstractCard):
@@ -1095,6 +1112,12 @@ class ColourSwapper(AbstractCard):
             }
         else:
             return None
+    
+    def pick_options_separately(self):
+        top_card = self.game.get_top_card()
+
+        return self.colours_are_compatible(top_card.get_colour(), self.COLOUR_1) \
+                and self.colours_are_compatible(top_card.get_colour(), self.COLOUR_2)
 
     def is_compatible_with(self, player, card):
         if self.colour == "colour swapper":  # compatible if either of the card colours are compatible

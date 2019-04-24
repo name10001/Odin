@@ -18,12 +18,10 @@ function getLines(text, maxWidth) {
 }
 
 class DescriptionWindow {
-    constructor(cardStack, cardX, cardY) {
+    constructor(cardStack) {
         this.image = cardStack.image;
         this.card = cardStack.card;
         this.cardStack = cardStack;
-        this.cardX = cardX;
-        this.cardY = cardY;
         this.allowedToPlay = cardStack.allowedToPlay;
 
         this.exitButton = new Button(CARD_WIDTH-1, 3, 1.5, "EXIT");
@@ -124,11 +122,11 @@ class DescriptionWindow {
         }
         //add
         else if(this.addButton.isMouseOverThis()) {
-            gui.play(this.cardStack,this.cardX,this.cardY);
+            gui.play(this.cardStack);
         }
         //add all
         else if(this.addallButton.isMouseOverThis()) {
-            gui.playAllCards(this.cardStack,this.cardX,this.cardY);
+            gui.playAllCards(this.cardStack);
         }
     }
 
@@ -143,11 +141,9 @@ class DescriptionWindow {
  * Option in an option window
  */
 class OptionItem {
-    constructor(card, optionId, optionString, cardX, cardY) {
+    constructor(card, optionId, optionString) {
         this.card = card;
         this.optionId = optionId;
-        this.cardX = cardX;
-        this.cardY = cardY;
         this.button = new Button(CARD_WIDTH*2-0.3,2.7,1.5,optionString);
     }
 
@@ -156,7 +152,7 @@ class OptionItem {
     }
 
     click(x,y) {
-        gui.pickOption(this.card, this.optionId, this.cardX, this.cardY);
+        gui.pickOption(this.card, this.optionId);
     }
 
 }
@@ -165,7 +161,7 @@ class OptionItem {
  * Class for the options window
  */
 class OptionsWindow {
-    constructor(card, cardX, cardY) {
+    constructor(card) {
         this.card = card;
         this.image = card.image;
 
@@ -193,7 +189,7 @@ class OptionsWindow {
             let id = card.optionIds[i];
             let text = card.optionStrings[i];
             
-            items.push(new OptionItem(card,id,text,cardX,cardY));
+            items.push(new OptionItem(card,id,text));
         }
         this.optionsScroller.setItems(items);
 

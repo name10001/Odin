@@ -54,7 +54,7 @@ class Button {
 }
 
 class AnimatedCard {
-    constructor(startPosition, endPosition, speed, wait, image, width, height) {
+    constructor(startPosition, endPosition, speed, wait, image, width, height, displayWhileWaiting=false) {
         let dx = endPosition.x-startPosition.x;
         let dy = endPosition.y-startPosition.y;
         let len = Math.sqrt(dx*dx+dy*dy);
@@ -72,6 +72,7 @@ class AnimatedCard {
         this.wait = wait;
         this.end = len/speed + wait;
         this.current = 0;
+        this.displayWhileWaiting = displayWhileWaiting;
     }
 
     move(dt) {
@@ -91,7 +92,7 @@ class AnimatedCard {
     }
 
     draw() {
-        if(this.current >= this.wait) {
+        if(this.current >= this.wait || this.displayWhileWaiting) {
             ctx.drawImage(this.image,this.position.x,this.position.y,this.width,this.height);
         }
     }
@@ -126,7 +127,7 @@ class CardStackPanel {
             GUI_SCALE*CARD_WIDTH, GUI_SCALE*CARD_HEIGHT);
         
         this.helpButton.draw(x+GUI_SCALE, y + (CARD_HEIGHT+1.5)*GUI_SCALE, true);
-        this.playallButton.draw(x+GUI_SCALE*4.5, y + (CARD_HEIGHT+1.5)*GUI_SCALE, this.cardStack.allowedToPlay);
+        this.playallButton.draw(x+GUI_SCALE*4.5, y + (CARD_HEIGHT+1.5)*GUI_SCALE, this.cardStack.allowedToPlay && !this.cardStack.pickOptionsSeparately);
         //draw stack size
         if(stackSize>1) {
             ctx.fillStyle = "#fff";
@@ -149,18 +150,18 @@ class CardStackPanel {
         //clicked the card
         if(x > GUI_SCALE/2 && x<GUI_SCALE*CARD_WIDTH+GUI_SCALE/2 &&
                 y > GUI_SCALE/2 && y<GUI_SCALE*CARD_HEIGHT+GUI_SCALE/2) {
-            gui.play(this.cardStack, cardX, cardY);
+            gui.play(this.cardStack);
             
         }
         //clicked the help button
         else if(x > GUI_SCALE && x<GUI_SCALE*4 &&
             y > GUI_SCALE*(CARD_HEIGHT+1.5) && y<GUI_SCALE*(CARD_HEIGHT+4.5)) {
-            gui.popup = new DescriptionWindow(this.cardStack, cardX, cardY);
+            gui.popup = new DescriptionWindow(this.cardStack);
         }
         //clicked the play all button
         else if(x > GUI_SCALE*4.5 && x<GUI_SCALE*CARD_WIDTH &&
-            y > GUI_SCALE*(CARD_HEIGHT+1.5) && y<GUI_SCALE*(CARD_HEIGHT+4.5)) {
-            gui.playAllCards(this.cardStack, cardX, cardY);
+            y > GUI_SCALE*(CARD_HEIGHT+1.5) && y<GUI_SCALE*(CARD_HEIGHT+4.5) && !this.cardStack.pickOptionsSeparately) {
+            gui.playAllCards(this.cardStack);
         }
     }
 
@@ -292,6 +293,29 @@ class ScrollArea {
     }
     getTotalWidth() {
         return this.getMaxScroll() - this.getMinScroll();
+    }
+
+    getPositionOf(index) {
+        let width = this.itemWidth * GUI_SCALE;
+        let height = this.itemHeight * GUI_SCALE;
+
+        let x = this.container.getLeft();
+        let y = this.location==0 ? this.container.getBottom() - height : this.container.getTop();
+        let minScroll = this.getMinScroll();
+        let maxScroll = this.getMaxScroll();
+        let totalWidth = maxScroll - minScroll;
+        let start = minScroll + this.scrollOffset * totalWidth;
+        
+        if(this.location == 0) {
+            x -= start;
+            x += width * index;
+        }
+        else {
+            y -= start;
+            y += height * index;
+        }
+
+        return {x, y};
     }
 
     /**

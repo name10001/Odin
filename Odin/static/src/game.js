@@ -9,11 +9,12 @@ class Player {
  * A stack of cards in your hand
  */
 class CardStack {
-    constructor(id, name, url, allowedToPlay, options) {
+    constructor(id, name, url, allowedToPlay, pickOptionsSeparately, options) {
         this.allowedToPlay = allowedToPlay;
         this.options = options;
         this.url = url;
         this.name = name;
+        this.pickOptionsSeparately = pickOptionsSeparately;
         this.card = game.allCards[name];
         this.image = game.allImages[url];
         this.optionStrings = [];
@@ -40,7 +41,7 @@ class CardStack {
     }
 
     playSingle(options) {
-        let id = this.cardIds.pop();
+        let id = this.cardIds[0];
         game.playCard([[id,options]]);
     }
 
@@ -70,6 +71,7 @@ class Card {
 class Game {
     constructor() {
         this.yourStacks = [];
+        this.cardIndices = {};
         this.topCards = [];
         this.planningCards = [];
         this.yourTurn = false;
@@ -98,23 +100,25 @@ class Game {
     update(update) {
 
         this.yourStacks.length = 0;
-
+        this.cardIndices = {};
         let canPlay = 0;
 
         let cardStackPanels = [];
+
         let lastStack = null;
         //update the cards in your hand
         for(let card of update['your cards']) {
             if(card['can be played']) canPlay++;
-            //this.yourCards.push(new CardStack(card['card id'], card['card image url'], card['can be played'], card['options']));
             if(lastStack != null) {
                 if(lastStack.name == card['name']) {
                     lastStack.addCard(card['card id']);
+                    this.cardIndices[card['card id']] = this.yourStacks.length - 1;
                     continue;
                 }
             }
-            lastStack = new CardStack(card['card id'], card['name'], card['card image url'], card['can be played'], card['options']);
+            lastStack = new CardStack(card['card id'], card['name'], card['card image url'], card['can be played'], card['pick options separately'], card['options']);
             this.yourStacks.push(lastStack);
+            this.cardIndices[card['card id']] = this.yourStacks.length - 1;
             cardStackPanels.push(new CardStackPanel(lastStack));
         }
         gui.updateCards(cardStackPanels);
@@ -127,7 +131,7 @@ class Game {
         //update planning cards
         this.planningCards.length = 0;
         for(let card of update['planning pile']) {
-            this.planningCards.push(new CardStack(card['card id'], card['name'], card['card image url'], true,null));
+            this.planningCards.push(new CardStack(card['card id'], card['name'], card['card image url'], true, false, null));
         }
 
         //update pickup
@@ -162,6 +166,29 @@ class Game {
 
         
         this.skip = (update['iteration']-1) % this.players.length; //tells you how many players will be skipped
+    }
+
+    animate(data) {
+        switch(data["type"]) {
+        // ADD CARDS TO PLANNING PILE
+        case "play cards":
+            gui.animatePlayCards(data["data"]);
+            break;
+        // UNDO
+        case "undo":
+            gui.animateUndo();
+            break;
+        // UNDO ALL
+        case "undo all":
+            gui.animateUndoAll();
+            break;
+        // PICKUP
+        case "pickup":
+            if(data["from"] == null) {
+                gui.animatePickup(data["data"]);  // pickup cards from deck
+            }
+            break;
+        }
     }
 
     playCard(card_array){

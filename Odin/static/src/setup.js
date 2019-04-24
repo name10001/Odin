@@ -53,7 +53,7 @@ $(document).ready(function() {
         socket.emit("initial game connection", GAME_ID);
     });
 
-    socket.on('message for player', function (message) {
+    socket.on('popup message', function (message) {
         $("#message-from-server").html(message);
         $('.modal').modal("show");
 
@@ -62,6 +62,9 @@ $(document).ready(function() {
     socket.on('card update', function(update) {
         game.update(update);
     });
+    socket.on('animate', function(data) {
+        game.animate(data);
+    })
 
     // BEGIN GAMELOOP
     gameLoop(0);
