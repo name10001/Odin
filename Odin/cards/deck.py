@@ -147,7 +147,7 @@ class Deck:
         :param card: The Card to add back
         :return: None
         """
-        self.banned_cards.add(card)
+        self.banned_cards.remove(card)
 
     def unban_cards(self, cards):
         """

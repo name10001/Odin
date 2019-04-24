@@ -944,7 +944,7 @@ class Thanos(AbstractCard):
         num_to_remove = math.ceil(total / 2)
         for i in range(0, num_to_remove):
             index = random.randrange(0, total)
-            player.hand.ban_card(index=index)
+            player.hand.remove_card(index=index)
             total -= 1
 
 
