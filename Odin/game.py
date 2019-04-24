@@ -33,7 +33,7 @@ class Game:
         for player in players:
             new_player = Player(self, players[player], player)
             self.players.append(new_player)
-            new_player.add_new_cards(self.starting_number_of_cards)
+            new_player.add_new_cards(self.starting_number_of_cards, False)
         self.player_turn_index = random.randint(0, len(self.players) - 1)
         self.turn = self.players[self.player_turn_index]
         self.turn.start_turn()

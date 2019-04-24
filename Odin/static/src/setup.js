@@ -63,7 +63,7 @@ $(document).ready(function() {
         game.update(update);
     });
     socket.on('animate', function(data) {
-        game.animate(data["type"], data["data"]);
+        game.animate(data);
     })
 
     // BEGIN GAMELOOP

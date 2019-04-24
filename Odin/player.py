@@ -242,7 +242,7 @@ class Player:
         else:
             return False
 
-    def add_new_cards(self, number):
+    def add_new_cards(self, number, display_pickup=True):
         """
         gets new cards from deck and adds them to hand
         Does not check for pickup chains of weather its the players turn
@@ -251,7 +251,19 @@ class Player:
         :return: None
         """
         number = min(settings.player_card_limit - len(self.hand), int(number))
-        self.game.deck.add_random_cards_to(self.hand, number)
+        cards = self.game.deck.add_random_cards_to(self.hand, number)
+
+        # send you an animation message to show you picking up the cards
+        json_to_send = {
+            "type": "pickup",
+            "from": None,  # use this same message for picking up cards from other players
+            "data": []
+        }
+
+        for card in cards:
+            json_to_send["data"].append(card.get_url())
+        
+        self.send_message("animate", json_to_send)
 
     def had_won(self):
         """

@@ -419,6 +419,26 @@ class Gui {
     }
 
     /**
+     * Animate picking up cards
+     */
+    animatePickup(cards) {
+        let wait = 0;
+        let waitIncr = this.getCardWaitIncrement(cards.length);
+        let startPosition = {x:canvas.width, y: canvas.height/2};
+        let endPosition =  {x:canvas.width/2, y:this.getBottomY()+GUI_SCALE*3.5};
+        for(let url of cards) {
+            let image = game.allImages[url];
+            console.log(url);
+            let movingCard = new AnimatedCard(startPosition, endPosition, 2, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT);
+            this.movingCards.push(movingCard);
+            wait+=waitIncr;
+        }
+        this.movingCards.reverse();
+
+
+    }
+
+    /**
      * When you drag the mouse/touch 
      */
     drag() {

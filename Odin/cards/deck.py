@@ -67,13 +67,19 @@ class Deck:
         Adds cards at the proper proportion to the given CardCollection
         :param card_collection: the CardCollection to added the cards to
         :param number: The number of new cards to add
-        :return: None
+        :return: The list of cards added
         """
+        added_cards = []
+
         for i in range(number):
             # calculate weights
             card_weights = self.get_weights(card_collection=card_collection)
             # add a random card based upon the weights
-            card_collection.add_card(self.get_random_card(card_weights)(self.game))
+            card = self.get_random_card(card_weights)(self.game)
+            card_collection.add_card(card)
+            added_cards.append(card)
+        
+        return added_cards
 
     def ban_colour(self, card_colour):
         """

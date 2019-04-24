@@ -168,16 +168,25 @@ class Game {
         this.skip = (update['iteration']-1) % this.players.length; //tells you how many players will be skipped
     }
 
-    animate(animationType, data) {
-        switch(animationType) {
+    animate(data) {
+        switch(data["type"]) {
+        // ADD CARDS TO PLANNING PILE
         case "play cards":
-            gui.animatePlayCards(data);
+            gui.animatePlayCards(data["data"]);
             break;
+        // UNDO
         case "undo":
             gui.animateUndo();
             break;
+        // UNDO ALL
         case "undo all":
             gui.animateUndoAll();
+            break;
+        // PICKUP
+        case "pickup":
+            if(data["from"] == null) {
+                gui.animatePickup(data["data"]);  // pickup cards from deck
+            }
             break;
         }
     }
