@@ -41,7 +41,7 @@ class CardStack {
     }
 
     playSingle(options) {
-        let id = this.cardIds.pop();
+        let id = this.cardIds[0];
         game.playCard([[id,options]]);
     }
 
@@ -71,6 +71,7 @@ class Card {
 class Game {
     constructor() {
         this.yourStacks = [];
+        this.cardIndices = {};
         this.topCards = [];
         this.planningCards = [];
         this.yourTurn = false;
@@ -99,23 +100,25 @@ class Game {
     update(update) {
 
         this.yourStacks.length = 0;
-
+        this.cardIndices = {};
         let canPlay = 0;
 
         let cardStackPanels = [];
+
         let lastStack = null;
         //update the cards in your hand
         for(let card of update['your cards']) {
             if(card['can be played']) canPlay++;
-            //this.yourCards.push(new CardStack(card['card id'], card['card image url'], card['can be played'], card['options']));
             if(lastStack != null) {
                 if(lastStack.name == card['name']) {
                     lastStack.addCard(card['card id']);
+                    this.cardIndices[card['card id']] = this.yourStacks.length - 1;
                     continue;
                 }
             }
             lastStack = new CardStack(card['card id'], card['name'], card['card image url'], card['can be played'], card['pick options separately'], card['options']);
             this.yourStacks.push(lastStack);
+            this.cardIndices[card['card id']] = this.yourStacks.length - 1;
             cardStackPanels.push(new CardStackPanel(lastStack));
         }
         gui.updateCards(cardStackPanels);
