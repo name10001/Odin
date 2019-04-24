@@ -800,6 +800,10 @@ class Genocide(AbstractCard):
     UNBANNABLE_COLOURS = ["black", "colour swapper"]  # colour swapper is banned by type instead
     UNBANNABLE_TYPES = []
 
+    def __init__(self, game):
+        self.banned_cards = []
+        super().__init__(game)
+
     def get_options(self, player):
         options = {}
         for card_colour in self.game.deck.all_colours:
@@ -817,8 +821,6 @@ class Genocide(AbstractCard):
         """
         This will update the list of available cards
         """
-        self.old_cards = self.game.deck.cards.copy()
-
         if self.is_option_valid(player, self.option) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
@@ -827,14 +829,14 @@ class Genocide(AbstractCard):
 
         # remove from deck and players hands
         if category == "type":
-            self.game.deck.ban_type(to_ban)
+            self.banned_cards = self.game.deck.ban_type(to_ban)
         elif category == "colour":
-            self.game.deck.ban_colour(to_ban)
+            self.banned_cards = self.game.deck.ban_colour(to_ban)
         else:
             print("Warning: got unknown category:", category)
     
     def undo_prepare_card(self, player):        
-        self.game.deck.set_cards(self.old_cards)
+        self.game.deck.unban_cards(self.banned_cards)
     
     def play_card(self, player):
         """
@@ -845,10 +847,10 @@ class Genocide(AbstractCard):
         # remove from deck and players hands
         if category == "type":
             for game_player in self.game.players:
-                game_player.hand.remove_type(to_ban)
+                game_player.hand.ban_type(to_ban)
         elif category == "colour":
             for game_player in self.game.players:
-                game_player.hand.remove_colour(to_ban)
+                game_player.hand.ban_colour(to_ban)
         else:
             print("Warning: got unknown category:", category)
 
@@ -942,7 +944,7 @@ class Thanos(AbstractCard):
         num_to_remove = math.ceil(total / 2)
         for i in range(0, num_to_remove):
             index = random.randrange(0, total)
-            player.hand.remove_card(index=index)
+            player.hand.ban_card(index=index)
             total -= 1
 
 
