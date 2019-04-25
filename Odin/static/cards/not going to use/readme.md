@@ -1,1 +1,0 @@
-These cards are here ether because they are to hard to implement or they are boring
