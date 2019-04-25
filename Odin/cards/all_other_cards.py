@@ -468,6 +468,20 @@ class AllOfSameColour(AbstractCard):
     def can_play_with(self, player, card, is_first_card):
         return card.get_colour() == self.get_colour()
 
+    def get_options(self, player):
+        return {
+            "play all of colour": "play all " + self.get_colour() + " cards",
+            "let me pick": "let me pick"
+        }
+
+    def get_play_with(self, player):
+        played_with = []
+        if self.option == "play all of colour":
+            for card in player.hand:
+                if card.get_colour() == self.get_colour():
+                    played_with.append(card)
+        return played_with
+
 
 class ManOfTheDay(AllOfSameColour):
     NAME = "Man Of The Day"
@@ -801,10 +815,6 @@ class Genocide(AbstractCard):
     UNBANNABLE_COLOURS = ["black", "colour swapper"]  # colour swapper is banned by type instead
     UNBANNABLE_TYPES = []
 
-    def __init__(self, game):
-        self.banned_cards = []
-        super().__init__(game)
-
     def get_options(self, player):
         options = {}
         for card_colour in self.game.deck.get_unbanned_colours():
@@ -828,16 +838,22 @@ class Genocide(AbstractCard):
 
         category, to_ban = self.option.split(' ', 1)
 
-        # remove from deck and players hands
+        # remove from deck
         if category == "type":
-            self.banned_cards = self.game.deck.ban_type(to_ban)
+            self.game.deck.ban_type(to_ban)
         elif category == "colour":
-            self.banned_cards = self.game.deck.ban_colour(to_ban)
+            self.game.deck.ban_colour(to_ban)
         else:
             print("Warning: got unknown category:", category)
     
-    def undo_prepare_card(self, player):        
-        self.game.deck.unban_cards(self.banned_cards)
+    def undo_prepare_card(self, player):
+        category, to_ban = self.option.split(' ', 1)
+
+        # add to deck
+        if category == "type":
+            self.game.deck.unban_type(to_ban)
+        elif category == "colour":
+            self.game.deck.unban_colour(to_ban)
     
     def play_card(self, player):
         """

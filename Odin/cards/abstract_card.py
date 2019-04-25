@@ -37,6 +37,9 @@ class AbstractCard:
 
     def play_card(self, player):
         pass
+
+    def get_play_with(self, player):
+        pass
     
     def is_compatible_with(self, player, card):
         """

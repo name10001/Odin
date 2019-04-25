@@ -12,9 +12,11 @@ class Deck:
         self.all_types = {}
         self.all_colours = {}
 
-        self.unbanned_colours = []
-        self.unbanned_types = []
-        self.banned_cards = set()
+        self.unbanned_colours = set()
+        self.banned_colours = set()
+        self.unbanned_types = set()
+        self.banned_types = set()
+
         self.set_cards(cards.all_cards.copy())
     
     def get_weights(self, card_collection=None):
@@ -37,7 +39,7 @@ class Deck:
         if card_collection is None:
             return card.CARD_FREQUENCY.medium_hand
         else:
-            if card in self.banned_cards:
+            if card.CARD_TYPE in self.banned_types or card.CARD_COLOUR in self.banned_colours:
                 return 0
             else:
                 n_cards = len(card_collection)
@@ -65,7 +67,10 @@ class Deck:
             self.all_colours[card.CARD_COLOUR].add(i)
             i += 1
 
-        self._update_unbanned()
+        self.unbanned_colours = self.all_colours.copy()
+        self.banned_colours.clear()
+        self.unbanned_types = self.all_types.copy()
+        self.banned_types.clear()
 
     def get_random_card(self, card_weights):
         """
@@ -104,110 +109,61 @@ class Deck:
     def ban_colour(self, card_colour):
         """
         Stops a colour from being picked up from the deck
-        Can be undone with unban_cards and the list of cards that are returned
         :param card_colour: color to ban
-        :return: list of the Cards that were banned.
+        :return: None
         """
-        banned_cards = []
-        for card in self.cards.copy():
-            if card not in self.banned_cards and card.CARD_COLOUR == card_colour:
-                self.ban_card(card, update_unbanned=False)
-                banned_cards.append(card)
-
-        self._update_unbanned()
-
-        return banned_cards
+        if card_colour in self.all_colours:
+            self.banned_colours.add(card_colour)
+            self.unbanned_colours.remove(card_colour)
+        else:
+            raise ValueError("that is not a valid card colour")
 
     def ban_type(self, card_type):
         """
         Stops a type from being picked up from the deck
-        Can be undone with unban_cards and the list of cards that are returned
         :param card_type: type to ban
-        :return: list of the Cards that were banned
-        """
-        banned_cards = []
-        for card in self.cards.copy():
-            if card not in self.banned_cards and card.CARD_TYPE == card_type:
-                self.ban_card(card, update_unbanned=False)
-                banned_cards.append(card)
-
-        self._update_unbanned()
-
-        return banned_cards
-
-    def _update_unbanned(self):
-        """
-        Updates the list of unbanned types and colours
         :return: None
         """
-        self.unbanned_colours.clear()
-        for card_colour in self.all_colours:
-            banned = True
-            for index in self.all_colours[card_colour]:
-                if self.cards[index] not in self.banned_cards:
-                    banned = False
-            if not banned:
-                self.unbanned_colours.append(card_colour)
+        if card_type in self.all_types:
+            self.banned_types.add(card_type)
+            self.unbanned_types.remove(card_type)
+        else:
+            raise ValueError("that is not a valid card type")
 
-        self.unbanned_types.clear()
-        for card_type in self.all_types:
-            banned = True
-            for index in self.all_types[card_type]:
-                if self.cards[index] not in self.banned_cards:
-                    banned = False
-            if not banned:
-                self.unbanned_types.append(card_type)
-
-        # if all the cards have been banned, unban all cards
-        if len(self.unbanned_colours) == 0 and len(self.unbanned_types) == 0:
-            self.banned_cards.clear()
-            self.unbanned_types = self.all_types.copy()
-            self.unbanned_colours = self.all_colours.copy()
-
-    def ban_card(self, card, update_unbanned=True):
+    def unban_colour(self, card_colour):
         """
-        Stops a card from being picked up from the deck
-        :param card: Card class to remove
-        :param update_unbanned: Only for internal use! This updates the array of unbanned types and colours
+        Allows a colour from being picked up from the deck
+        :param card_colour: color to allow
         :return: None
         """
-        self.banned_cards.add(card)
-        if update_unbanned:
-            self._update_unbanned()
+        if card_colour in self.all_colours:
+            self.banned_colours.remove(card_colour)
+            self.unbanned_colours.add(card_colour)
+        else:
+            raise ValueError("that is not a valid card colour")
 
-    def unban_card(self, card, update_unbanned=True):
+    def unban_type(self, card_type):
         """
-        Allows a Card back into the deck
-        This can be used to undo 'ban_card', 'ban_type' or 'ban_colour'
-        :param card: The Card to add back
-        :param update_unbanned: Only for internal use! This updates the array of unbanned types and colours
+        Allows a type from being picked up from the deck
+        :param card_type: type to allow
         :return: None
         """
-        self.banned_cards.remove(card)
-        if update_unbanned:
-            self._update_unbanned()
-
-    def unban_cards(self, cards):
-        """
-        Allows the given Cards to be picked up from the deck
-        This can be used to undo 'ban_card', 'ban_type' or 'ban_colour'
-        :param cards: An array of Cards to add back
-        :return: None
-        """
-        for card in cards:
-            self.unban_card(card, update_unbanned=False)
-        self._update_unbanned()
+        if card_type in self.all_types:
+            self.banned_types.remove(card_type)
+            self.unbanned_types.add(card_type)
+        else:
+            raise ValueError("that is not a valid card type")
 
     def get_unbanned_types(self):
         """
         Gets all the unbanned card types
-        :return: An array of card types that have not been banned
+        :return: A set of card types that have not been banned
         """
         return self.unbanned_types
 
     def get_unbanned_colours(self):
         """
         Gets all the unbanned card colours
-        :return: An array of card colours that have not been banned
+        :return: A set of card colours that have not been banned
         """
         return self.unbanned_colours

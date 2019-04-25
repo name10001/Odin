@@ -39,7 +39,6 @@ class Player:
         
         self.game.send_to_all_players("animate", json_to_send)
 
-
     def play_card(self, card_id, chosen_option):
         """
         Takes card out of players hand and adds it to the games played cards
@@ -58,6 +57,11 @@ class Player:
             card.set_option(chosen_option)
             card.prepare_card(self)
             self.game.planning_pile.add_card(card)
+            play_with = card.get_play_with(self)
+            if play_with is not None:
+                for card_played_with in play_with:
+                    if card_played_with.get_options(self) is None:
+                        self.play_card(card_played_with.get_id(), None)
             return card
         return None
         
