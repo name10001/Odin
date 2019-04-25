@@ -469,10 +469,13 @@ class AllOfSameColour(AbstractCard):
         return card.get_colour() == self.get_colour()
 
     def get_options(self, player):
-        return {
-            "play all of colour": "play all " + self.get_colour() + " cards",
-            "let me pick": "let me pick"
-        }
+        if player.hand.number_of_colour(self.get_colour()) > 3:
+            return {
+                "let me pick": "Pick cards (recommended)",
+                "play all of colour": "Add cards automatically"
+            }
+        else:
+            return None
 
     def get_play_with(self, player):
         played_with = []

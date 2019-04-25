@@ -148,6 +148,17 @@ class CardCollection:
             return len(self.card_types[card_type])
         else:
             return 0
+    
+    def number_of_colour(self, card_colour):
+        """
+        Number of cards of a particular colour in a collection
+        :param card_colour: Colour to count
+        :return: The number of that colour
+        """
+        if card_colour in self.card_colours:
+            return len(self.card_colours[card_colour])
+        else:
+            return 0
 
     def set_cards(self, cards):
         """
