@@ -1,0 +1,19 @@
+BRIDGE SIZE (2.25x3.5in)
+750x1125px
+
+Use the templates already saved to create cards
+
+Shadows:
+135 degree, -45 degree in bottom right
+Opacity/blur is none
+
+Outline is half the width of the shadow offset:
+small: 2px outline, 4px offset
+large: 5px outline, 10px offset
+
+Font size:
+Centre: 350
+Centre (smaller): 120
+Corners: 100
+Corners (smaller): 60
+Corners (even smaller): 4
