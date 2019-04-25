@@ -595,9 +595,10 @@ class Communist(AbstractCard):
 
     def play_card(self, player):
         # stop the card from playing multiple times
-        card_below = self.game.planning_pile.card_below(self)
-        if card_below is not None and card_below.get_type() == "Communist":
-            return
+        if self.game.planning_pile.contains(self):
+            card_below = self.game.planning_pile.card_below(self)
+            if card_below is not None and card_below.get_type() == "Communist":
+                return
 
         all_cards = []
         for player in self.game.players:
