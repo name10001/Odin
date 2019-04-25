@@ -95,14 +95,14 @@ class Deck:
             # get a random card based upon the weights
             card = self.get_random_card(card_weights)
 
-            # update weights of cards with the same type as the one that was picked up
-            for index in self.all_types[card.CARD_TYPE]:
-                card_weights[index] = self.get_weight(self.cards[index], card_collection)
-
             # add card to card_collection
             card = card(self.game)
             card_collection.add_card(card)
             added_cards.append(card)
+
+            # update weights of cards with the same type as the one that was picked up
+            for index in self.all_types[card.CARD_TYPE]:
+                card_weights[index] = self.get_weight(self.cards[index], card_collection)
         
         return added_cards
 
