@@ -177,9 +177,9 @@ class Deck:
         Unbans all colours and types
         :return: None
         """
-        self.unbanned_colours = self.all_colours.copy()
+        self.unbanned_colours = set(self.all_colours)
         self.banned_colours.clear()
-        self.unbanned_types = self.all_types.copy()
+        self.unbanned_types = set(self.all_types)
         self.banned_types.clear()
 
     def get_unbanned_types(self):
