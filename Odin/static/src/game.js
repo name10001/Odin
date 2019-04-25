@@ -5,6 +5,12 @@ class Player {
     }
 }
 
+class GameEvent {
+    constructor(run) {
+        this.run = run;
+    }
+}
+
 /**
  * A stack of cards in your hand
  */
@@ -84,6 +90,7 @@ class Game {
         this.skip = 0;
         this.turnString = "";
         this.cantPlayReason = null;  // is null if you are allowed to have your turn with the cards you have played
+        this.events = [];
 
         //build a list of all cards - use the url as the key
         this.allImages = [];
@@ -94,6 +101,35 @@ class Game {
         this.allCards = [];
         for(let card of ALL_CARDS) {
             this.allCards[card["name"]] = new Card(card, this.allImages[card["url"]]); 
+        }
+    }
+
+    /**
+     * Add a new event to the queue, if the queue is empty, run the event.
+     */
+    addEvent(event) {
+        console.log("ADDING EVENT " + event.run);
+        this.events.push(event);
+        console.log("EVENTS NOW LOOKS LIKE: " + this.events);
+        if(this.events.length == 1) {
+            console.log("RUNNING EVENT " + event.run);
+            event.run();
+        }
+    }
+
+    /**
+     * Finish the current event in the queue and move onto the next one if it exists
+     */
+    finishedEvent() {
+        if(this.events.length == 0) return;
+
+        this.events.splice(0, 1);
+        console.log("FINISHED EVENT");
+        
+        console.log("EVENTS NOW LOOKS LIKE: " + this.events);
+        if(this.events.length > 0) {
+            console.log("NOW RUNNING EVENT " + this.events[0].run);
+            this.events[0].run();
         }
     }
 
@@ -166,26 +202,36 @@ class Game {
 
         
         this.skip = (update['iteration']-1) % this.players.length; //tells you how many players will be skipped
+
+        this.finishedEvent();
     }
 
     animate(data) {
         switch(data["type"]) {
         // ADD CARDS TO PLANNING PILE
         case "play cards":
-            gui.animatePlayCards(data["data"]);
+            this.addEvent(new GameEvent(function() {
+                    gui.animatePlayCards(data["data"]);
+                }));
             break;
         // UNDO
         case "undo":
-            gui.animateUndo();
+            this.addEvent(new GameEvent(function() {
+                gui.animateUndo();
+            }));
             break;
         // UNDO ALL
         case "undo all":
-            gui.animateUndoAll();
+            this.addEvent(new GameEvent(function() {
+                gui.animateUndoAll();
+            }));
             break;
         // PICKUP
         case "pickup":
             if(data["from"] == null) {
-                gui.animatePickup(data["data"]);  // pickup cards from deck
+                this.addEvent(new GameEvent(function() {
+                    gui.animatePickup(data["data"]);  // pickup cards from deck
+                }));
             }
             break;
         }

@@ -703,7 +703,7 @@ class FeelingBlue(AbstractCard):
     NAME = "Feeling Blue"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/feeling_blue.png'
-    CARD_FREQUENCY = CardFrequency(2)
+    CARD_FREQUENCY = CardFrequency(1.5)
     CARD_TYPE = "Feeling Blue"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon playing this card, you will be forced to pickup 5 cards."
@@ -951,7 +951,7 @@ class Thanos(AbstractCard):
     NAME = "Thanos"
     CARD_COLOUR = "purple"
     CARD_IMAGE_URL = 'cards/thanos.png'
-    CARD_FREQUENCY = CardFrequency(0, 0, 1, 1, max_cards=2)
+    CARD_FREQUENCY = CardFrequency(0, 0, 1, 1, max_cards=3)
     CARD_TYPE = "Thanos"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon play, half of the cards in your hand will randomly disappear."

@@ -60,7 +60,9 @@ $(document).ready(function() {
     });
 
     socket.on('card update', function(update) {
-        game.update(update);
+        game.addEvent(new GameEvent(function() {
+            game.update(update);
+        }));
     });
     socket.on('animate', function(data) {
         game.animate(data);

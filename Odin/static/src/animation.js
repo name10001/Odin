@@ -1,5 +1,5 @@
 class AnimatedCard {
-    constructor(startPosition, endPosition, time, wait, image, width, height, sound, displayWhileWaiting=false) {
+    constructor(startPosition, endPosition, time, wait, image, width, height, sound, isLastCard=false, displayWhileWaiting=false) {
         let dx = endPosition.x-startPosition.x;
         let dy = endPosition.y-startPosition.y;
         let len = Math.sqrt(dx*dx+dy*dy);
@@ -18,6 +18,7 @@ class AnimatedCard {
         this.wait = wait;
         this.end = time + wait;
         this.current = 0;
+        this.isLastCard = isLastCard;
         this.displayWhileWaiting = displayWhileWaiting;
         
         if(sound==undefined) this.sound = null;
@@ -48,6 +49,7 @@ class AnimatedCard {
         if(this.sound != null)
             this.sound.play();
     }
+    place() {}
 
     draw() {
         if(this.current >= this.wait || this.displayWhileWaiting) {
