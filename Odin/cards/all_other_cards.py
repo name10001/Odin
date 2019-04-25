@@ -806,10 +806,10 @@ class Genocide(AbstractCard):
 
     def get_options(self, player):
         options = {}
-        for card_colour in self.game.deck.all_colours:
+        for card_colour in self.game.deck.get_unbanned_colours():
             if card_colour not in self.UNBANNABLE_COLOURS:
                 options["colour " + card_colour] = "Colour: " + card_colour.capitalize()
-        for card_type in self.game.deck.all_types:
+        for card_type in self.game.deck.get_unbanned_types():
             if card_type not in self.UNBANNABLE_TYPES:
                 options["type " + card_type] = "Type: " + card_type
         return options
@@ -847,10 +847,10 @@ class Genocide(AbstractCard):
         # remove from deck and players hands
         if category == "type":
             for game_player in self.game.players:
-                game_player.hand.ban_type(to_ban)
+                game_player.hand.remove_type(to_ban)
         elif category == "colour":
             for game_player in self.game.players:
-                game_player.hand.ban_colour(to_ban)
+                game_player.hand.remove_colour(to_ban)
         else:
             print("Warning: got unknown category:", category)
 
