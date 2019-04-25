@@ -379,6 +379,57 @@ class EA(AbstractCard):
         self.game.planning_pile[0].still_needs -= self. NUMBER_NEEDED
         self.still_needs = self.NUMBER_NEEDED
 
+    def get_options(self, player):
+        if player.hand.number_of_colour(self.get_colour()) > 3:
+            return {
+                "let me pick": "Pick cards (recommended)",
+                "pick for me": "Add cards automatically"
+            }
+        else:
+            return None
+
+    def get_play_with(self, player):
+        if self.option != "pick for me":
+            return None
+
+        # get all the number cards
+        number_cards = {}
+        for card in player.hand:
+            if card.get_type().isnumeric():
+                num = int(card.get_type())
+                if num not in number_cards:
+                    number_cards[num] = []
+                number_cards[num].append(card)
+
+        needs = self.game.planning_pile[0].still_needs
+
+        played_with = []
+
+        # keep adding the lowest card to 'played_with' till just before it passes 'needs'
+        for num in number_cards:
+            for card in number_cards[num]:
+                if needs - num >= 0:
+                    played_with.append(card)
+                    needs -= num
+                else:
+                    break
+
+        # If its right its found a match, return it now as the next part is very costly
+        if needs == 0:
+            return played_with
+
+        # check if 'needs' can be made to equal zero by swapping out one card
+        for i in range(len(played_with) - 1, 0, -1):
+            x = needs + int(played_with[i].get_type())
+            if x in number_cards and len(number_cards[x]) > 0:
+                played_with.pop(i)
+                played_with.append(number_cards[x][0])
+                return played_with
+
+        # 99% of the time it would have found a solution by the time it gets here.
+        # If it hasn't, let the human to it
+        return played_with
+
 
 class EA15(EA):
     CARD_FREQUENCY = CardFrequency(2, 1)
