@@ -392,7 +392,9 @@ class EA(AbstractCard):
         if self.option != "pick for me":
             return None
 
-        # get all the number cards
+        needs = self.game.planning_pile[0].still_needs
+
+        card_numbers = []
         number_cards = {}
         for card in player.hand:
             if card.get_type().isnumeric():
@@ -400,35 +402,37 @@ class EA(AbstractCard):
                 if num not in number_cards:
                     number_cards[num] = []
                 number_cards[num].append(card)
+                card_numbers.append(num)
 
-        needs = self.game.planning_pile[0].still_needs
+        number_played_with = []
+
+        try:
+            self.DFS(number_played_with, card_numbers, needs)
+        except OverflowError:
+            print("Warning: Got over flow error in EA card")
 
         played_with = []
+        for num in number_played_with:
+            played_with.append(number_cards[num].pop())
 
-        # keep adding the lowest card to 'played_with' till just before it passes 'needs'
-        for num in number_cards:
-            for card in number_cards[num]:
-                if needs - num >= 0:
-                    played_with.append(card)
-                    needs -= num
-                else:
-                    break
-
-        # If its right its found a match, return it now as the next part is very costly
-        if needs == 0:
-            return played_with
-
-        # check if 'needs' can be made to equal zero by swapping out one card
-        for i in range(len(played_with) - 1, 0, -1):
-            x = needs + int(played_with[i].get_type())
-            if x in number_cards and len(number_cards[x]) > 0:
-                played_with.pop(i)
-                played_with.append(number_cards[x][0])
-                return played_with
-
-        # 99% of the time it would have found a solution by the time it gets here.
-        # If it hasn't, let the human to it
         return played_with
+
+    def DFS(self, played_with, all_cards, needs, index=0):
+        # TODO make iterative. Python is not optimised for recursion
+        card = all_cards[index]
+        played_with.append(card)
+        number = card
+        needs -= number
+        if needs == 0:
+            return True
+        elif needs > 0:
+            for i in range(index+1, len(all_cards)):
+                card_array = self.DFS(played_with, all_cards, needs, i)
+                if card_array is True:
+                    return True
+        needs += number
+        played_with.pop(-1)
+        return False
 
 
 class EA15(EA):
