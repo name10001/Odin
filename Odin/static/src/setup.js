@@ -1,5 +1,5 @@
 
-const CARD_RATIO = 670.0/1045.0;
+const CARD_RATIO = 300.0/469.0;
 const CARD_WIDTH = 9;
 const CARD_HEIGHT = CARD_WIDTH/CARD_RATIO;
 const MIN_WIDTH = 48;//in terms of GUI_SCALE units
