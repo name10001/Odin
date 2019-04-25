@@ -6,18 +6,21 @@ class Deck:
     def __init__(self, game):
         self.game = game
         self.cards = []
-        # dictionaries with all types/colours as keys and the values being
+        # dictionaries with all types/colours that are not banned as keys and the values being
         # a set of indexes pointing to the locations of all the cards of that type/color in self.cards
         # e.g. {"blue": {1, 5, 6}, "green", {0, 4, 10}}
         self.all_types = {}
         self.all_colours = {}
 
-        self.unbanned_colours = set()
-        self.banned_colours = set()
-        self.unbanned_types = set()
-        self.banned_types = set()
+        # esentially the same as all_types and all_colours, except this is an array to be used for the genocide card options
+        self.unbanned_types = []
+        self.unbanned_colours = []
 
-        self.set_cards(cards.all_cards.copy())
+        # types and colours not included in all_types and all_colours. Remove and add from these
+        self.banned_types = set()
+        self.banned_colours = set()
+
+        self.set_cards()
     
     def get_weights(self, card_collection=None, ignore_limit=False):
         """
@@ -41,38 +44,40 @@ class Deck:
         if card_collection is None:
             return card.CARD_FREQUENCY.medium_hand
         else:
-            if card.CARD_TYPE in self.banned_types or card.CARD_COLOUR in self.banned_colours:
-                return 0
-            else:
-                n_cards = len(card_collection)
-                n_this_type = card_collection.number_of_type(card.CARD_TYPE)
-                return card.CARD_FREQUENCY.get_frequency(n_cards, n_this_type, ignore_limit=ignore_limit)
+            n_cards = len(card_collection)
+            n_this_type = card_collection.number_of_type(card.CARD_TYPE)
+            return card.CARD_FREQUENCY.get_frequency(n_cards, n_this_type, ignore_limit=ignore_limit)
 
-    def set_cards(self, cards):
+    def set_cards(self):
         """
-        Set the list of all cards
-        Used when undoing a genocide card or initialization
-        :param cards: card class list to pickup future cards from
+        Sets the list of cards, unbanned types and unbanned colours to not include any of the banned types or colours
         :return: None
         """
-        if len(cards) == 0:
-            raise ValueError("There are no cards")
 
-        self.cards = list(cards)
-
-        self.all_types.clear()
-        self.all_colours.clear()
+        self.cards = list()
+        self.all_types = {}
+        self.all_colours = {}
+        self.unbanned_colours.clear()
+        self.unbanned_types.clear()
+        
         i = 0
-        for card in self.cards:
-            if card.CARD_TYPE not in self.all_types:
-                self.all_types[card.CARD_TYPE] = set()
-            self.all_types[card.CARD_TYPE].add(i)
-            if card.CARD_COLOUR not in self.all_colours:
-                self.all_colours[card.CARD_COLOUR] = set()
-            self.all_colours[card.CARD_COLOUR].add(i)
-            i += 1
+        for card in cards.all_cards.copy():
+            if card.CARD_TYPE not in self.banned_types and card.CARD_COLOUR not in self.banned_colours:
+                self.cards.append(card)
 
-        self.unban_all()
+                # add to all types and unbanned types
+                if card.CARD_TYPE not in self.unbanned_types:
+                    self.unbanned_types.append(card.CARD_TYPE)
+                    self.all_types[card.CARD_TYPE] = set()
+                self.all_types[card.CARD_TYPE].add(i)
+                
+                # add to all colours and unbanned colours
+                if card.CARD_COLOUR not in self.unbanned_colours:
+                    self.unbanned_colours.append(card.CARD_COLOUR)
+                    self.all_colours[card.CARD_COLOUR] = set()
+                self.all_colours[card.CARD_COLOUR].add(i)
+
+                i += 1
 
     def get_random_card(self, card_weights):
         """
@@ -130,11 +135,13 @@ class Deck:
         :param card_colour: color to ban
         :return: None
         """
-        if card_colour in self.all_colours:
+        if card_colour in self.unbanned_colours:
             self.banned_colours.add(card_colour)
-            self.unbanned_colours.remove(card_colour)
+
+            self.set_cards()
         else:
             raise ValueError("that is not a valid card colour")
+
 
     def ban_type(self, card_type):
         """
@@ -144,7 +151,8 @@ class Deck:
         """
         if card_type in self.all_types:
             self.banned_types.add(card_type)
-            self.unbanned_types.remove(card_type)
+
+            self.set_cards()
         else:
             raise ValueError("that is not a valid card type")
 
@@ -154,9 +162,10 @@ class Deck:
         :param card_colour: color to allow
         :return: None
         """
-        if card_colour in self.all_colours:
+        if card_colour in self.banned_colours:
             self.banned_colours.remove(card_colour)
-            self.unbanned_colours.add(card_colour)
+
+            self.set_cards()
         else:
             raise ValueError("that is not a valid card colour")
 
@@ -166,9 +175,10 @@ class Deck:
         :param card_type: type to allow
         :return: None
         """
-        if card_type in self.all_types:
+        if card_type in self.banned_types:
             self.banned_types.remove(card_type)
-            self.unbanned_types.add(card_type)
+
+            self.set_cards()
         else:
             raise ValueError("that is not a valid card type")
 
@@ -177,10 +187,10 @@ class Deck:
         Unbans all colours and types
         :return: None
         """
-        self.unbanned_colours = set(self.all_colours)
         self.banned_colours.clear()
-        self.unbanned_types = set(self.all_types)
         self.banned_types.clear()
+
+        self.set_cards()
 
     def get_unbanned_types(self):
         """

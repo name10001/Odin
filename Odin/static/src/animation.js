@@ -1,8 +1,9 @@
 class AnimatedCard {
-    constructor(startPosition, endPosition, speed, wait, image, width, height, sound, displayWhileWaiting=false) {
+    constructor(startPosition, endPosition, time, wait, image, width, height, sound, displayWhileWaiting=false) {
         let dx = endPosition.x-startPosition.x;
         let dy = endPosition.y-startPosition.y;
         let len = Math.sqrt(dx*dx+dy*dy);
+        let speed = len/time;
         this.moveVector = {
             x:speed*dx/len,
             y:speed*dy/len
@@ -15,7 +16,7 @@ class AnimatedCard {
         this.width = width;
         this.height = height;
         this.wait = wait;
-        this.end = len/speed + wait;
+        this.end = time + wait;
         this.current = 0;
         this.displayWhileWaiting = displayWhileWaiting;
         

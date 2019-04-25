@@ -21,9 +21,7 @@ class Player:
         """
         played_cards = []
         for card_data in data:
-            card = self.play_card(card_data[0], card_data[1])
-            if card is not None:
-                played_cards.append(card)
+            self.play_card(card_data[0], card_data[1], played_cards)
         
         # send a message to all players
         json_to_send = {
@@ -39,13 +37,13 @@ class Player:
         
         self.game.send_to_all_players("animate", json_to_send)
 
-    def play_card(self, card_id, chosen_option):
+    def play_card(self, card_id, chosen_option, played_cards):
         """
         Takes card out of players hand and adds it to the games played cards
         Also preforms all actions of the card and checks if its allowed to be played
         :param card_id:
         :param chosen_option:
-        :return: Returns the card object that was played
+        :param played_cards: array of played cards to add to if successfully played
         """
         card = self.hand.find_card(card_id)
         if card is None:
@@ -57,13 +55,15 @@ class Player:
             card.set_option(chosen_option)
             card.prepare_card(self)
             self.game.planning_pile.add_card(card)
+
+            played_cards.append(card)
+
             play_with = card.get_play_with(self)
             if play_with is not None:
                 for card_played_with in play_with:
                     if card_played_with.get_options(self) is None:
-                        self.play_card(card_played_with.get_id(), None)
-            return card
-        return None
+                        self.play_card(card_played_with.get_id(), None, played_cards)
+            
         
     def finish_turn(self):
         """

@@ -352,7 +352,7 @@ class Gui {
                 let index = game.cardIndices[card['id']];
                 let position = this.cardScroller.getPositionOf(index);
                 let image = game.allImages[card['card image url']];
-                let movingCard = new AnimatedCard(position, planningPilePosition, 3, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
+                let movingCard = new AnimatedCard(position, planningPilePosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
                 this.movingCards.push(movingCard);
                 wait += waitIncr;
                 if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
@@ -368,7 +368,7 @@ class Gui {
             let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
             for(let card of cards) {
                 let image = game.allImages[card['card image url']];
-                let movingCard = new AnimatedCard(position, planningPilePosition, 3, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
+                let movingCard = new AnimatedCard(position, planningPilePosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
                 this.movingCards.push(movingCard);
                 wait += waitIncr;
                 if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
@@ -393,7 +393,7 @@ class Gui {
         
         let image = card.image;
         
-        let movingCard = new AnimatedCard(position, endPosition, 3, 0, image, this.CARD_WIDTH, this.CARD_HEIGHT, this.pickupSound);
+        let movingCard = new AnimatedCard(position, endPosition, 300, 0, image, this.CARD_WIDTH, this.CARD_HEIGHT, this.pickupSound);
         this.movingCards.push(movingCard);
     }
 
@@ -421,7 +421,7 @@ class Gui {
             let card = game.planningCards.pop();
             let image = card.image;
             
-            let movingCard = new AnimatedCard(position, endPosition, 3, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.pickupSound : null, true);
+            let movingCard = new AnimatedCard(position, endPosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.pickupSound : null, true);
             this.movingCards.push(movingCard);
             wait+=waitIncr;
             position.y += gap;
@@ -445,7 +445,7 @@ class Gui {
         for(let url of cards) {
             let image = game.allImages[url];
             console.log(url);
-            let movingCard = new AnimatedCard(startPosition, endPosition, 2, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.pickupSound : null);
+            let movingCard = new AnimatedCard(startPosition, endPosition, 600, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.pickupSound : null);
             this.movingCards.push(movingCard);
             wait+=waitIncr;
             if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
