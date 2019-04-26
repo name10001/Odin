@@ -64,8 +64,6 @@ class Player:
         if was_empty is False:
             return
 
-        print("This should only happen once")
-
         # play all the cards
         cards_played = []
         while len(self._play_cards_queue) > 0:
