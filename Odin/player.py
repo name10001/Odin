@@ -34,9 +34,9 @@ class Player:
         ways = (card_array is not None) + (card_to_play is not None) + (card_id_to_play is not None)
         if ways != 1:
             raise ValueError("Exactly one of the following needs to be specified: "
-                             "card_to_play, card_id_to_play and card_array. Got: " + ways)
+                             "card_to_play, card_id_to_play and card_array. Got: " + ways + " ways")
         if card_array is not None and chosen_option is not None:
-            raise ValueError("card_array and chosen_option an not be used together.")
+            raise ValueError("card_array and chosen_option can not be used together.")
 
         # add all the cards into card array
         if card_array is None:
