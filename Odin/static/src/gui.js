@@ -16,6 +16,7 @@ class Gui {
 
         //initialize some variables
         this.popup = null;
+        this.currentAnimation = null;
         this.playAll = false;
 
         //SOME BUTTONS
@@ -52,6 +53,12 @@ class Gui {
         this.MIN_SOUND_DISPLACEMENT = 80;  // sounds will be 80ms apart at the minimum
         this.pickupSound = new Audio('/static/sounds/card_pickup.mp3');
         this.playSound = new Audio('/static/sounds/card_play.mp3');
+        this.sovietFlag = new Image;
+        this.sovietFlag.src = '/static/soviet.png';
+        this.stalin = new Image;
+        this.stalin.src = '/static/stalin.png';
+        this.cardBack = new Image;
+        this.cardBack.src = '/static/cards/back.png';
     }
 
     updateCards(cardPanels) {
@@ -260,6 +267,7 @@ class Gui {
         this.cardScroller.draw();
         //DRAW POPUP
         if(this.popup!=null) this.popup.draw();
+        if(this.currentAnimation!=null) this.currentAnimation.draw(dt);
         
 
         //DRAW MOVING CARDS
@@ -308,6 +316,7 @@ class Gui {
      * Method when you tap/click a point on the screen
      */
     click() {
+        if(this.currentAnimation!=null) return;
         if(this.popup!=null) {
             this.popup.click();
             return;
@@ -437,7 +446,8 @@ class Gui {
             let card = game.planningCards.pop();
             let image = card.image;
             
-            movingCard = new AnimatedCard(position, endPosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.pickupSound : null, true);
+            movingCard = new AnimatedCard(position, endPosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, 
+                soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.pickupSound : null, true);
             this.movingCards.push(movingCard);
             wait+=waitIncr;
             position.y += gap;
@@ -463,7 +473,6 @@ class Gui {
         
         let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
         let movingCard;
-        console.log(cards.length);
         for(let url of cards) {
             let image = game.allImages[url];
             movingCard = new AnimatedCard(startPosition, endPosition, 600, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.pickupSound : null);
@@ -482,10 +491,15 @@ class Gui {
 
     }
 
+    communistAnimation(yourCards) {
+        this.currentAnimation = new CommunistAnimation(yourCards);
+    }
+
     /**
      * When you drag the mouse/touch 
      */
     drag() {
+        if(this.currentAnimation!=null) return;
         if(this.popup!=null) {
             this.popup.drag();
             return;
@@ -497,6 +511,7 @@ class Gui {
      * Release the mouse/touch
      */
     release() {
+        if(this.currentAnimation!=null) return;
         if(this.popup!=null) {
             this.popup.release();
             return;
@@ -508,6 +523,7 @@ class Gui {
      * Mouse Wheel
      */
     wheel(amount) {
+        if(this.currentAnimation!=null) return;
         if(this.popup!=null) {
             this.popup.wheel(amount);
             return;
@@ -520,6 +536,7 @@ class Gui {
      * Scrolling 
      */
     scroll(dt) {
+        if(this.currentAnimation!=null) return;
         if(this.popup!=null) {
             this.popup.scroll(dt);
             return;

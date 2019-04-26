@@ -108,11 +108,8 @@ class Game {
      * Add a new event to the queue, if the queue is empty, run the event.
      */
     addEvent(event) {
-        console.log("ADDING EVENT " + event.run);
         this.events.push(event);
-        console.log("EVENTS NOW LOOKS LIKE: " + this.events);
         if(this.events.length == 1) {
-            console.log("RUNNING EVENT " + event.run);
             event.run();
         }
     }
@@ -124,11 +121,8 @@ class Game {
         if(this.events.length == 0) return;
 
         this.events.splice(0, 1);
-        console.log("FINISHED EVENT");
-        
-        console.log("EVENTS NOW LOOKS LIKE: " + this.events);
+
         if(this.events.length > 0) {
-            console.log("NOW RUNNING EVENT " + this.events[0].run);
             this.events[0].run();
         }
     }
@@ -234,6 +228,11 @@ class Game {
                 }));
             }
             break;
+        //COMMUNIST CARD
+        case "communist":
+            this.addEvent(new GameEvent(function() {
+                gui.communistAnimation(data["your cards"]);
+            }));
         }
     }
 

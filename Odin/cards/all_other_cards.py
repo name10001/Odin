@@ -660,7 +660,8 @@ class Communist(AbstractCard):
     NAME = "Communist"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/communist.png'
-    CARD_FREQUENCY = CardFrequency(0, 1, max_cards=1)
+    #CARD_FREQUENCY = CardFrequency(0, 1, max_cards=1)
+    CARD_FREQUENCY = CardFrequency(30)
     CARD_TYPE = "Communist"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded."
@@ -687,6 +688,15 @@ class Communist(AbstractCard):
         i = 0
         for player in self.game.players:
             player.hand.set_cards(all_cards[i:i+number_of_cards_each])
+
+            json_to_send = {
+                "type": "communist",
+                "your cards": []
+            }
+            for card in player.hand:
+                json_to_send["your cards"].append(card.get_url())
+
+            player.send_message("animate", json_to_send)
             i += number_of_cards_each
 
 
