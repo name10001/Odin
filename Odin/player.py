@@ -1,6 +1,7 @@
 import flask_server as fs
 from cards.card_collection import CardCollection
 import settings
+from time import sleep
 
 
 class Player:
@@ -14,6 +15,10 @@ class Player:
         self.turns_left = 1
         self.state = "not turn"
         self._play_cards_queue = []  # see self.play_card()
+
+        # setting up question stuff see self.ask()
+        self._question_answer = []
+        self._question = None
 
     def play_card(self, card_to_play=None, card_id_to_play=None, chosen_option=None, card_array=None):
         """
@@ -91,6 +96,68 @@ class Player:
             ]
         }
         self.game.send_to_all_players("animate", json_to_send)
+
+    def ask(self, title, choices, choices_type="text", number_to_pick=1):
+        """
+        Asks the player a question. This can be done at any time.
+        :param title: The title of the question or the question itself. E.g. "Pick a card"
+        :param choices: The choices to give the player.
+        This is a directory of possible answers where the key is what gets sent back
+        and the value is what to shown the player.
+        Example of card type: {"Blue_Six_card_12345": "cards/6_blue.png", "EA_15_card_13464": "cards/ea_15.png"}
+        Example of text type: {"player": "Let me pick the cards", "server": "Automatically play cards"}
+        :param choices_type: The type of choice. Available types are "text" and "card".
+        :param number_to_pick: The number of choices to pick. Usual 1
+        :return: The choice itself if number_to_pick is 0 or an array of the chosen choices.
+        E.g. "Blue_Six_card_12345" or "server" or ["Green_Two_card_54321", "Blue_Pickup_2_card_56443", ...]
+        """
+        raise NotImplementedError("This is unfinished and untested, and this is not implemented in the client yet. "
+                                  "Please don't use this for anything other than testing and development")
+
+        # generate json for question
+        self._question = {
+            "title": str(title),
+            "number to pick": int(number_to_pick),
+            "type": choices_type,
+            "choices": choices
+        }
+
+        # send the question and wait for a reply. If the reply is not valid, send it again
+        self._question_answer.clear()
+        valid_answer = False
+        while valid_answer is False:
+            self.send_message("ask", self._question)
+
+            # wait for answer
+            while self._question_answer is None:
+                sleep(1/30)
+
+            if len(self._question_answer) == 0:
+                continue
+
+            valid_answer = True
+            for choice in self._question_answer:
+                if choice not in choices:
+                    valid_answer = False
+                    break
+
+        # clear the question
+        question_answer = self._question_answer
+        self._question_answer.clear()
+        self._question = None
+
+        if number_to_pick == 1:
+            return question_answer[0]
+        else:
+            return self._question_answer
+
+    def answer_question(self, question_answer):
+        """
+        This will answer the current question with the given answer
+        :param question_answer: An array of the players chosen choices for the current question
+        :return: None
+        """
+        self._question_answer = question_answer
 
     def finish_turn(self):
         """
