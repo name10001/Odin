@@ -373,24 +373,9 @@ class EA(AbstractCard):
             self.game.planning_pile[0].still_needs = self.NUMBER_NEEDED
         self.still_needs = 0
 
-    def undo_prepare_card(self, player):
-        if len(self.game.planning_pile) == 0:
-            return
-        self.game.planning_pile[0].still_needs -= self. NUMBER_NEEDED
-        self.still_needs = self.NUMBER_NEEDED
-
-    def get_options(self, player):
-        if player.hand.number_of_colour(self.get_colour()) > 3:
-            return {
-                "let me pick": "Pick cards (recommended)",
-                "pick for me": "Add cards automatically"
-            }
-        else:
-            return None
-
-    def get_play_with(self, player):
+        # play cards
         if self.option != "pick for me":
-            return None
+            return
 
         needs = self.game.planning_pile[0].still_needs
 
@@ -411,11 +396,23 @@ class EA(AbstractCard):
         except OverflowError:
             print("Warning: Got over flow error in EA card")
 
-        played_with = []
         for num in number_played_with:
-            played_with.append(number_cards[num].pop())
+            player.play_card(number_cards[num].pop())
 
-        return played_with
+    def undo_prepare_card(self, player):
+        if len(self.game.planning_pile) == 0:
+            return
+        self.game.planning_pile[0].still_needs -= self. NUMBER_NEEDED
+        self.still_needs = self.NUMBER_NEEDED
+
+    def get_options(self, player):
+        if player.hand.number_of_colour(self.get_colour()) > 3:
+            return {
+                "let me pick": "Pick cards (recommended)",
+                "pick for me": "Add cards automatically"
+            }
+        else:
+            return None
 
     def DFS(self, played_with, all_cards, needs, index=0):
         # TODO make iterative. Python is not optimised for recursion
@@ -532,13 +529,12 @@ class AllOfSameColour(AbstractCard):
         else:
             return None
 
-    def get_play_with(self, player):
+    def prepare_card(self, player):
         played_with = []
         if self.option == "play all of colour":
             for card in player.hand:
                 if card.get_colour() == self.get_colour():
-                    played_with.append(card)
-        return played_with
+                    player.play_card(card_to_play=card)
 
 
 class ManOfTheDay(AllOfSameColour):
@@ -738,7 +734,7 @@ class SwapHand(AbstractCard):
         if self.option is None:
             return
         
-        if self.is_option_valid(player, self.option, is_player=True) is False:
+        if self.is_option_valid(player, self.option) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
         other_player = self.game.get_player(self.option)
@@ -851,7 +847,7 @@ class FuckYou(AbstractCard):
         self.game.pickup = self.old_pickup
 
     def play_card(self, player):
-        if self.is_option_valid(player, self.option, is_player=True) is False:
+        if self.is_option_valid(player, self.option) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
         other_player = self.game.get_player(self.option)
@@ -954,7 +950,7 @@ class Jesus(AbstractCard):
         return True
 
     def play_card(self, player):
-        if self.is_option_valid(player, self.option, is_player=True) is False:
+        if self.is_option_valid(player, self.option) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
 
