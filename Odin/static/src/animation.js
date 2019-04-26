@@ -68,9 +68,10 @@ class CommunistAnimation {
         this.ourCards = this.yourCards.length * game.players.length;
 
         //When the counts should start going down
-        this.playerCountDownStart = []
+        this.playerCountDownStart = [];
+        this.playerCountUpStart = [];
 
-        //Moving cards
+        //THE BECOMING OF OUR CARDS
         let pwidth = CARD_WIDTH * 3 * GUI_SCALE;
         let pheight = GUI_SCALE * 3;
         let pgap = GUI_SCALE;
@@ -84,7 +85,7 @@ class CommunistAnimation {
         let py = y + ourHeight;
 
 
-        let wait = 3000;
+        let wait = 3200;
         this.playerIncr = gui.getCardWaitIncrement(game.players.length, 6000);
         let soundDisplacement = gui.MIN_SOUND_DISPLACEMENT;
 
@@ -111,6 +112,25 @@ class CommunistAnimation {
             py += pgap+pheight;
         }
         this.countEnd = wait+400;
+
+        //SHARING OUT ANIMATION
+        wait = 7000;
+        py = y + ourHeight - (cardDimensions.height - pheight)/2;
+        soundDisplacement = gui.MIN_SOUND_DISPLACEMENT;
+        for(let player of game.players) {
+            let cardIncr = this.playerIncr / this.yourCards.length;
+            this.playerCountUpStart.push(wait + 400);
+            for(let i = 0; i < this.yourCards.length; i++) {
+                let movingCard = new AnimatedCard(endPosition, {x:px,y:py}, 400, wait, gui.cardBack,
+                    cardDimensions.width, cardDimensions.height, 
+                    soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.pickupSound : null, false);
+                gui.movingCards.push(movingCard);
+                wait += cardIncr;
+                if(soundDisplacement >= gui.MIN_SOUND_DISPLACEMENT) soundDisplacement -= gui.MIN_SOUND_DISPLACEMENT;
+                soundDisplacement += cardIncr;
+            }
+            py += pgap+pheight;
+        }
     }
 
     draw(dt) {
@@ -152,7 +172,13 @@ class CommunistAnimation {
             let player = game.players[i];
             let nCards = player.nCards;
             let timeElapse = this.timeElapsed - this.playerCountDownStart[i];
-            if(timeElapse > this.playerIncr) {
+            let timeElapse2 = this.timeElapsed - this.playerCountUpStart[i];
+            if(timeElapse2 > this.playerIncr) {
+                nCards = this.yourCards.length;
+            }else if(timeElapse2>0) {
+                nCards += this.yourCards.length * timeElapse2/this.playerIncr;
+                nCards = Math.floor(nCards);
+            }else if(timeElapse > this.playerIncr) {
                 nCards = 0;
             }else if(timeElapse>0) {
                 nCards -= nCards * timeElapse/this.playerIncr;
