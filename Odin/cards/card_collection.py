@@ -69,7 +69,7 @@ class CardCollection:
             if self.cards_list[card_index] is card:
                 return card_index
             else:
-                if card in self.cards_list.index:
+                if card in self.cards_list:
                     print("WARNING! card changed its location while in the card collection")
                     return self.cards_list.index(card)
                 else:

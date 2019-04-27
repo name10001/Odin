@@ -58,7 +58,7 @@ for card in all_cards:
 
 # highest one takes priority!
 # don't mix "types" and "colours", only use one per index
-miscellaneous_category_index = 2
+miscellaneous_category_index = 3
 category_indexes = (
     {
         "colours": (),
@@ -68,7 +68,7 @@ category_indexes = (
     {
         "colours": (),
         "types": ("Fuckin' M8"),
-        "index": 3
+        "index": 2
     },
     {
         "colours": (),
@@ -82,7 +82,7 @@ category_indexes = (
     },
     {
         "colours": (),
-        "types": ('+2', '+4', '+10', '+100', 'x2', '^2'),
+        "types": ('+2', '+4', '+10', '+100', 'x2', 'x Squared', "Factorial"),
         "index": 6
     },
     {

@@ -1,3 +1,4 @@
+from cards.card_frequency import CardFrequency
 import cards
 import random
 
@@ -86,9 +87,13 @@ class Deck:
             card_collection.add_card(card)
             added_cards.append(card)
 
-            # update weights of cards with the same type as the one that was picked up
-            for index in self.all_types[card_class.CARD_TYPE]:
-                card_weights[index] = self.get_weight(self.cards[index], card_collection, ignore_limit=ignore_limit)
+            # if the amount of cards has surpassed a milestone as set in the card frequency class, update all frequencies
+            if CardFrequency.surpassed_milestone(len(card_collection)):
+                card_weights = self.get_weights(card_collection=card_collection, ignore_limit=ignore_limit)
+            else:
+                # update weights of cards with the same type as the one that was picked up
+                for index in self.all_types[card_class.CARD_TYPE]:
+                    card_weights[index] = self.get_weight(self.cards[index], card_collection, ignore_limit=ignore_limit)
 
             picked_up += 1
 

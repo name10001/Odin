@@ -53,3 +53,8 @@ class CardFrequency:
             return self.large_hand
         else:
             return self.massive_hand
+    
+    @classmethod
+    def surpassed_milestone(cls, card_amount):
+        return card_amount == cls.SMALL_HAND+1 or card_amount == cls.MEDIUM_HAND+1 or card_amount == cls.LARGE_HAND+1
+

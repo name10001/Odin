@@ -14,7 +14,7 @@ class Player:
         self.sid = None
         self.turns_left = 1
         self.state = "not turn"
-        self._play_cards_queue = []  # see self.play_card()
+        self._play_cards_stack = []  # see self.play_card()
 
         # setting up question stuff see self.ask()
         self._question_answer = []
@@ -50,6 +50,8 @@ class Player:
             else:
                 card_array = [[card_id_to_play, chosen_option]]
 
+        print("Playing cards " + str(card_array))
+
         # Go through card_array, if its a valid card add it to cards_to_play and set its options.
         # If its not, raise an error
         cards_to_play = []
@@ -63,18 +65,19 @@ class Player:
                 cards_to_play.append(card)
 
         # add all cards to self.cards_to_play. If self.play_card already running, stop
-        was_empty = len(self._play_cards_queue) == 0
+        was_empty = len(self._play_cards_stack) == 0
         for card in cards_to_play:
-            self._play_cards_queue.append(card)
+            self._play_cards_stack.append(card)
         if was_empty is False:
             return
 
         # play all the cards
         cards_played = []
-        while len(self._play_cards_queue) > 0:
-            card = self._play_cards_queue[0]
+        while len(self._play_cards_stack) > 0:
+            index = len(self._play_cards_stack) - 1
+            card = self._play_cards_stack[index]
             if not self._can_be_played(card):
-                self._play_cards_queue.pop(0)
+                self._play_cards_stack.pop(index)
                 continue
 
             # do not change order
@@ -83,7 +86,7 @@ class Player:
             self.game.planning_pile.add_card(card)
             cards_played.append(card)
 
-            self._play_cards_queue.pop(0)
+            self._play_cards_stack.pop(index)
 
         # send animation message to all players
         json_to_send = {

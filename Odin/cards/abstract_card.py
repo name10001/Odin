@@ -135,8 +135,9 @@ class AbstractCard:
             return False
         options = self.get_options(player)
         if options is not None:
-            if option not in options:
-                return False
+            if len(options) is not 0:
+                if option not in options:
+                    return False
         return True
 
     @classmethod

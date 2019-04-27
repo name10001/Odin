@@ -133,7 +133,7 @@ class YellowPickup2(Pickup2):
 
 
 class Pickup10(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(3, 2, 0.5, 0.5)
+    CARD_FREQUENCY = CardFrequency(4, 2, 1, 0.5)
     CARD_TYPE = "+10"
     NAME = "Pickup 10"
     CARD_COLOUR = "black"
@@ -167,7 +167,7 @@ class Pickup100(AbstractCard):
 
 
 class Pickup4(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(5.5, 4, 1, 1)
+    CARD_FREQUENCY = CardFrequency(6, 4, 2, 1)
     CARD_TYPE = "+4"
     NAME = "Pickup 4"
     CARD_COLOUR = "black"
@@ -184,7 +184,7 @@ class Pickup4(AbstractCard):
 
 
 class PickupTimes2(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(4, 4, 1, 1)
+    CARD_FREQUENCY = CardFrequency(4, 2, 1, 0.5)
     CARD_TYPE = "x2"
     NAME = "Pickup x2"
     CARD_COLOUR = "black"
@@ -363,21 +363,23 @@ class EA(AbstractCard):
             return True, None
 
     def prepare_card(self, player):
-        if len(self.game.planning_pile) == 0:
-            return
-        if hasattr(self.game.planning_pile[0], 'still_needs'):
-            self.game.planning_pile[0].still_needs += self.NUMBER_NEEDED
-        else:
-            # In this case it's either a nazi card or a filthy sharon card.
-            # Give the bottom card the "still_needs" attribute.
-            self.game.planning_pile[0].still_needs = self.NUMBER_NEEDED
-        self.still_needs = 0
+        needs = self.still_needs
+
+        if len(self.game.planning_pile) > 0:
+            if hasattr(self.game.planning_pile[0], 'still_needs'):
+                self.game.planning_pile[0].still_needs += self.NUMBER_NEEDED
+            else:
+                # In this case it's either a nazi card or a filthy sharon card.
+                # Give the bottom card the "still_needs" attribute.
+                self.game.planning_pile[0].still_needs = self.NUMBER_NEEDED
+            self.still_needs = 0
+
+            needs = self.game.planning_pile[0].still_needs
 
         # play cards
         if self.option != "pick for me":
             return
 
-        needs = self.game.planning_pile[0].still_needs
 
         card_numbers = []
         number_cards = {}
@@ -532,7 +534,7 @@ class AllOfSameColour(AbstractCard):
     def prepare_card(self, player):
         played_with = []
         if self.option == "play all of colour":
-            for card in player.hand:
+            for card in reversed(player.hand):
                 if card.get_colour() == self.get_colour():
                     player.play_card(card_to_play=card)
 
@@ -738,6 +740,7 @@ class SwapHand(AbstractCard):
         for other_player in self.game.players:
             if other_player != player:
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+
         return options
 
     def play_card(self, player):
@@ -860,6 +863,10 @@ class FuckYou(AbstractCard):
         if self.is_option_valid(player, self.option) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
+        
+        if self.option is None:
+            return
+        
         other_player = self.game.get_player(self.option)
 
         other_player.add_new_cards(self.pickup_amount)
