@@ -10,6 +10,7 @@ Here are all the tasks that are being planned
 Example of protocol in 'options example.txt'
 
 ### Thomas:
+* Improve options menu
 * Genocide animation
 * Thanos animation
 * Capatilist animation
