@@ -660,8 +660,8 @@ class Communist(AbstractCard):
     NAME = "Communist"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/communist.png'
-    #CARD_FREQUENCY = CardFrequency(0, 1, max_cards=1)
-    CARD_FREQUENCY = CardFrequency(30)
+    CARD_FREQUENCY = CardFrequency(0, 1, max_cards=1)
+    #CARD_FREQUENCY = CardFrequency(30)
     CARD_TYPE = "Communist"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded."
@@ -768,7 +768,7 @@ class FeelingBlue(AbstractCard):
     NAME = "Feeling Blue"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/feeling_blue.png'
-    CARD_FREQUENCY = CardFrequency(1.5)
+    CARD_FREQUENCY = CardFrequency(1.5, max_cards=3)
     CARD_TYPE = "Feeling Blue"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon playing this card, you will be forced to pickup 5 cards."
