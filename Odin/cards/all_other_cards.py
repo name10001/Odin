@@ -409,14 +409,10 @@ class EA(AbstractCard):
 
     def get_options(self, player):
         if player.hand.number_of_colour(self.get_colour()) > 3:
-            return {
-                "type": "buttons",
-                "title": "Should we automatically pick cards for you?",
-                "options": {
-                    "pick for me": "Yes",
-                    "let me pick": "No, let me pick"
-                }
-            }
+            return self.create_options({
+                "pick for me": "Yes",
+                "let me pick": "No, let me pick"
+            }, title="Should we automatically pick cards for you?")
         else:
             return None
 
@@ -528,14 +524,10 @@ class AllOfSameColour(AbstractCard):
 
     def get_options(self, player):
         if player.hand.number_of_colour(self.get_colour()) > 3:
-            return {
-                "type": "buttons",
-                "title": "Would you like to manually pick cards to play?",
-                "options": {
-                    "let me pick": "Yes (recommended)",
-                    "pick for me": "No, select all automatically"
-                }
-            }
+            return self.create_options({
+                "let me pick": "Yes (recommended)",
+                "pick for me": "No, select all automatically"
+            }, title="Would you like to manually pick cards to play?")
         else:
             return None
 
@@ -747,16 +739,14 @@ class SwapHand(AbstractCard):
         if len(self.game.players) == 1:
             return None
 
-        options = {
-            "type": "vertical scroll",
-            "title": "Select player to swap hands with:",
-            "options": {}
-        }
+        options = {}
+
         for other_player in self.game.players:
             if other_player != player:
-                options["options"][other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
 
-        return options
+        return self.create_options(options, title="Pick a player to swap hands with:", \
+            options_type="vertical scroll")
 
     def play_card(self, player):
         if self.option is None:
@@ -854,16 +844,14 @@ class FuckYou(AbstractCard):
         if len(self.game.players) == 1:
             return None
         
-        options = {
-            "type": "vertical scroll",
-            "title": "Select player to pickup cards:",
-            "options": {}
-        }
+        options = {}
 
         for other_player in self.game.players:
             if other_player != player:
-                options["options"][other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
-        return options
+                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+        
+        return self.create_options(options, title="Select player to pickup cards:", \
+            options_type="vertical scroll")
 
     def prepare_card(self, player):
         self.old_pickup = self.game.pickup
@@ -910,18 +898,16 @@ class Genocide(AbstractCard):
     UNBANNABLE_TYPES = []
 
     def get_options(self, player):
-        options = {
-            "type": "vertical scroll",
-            "title": "Select card type/colour to ban:",
-            "options": {}
-        }
+        options = {}
         for card_colour in self.game.deck.get_unbanned_colours():
             if card_colour not in self.UNBANNABLE_COLOURS:
-                options["options"]["colour " + card_colour] = "Colour: " + card_colour.capitalize()
+                options["colour " + card_colour] = "Colour: " + card_colour.capitalize()
         for card_type in self.game.deck.get_unbanned_types():
             if card_type not in self.UNBANNABLE_TYPES:
-                options["options"]["type " + card_type] = "Type: " + card_type
-        return options
+                options["type " + card_type] = "Type: " + card_type
+        
+        return self.create_options(options, title="Select card type/colour to ban:", \
+            options_type="vertical scroll")
     
     def pick_options_separately(self):
         return True
@@ -981,18 +967,15 @@ class Jesus(AbstractCard):
                          "back to a value of 15 cards."
 
     def get_options(self, player):
-        options = {
-            "type": "vertical scroll",
-            "title": "Select player to reset their hand:",
-            "options": {}
-        }
+        options = {}
         for other_player in self.game.players:
             if other_player != player:
-                options["options"][other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
             else:
-                options["options"][other_player.get_id()] = other_player.get_name() + "(You)"
+                options[other_player.get_id()] = other_player.get_name() + "(You)"
 
-        return options
+        return self.create_options(options, title="Select player to reset their hand:", \
+            options_type="vertical scroll")
     
     def pick_options_separately(self):
         return True
@@ -1164,16 +1147,12 @@ class ColourChooser(AbstractCard):
         self.url = self.CARD_IMAGE_URL
 
     def get_options(self, player):
-        return {
-            "type": "buttons",
-            "title": "Select colour:",
-            "options": {
+        return self.create_options({
                 "red": "Red",
                 "green": "Green",
                 "blue": "Blue",
                 "yellow": "Yellow"
-            }
-        }
+            }, title="Choose colour:")
     
     def is_compatible_with(self, player, card):
         """
@@ -1231,14 +1210,10 @@ class ColourSwapper(AbstractCard):
         if self.colours_are_compatible(top_card.get_colour(), self.COLOUR_1) \
                 and self.colours_are_compatible(top_card.get_colour(), self.COLOUR_2):
             # if both colours are compatible with the bottom, then you get to choose the outcome
-            return {
-                "type": "buttons",
-                "title": "Select player to swap hands with:",
-                "options": {
-                    self.COLOUR_1: self.COLOUR_1.capitalize(),
-                    self.COLOUR_2: self.COLOUR_2.capitalize()
-                }
-            }
+            return self.create_options({
+                self.COLOUR_1: self.COLOUR_1.capitalize(),
+                self.COLOUR_2: self.COLOUR_2.capitalize()
+            }, title="Select colour:")
         else:
             return None
     
