@@ -4,24 +4,32 @@ Here are all the tasks that are being planned
 ## Current Tasks
 
 ### Isaac:
+* Do COMP261 and SWEN221 please
 * Separated out networking stuff from Player into Client class
 * Add the ability for cards to ask the player questions as they are being played.
 Example of protocol in 'options example.txt'
-* Slavery card
 
 ### Thomas:
-* update message for player. Example of protocol in 'message example.txt'
-* Improve animations using player messages. Display moving cards only when the server responds, and show more variety of moving cards.
+* Genocide animation
+* Thanos animation
+* Capatilist animation
+* 69 nice
+* Swap hand animation
+* Add indicators to the chosen players for Fuck You and Jesus cards
+* Other UI improvements
 
 ## Future Tasks
 
-* update card options. Example of protocol in 'options example.txt'
-* Add more documentation
-* Add settings to the waiting room for things like the starting number of cards
-* Make a proper end screen
+* Make a proper game end screen
+* Further balance out the gameplay
+* Add some options to the games when you create them
+
+## Cards to implement
 * Trash cards
 * Elevator card
 * Jew card
 * Snowden card
 * Do justly
 * Swap card
+* Slavery card
+* New cards: need some more hard to remove cards
