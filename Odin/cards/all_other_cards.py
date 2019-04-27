@@ -133,7 +133,7 @@ class YellowPickup2(Pickup2):
 
 
 class Pickup10(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(3, 2, 1.5, 0.5)
+    CARD_FREQUENCY = CardFrequency(3, 2, 0.5, 0.5)
     CARD_TYPE = "+10"
     NAME = "Pickup 10"
     CARD_COLOUR = "black"
@@ -167,7 +167,7 @@ class Pickup100(AbstractCard):
 
 
 class Pickup4(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(5, 3, 2, 1)
+    CARD_FREQUENCY = CardFrequency(5.5, 4, 1, 1)
     CARD_TYPE = "+4"
     NAME = "Pickup 4"
     CARD_COLOUR = "black"
@@ -184,7 +184,7 @@ class Pickup4(AbstractCard):
 
 
 class PickupTimes2(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(5, 3, 2, 1)
+    CARD_FREQUENCY = CardFrequency(4, 4, 1, 1)
     CARD_TYPE = "x2"
     NAME = "Pickup x2"
     CARD_COLOUR = "black"
@@ -433,28 +433,28 @@ class EA(AbstractCard):
 
 
 class EA15(EA):
-    CARD_FREQUENCY = CardFrequency(2, 1)
+    CARD_FREQUENCY = CardFrequency(0.5, 1.5, 1)
     NAME = "EA $15"
     CARD_IMAGE_URL = 'cards/ea_15.png'
     NUMBER_NEEDED = 15
 
 
 class EA20(EA):
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(0.5, 1)
     NAME = "EA $20"
     CARD_IMAGE_URL = 'cards/ea_20.png'
     NUMBER_NEEDED = 20
 
 
 class EA30(EA):
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(0.25, 1)
     NAME = "EA $30"
     CARD_IMAGE_URL = 'cards/ea_30.png'
     NUMBER_NEEDED = 30
 
 
 class EA100(EA):
-    CARD_FREQUENCY = CardFrequency(0.05)
+    CARD_FREQUENCY = CardFrequency(0, 0, 0.05)
     NAME = "EA $100"
     CARD_IMAGE_URL = 'cards/ea_100.png'
     NUMBER_NEEDED = 100
@@ -466,7 +466,7 @@ class EA100(EA):
 
 
 class Fuck(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(1.2, 0.5)
     CARD_TYPE = "Fuckin' M8"
     CARD_COLOUR = "Abstract"
     COMPATIBILITY_DESCRIPTION = "This card is only compatible with other {cls.CARD_COLOUR} cards or " \
@@ -611,7 +611,7 @@ class AtomicBomb(AbstractCard):
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = "cards/explosion.png"
     PICKUP_CARDS = ["Atomic Bomb", "^2", "+2", "+4", "+10", "+100", "x2",
-                    "x Squared", "Factorial", "Plus", "Fuck You", "Pawn"]
+                    "x Squared", "Factorial", "Plus", "Fuck You", "Copy Cat", "Pawn"]
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Allows you to place as many pickup cards as you like with this card on your turn."
@@ -849,7 +849,7 @@ class FuckYou(AbstractCard):
             self.pickup_amount = played_on.pickup_amount
         
         if self.pickup_amount == 0:
-            self.pickup_amount = 2
+            self.pickup_amount = 5
         
         self.game.pickup = 0
     
@@ -940,7 +940,7 @@ class Jesus(AbstractCard):
     NAME = "Jesus"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/jesus.png'
-    CARD_FREQUENCY = CardFrequency(1, 1, 0.5, 0.5, max_cards=2)
+    CARD_FREQUENCY = CardFrequency(1.2, 1, 0.5, 0.5, max_cards=2)
     CARD_TYPE = "Jesus"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose any person (including yourself) to reset their entire hand " \
@@ -1012,7 +1012,7 @@ class Thanos(AbstractCard):
     NAME = "Thanos"
     CARD_COLOUR = "purple"
     CARD_IMAGE_URL = 'cards/thanos.png'
-    CARD_FREQUENCY = CardFrequency(0, 0, 1, 1, max_cards=3)
+    CARD_FREQUENCY = CardFrequency(0, 0.5, 1, 1, max_cards=3)
     CARD_TYPE = "Thanos"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon play, half of the cards in your hand will randomly disappear."
@@ -1164,7 +1164,7 @@ class ColourSwapper(AbstractCard):
     """
     Abstract double-colour swapper card
     """
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(0.8)
     CARD_TYPE = "Colour Swapper"
     COLOUR_1 = "black"
     COLOUR_2 = "black"
@@ -1308,7 +1308,7 @@ class YellowGreenSwapper(ColourSwapper):
 
 class BlackWhiteSwapper(ColourSwapper):
     NAME = "Black/White Colour Swapper"
-    CARD_FREQUENCY = CardFrequency(1.5)
+    CARD_FREQUENCY = CardFrequency(1.2)
     CARD_IMAGE_URL = 'cards/black_white.png'
     COLOUR_1 = "black"
     COLOUR_2 = "white"

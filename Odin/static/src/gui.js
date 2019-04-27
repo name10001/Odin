@@ -201,6 +201,16 @@ class Gui {
             let pheight = GUI_SCALE*5;
             let pgap = GUI_SCALE;
             let pwidth = this.CARD_WIDTH + this.getButtonsWidth();
+            let totalHeight = pheight + (game.players.length-2) * (pgap + pheight/2);
+            let room = this.getBottomY() - GUI_SCALE*17;
+            if(totalHeight > room) {
+                let ratio = room/totalHeight;
+                fontSize *= ratio;
+                medFontSize *= ratio;
+                pheight*=ratio;
+                pgap*=ratio;
+
+            }
 
             let i = game.turn;
             let skip = game.skip;
