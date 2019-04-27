@@ -577,7 +577,86 @@ class FilthySharon(AllOfSameColour):
     CARD_IMAGE_URL = 'cards/filthy_sharon.png'
     CARD_TYPE = "Filthy Sharon"
     EFFECT_DESCRIPTION = "Allows you to place as many white cards as you like with this card on your turn."
+
+
+# ~~~~~~~~~~~~~~
+#    Card removal
+# ~~~~~~~~~~~~~~
+
+
+class TrashCard(AbstractCard):
+    CARD_FREQUENCY = CardFrequency(100, max_cards=4)
+    MULTI_COLOURED = True
+    CARD_TYPE = "Trash"
+    EFFECT_DESCRIPTION = "Choose any card to be removed from your hand. The effects of this card do not apply."
+    NUMBER_TO_REMOVE = 1
+
+    def __init__(self, game):
+        super().__init__(game)
+
+        self.cards_removed = []
+
+    def get_options(self, player):
+        options = {}
+
+        for card in player.hand:
+            if card is not self:
+                options[card.get_id()] = card.NAME
         
+        title = "Pick a card to remove:"
+        if self.NUMBER_TO_REMOVE > 1:
+            title = "Pick " + self.NUMBER_TO_REMOVE + " cards to remove:"
+
+        return self.create_options(options, title=title, options_type="cards", \
+            number_to_pick=self.NUMBER_TO_REMOVE)
+    
+    def pick_options_separately(self):
+        return True
+
+    def prepare_card(self, player):
+        if self.option is None:
+            return
+        
+        # TODO change options to be an array. At the moment this just assumes 1 card
+
+        card = player.hand.find_card(self.option)
+
+        if card is None:
+            return
+        
+        self.cards_removed.append(card)
+        player.hand.remove_card(card=card)
+    
+    def undo_prepare_card(self, player):
+        for card in self.cards_removed:
+            player.hand.add_card(card)
+        
+        self.cards_removed.clear()
+
+        
+class BlueTrash(TrashCard):
+    NAME = "Blue Trash"
+    CARD_COLOUR = "blue"
+    CARD_IMAGE_URL = "cards/trash_blue.png"
+
+
+class GreenTrash(TrashCard):
+    NAME = "Green Trash"
+    CARD_COLOUR = "green"
+    CARD_IMAGE_URL = "cards/trash_green.png"
+
+
+class RedTrash(TrashCard):
+    NAME = "Red Trash"
+    CARD_COLOUR = "red"
+    CARD_IMAGE_URL = "cards/trash_red.png"
+
+
+class YellowTrash(TrashCard):
+    NAME = "Yellow Trash"
+    CARD_COLOUR = "yellow"
+    CARD_IMAGE_URL = "cards/trash_yellow.png"
+
 
 # ~~~~~~~~~~~~~~
 #    Other
