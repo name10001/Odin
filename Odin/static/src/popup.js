@@ -164,6 +164,9 @@ class OptionsWindow {
     constructor(card) {
         this.card = card;
         this.image = card.image;
+        this.optionTitle = card.optionTitle;
+        this.optionType = card.optionType;
+        console.log("OPTION TITLE: " + this.optionTitle + " type = " + this.optionType);
 
         //Create the scroll container
         this.scrollContainer = new Container();

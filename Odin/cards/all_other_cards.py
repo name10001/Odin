@@ -410,8 +410,12 @@ class EA(AbstractCard):
     def get_options(self, player):
         if player.hand.number_of_colour(self.get_colour()) > 3:
             return {
-                "let me pick": "Pick cards (recommended)",
-                "pick for me": "Add cards automatically"
+                "type": "buttons",
+                "title": "Should we automatically pick cards for you?",
+                "options": {
+                    "pick for me": "Yes",
+                    "let me pick": "No, let me pick"
+                }
             }
         else:
             return None
@@ -525,15 +529,19 @@ class AllOfSameColour(AbstractCard):
     def get_options(self, player):
         if player.hand.number_of_colour(self.get_colour()) > 3:
             return {
-                "let me pick": "Pick cards (recommended)",
-                "play all of colour": "Add cards automatically"
+                "type": "buttons",
+                "title": "Would you like to manually pick cards to play?",
+                "options": {
+                    "let me pick": "Yes (recommended)",
+                    "pick for me": "No, select all automatically"
+                }
             }
         else:
             return None
 
     def prepare_card(self, player):
         played_with = []
-        if self.option == "play all of colour":
+        if self.option == "pick for me":
             for card in reversed(player.hand):
                 if card.get_colour() == self.get_colour():
                     player.play_card(card_to_play=card)
@@ -735,11 +743,18 @@ class SwapHand(AbstractCard):
         for card in self.game.planning_pile:
             if isinstance(card, SwapHand):
                 return None
+        
+        if len(self.game.players) == 1:
+            return None
 
-        options = {}
+        options = {
+            "type": "vertical scroll",
+            "title": "Select player to swap hands with:",
+            "options": {}
+        }
         for other_player in self.game.players:
             if other_player != player:
-                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+                options["options"][other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
 
         return options
 
@@ -836,10 +851,18 @@ class FuckYou(AbstractCard):
         super().__init__(game)
 
     def get_options(self, player):
-        options = {}
+        if len(self.game.players) == 1:
+            return None
+        
+        options = {
+            "type": "vertical scroll",
+            "title": "Select player to pickup cards:",
+            "options": {}
+        }
+
         for other_player in self.game.players:
             if other_player != player:
-                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+                options["options"][other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
         return options
 
     def prepare_card(self, player):
@@ -887,13 +910,17 @@ class Genocide(AbstractCard):
     UNBANNABLE_TYPES = []
 
     def get_options(self, player):
-        options = {}
+        options = {
+            "type": "vertical scroll",
+            "title": "Select card type/colour to ban:",
+            "options": {}
+        }
         for card_colour in self.game.deck.get_unbanned_colours():
             if card_colour not in self.UNBANNABLE_COLOURS:
-                options["colour " + card_colour] = "Colour: " + card_colour.capitalize()
+                options["options"]["colour " + card_colour] = "Colour: " + card_colour.capitalize()
         for card_type in self.game.deck.get_unbanned_types():
             if card_type not in self.UNBANNABLE_TYPES:
-                options["type " + card_type] = "Type: " + card_type
+                options["options"]["type " + card_type] = "Type: " + card_type
         return options
     
     def pick_options_separately(self):
@@ -954,12 +981,16 @@ class Jesus(AbstractCard):
                          "back to a value of 15 cards."
 
     def get_options(self, player):
-        options = {}
+        options = {
+            "type": "vertical scroll",
+            "title": "Select player to reset their hand:",
+            "options": {}
+        }
         for other_player in self.game.players:
             if other_player != player:
-                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+                options["options"][other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
             else:
-                options[other_player.get_id()] = other_player.get_name() + "(You)"
+                options["options"][other_player.get_id()] = other_player.get_name() + "(You)"
 
         return options
     
@@ -1134,10 +1165,14 @@ class ColourChooser(AbstractCard):
 
     def get_options(self, player):
         return {
-            "red": "Red",
-            "green": "Green",
-            "blue": "Blue",
-            "yellow": "Yellow"
+            "type": "buttons",
+            "title": "Select colour:",
+            "options": {
+                "red": "Red",
+                "green": "Green",
+                "blue": "Blue",
+                "yellow": "Yellow"
+            }
         }
     
     def is_compatible_with(self, player, card):
@@ -1197,8 +1232,12 @@ class ColourSwapper(AbstractCard):
                 and self.colours_are_compatible(top_card.get_colour(), self.COLOUR_2):
             # if both colours are compatible with the bottom, then you get to choose the outcome
             return {
-                self.COLOUR_1: self.COLOUR_1.capitalize(),
-                self.COLOUR_2: self.COLOUR_2.capitalize(),
+                "type": "buttons",
+                "title": "Select player to swap hands with:",
+                "options": {
+                    self.COLOUR_1: self.COLOUR_1.capitalize(),
+                    self.COLOUR_2: self.COLOUR_2.capitalize()
+                }
             }
         else:
             return None
