@@ -124,21 +124,19 @@ class AbstractCard:
         """
         return None
 
-    def is_option_valid(self, player, option, is_player=False):
+    def is_option_valid(self, player, option):
         """
         Is the given option valid
         :param player: the player who owns the card
         :param option: option to test
-        :param is_player: (only used internally) Is the given option supposed to be a player id
         :return: True if it is valid, False if its not
         """
         if option is 0:
             return False
-        if self.get_options(player) is not None:
-            if option not in self.get_options(player):
+        options = self.get_options(player)
+        if options is not None:
+            if option not in options:
                 return False
-        if is_player and self.game.get_player(option) is None:
-            return False
         return True
 
     @classmethod

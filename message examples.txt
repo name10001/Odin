@@ -2,8 +2,8 @@
 
 Show list of card:
 {
-	"type": "card list",
-	"messgae":
+	"type": "cards",
+	"message": 
 		[
 			"/static/cards/1_blue.png",
 			"/static/cards/5_blue.png",
@@ -15,8 +15,8 @@ Show list of card:
 
 Show 1 card:
 {
-	"type": "card list",
-	"messgae":
+	"type": "cards",
+	"message": 
 		[
 			"/static/cards/1_blue.png",
 		]
@@ -26,8 +26,8 @@ Show 1 card:
 
 Show String:
 {
-	"type": "string",
-	"messgae": "Bob has won!",
+	"type": "text",
+	"message": "Bob has won!",
 	"title": "Game over",
 	"display time": -1,  # display time in seconds. -1 if infinite
 }

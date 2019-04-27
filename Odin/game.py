@@ -123,9 +123,9 @@ class Game:
         start_time = time()
 
         if message == "play card":
-            player.play_cards([data])
+            player.play_card(card_id_to_play=data[0], chosen_option=data[1])
         elif message == "play cards":
-            player.play_cards(data)
+            player.play_card(card_array=data)
         elif message == "finished turn":
             if player == self.turn:
                 self.next_turn()

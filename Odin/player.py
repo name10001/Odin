@@ -1,6 +1,7 @@
 import flask_server as fs
 from cards.card_collection import CardCollection
 import settings
+from time import sleep
 
 
 class Player:
@@ -13,58 +14,151 @@ class Player:
         self.sid = None
         self.turns_left = 1
         self.state = "not turn"
-    
-    def play_cards(self, data):
-        """
-        Plays a list of cards as given by a message
-        Sends a list of all the successfully played cards to all players to show an animation
-        """
-        played_cards = []
-        for card_data in data:
-            self.play_card(card_data[0], card_data[1], played_cards)
-        
-        # send a message to all players
-        json_to_send = {
-            "type": "play cards",
-            "data": []
-        }
+        self._play_cards_queue = []  # see self.play_card()
 
-        for card in played_cards:
-            json_to_send["data"].append({
-                "id": card.get_id(),
-                "card image url": card.get_url()
-            })
-        
-        self.game.send_to_all_players("animate", json_to_send)
+        # setting up question stuff see self.ask()
+        self._question_answer = []
+        self._question = None
 
-    def play_card(self, card_id, chosen_option, played_cards):
+    def play_card(self, card_to_play=None, card_id_to_play=None, chosen_option=None, card_array=None):
         """
-        Takes card out of players hand and adds it to the games played cards
-        Also preforms all actions of the card and checks if its allowed to be played
-        :param card_id:
-        :param chosen_option:
-        :param played_cards: array of played cards to add to if successfully played
+        Takes card out of players hand and adds it to the games played cards.
+        Also preforms all actions of the card.
+        It will only play the card if it is allowed to be played and the option is valid
+        You can specify a card by its ID with the card itself.
+        Can be called again before previous card(s) have finished being played.
+        :param card_to_play: The card to play. Can not be used with card_id_to_play or card_array
+        :param card_id_to_play: The ID of the card to play. Can not be used with card_to_play or card_array
+        :param chosen_option: The card's chosen option. Can not be used with card_array.
+        :param card_array: A 2D array of cards and there options. E.g [[card, option], [card, options], ...]
+        You can use ether the card's ID or the card itself.
+        Can not be used with card_to_play, card_id_to_play or chosen_option
+        :return: None
         """
-        card = self.hand.find_card(card_id)
-        if card is None:
-            return None
-        
-        if self._can_be_played(card):
+        # error checking
+        ways = (card_array is not None) + (card_to_play is not None) + (card_id_to_play is not None)
+        if ways != 1:
+            raise ValueError("Exactly one of the following needs to be specified: "
+                             "card_to_play, card_id_to_play and card_array. Got: " + ways + " ways")
+        if card_array is not None and chosen_option is not None:
+            raise ValueError("card_array and chosen_option can not be used together.")
+
+        # add all the cards into card array
+        if card_array is None:
+            if card_to_play is not None:
+                card_array = [[card_to_play, chosen_option]]
+            else:
+                card_array = [[card_id_to_play, chosen_option]]
+
+        # Go through card_array, if its a valid card add it to cards_to_play and set its options.
+        # If its not, raise an error
+        cards_to_play = []
+        for card, option in card_array:
+            if self.hand.contains(card):
+                card = self.hand.find_card(card)
+                if card is None:
+                    raise ValueError("One of the given cards is not valid")
+            if card.is_option_valid(self, option):
+                card.set_option(option)
+                cards_to_play.append(card)
+
+        # add all cards to self.cards_to_play. If self.play_card already running, stop
+        was_empty = len(self._play_cards_queue) == 0
+        for card in cards_to_play:
+            self._play_cards_queue.append(card)
+        if was_empty is False:
+            return
+
+        # play all the cards
+        cards_played = []
+        while len(self._play_cards_queue) > 0:
+            card = self._play_cards_queue[0]
+            if not self._can_be_played(card):
+                self._play_cards_queue.pop(0)
+                continue
+
             # do not change order
             self.hand.remove_card(card)
-            card.set_option(chosen_option)
             card.prepare_card(self)
             self.game.planning_pile.add_card(card)
+            cards_played.append(card)
 
-            played_cards.append(card)
+            self._play_cards_queue.pop(0)
 
-            play_with = card.get_play_with(self)
-            if play_with is not None:
-                for card_played_with in play_with:
-                    if card_played_with.get_options(self) is None:
-                        self.play_card(card_played_with.get_id(), None, played_cards)
-            
-        
+        # send animation message to all players
+        json_to_send = {
+            "type": "play cards",
+            "data": [
+                {
+                    "id": card.get_id(),
+                    "card image url": card.get_url()
+                } for card in cards_played
+            ]
+        }
+        self.game.send_to_all_players("animate", json_to_send)
+
+    def ask(self, title, choices, choices_type="text", number_to_pick=1):
+        """
+        Asks the player a question. This can be done at any time.
+        :param title: The title of the question or the question itself. E.g. "Pick a card"
+        :param choices: The choices to give the player.
+        This is a directory of possible answers where the key is what gets sent back
+        and the value is what to shown the player.
+        Example of card type: {"Blue_Six_card_12345": "cards/6_blue.png", "EA_15_card_13464": "cards/ea_15.png"}
+        Example of text type: {"player": "Let me pick the cards", "server": "Automatically play cards"}
+        :param choices_type: The type of choice. Available types are "text" and "card".
+        :param number_to_pick: The number of choices to pick. Usual 1
+        :return: The choice itself if number_to_pick is 0 or an array of the chosen choices.
+        E.g. "Blue_Six_card_12345" or "server" or ["Green_Two_card_54321", "Blue_Pickup_2_card_56443", ...]
+        """
+        raise NotImplementedError("This is unfinished and untested, and this is not implemented in the client yet. "
+                                  "Please don't use this for anything other than testing and development")
+
+        # generate json for question
+        self._question = {
+            "title": str(title),
+            "number to pick": int(number_to_pick),
+            "type": choices_type,
+            "choices": choices
+        }
+
+        # send the question and wait for a reply. If the reply is not valid, send it again
+        self._question_answer.clear()
+        valid_answer = False
+        while valid_answer is False:
+            self.send_message("ask", self._question)
+
+            # wait for answer
+            while self._question_answer is None:
+                sleep(1/30)
+
+            if len(self._question_answer) == 0:
+                continue
+
+            valid_answer = True
+            for choice in self._question_answer:
+                if choice not in choices:
+                    valid_answer = False
+                    break
+
+        # clear the question
+        question_answer = self._question_answer
+        self._question_answer.clear()
+        self._question = None
+
+        if number_to_pick == 1:
+            return question_answer[0]
+        else:
+            return self._question_answer
+
+    def answer_question(self, question_answer):
+        """
+        This will answer the current question with the given answer
+        :param question_answer: An array of the players chosen choices for the current question
+        :return: None
+        """
+        self._question_answer = question_answer
+
     def finish_turn(self):
         """
         Call this to finish the players turn

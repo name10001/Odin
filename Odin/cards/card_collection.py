@@ -184,13 +184,13 @@ class CardCollection:
         if card_id in self.cards_dict:
             return self.cards_dict[card_id]
 
-    def contains(self, card):
+    def contains(self, card_id):
         """
         Is the given card in this card collection
-        :param card: card to check
+        :param card_id: card id to check
         :return: True or False
         """
-        return card in self.cards_dict
+        return card_id in self.cards_dict
 
     def clear(self):
         """
