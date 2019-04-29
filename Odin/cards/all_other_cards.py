@@ -417,10 +417,10 @@ class EA(AbstractCard):
         self.still_needs = self.NUMBER_NEEDED
 
     def get_options(self, player):
-        return {
-            "let me pick": "Pick cards (recommended)",
-            "pick for me": "Add cards automatically"
-        }
+        return self.create_options({
+            "pick for me": "Yes",
+            "let me pick": "No, let me pick"
+        }, title="Should we automatically\npick cards for you?")
 
     def DFS(self, played_with, all_cards, needs, index=0):
         # TODO make iterative. Python is not optimised for recursion
@@ -530,16 +530,16 @@ class AllOfSameColour(AbstractCard):
 
     def get_options(self, player):
         if player.hand.number_of_colour(self.get_colour()) > 3:
-            return {
-                "let me pick": "Pick cards (recommended)",
-                "play all of colour": "Add cards automatically"
-            }
+            return self.create_options({
+                "let me pick": "Yes (recommended)",
+                "pick for me": "No, select all automatically"
+            }, title="Would you like to manually\npick cards to play?")
         else:
             return None
 
     def prepare_card(self, player):
         played_with = []
-        if self.option == "play all of colour":
+        if self.option == "pick for me":
             for card in reversed(player.hand):
                 if card.get_colour() == self.get_colour():
                     player.play_card(card_to_play=card)
@@ -583,7 +583,86 @@ class FilthySharon(AllOfSameColour):
     CARD_IMAGE_URL = 'cards/filthy_sharon.png'
     CARD_TYPE = "Filthy Sharon"
     EFFECT_DESCRIPTION = "Allows you to place as many white cards as you like with this card on your turn."
+
+
+# ~~~~~~~~~~~~~~
+#    Card removal
+# ~~~~~~~~~~~~~~
+
+
+class TrashCard(AbstractCard):
+    CARD_FREQUENCY = CardFrequency(1.2, max_cards=4)
+    MULTI_COLOURED = True
+    CARD_TYPE = "Trash"
+    EFFECT_DESCRIPTION = "Choose any card to be removed from your hand. The effects of this card do not apply."
+    NUMBER_TO_REMOVE = 1
+
+    def __init__(self, game):
+        super().__init__(game)
+
+        self.cards_removed = []
+
+    def get_options(self, player):
+        options = {}
+
+        for card in player.hand:
+            if card is not self:
+                options[card.get_id()] = card.NAME
         
+        title = "Pick a card to remove:"
+        if self.NUMBER_TO_REMOVE > 1:
+            title = "Pick " + self.NUMBER_TO_REMOVE + " cards to remove:"
+
+        return self.create_options(options, title=title, options_type="cards", \
+            number_to_pick=self.NUMBER_TO_REMOVE)
+    
+    def pick_options_separately(self):
+        return True
+
+    def prepare_card(self, player):
+        if self.option is None:
+            return
+        
+        # TODO change options to be an array. At the moment this just assumes 1 card
+
+        card = player.hand.find_card(self.option)
+
+        if card is None:
+            return
+        
+        self.cards_removed.append(card)
+        player.hand.remove_card(card=card)
+    
+    def undo_prepare_card(self, player):
+        for card in self.cards_removed:
+            player.hand.add_card(card)
+        
+        self.cards_removed.clear()
+
+        
+class BlueTrash(TrashCard):
+    NAME = "Blue Trash"
+    CARD_COLOUR = "blue"
+    CARD_IMAGE_URL = "cards/trash_blue.png"
+
+
+class GreenTrash(TrashCard):
+    NAME = "Green Trash"
+    CARD_COLOUR = "green"
+    CARD_IMAGE_URL = "cards/trash_green.png"
+
+
+class RedTrash(TrashCard):
+    NAME = "Red Trash"
+    CARD_COLOUR = "red"
+    CARD_IMAGE_URL = "cards/trash_red.png"
+
+
+class YellowTrash(TrashCard):
+    NAME = "Yellow Trash"
+    CARD_COLOUR = "yellow"
+    CARD_IMAGE_URL = "cards/trash_yellow.png"
+
 
 # ~~~~~~~~~~~~~~
 #    Other
@@ -741,13 +820,18 @@ class SwapHand(AbstractCard):
         for card in self.game.planning_pile:
             if isinstance(card, SwapHand):
                 return None
+        
+        if len(self.game.players) == 1:
+            return None
 
         options = {}
+
         for other_player in self.game.players:
             if other_player != player:
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
 
-        return options
+        return self.create_options(options, title="Pick a player to\nswap hands with:", \
+            options_type="vertical scroll")
 
     def play_card(self, player):
         if self.option is None:
@@ -842,11 +926,17 @@ class FuckYou(AbstractCard):
         super().__init__(game)
 
     def get_options(self, player):
+        if len(self.game.players) == 1:
+            return None
+        
         options = {}
+
         for other_player in self.game.players:
             if other_player != player:
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
-        return options
+        
+        return self.create_options(options, title="Select player to\npickup cards:", \
+            options_type="vertical scroll")
 
     def prepare_card(self, player):
         self.old_pickup = self.game.pickup
@@ -900,7 +990,9 @@ class Genocide(AbstractCard):
         for card_type in self.game.deck.get_unbanned_types():
             if card_type not in self.UNBANNABLE_TYPES:
                 options["type " + card_type] = "Type: " + card_type
-        return options
+        
+        return self.create_options(options, title="Select card type/colour\nto ban:", \
+            options_type="vertical scroll")
     
     def pick_options_separately(self):
         return True
@@ -967,7 +1059,8 @@ class Jesus(AbstractCard):
             else:
                 options[other_player.get_id()] = other_player.get_name() + "(You)"
 
-        return options
+        return self.create_options(options, title="Select player to\nreset their hand:", \
+            options_type="vertical scroll")
     
     def pick_options_separately(self):
         return True
@@ -1139,12 +1232,12 @@ class ColourChooser(AbstractCard):
         self.url = self.CARD_IMAGE_URL
 
     def get_options(self, player):
-        return {
-            "red": "Red",
-            "green": "Green",
-            "blue": "Blue",
-            "yellow": "Yellow"
-        }
+        return self.create_options({
+                "red": "Red",
+                "green": "Green",
+                "blue": "Blue",
+                "yellow": "Yellow"
+            }, title="Choose colour:")
     
     def is_compatible_with(self, player, card):
         """
@@ -1202,10 +1295,10 @@ class ColourSwapper(AbstractCard):
         if self.colours_are_compatible(top_card.get_colour(), self.COLOUR_1) \
                 and self.colours_are_compatible(top_card.get_colour(), self.COLOUR_2):
             # if both colours are compatible with the bottom, then you get to choose the outcome
-            return {
+            return self.create_options({
                 self.COLOUR_1: self.COLOUR_1.capitalize(),
-                self.COLOUR_2: self.COLOUR_2.capitalize(),
-            }
+                self.COLOUR_2: self.COLOUR_2.capitalize()
+            }, title="Select colour:")
         else:
             return None
     

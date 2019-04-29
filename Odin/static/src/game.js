@@ -23,13 +23,19 @@ class CardStack {
         this.pickOptionsSeparately = pickOptionsSeparately;
         this.card = game.allCards[name];
         this.image = game.allImages[url];
+        this.cardIds = [id];
+        
+        //options
         this.optionStrings = [];
         this.optionIds = [];
-        this.cardIds = [id];
         if(options!=null) {
-            for(let id of Object.keys(options)) {
-                this.optionIds.push(id);
-                this.optionStrings.push(options[id]);
+            this.optionTitle = options["title"];
+            this.optionType = options["type"];
+            if(options!=null) {
+                for(let id of Object.keys(options["options"])) {
+                    this.optionIds.push(id);
+                    this.optionStrings.push(options["options"][id]);
+                }
             }
         }
     }

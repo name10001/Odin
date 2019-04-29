@@ -135,9 +135,8 @@ class AbstractCard:
             return False
         options = self.get_options(player)
         if options is not None:
-            if len(options) is not 0:
-                if option not in options:
-                    return False
+            if option not in options["options"]:
+                return False
         return True
 
     @classmethod
@@ -159,6 +158,15 @@ class AbstractCard:
             to_return += " Also compatible with {cls.CARD_TYPE} cards of any colour."
 
         return extended_formatter.format(to_return, cls=cls)
+    
+    @classmethod
+    def create_options(cls, options, title="Pick option:", options_type="buttons", number_to_pick=1):
+        return {
+            "title": str(title),
+            "number to pick": int(number_to_pick),
+            "type": options_type,
+            "options": options
+        }
 
     def __gt__(self, other):
         """

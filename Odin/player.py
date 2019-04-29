@@ -72,10 +72,13 @@ class Player:
         # play all the cards
         cards_played = []
         while len(self._play_cards_stack) > 0:
+
             card = self._play_cards_stack[-1]
             if not self._can_be_played(card):
                 self._play_cards_stack.pop(-1)
                 continue
+
+            index = len(self._play_cards_stack) - 1
 
             # do not change order
             self.hand.remove_card(card)
@@ -83,7 +86,7 @@ class Player:
             self.game.planning_pile.add_card(card)
             cards_played.append(card)
 
-            self._play_cards_stack.pop(-1)
+            self._play_cards_stack.pop(index)
 
         # send animation message to all players
         json_to_send = {
@@ -97,7 +100,7 @@ class Player:
         }
         self.game.send_to_all_players("animate", json_to_send)
 
-    def ask(self, title, choices, choices_type="text", number_to_pick=1):
+    def ask(self, options, title="Pick option:", options_type="buttons", number_to_pick=1):
         """
         Asks the player a question. This can be done at any time.
         :param title: The title of the question or the question itself. E.g. "Pick a card"
@@ -106,7 +109,7 @@ class Player:
         and the value is what to shown the player.
         Example of card type: {"Blue_Six_card_12345": "cards/6_blue.png", "EA_15_card_13464": "cards/ea_15.png"}
         Example of text type: {"player": "Let me pick the cards", "server": "Automatically play cards"}
-        :param choices_type: The type of choice. Available types are "text" and "card".
+        :param choices_type: The type of choice. Available types are "buttons", "vertical scroll" and "cards".
         :param number_to_pick: The number of choices to pick. Usual 1
         :return: The choice itself if number_to_pick is 0 or an array of the chosen choices.
         E.g. "Blue_Six_card_12345" or "server" or ["Green_Two_card_54321", "Blue_Pickup_2_card_56443", ...]
@@ -118,8 +121,8 @@ class Player:
         self._question = {
             "title": str(title),
             "number to pick": int(number_to_pick),
-            "type": choices_type,
-            "choices": choices
+            "type": options_type,
+            "options": options
         }
 
         # send the question and wait for a reply. If the reply is not valid, send it again

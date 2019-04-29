@@ -21,6 +21,7 @@ all_cards = [
     BlueSkip, GreenSkip, PurpleSkip, RedSkip, YellowSkip, WhiteSkip, BlackSkip,
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
     BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck,
+    BlueTrash, GreenTrash, RedTrash, YellowTrash,
     BluePickup2, GreenPickup2, PurplePickup2, RedPickup2, YellowPickup2, WhitePickup2, BlackPickup2,
     Pickup10, Pickup4, PickupTimes2, Pawn, FeelingBlue, Plus, FuckYou, AtomicBomb, PickupPower2, Pickup100, PickupFactorial,
     EA15, EA20, EA30, EA100,
@@ -58,7 +59,7 @@ for card in all_cards:
 
 # highest one takes priority!
 # don't mix "types" and "colours", only use one per index
-miscellaneous_category_index = 3
+miscellaneous_category_index = 2
 category_indexes = (
     {
         "colours": (),
@@ -67,8 +68,8 @@ category_indexes = (
     },
     {
         "colours": (),
-        "types": ("Fuckin' M8"),
-        "index": 2
+        "types": ("Fuckin' M8", 'Trash'),
+        "index": 3
     },
     {
         "colours": (),
