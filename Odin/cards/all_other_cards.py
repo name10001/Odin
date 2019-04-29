@@ -408,13 +408,10 @@ class EA(AbstractCard):
         self.still_needs = self.NUMBER_NEEDED
 
     def get_options(self, player):
-        if player.hand.number_of_colour(self.get_colour()) > 3:
-            return self.create_options({
-                "pick for me": "Yes",
-                "let me pick": "No, let me pick"
-            }, title="Should we automatically pick cards for you?")
-        else:
-            return None
+        return self.create_options({
+            "pick for me": "Yes",
+            "let me pick": "No, let me pick"
+        }, title="Should we automatically\npick cards for you?")
 
     def DFS(self, played_with, all_cards, needs, index=0):
         # TODO make iterative. Python is not optimised for recursion
@@ -527,7 +524,7 @@ class AllOfSameColour(AbstractCard):
             return self.create_options({
                 "let me pick": "Yes (recommended)",
                 "pick for me": "No, select all automatically"
-            }, title="Would you like to manually pick cards to play?")
+            }, title="Would you like to manually\npick cards to play?")
         else:
             return None
 
@@ -585,7 +582,7 @@ class FilthySharon(AllOfSameColour):
 
 
 class TrashCard(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(100, max_cards=4)
+    CARD_FREQUENCY = CardFrequency(1.2, max_cards=4)
     MULTI_COLOURED = True
     CARD_TYPE = "Trash"
     EFFECT_DESCRIPTION = "Choose any card to be removed from your hand. The effects of this card do not apply."
@@ -824,7 +821,7 @@ class SwapHand(AbstractCard):
             if other_player != player:
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
 
-        return self.create_options(options, title="Pick a player to swap hands with:", \
+        return self.create_options(options, title="Pick a player to\nswap hands with:", \
             options_type="vertical scroll")
 
     def play_card(self, player):
@@ -929,7 +926,7 @@ class FuckYou(AbstractCard):
             if other_player != player:
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
         
-        return self.create_options(options, title="Select player to pickup cards:", \
+        return self.create_options(options, title="Select player to\npickup cards:", \
             options_type="vertical scroll")
 
     def prepare_card(self, player):
@@ -985,7 +982,7 @@ class Genocide(AbstractCard):
             if card_type not in self.UNBANNABLE_TYPES:
                 options["type " + card_type] = "Type: " + card_type
         
-        return self.create_options(options, title="Select card type/colour to ban:", \
+        return self.create_options(options, title="Select card type/colour\nto ban:", \
             options_type="vertical scroll")
     
     def pick_options_separately(self):
@@ -1053,7 +1050,7 @@ class Jesus(AbstractCard):
             else:
                 options[other_player.get_id()] = other_player.get_name() + "(You)"
 
-        return self.create_options(options, title="Select player to reset their hand:", \
+        return self.create_options(options, title="Select player to\nreset their hand:", \
             options_type="vertical scroll")
     
     def pick_options_separately(self):
