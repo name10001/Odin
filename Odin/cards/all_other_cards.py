@@ -373,13 +373,22 @@ class EA(AbstractCard):
                 # Give the bottom card the "still_needs" attribute.
                 self.game.planning_pile[0].still_needs = self.NUMBER_NEEDED
             self.still_needs = 0
-
             needs = self.game.planning_pile[0].still_needs
+            return
+
+        # once ask is implemented, do this:
+        # ask the player if they want to play the cards
+        # self.option = player.ask(
+        #     "Do you want to play card automatically?",
+        #     {
+        #         "let me pick": "Pick cards (recommended)",
+        #         "pick for me": "Add cards automatically"
+        #     }
+        # )
 
         # play cards
         if self.option != "pick for me":
             return
-
 
         card_numbers = []
         number_cards = {}
@@ -408,13 +417,10 @@ class EA(AbstractCard):
         self.still_needs = self.NUMBER_NEEDED
 
     def get_options(self, player):
-        if player.hand.number_of_colour(self.get_colour()) > 3:
-            return {
-                "let me pick": "Pick cards (recommended)",
-                "pick for me": "Add cards automatically"
-            }
-        else:
-            return None
+        return {
+            "let me pick": "Pick cards (recommended)",
+            "pick for me": "Add cards automatically"
+        }
 
     def DFS(self, played_with, all_cards, needs, index=0):
         # TODO make iterative. Python is not optimised for recursion

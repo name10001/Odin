@@ -50,8 +50,6 @@ class Player:
             else:
                 card_array = [[card_id_to_play, chosen_option]]
 
-        print("Playing cards " + str(card_array))
-
         # Go through card_array, if its a valid card add it to cards_to_play and set its options.
         # If its not, raise an error
         cards_to_play = []
@@ -74,10 +72,9 @@ class Player:
         # play all the cards
         cards_played = []
         while len(self._play_cards_stack) > 0:
-            index = len(self._play_cards_stack) - 1
-            card = self._play_cards_stack[index]
+            card = self._play_cards_stack[-1]
             if not self._can_be_played(card):
-                self._play_cards_stack.pop(index)
+                self._play_cards_stack.pop(-1)
                 continue
 
             # do not change order
@@ -86,7 +83,7 @@ class Player:
             self.game.planning_pile.add_card(card)
             cards_played.append(card)
 
-            self._play_cards_stack.pop(index)
+            self._play_cards_stack.pop(-1)
 
         # send animation message to all players
         json_to_send = {
@@ -211,7 +208,7 @@ class Player:
             "pickup size": self.game.pickup,
             "iteration": self.game.iterate_turn_by,
             "players": [],
-            "cant play reason": None,
+            "cant play reason": None
         }
 
         # get first 4 cards from deck that are not in planning pile
