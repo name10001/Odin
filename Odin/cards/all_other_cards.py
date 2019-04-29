@@ -374,7 +374,6 @@ class EA(AbstractCard):
                 self.game.planning_pile[0].still_needs = self.NUMBER_NEEDED
             self.still_needs = 0
             needs = self.game.planning_pile[0].still_needs
-            return
 
         # once ask is implemented, do this:
         # ask the player if they want to play the cards
