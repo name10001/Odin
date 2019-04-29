@@ -16,6 +16,8 @@ class CardCollection:
         self.card_types = {}
         self.card_colours = {}
         self.should_sort = sort
+        self.cards_removed = []
+        self.cards_added = []
 
     def add_cards(self, cards):
         """
@@ -45,6 +47,7 @@ class CardCollection:
         else:
             self.cards_list.append(card)
         self.cards_dict[card.get_id()] = card
+        self.cards_added.append(card)
 
         if card.get_type() not in self.card_types:
             self.card_types[card.get_type()] = set()
@@ -100,6 +103,7 @@ class CardCollection:
 
         self.cards_list.pop(index)
         del self.cards_dict[card.get_id()]
+        self.cards_removed.append(card)
         try:
             if remove_type:
                 self.card_types[card.get_type()].remove(card)
@@ -107,6 +111,19 @@ class CardCollection:
                 self.card_colours[card.get_colour()].remove(card)
         except KeyError:
             raise RuntimeError("Cant remove from type/color set, has it changed since it was added to this collection?")
+
+    def get_changed(self):
+        """
+        Returns a list of cards added and a list of cards removed since the last time get_changed was called
+        or since this collection was initiated.
+        :return: (cards_added, cards_removed)
+        """
+        cards_added = self.cards_added
+        cards_removed = self.cards_removed
+        self.cards_removed = []
+        self.cards_added = []
+
+        return cards_added, cards_removed
 
     def remove_type(self, card_type):
         """

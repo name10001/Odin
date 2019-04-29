@@ -104,25 +104,44 @@ class Player:
         """
         Asks the player a question. This can be done at any time.
         :param title: The title of the question or the question itself. E.g. "Pick a card"
-        :param choices: The choices to give the player.
-        This is a directory of possible answers where the key is what gets sent back
-        and the value is what to shown the player.
-        Example of card type: {"Blue_Six_card_12345": "cards/6_blue.png", "EA_15_card_13464": "cards/ea_15.png"}
-        Example of text type: {"player": "Let me pick the cards", "server": "Automatically play cards"}
-        :param choices_type: The type of choice. Available types are "buttons", "vertical scroll" and "cards".
+        :param options: The choices to give the player.
+        This can be a dictionary, list, set or CardCollection or anything iterable.
+        If its a directory the value is what to shown the player and the key is what gets returned.
+        If its a set or list, the items are what is shown to the player and what get returned.
+        If its a card collection, an images of the cards is what the player sees and the card_id(s) is whats returned.
+        :param options_type: The type of choice. Available types are "buttons", "vertical scroll" and "cards".
+        "Buttons" shows a ______________???
+        "Cards" shows a list of cards in a similar way to the players hand at the bottom of the screen
+        "vertical scroll" shows a _____________???
         :param number_to_pick: The number of choices to pick. Usual 1
-        :return: The choice itself if number_to_pick is 0 or an array of the chosen choices.
+        :return: A List of the chosen choices or the choice itself if number_to_pick is 0.
         E.g. "Blue_Six_card_12345" or "server" or ["Green_Two_card_54321", "Blue_Pickup_2_card_56443", ...]
         """
         raise NotImplementedError("This is unfinished and untested, and this is not implemented in the client yet. "
                                   "Please don't use this for anything other than testing and development")
+
+        options_as_dict = {}
+
+        # convert everything to a dict
+        if isinstance(options, dict):
+            options_as_dict = options
+        elif options_type == "cards":
+            for card in options:
+                # TODO: once implemented in front change "card.get_name()" to "card.get_url()"
+                options_as_dict[card.get_id()] = card.get_name()
+        elif isinstance(options, CardCollection):
+            for card in options:
+                options_as_dict[card.get_id()] = card.get_name()
+        else:
+            for item in options:
+                options_as_dict[item] = item
 
         # generate json for question
         self._question = {
             "title": str(title),
             "number to pick": int(number_to_pick),
             "type": options_type,
-            "options": options
+            "options": options_as_dict
         }
 
         # send the question and wait for a reply. If the reply is not valid, send it again
@@ -247,7 +266,7 @@ class Player:
                     "card image url": card.get_url(),
                     "name": card.get_name(),
                     "can be played": self._can_be_played(card),
-                    "pick options separately": card.pick_options_separately(),
+                    "pick options separately": card.get_pick_options_separately(),
                     "options": card.get_options(self)
                 }
             )

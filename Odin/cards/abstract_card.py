@@ -2,6 +2,8 @@ from flask import *
 import cards
 from cards.card_frequency import CardFrequency
 from util.extended_formatter import extended_formatter
+import textwrap
+from cards.card_collection import CardCollection
 
 
 class AbstractCard:
@@ -16,6 +18,7 @@ class AbstractCard:
     CAN_BE_ON_PICKUP = False
     # Used for generating compatibility description, set to False if there's only 1 colour of this type.
     MULTI_COLOURED = True
+    _PICK_OPTIONS_SEPARATELY = False
 
     def __init__(self, game):
         self.option = None
@@ -160,12 +163,39 @@ class AbstractCard:
         return extended_formatter.format(to_return, cls=cls)
     
     @classmethod
-    def create_options(cls, options, title="Pick option:", options_type="buttons", number_to_pick=1):
+    def _create_options(cls, options, title="Pick option:", options_type="buttons", number_to_pick=1):
+        """
+        Generates options json to send to the player
+        :param options: A list, set, dict or CardCollection of options
+        :param title:
+        :param options_type:
+        :param number_to_pick:
+        :return:
+        """
+        # wraps the text. This should be done in the front end not here
+        title = textwrap.fill(title, 25)
+
+        options_as_dict = {}
+
+        # convert everything to a dict
+        if isinstance(options, dict):
+            options_as_dict = options
+        elif options_type == "cards":
+            for card in options:
+                # TODO: once implemented in front change "card.get_name()" to "card.get_url()"
+                options_as_dict[card.get_id()] = card.get_name()
+        elif isinstance(options, CardCollection):
+            for card in options:
+                options_as_dict[card.get_id()] = card.get_name()
+        else:
+            for item in options:
+                options_as_dict[item] = item
+
         return {
             "title": str(title),
             "number to pick": int(number_to_pick),
             "type": options_type,
-            "options": options
+            "options": options_as_dict
         }
 
     def __gt__(self, other):
@@ -214,8 +244,8 @@ class AbstractCard:
     def can_be_on_pickup(self):
         return self.CAN_BE_ON_PICKUP
     
-    def pick_options_separately(self):
+    def get_pick_options_separately(self):
         """
         Should the player pick a separate option for each card? If so, the play all button will be disabled
         """
-        return False
+        return self._PICK_OPTIONS_SEPARATELY

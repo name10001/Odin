@@ -87,7 +87,8 @@ class Deck:
             card_collection.add_card(card)
             added_cards.append(card)
 
-            # if the amount of cards has surpassed a milestone as set in the card frequency class, update all frequencies
+            # if the amount of cards has surpassed a milestone
+            # as set in the card frequency class, update all frequencies
             if CardFrequency.surpassed_milestone(len(card_collection)):
                 card_weights = self.get_weights(card_collection=card_collection, ignore_limit=ignore_limit)
             else:
