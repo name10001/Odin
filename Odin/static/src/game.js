@@ -239,6 +239,13 @@ class Game {
             this.addEvent(new GameEvent(function() {
                 gui.communistAnimation(data["your cards"]);
             }));
+            break;
+        //SOUND EFFECT - FOR THINGS LIKE 69 NICE
+        case "sound":
+        console.log(data["sound"]);
+            let audio = new Audio(data["sound"]);
+            audio.play();
+            break;
         }
     }
 

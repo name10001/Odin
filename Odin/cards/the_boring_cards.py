@@ -1,6 +1,7 @@
 from cards.abstract_card import AbstractCard
 import cards
 from cards.card_frequency import CardFrequency
+import random
 
 
 class NumberCard(AbstractCard):
@@ -437,47 +438,67 @@ class YellowNine(NumberCard):
 #   SixtyNines
 # ~~~~~~~~~~~~~~
 
+class SixtyNine(NumberCard):
+    CARD_FREQUENCY = CardFrequency(20)
+    CARD_TYPE = "69"
+    EFFECT_DESCRIPTION = "A surprise ;)"
 
-class BlueSixtyNine(NumberCard):
+    def play_card(self, player):
+        # only send "nice" sound effect if this is the bottom card in the pile
+        is_bottom = True
+        n_cards = 0
+        for card in self.game.planning_pile:
+            if isinstance(card, SixtyNine):
+                if card is self and is_bottom is True:
+                    n_cards += 1
+                elif n_cards > 0:
+                    n_cards += 1
+                
+                is_bottom = False
+        
+        # play sound effect if more than 1 69 card
+        if n_cards > 0:
+            file = ""
+            if n_cards < 15:
+                r = random.randrange(1, 5)
+                file = "/static/sounds/nice" + str(r) + ".mp3"
+            else:  # fucked sound effect for >=15 69 cards played at once
+                r = random.randrange(1, 4)
+                file = "/static/sounds/nice_fucked" + str(r) + ".mp3"
+
+            json_to_send = {
+                "type": "sound",
+                "sound": file
+            }
+            player.send_message("animate", json_to_send)
+                
+
+
+class BlueSixtyNine(SixtyNine):
     NAME = "Blue Sixty Nine"
-    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "blue"
-    CARD_TYPE = "69"
     CARD_IMAGE_URL = 'cards/69_blue.png'
-    EFFECT_DESCRIPTION = "A surprise ;)"
 
 
-class GreenSixtyNine(NumberCard):
+class GreenSixtyNine(SixtyNine):
     NAME = "Green Sixty Nine"
-    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "green"
-    CARD_TYPE = "69"
     CARD_IMAGE_URL = 'cards/69_green.png'
-    EFFECT_DESCRIPTION = "A surprise ;)"
 
 
-class PurpleSixtyNine(NumberCard):
+class PurpleSixtyNine(SixtyNine):
     NAME = "Purple Sixty Nine"
-    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
-    CARD_TYPE = "69"
     CARD_IMAGE_URL = 'cards/69_purple.png'
-    EFFECT_DESCRIPTION = "A surprise ;)"
 
 
-class RedSixtyNine(NumberCard):
+class RedSixtyNine(SixtyNine):
     NAME = "Red Sixty Nine"
-    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "red"
-    CARD_TYPE = "69"
     CARD_IMAGE_URL = 'cards/69_red.png'
-    EFFECT_DESCRIPTION = "A surprise ;)"
 
 
-class YellowSixtyNine(NumberCard):
+class YellowSixtyNine(SixtyNine):
     NAME = "Yellow Sixty Nine"
-    CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "yellow"
-    CARD_TYPE = "69"
     CARD_IMAGE_URL = 'cards/69_yellow.png'
-    EFFECT_DESCRIPTION = "A surprise ;)"
