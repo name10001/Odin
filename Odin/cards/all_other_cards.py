@@ -402,7 +402,15 @@ class EA(AbstractCard):
         number_played_with = []
 
         try:
-            self._find_cards_to_play(number_played_with, card_numbers, needs)
+            found = False
+            for i in range(0, len(card_numbers)):
+                found = self._find_cards_to_play(number_played_with, card_numbers, needs, i)
+                if found is True:
+                    break
+            
+            if not found:
+                return
+                
         except OverflowError:
             print("Warning: Got over flow error in EA card")
 
