@@ -66,7 +66,10 @@ $(document).ready(function() {
     });
     socket.on('animate', function(data) {
         game.animate(data);
-    })
+    });
+    socket.on('ask', function(question) {
+        game.ask(question);
+    });
 
     // BEGIN GAMELOOP
     gameLoop(0);

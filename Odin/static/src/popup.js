@@ -137,6 +137,176 @@ class DescriptionWindow {
     scroll(dt) {}
 }
 
+
+/**
+ * Option in an option window
+ */
+class QuestionItem {
+    constructor(optionId, optionString) {
+        //this.card = card;
+        this.optionId = optionId;
+        this.button = new Button(CARD_WIDTH*3-0.5,4.5,2,optionString);
+    }
+
+    draw(x,y,width,height) {
+        this.button.draw(x+GUI_SCALE*0.25,y+GUI_SCALE*0.25,true);
+    }
+
+    click(x,y) {
+        //gui.pickOption(this.card, this.optionId);
+        game.pickOption(this.optionId);
+        gui.popup = null;
+        game.finishedEvent();
+    }
+
+}
+
+/**
+ * Class for the options window
+ */
+class QuestionWindow {
+    constructor(question) {
+        //this.card = card;
+        //this.image = card.image;
+        this.optionTitle = question["title"].split("\n");
+        this.optionType = question["type"];
+        this.allowCancel = question["allow cancel"];
+
+        //Create the scroll container
+        this.scrollContainer = new Container();
+        this.scrollContainer.window = this;
+        this.scrollContainer.getLeft = function() {
+            return this.window.getX() + GUI_SCALE*2;
+        }
+        this.scrollContainer.getRight = function() {
+            return canvas.width - this.window.getX();
+        }
+        this.scrollContainer.getTop = function() {
+            return this.window.getY() + GUI_SCALE * 11;
+        }
+        this.scrollContainer.getBottom = function() {
+            return this.window.getY() + this.window.getHeight() - GUI_SCALE*5.5;
+        }
+
+        //Create the scroller
+        this.optionsScroller = new ScrollArea(this.scrollContainer,CARD_WIDTH*3,5,3,1);
+        this.optionsScroller.scrollOffset = 0;
+        let items = [];
+        for(let optionId of Object.keys(question["options"])) {
+            items.push(new QuestionItem(optionId, question["options"][optionId]));
+        }
+        this.optionsScroller.setItems(items);
+
+        //create a cancel button
+        if(this.allowCancel) {
+            this.cancelButton = new Button(CARD_WIDTH,3,1.5,"CANCEL");
+            this.cancelButton.window = this;
+            this.cancelButton.x = function() {
+                return this.window.getX() + this.window.getWidth() - GUI_SCALE * (1+CARD_WIDTH);
+            }
+            this.cancelButton.y = function() {
+                return this.window.getY() + (CARD_HEIGHT+2) * GUI_SCALE;
+            }
+        }
+    }
+    getWidth() {
+        return (4 * CARD_WIDTH + 7) * GUI_SCALE;
+    }
+
+    getX() {
+        return (canvas.width-this.getWidth())/2;
+    }
+
+    getY() {
+        return canvas.height/8;
+    }
+
+    getHeight() {
+        return canvas.height * 0.75;
+    }
+
+    /**
+     * Draw the options window with specified dimensions
+     */
+    draw() {
+        let width = this.getWidth();
+        let height = this.getHeight();
+        let x = this.getX();
+        let y = this.getY();
+
+        let fontSize = GUI_SCALE*2;
+        let cardWidth = GUI_SCALE*CARD_WIDTH;
+        let cardHeight = GUI_SCALE*CARD_HEIGHT;
+
+        //draw the options window
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = GUI_SCALE/2;
+        ctx.strokeRect(x+3,y+3,width,height);
+        ctx.fillStyle = "#0d3a0d";
+        ctx.fillRect(x,y,width,height);
+
+        //draw card
+        //ctx.drawImage(this.image,x+width-GUI_SCALE-cardWidth,y+GUI_SCALE,cardWidth,cardHeight);
+        //this.cancelButton.drawThis(true);
+        
+        ctx.strokeStyle = "#fff";
+        ctx.fillStyle = "#222";
+        ctx.fillRect(this.scrollContainer.getLeft(),this.scrollContainer.getTop(),GUI_SCALE*CARD_WIDTH*3,this.scrollContainer.getHeight());
+        
+        //draw options box
+        this.optionsScroller.draw();
+
+        ctx.fillStyle = "#0d3a0d";
+        ctx.strokeStyle = "#fff";
+        ctx.fillRect(x+GUI_SCALE*2-1,y+GUI_SCALE*6-1,GUI_SCALE*CARD_WIDTH*3+2,GUI_SCALE*5+2);
+        ctx.fillRect(x+GUI_SCALE*2-1,y+height-GUI_SCALE*5.5-1,GUI_SCALE*CARD_WIDTH*3+2,GUI_SCALE*5+2);
+        
+        //ctx.lineWidth = GUI_SCALE/4;
+        //ctx.strokeRect(this.scrollContainer.getLeft(),this.scrollContainer.getTop(),GUI_SCALE*CARD_WIDTH*2,this.scrollContainer.getHeight());
+        
+        
+        ctx.lineWidth = GUI_SCALE/2;
+        ctx.strokeStyle = "#fff";
+        ctx.strokeRect(x,y,width,height);
+
+        //draw text
+        let textY = y + GUI_SCALE * 7.5;
+        let gap = 3 * GUI_SCALE;
+        textY -= gap * this.optionTitle.length/2;
+        for(let optionTitle of this.optionTitle) {
+            drawText(optionTitle, x + GUI_SCALE*(CARD_WIDTH*1.5+2), textY, "center", GUI_SCALE*2.5, GUI_SCALE*CARD_WIDTH*3);
+            textY+=gap;
+        }
+    }
+
+    click() {
+        this.optionsScroller.click();
+        if(this.allowCancel) {
+            if(this.cancelButton.isMouseOverThis() || mousePosition.x < this.getX() || mousePosition.x > this.getX()+this.getWidth() || mousePosition.y < this.getY() || mousePosition.y > this.getY()+this.getHeight()) {
+                game.pickOption(null);
+                gui.popup = null;
+                game.finishedEvent();
+            }
+        }
+    }
+
+    drag() {
+        this.optionsScroller.drag();
+
+    }
+    
+    release() {
+        this.optionsScroller.release();
+    }
+    wheel(amount) {
+        this.optionsScroller.setScrollSpeed(amount*0.07);
+    }
+    scroll(dt) {
+        this.optionsScroller.scroll(dt);
+    }
+}
+
+
 /**
  * Option in an option window
  */
@@ -156,7 +326,6 @@ class OptionItem {
     }
 
 }
-
 /**
  * Class for the options window
  */

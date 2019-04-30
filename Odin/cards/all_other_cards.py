@@ -1246,16 +1246,16 @@ class ColourChooser(AbstractCard):
         self.colour = "black"
         self.url = self.CARD_IMAGE_URL
 
-    def get_options(self, player):
-        return self._create_options(
-            {
-                "red": "Red",
-                "green": "Green",
-                "blue": "Blue",
-                "yellow": "Yellow"
-            },
-            title="Choose colour:"
-        )
+    #def get_options(self, player):
+    #    return self._create_options(
+    #        {
+    #            "red": "Red",
+    #            "green": "Green",
+    #            "blue": "Blue",
+    #            "yellow": "Yellow"
+    #        },
+    #        title="Choose colour:"
+    #    )
     
     def is_compatible_with(self, player, card):
         """
@@ -1270,8 +1270,18 @@ class ColourChooser(AbstractCard):
         if self.is_option_valid(player, self.option) is False:
             print(self.option, "is not a valid option for", self.get_name())
             return
-        self.colour = self.option
-        self.url = 'cards/choose_' + self.option + '.png'
+        
+        option = player.ask(options=
+            {
+                "red": "Red",
+                "green": "Green",
+                "blue": "Blue",
+                "yellow": "Yellow"
+            },
+            title="Choose colour:", allow_cancel=True)
+
+        self.colour = option
+        self.url = 'cards/choose_' + option + '.png'
 
     def undo_prepare_card(self, player):
         self.url = self.CARD_IMAGE_URL

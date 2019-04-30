@@ -247,6 +247,17 @@ class Game {
         socket.emit("game message", GAME_ID, "play cards", card_array);
     }
 
+    ask(question) {
+        this.addEvent(new GameEvent(function() {
+            gui.popup = new QuestionWindow(question);
+        }));
+
+    }
+
+    pickOption(optionId) {
+        socket.emit("game message", GAME_ID, "answer", [optionId]);
+    }
+
     /*sayUno(){
         socket.emit("game message", GAME_ID, "uno", null);
     }*/

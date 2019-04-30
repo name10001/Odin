@@ -100,7 +100,7 @@ class Player:
         }
         self.game.send_to_all_players("animate", json_to_send)
 
-    def ask(self, options, title="Pick option:", options_type="buttons", number_to_pick=1):
+    def ask(self, options=None, title="Pick option:", options_type="buttons", number_to_pick=1, allow_cancel=True):
         """
         Asks the player a question. This can be done at any time.
         :param title: The title of the question or the question itself. E.g. "Pick a card"
@@ -117,9 +117,10 @@ class Player:
         :return: A List of the chosen choices or the choice itself if number_to_pick is 0.
         E.g. "Blue_Six_card_12345" or "server" or ["Green_Two_card_54321", "Blue_Pickup_2_card_56443", ...]
         """
-        raise NotImplementedError("This is unfinished and untested, and this is not implemented in the client yet. "
-                                  "Please don't use this for anything other than testing and development")
+        # raise NotImplementedError("This is unfinished and untested, and this is not implemented in the client yet. "
+        #                           "Please don't use this for anything other than testing and development")
 
+    
         options_as_dict = {}
 
         # convert everything to a dict
@@ -141,7 +142,8 @@ class Player:
             "title": str(title),
             "number to pick": int(number_to_pick),
             "type": options_type,
-            "options": options_as_dict
+            "options": options_as_dict,
+            "allow cancel": allow_cancel
         }
 
         # send the question and wait for a reply. If the reply is not valid, send it again
@@ -151,15 +153,13 @@ class Player:
             self.send_message("ask", self._question)
 
             # wait for answer
-            while self._question_answer is None:
-                sleep(1/30)
+            while len(self._question_answer) == 0:
+                print("waiting for answer..")
+                sleep(1)
 
-            if len(self._question_answer) == 0:
-                continue
-
-            valid_answer = True
+            valid_answer = len(self._question_answer) == number_to_pick
             for choice in self._question_answer:
-                if choice not in choices:
+                if choice not in self._question['options'] or (choice is None and allow_cancel is True):
                     valid_answer = False
                     break
 
