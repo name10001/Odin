@@ -655,6 +655,15 @@ class TrashCard(AbstractCard):
         if card is None:
             return
         
+        json_to_send = {
+            "type": "remove cards",
+            "data": [{
+                "id": card.get_id(),
+                "card image url": card.get_url()
+            }]
+        }
+        player.send_message("animate", json_to_send)
+
         self.cards_removed.append(card)
         player.hand.remove_card(card=card)
     
@@ -1086,6 +1095,16 @@ class Jesus(AbstractCard):
             return
 
         other_player = self.game.get_player(self.option)
+
+        json_to_send = {
+            "type": "remove cards",
+            "data": [{
+                "id": card.get_id(),
+                "card image url": card.get_url()
+            } for card in player.hand]
+        }
+        player.send_message("animate", json_to_send)
+
         other_player.hand.clear()
         other_player.add_new_cards(settings.jesus_card_number)
 
@@ -1144,10 +1163,22 @@ class Thanos(AbstractCard):
         """
         total = len(player.hand)
         num_to_remove = math.ceil(total / 2)
+
+        removed = []
         for i in range(0, num_to_remove):
             index = random.randrange(0, total)
+            removed.append(player.hand.cards_list[index])
             player.hand.remove_card(index=index)
             total -= 1
+        
+        json_to_send = {
+            "type": "remove cards",
+            "data": [{
+                "id": card.get_id(),
+                "card image url": card.get_url()
+            } for card in removed]
+        }
+        player.send_message("animate", json_to_send)
 
 
 class CopyCat(AbstractCard):

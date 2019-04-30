@@ -439,7 +439,7 @@ class YellowNine(NumberCard):
 # ~~~~~~~~~~~~~~
 
 class SixtyNine(NumberCard):
-    CARD_FREQUENCY = CardFrequency(20)
+    CARD_FREQUENCY = CardFrequency(1)
     CARD_TYPE = "69"
     EFFECT_DESCRIPTION = "A surprise ;)"
 

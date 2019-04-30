@@ -373,6 +373,10 @@ class Gui {
                 let position = this.cardScroller.getPositionOf(index);
                 let image = game.allImages[card['card image url']];
                 movingCard = new AnimatedCard(position, planningPilePosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
+                movingCard.index = index;
+                movingCard.release = function() {
+                    gui.cardScroller.items[this.index].cardStack.pop();
+                }
                 this.movingCards.push(movingCard);
                 wait += waitIncr;
                 if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
@@ -400,6 +404,40 @@ class Gui {
                 if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
                 soundDisplacement += waitIncr;
             }
+            if(movingCard != undefined) {
+                movingCard.place = function() {
+                    game.finishedEvent();
+                }
+            }else game.finishedEvent();
+        }
+    }
+
+    /**
+     * Animate removing cards from your hand
+     */
+    animateRemoveCards(cards, finishEvent=true) {
+        // cards from your hand
+        let wait = 0;
+        let planningPilePosition = {x:canvas.width, y:canvas.height/2};
+        let waitIncr = this.getCardWaitIncrement(cards.length);
+        let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
+        let movingCard;
+        for(let card of cards) {
+            let index = game.cardIndices[card['id']];
+            let position = this.cardScroller.getPositionOf(index);
+            let image = game.allImages[card['card image url']];
+            movingCard = new AnimatedCard(position, planningPilePosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, 
+                soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.pickupSound : null);
+            movingCard.index = index;
+            movingCard.release = function() {
+                gui.cardScroller.items[this.index].cardStack.pop();
+            }
+            this.movingCards.push(movingCard);
+            wait += waitIncr;
+            if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
+            soundDisplacement += waitIncr;
+        }
+        if(finishEvent) {
             if(movingCard != undefined) {
                 movingCard.place = function() {
                     game.finishedEvent();

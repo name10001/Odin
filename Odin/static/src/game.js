@@ -57,6 +57,10 @@ class CardStack {
         game.playCard([[id,options]]);
     }
 
+    pop() {
+        this.cardIds.splice(0, 1);
+    }
+
     size() {
         return this.cardIds.length;
     }
@@ -234,6 +238,12 @@ class Game {
                 }));
             }
             break;
+        // REMOVE CARD
+        case "remove cards":
+            this.addEvent(new GameEvent(function() {
+                gui.animateRemoveCards(data["data"]);
+            }));
+            break;
         //COMMUNIST CARD
         case "communist":
             this.addEvent(new GameEvent(function() {
@@ -242,7 +252,6 @@ class Game {
             break;
         //SOUND EFFECT - FOR THINGS LIKE 69 NICE
         case "sound":
-        console.log(data["sound"]);
             let audio = new Audio(data["sound"]);
             audio.play();
             break;

@@ -31,8 +31,9 @@ class AnimatedCard {
     move(dt) {
         let start = this.current; 
         this.current += dt;
-        if(start < this.wait && this.current > this.wait) {
+        if(start <= this.wait && this.current > this.wait) {
             dt = this.current - this.wait;
+            this.release();
         }
         if(this.current >= this.wait) {
             this.position.x += this.moveVector.x*dt;
@@ -48,6 +49,8 @@ class AnimatedCard {
         if(this.sound != null)
             this.sound.play();
     }
+
+    release() {}
     place() {}
 
     draw() {
@@ -66,6 +69,7 @@ class CommunistAnimation {
         this.timeElapsed = 0;
         this.timeUntilDone = 13000;
         this.ourCards = this.yourCards.length * game.players.length;
+        this.removedCards = false;
 
         //When the counts should start going down
         this.playerCountDownStart = [];
@@ -205,6 +209,14 @@ class CommunistAnimation {
 
         this.timeUntilDone -= dt;
         this.timeElapsed += dt;
+
+        if(!this.removedCards && this.timeElapsed > 4000) {
+            for(let cardStack of game.yourStacks) {
+                cardStack.cardIds.length = 0;
+            }
+            this.removedCards = true;
+        }
+
         if(this.timeUntilDone <= 0) {
             gui.currentAnimation = null;
             gui.animatePickup(this.yourCards);
