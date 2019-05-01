@@ -59,6 +59,8 @@ class Gui {
         this.stalin.src = '/static/stalin.png';
         this.cardBack = new Image;
         this.cardBack.src = '/static/cards/back.png';
+        this.skull = new Image;
+        this.skull.src = '/static/skull.png';
     }
 
     updateCards(cardPanels) {

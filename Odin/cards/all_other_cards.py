@@ -1003,7 +1003,7 @@ class Genocide(AbstractCard):
     NAME = "Genocide"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/genocide.png'
-    CARD_FREQUENCY = CardFrequency(0.4, max_cards=2)
+    CARD_FREQUENCY = CardFrequency(20, max_cards=20)
     MULTI_COLOURED = False
     CARD_TYPE = "Genocide"
     _PICK_OPTIONS_SEPARATELY = True
@@ -1056,14 +1056,22 @@ class Genocide(AbstractCard):
         On play this will remove all the types from everyone's hands
         """
         category, to_ban = self.option.split(' ', 1)
+        
+        json_to_send = {
+            "type": "genocide",
+            "cards to remove": [],
+            "banned": to_ban
+        }
 
         # remove from deck and players hands
         if category == "type":
             for game_player in self.game.players:
                 game_player.hand.remove_type(to_ban)
+                game_player.send_message("animate", json_to_send)
         elif category == "colour":
             for game_player in self.game.players:
                 game_player.hand.remove_colour(to_ban)
+                game_player.send_message("animate", json_to_send)
         else:
             print("Warning: got unknown category:", category)
 

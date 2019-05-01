@@ -256,6 +256,13 @@ class Game {
                 gui.currentAnimation = new ThanosAnimation(data["data"]);
             }));
             break;
+        //THANOS
+        case "genocide":
+            console.log("seen animation");
+            this.addEvent(new GameEvent(function() {
+                gui.currentAnimation = new GenocideAnimation(data["cards to remove"], data['banned']);
+            }));
+            break;
         //SOUND EFFECT - FOR THINGS LIKE 69 NICE
         case "sound":
             let audio = new Audio(data["sound"]);

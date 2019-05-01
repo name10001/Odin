@@ -59,6 +59,17 @@ class AnimatedCard {
         }
     }
 }
+/*
+
+
+
+
+                COMMUNIST
+
+
+
+
+*/
 
 class CommunistAnimation {
     constructor(yourCards) {
@@ -223,7 +234,17 @@ class CommunistAnimation {
         }
     }
 }
+/*
 
+
+
+
+                THANOS
+
+
+
+
+*/
 
 class Particle {
     constructor(image, x, y, ix, iy, width, height, cardWidth, cardHeight) {
@@ -324,5 +345,45 @@ class ThanosAnimation {
         if(this.topCard >= 0) {
             ctx.drawImage(this.cardImages[this.topCard], this.cardPosition.x, this.cardPosition.y, this.cardWidth, this.cardHeight);
         }
+    }
+}
+/*
+
+
+
+
+                GENOCIDE
+
+
+
+
+*/
+class GenocideAnimation {
+    constructor(cardsToRemove, bannedString) {
+        let audio = new Audio('/static/sounds/genocide.mp3');
+        audio.play();
+        this.timer = 2000;
+        this.cardsToRemove = cardsToRemove;
+        this.bannedString = bannedString;
+        
+    }
+
+    draw(dt) {
+        this.timer -= dt;
+        if(this.timer < 0) {
+            gui.currentAnimation = null;
+            game.finishedEvent();
+            return;
+        }
+
+        if(this.timer < 1000) {
+            ctx.globalAlpha = this.timer/1000;
+        }
+        ctx.drawImage(gui.skull,canvas.width/2-GUI_SCALE*15,canvas.height/2-GUI_SCALE*15,GUI_SCALE*30,GUI_SCALE*30);
+        drawText("RIP " + this.bannedString + " cards", canvas.width/2, canvas.height/2, "center", GUI_SCALE*5);
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 3;
+        ctx.strokeText("RIP " + this.bannedString + " cards", canvas.width/2, canvas.height/2);
+        ctx.globalAlpha = 1;
     }
 }
