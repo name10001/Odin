@@ -223,3 +223,106 @@ class CommunistAnimation {
         }
     }
 }
+
+
+class Particle {
+    constructor(image, x, y, ix, iy, width, height, cardWidth, cardHeight) {
+        this.image = image;
+        this.ix = ix;
+        this.iy = iy;
+        this.iwidth = width/cardWidth * image.width;
+        this.iheight = height/cardHeight * image.height;
+        this.width = width;
+        this.height = height;
+
+        this.x = x+ix;
+        this.y = y+iy;
+
+        this.xspeed = Math.random()*0.1-0.02;
+        this.yspeed = 0.02-Math.random()*0.1;
+        this.timeRemaining = Math.random() * 800 + 200;
+        this.time = this.timeRemaining;
+    }
+
+    draw(dt) {
+        this.x+=this.xspeed*dt;
+        this.y+=this.yspeed*dt;
+        this.timeRemaining-=dt;
+        let alpha = this.timeRemaining/this.time;
+        if(alpha<0) alpha = 0;
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(this.image, this.ix, this.iy, this.iwidth, this.iheight, 
+            this.x, this.y, this.width, this.height);
+    }
+}
+
+class ThanosAnimation {
+    constructor(cardsToRemove) {
+        this.topCard = -1;
+        this.cardImages = [];
+        this.particles = [];
+        for(let card of cardsToRemove) {
+            let image = game.allImages[card['card image url']];
+            this.cardImages.push(image);
+        }
+        this.timer = 1500;
+        this.cardWidth = CARD_WIDTH * GUI_SCALE;
+        this.cardHeight = CARD_HEIGHT * GUI_SCALE;
+        this.cardPosition = {x:canvas.width/2-this.cardWidth/2, y:canvas.height/2-this.cardHeight/2};
+        this.eventNum = 2;
+
+        let cardPlaceFunction = function() {
+            gui.currentAnimation.nextTopCard();
+        }
+        let finishedFunction = function() {
+            gui.currentAnimation.nextTopCard();
+            gui.currentAnimation.snap();
+        }
+        gui.animateMoveCardsFromHand(cardsToRemove, this.cardPosition, finishedFunction, cardPlaceFunction);
+    }
+
+    nextTopCard() {
+        this.topCard++;
+    }
+
+    snap() {
+        this.eventNum = 1;
+    }
+
+    draw(dt) {
+        if(this.eventNum < 2) {
+            this.timer -= dt;
+            
+            if(this.timer <= 1000 && this.eventNum == 1) {
+                let audio = new Audio('/static/sounds/snap.mp3');
+                audio.play();
+                this.eventNum = 0;
+
+                let particleSize = 2;
+                let image = this.cardImages[this.topCard];
+                for(let x = 0; x <= this.cardWidth - particleSize; x+=particleSize) {
+                    for(let y = 0; y <= this.cardHeight - particleSize; y+=particleSize) {
+                        let particle = new Particle(image, this.cardPosition.x, this.cardPosition.y,
+                            x, y, particleSize, particleSize, this.cardWidth, this.cardHeight);
+                        this.particles.push(particle);
+                    }
+                }
+
+                this.topCard = -1;
+            }
+            if(this.timer <= 0) {
+                gui.currentAnimation = null;
+                game.finishedEvent();
+            }
+            if(this.eventNum == 0) {
+                for(let particle of this.particles) {
+                    particle.draw(dt);
+                }
+                ctx.globalAlpha = 1;
+            }
+        }
+        if(this.topCard >= 0) {
+            ctx.drawImage(this.cardImages[this.topCard], this.cardPosition.x, this.cardPosition.y, this.cardWidth, this.cardHeight);
+        }
+    }
+}

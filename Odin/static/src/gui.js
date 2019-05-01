@@ -363,30 +363,8 @@ class Gui {
     animatePlayCards(cards) {
         if(game.yourTurn) {
             // cards from your hand
-            let wait = 0;
             let planningPilePosition = this.getPlanningPilePosition();
-            let waitIncr = this.getCardWaitIncrement(cards.length);
-            let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
-            let movingCard;
-            for(let card of cards) {
-                let index = game.cardIndices[card['id']];
-                let position = this.cardScroller.getPositionOf(index);
-                let image = game.allImages[card['card image url']];
-                movingCard = new AnimatedCard(position, planningPilePosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
-                movingCard.index = index;
-                movingCard.release = function() {
-                    gui.cardScroller.items[this.index].cardStack.pop();
-                }
-                this.movingCards.push(movingCard);
-                wait += waitIncr;
-                if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
-                soundDisplacement += waitIncr;
-            }
-            if(movingCard != undefined) {
-                movingCard.place = function() {
-                    game.finishedEvent();
-                }
-            }else game.finishedEvent();
+            this.animateMoveCardsFromHand(cards, planningPilePosition, function() {game.finishedEvent();});
         }
         else {
             // cards from another person's hand
@@ -417,8 +395,13 @@ class Gui {
      */
     animateRemoveCards(cards, finishEvent=true) {
         // cards from your hand
+        let offscreen = {x:canvas.width, y:canvas.height/2};
+        this.animateMoveCardsFromHand(cards, offscreen, 
+            finishEvent ? function() {game.finishedEvent();} : null);
+    }
+
+    animateMoveCardsFromHand(cards, endPosition, finishedFunction=null, cardPlaceFunction=null) {
         let wait = 0;
-        let planningPilePosition = {x:canvas.width, y:canvas.height/2};
         let waitIncr = this.getCardWaitIncrement(cards.length);
         let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
         let movingCard;
@@ -426,24 +409,26 @@ class Gui {
             let index = game.cardIndices[card['id']];
             let position = this.cardScroller.getPositionOf(index);
             let image = game.allImages[card['card image url']];
-            movingCard = new AnimatedCard(position, planningPilePosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, 
-                soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.pickupSound : null);
+            movingCard = new AnimatedCard(position, endPosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, 
+                soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
             movingCard.index = index;
             movingCard.release = function() {
                 gui.cardScroller.items[this.index].cardStack.pop();
+            }
+            if(cardPlaceFunction!=null) {
+                movingCard.place = cardPlaceFunction;
             }
             this.movingCards.push(movingCard);
             wait += waitIncr;
             if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
             soundDisplacement += waitIncr;
         }
-        if(finishEvent) {
+        if(finishedFunction!=null) {
             if(movingCard != undefined) {
-                movingCard.place = function() {
-                    game.finishedEvent();
-                }
-            }else game.finishedEvent();
+                movingCard.place = finishedFunction;
+            }else finishedFunction();
         }
+        
     }
 
     /**
@@ -537,10 +522,6 @@ class Gui {
         this.movingCards.reverse();
 
 
-    }
-
-    communistAnimation(yourCards) {
-        this.currentAnimation = new CommunistAnimation(yourCards);
     }
 
     /**

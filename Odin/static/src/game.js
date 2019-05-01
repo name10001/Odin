@@ -247,7 +247,13 @@ class Game {
         //COMMUNIST CARD
         case "communist":
             this.addEvent(new GameEvent(function() {
-                gui.communistAnimation(data["your cards"]);
+                gui.currentAnimation = new CommunistAnimation(data["your cards"]);
+            }));
+            break;
+        //THANOS
+        case "thanos":
+            this.addEvent(new GameEvent(function() {
+                gui.currentAnimation = new ThanosAnimation(data["data"]);
             }));
             break;
         //SOUND EFFECT - FOR THINGS LIKE 69 NICE

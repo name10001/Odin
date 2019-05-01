@@ -1172,7 +1172,7 @@ class Thanos(AbstractCard):
             total -= 1
         
         json_to_send = {
-            "type": "remove cards",
+            "type": "thanos",
             "data": [{
                 "id": card.get_id(),
                 "card image url": card.get_url()
