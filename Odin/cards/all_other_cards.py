@@ -856,8 +856,6 @@ class SwapHand(AbstractCard):
 
 
     def play_card(self, player):
-        print(self.swap_with)
-
         if self.swap_with is None:
             return
 
@@ -866,7 +864,6 @@ class SwapHand(AbstractCard):
             print("no player of that id was found")
             return
         
-        print("got this far lmao")
 
         hand = player.hand
         player.hand = other_player.hand
