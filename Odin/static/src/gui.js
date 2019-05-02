@@ -232,6 +232,9 @@ class Gui {
                 //name
                 drawText(player.name,px+fontSize/2,py+pheight/2+fontSize/3,"left",fontSize,fontSize*5,"#fff");
                 drawText(player.nCards,px+pwidth-fontSize/2,py+pheight/2+fontSize/3,"right",fontSize,fontSize*4,"#fff");
+                if(player.nPickup) {
+                    
+                }
 
                 //adjust size for non-turn players
                 if(i==game.turn) {

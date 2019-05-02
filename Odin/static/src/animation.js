@@ -372,7 +372,7 @@ class GenocideAnimation {
         this.timer -= dt;
         if(this.timer < 0) {
             gui.currentAnimation = null;
-            game.finishedEvent();
+            gui.animateRemoveCards(this.cardsToRemove);
             return;
         }
 

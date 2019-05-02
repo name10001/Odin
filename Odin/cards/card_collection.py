@@ -129,32 +129,42 @@ class CardCollection:
         """
         Remove all the cards of a particular type
         :param card_type: Type to ban
-        :return: None
+        :return: A list of all the cards removed
         """
         # O(m log n)
         # n = number of cards already in the collection
         # m = number of cards to ban
 
+        removed_cards = []
+
         if card_type in self.card_types:
             for card in self.card_types[card_type]:
+                removed_cards.append(card)
                 self.remove_card(card, remove_type=False)
             self.card_types[card_type].clear()
+
+        return removed_cards
     
     def remove_colour(self, card_colour):
         """
         Remove all the cards of a particular colour
         :param card_colour: Colour to ban
-        :return: None
+        :return: A kust of all the cards removed
         """
         # O(m log n)
         # n = number of cards already in the collection
         # m = number of cards to ban
 
+        removed_cards = []
+
         if card_colour in self.card_colours:
             for card in self.card_colours[card_colour]:
+                removed_cards.append(card)
                 self.remove_card(card, remove_colour=False)
             self.card_colours[card_colour].clear()
-    
+        
+        return removed_cards
+
     def number_of_type(self, card_type):
         """
         Number of cards of a particular type in a collection

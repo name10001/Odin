@@ -980,10 +980,21 @@ class FuckYou(AbstractCard):
         if self.pickup_amount == 0:
             self.pickup_amount = 5
         
+        if self.option != None:
+            other_player = self.game.get_player(self.option)
+
+            other_player.player_pickup_amount += self.pickup_amount
+
+        
         self.game.pickup = 0
     
     def undo_prepare_card(self, player):
         self.game.pickup = self.old_pickup
+
+        if self.option != None:
+            other_player = self.game.get_player(self.option)
+
+            other_player.player_pickup_amount -= self.pickup_amount
 
     def play_card(self, player):
         if self.is_option_valid(player, self.option) is False:
@@ -1003,7 +1014,7 @@ class Genocide(AbstractCard):
     NAME = "Genocide"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'cards/genocide.png'
-    CARD_FREQUENCY = CardFrequency(20, max_cards=20)
+    CARD_FREQUENCY = CardFrequency(0.4, max_cards=2)
     MULTI_COLOURED = False
     CARD_TYPE = "Genocide"
     _PICK_OPTIONS_SEPARATELY = True
@@ -1066,11 +1077,14 @@ class Genocide(AbstractCard):
         # remove from deck and players hands
         if category == "type":
             for game_player in self.game.players:
-                game_player.hand.remove_type(to_ban)
+                removed_cards = game_player.hand.remove_type(to_ban)
+                json_to_send["cards to remove"] = [{"id": card.get_id(), "card image url": card.get_url()} for card in removed_cards]
                 game_player.send_message("animate", json_to_send)
         elif category == "colour":
             for game_player in self.game.players:
-                game_player.hand.remove_colour(to_ban)
+                removed_cards = game_player.hand.remove_colour(to_ban)
+                json_to_send["banned"] = to_ban.capitalize()
+                json_to_send["cards to remove"] = [{"id": card.get_id(), "card image url": card.get_url()} for card in removed_cards]
                 game_player.send_message("animate", json_to_send)
         else:
             print("Warning: got unknown category:", category)

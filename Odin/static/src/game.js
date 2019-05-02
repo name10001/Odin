@@ -1,7 +1,8 @@
 class Player {
-    constructor(name, nCards) {
+    constructor(name, nCards, nPickup) {
         this.name = name;
         this.nCards = nCards;
+        this.nPickup = nPickup;
     }
 }
 
@@ -201,7 +202,7 @@ class Game {
                     this.yourTurn = false;
                 }
             }
-            this.players.push(new Player(player['name'],player['number of cards']));
+            this.players.push(new Player(player['name'],player['number of cards'],player['pickup amount']));
         }
 
         
