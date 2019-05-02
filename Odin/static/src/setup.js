@@ -60,6 +60,7 @@ $(document).ready(function() {
     });
 
     socket.on('card update', function(update) {
+
         game.addEvent(new GameEvent(function() {
             game.update(update);
         }));
@@ -149,7 +150,7 @@ function resize() {
 
 var lastTime = 0;
 function gameLoop(timestamp) {
-    sleep(16);
+    sleep(2);
     let dt = timestamp-lastTime;
     lastTime = timestamp;
     
