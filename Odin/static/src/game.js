@@ -259,7 +259,6 @@ class Game {
             break;
         //THANOS
         case "genocide":
-            console.log("seen animation");
             this.addEvent(new GameEvent(function() {
                 gui.currentAnimation = new GenocideAnimation(data["cards to remove"], data['banned']);
             }));

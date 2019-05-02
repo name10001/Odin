@@ -377,10 +377,10 @@ class EA(AbstractCard):
 
         # asks the player if they want to play the cards
         option = player.ask(
-            "Do you want to play card automatically?",
+             "Would you like the game\nto automatically pick cards?",
             {
-                "let me pick": "Pick cards (recommended)",
-                "pick for me": "Add cards automatically"
+                "pick for me": "Yes",
+                "let me pick": "No, let me pick"
             }
         )
 
@@ -532,6 +532,7 @@ class YellowFuck(Fuck):
 class AllOfSameColour(AbstractCard):
     CARD_FREQUENCY = CardFrequency(1, max_cards=1)
     MULTI_COLOURED = False
+    PICK_NUMBERS = True  # False for 
 
     def can_play_with(self, player, card, is_first_card):
         return card.get_colour() == self.get_colour()
@@ -540,14 +541,15 @@ class AllOfSameColour(AbstractCard):
         """
         Play all the cards in the players hand that are of the same colour as this one
         """
-        option = player.ask(
-            "Would you like to automatically pick cards?",
-            {
-                "player pick": "No, let me pick (recommended)",
-                "server pick all": "Yes, select all",
-                "server pick numbers": "Yes, select just numbers"
-            }
-        )
+
+        options = {
+            "player pick": "No, let me pick (recommended)",
+            "server pick all": "Yes: Select all"
+        }
+        if self.PICK_NUMBERS is True:
+            optios["server pick numbers"] = "Yes: Only Numbers"
+        option = player.ask("Would you like the game\nto automatically pick cards?", options)
+        
         if option == "server pick all":
             for card in reversed(player.hand):
                 if card.get_colour() == self.get_colour():
@@ -595,6 +597,7 @@ class FilthySharon(AllOfSameColour):
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'cards/filthy_sharon.png'
     CARD_TYPE = "Filthy Sharon"
+    PICK_NUMBERS = False
     EFFECT_DESCRIPTION = "Allows you to place as many white cards as you like with this card on your turn."
 
 
@@ -830,7 +833,7 @@ class SwapHand(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a player and you will swap your entire hand with theirs upon play."
 
-    def play_card(self, player):
+    def prepare_card(self, player):
         # get the options
         for card in self.game.planning_pile:
             if isinstance(card, SwapHand):
@@ -844,20 +847,26 @@ class SwapHand(AbstractCard):
         for other_player in self.game.players:
             if other_player != player:
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
-
-        swap_with = player.ask(
-            "Pick a player to swap hands with:",
+        
+        self.swap_with = player.ask(
+            "Pick a player to\nswap hands with:",
             options,
             options_type="vertical scroll"
         )
 
-        if swap_with is None:
+
+    def play_card(self, player):
+        print(self.swap_with)
+
+        if self.swap_with is None:
             return
 
-        other_player = self.game.get_player(swap_with)
+        other_player = self.game.get_player(self.swap_with)
         if other_player is None:
             print("no player of that id was found")
             return
+        
+        print("got this far lmao")
 
         hand = player.hand
         player.hand = other_player.hand
@@ -964,12 +973,15 @@ class FuckYou(AbstractCard):
             if other_player != player:
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
 
-        self.chosen_player_id = player.ask("Select player to pickup cards:", options, options_type="vertical scroll")
+        if len(options) > 0:
+            self.chosen_player_id = player.ask("Select player to pickup cards:", options, options_type="vertical scroll")
         
-        if self.chosen_player_id != None:
-            other_player = self.game.get_player(self.chosen_player_id)
+            if self.chosen_player_id != None:
+                other_player = self.game.get_player(self.chosen_player_id)
 
-            other_player.player_pickup_amount += self.pickup_amount
+                other_player.player_pickup_amount += self.pickup_amount
+        else:
+            self.chosen_player_id = None
 
         
         self.game.pickup = 0
@@ -986,7 +998,9 @@ class FuckYou(AbstractCard):
         if len(self.game.players) == 1:
             return None
 
-        self.game.get_player(self.chosen_player_id).add_new_cards(self.pickup_amount)
+        if self.chosen_player_id != None:
+            self.game.get_player(self.chosen_player_id).add_new_cards(self.pickup_amount)
+
         self.pickup_amount = 0
 
 
@@ -1059,7 +1073,7 @@ class Genocide(AbstractCard):
                 game_player.send_message("animate", json_to_send)
         elif self.category == "colour":
             for game_player in self.game.players:
-                removed_cards = game_player.hand.remove_colour(to_ban)
+                removed_cards = game_player.hand.remove_colour(self.to_ban)
                 json_to_send["banned"] = self.to_ban.capitalize()
                 json_to_send["cards to remove"] = [{"id": card.get_id(), "card image url": card.get_url()} for card in removed_cards]
                 game_player.send_message("animate", json_to_send)
@@ -1084,7 +1098,7 @@ class Jesus(AbstractCard):
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
             else:
                 options[other_player.get_id()] = other_player.get_name() + "(You)"
-        self.other_player_id = player.ask("Select player to reset their hand:", options, options_type="vertical scroll")
+        self.other_player_id = player.ask("Select player to\nreset their hand:", options, options_type="vertical scroll")
 
     def play_card(self, player):
         other_player = self.game.get_player(self.other_player_id)

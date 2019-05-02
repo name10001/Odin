@@ -133,6 +133,7 @@ class Game:
             player.undo_all()
         elif message == "answer":
             player.answer_question(data)
+            return
         else:
             print("got unknown message from player:", message)
 

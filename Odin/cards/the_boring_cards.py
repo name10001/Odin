@@ -470,7 +470,7 @@ class SixtyNine(NumberCard):
                 "type": "sound",
                 "sound": file
             }
-            player.send_message("animate", json_to_send)
+            self.game.send_to_all_players("animate", json_to_send)
                 
 
 

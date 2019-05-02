@@ -1,8 +1,1 @@
-"ask" does not end the event and you don't see any cards being played
-SwapHand does not work
 Copycat on top of other copycats with the everyone pickup does not stack
-EA question is retarded (also re add \n)
-Genocide throws an error!! haha
-filthy sharon options are dumb also
-69 only plays for one person
-Choose jesus rules before? Also the animation for this is fucked
