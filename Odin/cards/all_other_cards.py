@@ -609,7 +609,6 @@ class TrashCard(AbstractCard):
     CARD_TYPE = "Trash"
     EFFECT_DESCRIPTION = "Choose any card to be removed from your hand. The effects of this card do not apply."
     NUMBER_TO_REMOVE = 1
-    _PICK_OPTIONS_SEPARATELY = True
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -821,7 +820,6 @@ class SwapHand(AbstractCard):
     CARD_TYPE = "Swap Hand"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a player and you will swap your entire hand with theirs upon play."
-    _PICK_OPTIONS_SEPARATELY = True
 
     def play_card(self, player):
         # get the options
@@ -969,7 +967,6 @@ class Genocide(AbstractCard):
     CARD_FREQUENCY = CardFrequency(0.4, max_cards=2)
     MULTI_COLOURED = False
     CARD_TYPE = "Genocide"
-    _PICK_OPTIONS_SEPARATELY = True
     EFFECT_DESCRIPTION = "Pick any colour or type of card to entirely removed from the game. " \
                          "All cards of this colour/type will be removed from everyone's hand " \
                          "and will never be able to be picked up in the future of this game."
@@ -1035,7 +1032,6 @@ class Jesus(AbstractCard):
     CARD_FREQUENCY = CardFrequency(1.2, 1, 0.5, 0.5, max_cards=2)
     CARD_TYPE = "Jesus"
     MULTI_COLOURED = False
-    _PICK_OPTIONS_SEPARATELY = True
     EFFECT_DESCRIPTION = "Choose any person (including yourself) to reset their entire hand " \
                          "back to a value of 15 cards."
 

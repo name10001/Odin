@@ -259,7 +259,8 @@ class Player:
                     "card image url": card.get_url(),
                     "name": card.get_name(),
                     "can be played": self._can_be_played(card),
-                    "pick options separately": card.get_pick_options_separately(),
+                    # TODO: remove the following. Can be done once client no longer uses them
+                    "pick options separately": False,
                     "options": None
                 }
             )

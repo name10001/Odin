@@ -16,7 +16,6 @@ class AbstractCard:
     CAN_BE_ON_PICKUP = False
     # Used for generating compatibility description, set to False if there's only 1 colour of this type.
     MULTI_COLOURED = True
-    _PICK_OPTIONS_SEPARATELY = False
 
     def __init__(self, game):
         self.game = game
@@ -179,9 +178,3 @@ class AbstractCard:
 
     def can_be_on_pickup(self):
         return self.CAN_BE_ON_PICKUP
-    
-    def get_pick_options_separately(self):
-        """
-        Should the player pick a separate option for each card? If so, the play all button will be disabled
-        """
-        return self._PICK_OPTIONS_SEPARATELY
