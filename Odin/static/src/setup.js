@@ -149,7 +149,7 @@ function resize() {
 
 var lastTime = 0;
 function gameLoop(timestamp) {
-    sleep(2);
+    sleep(16);
     let dt = timestamp-lastTime;
     lastTime = timestamp;
     

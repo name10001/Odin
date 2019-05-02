@@ -1,7 +1,8 @@
 import flask_server as fs
 from cards.card_collection import CardCollection
 import settings
-from time import sleep
+from eventlet import event
+from flask import request
 
 
 class Player:
@@ -17,7 +18,7 @@ class Player:
         self._play_cards_stack = []  # see self.play_card()
 
         # setting up question stuff see self.ask()
-        self._question_answer = []
+        self._answer_event = None
         self._question = None
 
     def play_card(self, card_to_play=None, card_id_to_play=None, chosen_option=None, card_array=None):
@@ -147,31 +148,27 @@ class Player:
         }
 
         # send the question and wait for a reply. If the reply is not valid, send it again
-        self._question_answer.clear()
         valid_answer = False
+        question_answer = None
         while valid_answer is False:
             self.send_message("ask", self._question)
 
-            # wait for answer
-            while len(self._question_answer) == 0:
-                print("waiting for answer..")
-                sleep(1)
+            self._answer_event = event.Event()
+            question_answer = self._answer_event.wait()
 
-            valid_answer = len(self._question_answer) == number_to_pick
-            for choice in self._question_answer:
+            valid_answer = len(question_answer) == number_to_pick
+            for choice in question_answer:
                 if choice not in self._question['options'] or (choice is None and allow_cancel is True):
                     valid_answer = False
                     break
 
         # clear the question
-        question_answer = self._question_answer
-        self._question_answer.clear()
         self._question = None
 
         if number_to_pick == 1:
             return question_answer[0]
         else:
-            return self._question_answer
+            return question_answer
 
     def answer_question(self, question_answer):
         """
@@ -179,7 +176,9 @@ class Player:
         :param question_answer: An array of the players chosen choices for the current question
         :return: None
         """
-        self._question_answer = question_answer
+        print(question_answer)
+        if self._answer_event is not None:
+            self._answer_event.send(question_answer)
 
     def finish_turn(self):
         """
@@ -384,6 +383,12 @@ class Player:
             json_to_send["data"].append(card.get_url())
         
         self.send_message("animate", json_to_send)
+
+    def initial_connection(self):
+        self.set_sid(request.sid)
+        self.card_update()
+        if self._question is not None:
+            self.send_message("ask", self._question)
 
     def had_won(self):
         """

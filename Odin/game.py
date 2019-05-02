@@ -176,6 +176,4 @@ class Game:
         """
         self.waiting_room.modify()
         player = self.get_player(session['player_id'])
-        player.set_sid(request.sid)
-        player.card_update()
-        print("Player connected and message sent")
+        player.initial_connection()
