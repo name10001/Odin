@@ -458,7 +458,6 @@ class SixtyNine(NumberCard):
         
         # play sound effect if more than 1 69 card
         if n_cards > 0:
-            file = ""
             if n_cards < 15:
                 r = random.randrange(1, 5)
                 file = "/static/sounds/nice" + str(r) + ".mp3"
@@ -472,7 +471,6 @@ class SixtyNine(NumberCard):
             }
             self.game.send_to_all_players("animate", json_to_send)
                 
-
 
 class BlueSixtyNine(SixtyNine):
     NAME = "Blue Sixty Nine"

@@ -3,6 +3,7 @@ from cards.card_collection import CardCollection
 import settings
 from eventlet import event
 from flask import request
+import textwrap
 
 
 class Player:
@@ -106,16 +107,17 @@ class Player:
         If its a set or list, the items are what is shown to the player and what get returned.
         If its a card collection, an images of the cards is what the player sees and the card_id(s) is whats returned.
         :param options_type: The type of choice. Available types are "buttons", "vertical scroll" and "cards".
-        "Buttons" shows a ______________???
+        "Buttons" shows a ______________??? TODO: Thomas please fill this in
         "Cards" shows a list of cards in a similar way to the players hand at the bottom of the screen
-        "vertical scroll" shows a _____________???
+        "vertical scroll" shows a _____________??? TODO: Thomas please fill this in
         :param number_to_pick: The number of choices to pick. Usual 1
+        :param allow_cancel: Should the player be allowed to cancel the question. If they do, None is returned
         :return: A List of the chosen choices or the choice itself if number_to_pick is 0.
         E.g. "Blue_Six_card_12345" or "server" or ["Green_Two_card_54321", "Blue_Pickup_2_card_56443", ...]
+        It will return None if and only if the player cancels
         """
-        # raise NotImplementedError("This is unfinished and untested, and this is not implemented in the client yet. "
-        #                           "Please don't use this for anything other than testing and development")
 
+        title = textwrap.fill(title, 25)
     
         options_as_dict = {}
 
@@ -418,3 +420,36 @@ class Player:
     
     def is_turn(self):
         return self.state == "playing turn"
+
+
+class Observer (Player):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.hand.clear()
+
+    def start_turn(self, *args, **kwargs):
+        pass
+
+    def add_new_cards(self, *args, **kwargs):
+        pass
+
+    def play_card(self, *args, **kwargs):
+        pass
+
+    def finish_turn(self, *args, **kwargs):
+        pass
+
+    def pickup(self, *args, **kwargs):
+        pass
+
+    def undo(self, *args, **kwargs):
+        pass
+
+    def undo_all(self, *args, **kwargs):
+        pass
+
+    def had_won(self, *args, **kwargs):
+        return False
+
+    def is_turn(self, *args, **kwargs):
+        return False

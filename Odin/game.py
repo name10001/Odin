@@ -12,11 +12,19 @@ class Game:
     """
 
     def __init__(self, game_id, players, waiting_room, starting_number_of_cards=50):
+        """
+
+        :param game_id:
+        :param players: A dict of players with the key as player id and the player name as the value
+        :param waiting_room:
+        :param starting_number_of_cards:
+        """
         self.game_id = game_id
         self.waiting_room = waiting_room
         self.starting_number_of_cards = starting_number_of_cards
 
         self.players = []
+        self.observers = []
 
         # setting up cards
         self.deck = cards.Deck(self)
