@@ -1442,3 +1442,4 @@ class BlackWhiteSwapper(ColourSwapper):
                                 "White is compatible with any red, blue, green, yellow, purple and white cards. "
     ADDITIONAL_URLS = ['cards/switch_black.png', 'cards/switch_white.png', 'cards/switch_red.png',
                        'cards/switch_yellow.png', 'cards/switch_green.png', 'cards/switch_blue.png']
+

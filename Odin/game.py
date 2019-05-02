@@ -1,11 +1,9 @@
 import cards
 from player import Player
 from flask import *
-from flask_socketio import *
 import random
 from time import time
 from cards.card_collection import CardCollection
-import flask_server as fs
 
 
 class Game:
@@ -23,7 +21,7 @@ class Game:
         # setting up cards
         self.deck = cards.Deck(self)
         self.played_cards = CardCollection()
-        self.deck.add_random_cards_to(self.played_cards, 1)
+        self.deck.add_random_cards_to(self.played_cards, 1, dynamic_weights=False)
         self.planning_pile = CardCollection()
         self.pickup = 0
 

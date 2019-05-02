@@ -37,9 +37,9 @@ class CardFrequency:
         
         self.max_cards = max_cards
     
-    def get_frequency(self, n_cards, n_this_type, ignore_limit=False):
+    def get_weight(self, n_cards, n_this_type, ignore_limit=False):
         """
-        Get the frequency of this card in the deck, given you have n_cards in your hand
+        Get the weight of this card in the deck, given you have n_cards in your hand
         and n_this_type of this type of card
         """
         if ignore_limit is False and self.max_cards is not None and n_this_type >= self.max_cards:
@@ -53,8 +53,11 @@ class CardFrequency:
             return self.large_hand
         else:
             return self.massive_hand
-    
-    @classmethod
-    def surpassed_milestone(cls, card_amount):
-        return card_amount == cls.SMALL_HAND+1 or card_amount == cls.MEDIUM_HAND+1 or card_amount == cls.LARGE_HAND+1
+
+    def get_static_weight(self):
+        """
+        Gets the frequency of a card ignoring the number of cards.
+        This should be used for things like the starting card and the Elevator card
+        """
+        return self.medium_hand
 

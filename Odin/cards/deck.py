@@ -56,17 +56,21 @@ class Deck:
 
                 i += 1
 
-    def add_random_cards_to(self, card_collection, number):
+    def add_random_cards_to(self, card_collection, number, dynamic_weights=True):
         """
         Adds cards at the proper proportion to the given CardCollection.
         :param card_collection: The CardCollection to added the cards to.
         :param number: The number of new cards to add.
+        :param dynamic_weights: Weather of not to take into account the number of cards already in the collection
         :return: The list of cards added.
         """
         added_cards = []
         ignore_limit = False
         # calculate weights
-        card_weights = self.get_weights(card_collection=card_collection, ignore_limit=ignore_limit)
+        if dynamic_weights:
+            card_weights = self.get_weights(card_collection=card_collection, ignore_limit=ignore_limit)
+        else:
+            card_weights = self.get_weights()
 
         picked_up = 0
         while picked_up < number:
@@ -87,14 +91,19 @@ class Deck:
             card_collection.add_card(card)
             added_cards.append(card)
 
-            # if the amount of cards has surpassed a milestone
-            # as set in the card frequency class, update all frequencies
-            if CardFrequency.surpassed_milestone(len(card_collection)):
-                card_weights = self.get_weights(card_collection=card_collection, ignore_limit=ignore_limit)
-            else:
-                # update weights of cards with the same type as the one that was picked up
-                for index in self.all_types[card_class.CARD_TYPE]:
-                    card_weights[index] = self.get_weight(self.cards[index], card_collection, ignore_limit=ignore_limit)
+            if dynamic_weights:
+                # if the amount of cards has surpassed a milestone
+                # as set in the card frequency class, update all frequencies
+                if len(card_collection) in (
+                        CardFrequency.SMALL_HAND+1,
+                        CardFrequency.MEDIUM_HAND+1,
+                        CardFrequency.LARGE_HAND+1
+                ):
+                    card_weights = self.get_weights(card_collection, ignore_limit)
+                else:
+                    # update weights of cards with the same type as the one that was picked up
+                    for index in self.all_types[card_class.CARD_TYPE]:
+                        card_weights[index] = self.get_weight(self.cards[index], card_collection, ignore_limit)
 
             picked_up += 1
 
@@ -106,7 +115,8 @@ class Deck:
         :param card_collection: The card_collection to calculate the weights for.
         If its None, it will calculate the weights for a medium hand.
         :return: an array of card weights. The order is the same as Deck.cards.
-        :param ignore_limit: Should the card limit be ignored,
+        :param ignore_limit: Should the card limit be ignored
+        :return: The weight of the given cards. The order its the unchanged,
         I.e. weights[0] is the weight for Deck.cards[0].
         """
         return [self.get_weight(card, card_collection, ignore_limit=ignore_limit) for card in self.cards]
@@ -121,11 +131,11 @@ class Deck:
         :return: The weight of the given card.
         """
         if card_collection is None:
-            return card.CARD_FREQUENCY.medium_hand
+            return card.CARD_FREQUENCY.get_static_weight()
         else:
             n_cards = len(card_collection)
             n_this_type = card_collection.number_of_type(card.CARD_TYPE)
-            return card.CARD_FREQUENCY.get_frequency(n_cards, n_this_type, ignore_limit=ignore_limit)
+            return card.CARD_FREQUENCY.get_weight(n_cards, n_this_type, ignore_limit=ignore_limit)
 
     def get_random_card(self, card_weights):
         """
