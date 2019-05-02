@@ -44,17 +44,17 @@ class WaitingRoom:
                 else:
                     return render_template("waiting room.html", game=self)
             else:
-                if self.running:
-                    return "Sorry, game has already started"
-                else:
-                    return render_template("login.html")
+                return render_template("login.html")
         elif request.method == 'POST':
             name = request.form['player_name'][0:20]  # limit to 20 characters
             player_id = self.make_player_id(name)
             self._players[player_id] = name
             session['player_id'] = player_id
-            with fs.app.app_context():
-                fs.socket_io.emit("user joined", name, room=self.game_id)
+            if self.running is False:
+                with fs.app.app_context():
+                    fs.socket_io.emit("user joined", name, room=self.game_id)
+            else:
+                self.game.add_observer(name, player_id)
             return redirect("/" + self.game_id)
         else:
             return "What the Fuck Did You Just Bring Upon This Cursed Land!"

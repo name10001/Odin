@@ -1,5 +1,5 @@
 import cards
-from player import Player
+from player import Player, Observer
 from flask import *
 import random
 from time import time
@@ -71,6 +71,19 @@ class Game:
             if player.get_id() == player_id:
                 return player
 
+    def get_user(self, user_id):
+        """
+        Gets the player or observer from this game with the given id
+        :param user_id: id of player or observer to look for
+        :return: returns the player if found, else None
+        """
+        for player in self.players:
+            if player.get_id() == user_id:
+                return player
+        for observer in self.observers:
+            if observer.get_id() == user_id:
+                return observer
+
     def render_game(self):
         """
         render the HTML needed to display the game
@@ -87,7 +100,7 @@ class Game:
         # if player has another turn
         is_finished = self.turn.finish_turn()
         if is_finished is False:
-            self.update_players()
+            self.update_users()
             return
 
         # increment player index
@@ -103,14 +116,17 @@ class Game:
         self.turn = self.players[self.player_turn_index]
         self.turn.start_turn()
 
-    def update_players(self, exclude=None):
+    def update_users(self, exclude=None):
         """
-        sends updates to all the players in this game
+        Sends updates to all the players and observers in this game
         :return:
         """
         for player in self.players:
             if player != exclude:
                 player.card_update()
+        for observer in self.observers:
+            if observer != exclude:
+                observer.card_update()
 
     def message(self, message, data):
         """
@@ -120,7 +136,7 @@ class Game:
         :return: None
         """
         self.waiting_room.modify()
-        player = self.get_player(session['player_id'])
+        player = self.get_user(session['player_id'])
         if player is None:
             return
 
@@ -129,7 +145,7 @@ class Game:
         start_time = time()
 
         if message == "play card":
-            player.play_card(card_id_to_play=data[0], chosen_option=data[1])
+            player.play_card(card_id_to_play=data[0])
         elif message == "play cards":
             player.play_card(card_array=data)
         elif message == "finished turn":
@@ -147,7 +163,7 @@ class Game:
 
         print("processed message, took: " + str(time() - start_time) + "s")
         start_time = time()
-        self.update_players()
+        self.update_users()
         print("updated player, took: " + str(time() - start_time) + "s")
 
     def get_top_card(self):
@@ -166,6 +182,15 @@ class Game:
             card_below = self.played_cards.get_top_card()
         return card_below
 
+    def add_observer(self, name, player_id):
+        """
+        Adds an observer to this game
+        :param name: The name of the player to add
+        :param player_id: The ID of the player to add
+        :return: None
+        """
+        self.observers.append(Observer(self, name, player_id))
+
     def get_id(self):
         return self.game_id
 
@@ -182,5 +207,5 @@ class Game:
         :return: None
         """
         self.waiting_room.modify()
-        player = self.get_player(session['player_id'])
-        player.initial_connection()
+        user = self.get_user(session['player_id'])
+        user.initial_connection()

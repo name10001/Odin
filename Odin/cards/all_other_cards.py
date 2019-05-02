@@ -622,21 +622,24 @@ class TrashCard(AbstractCard):
         if self.NUMBER_TO_REMOVE > 1:
             title = "Pick " + str(self.NUMBER_TO_REMOVE) + " cards to remove:"
 
-        option = player.ask(
+        options = player.ask(
             title,
             player.hand,
             options_type="cards",
             number_to_pick=self.NUMBER_TO_REMOVE
         )
-        if option is None:
+        if options is None:
             return
-        
-        # TODO change options to be an array. At the moment this just assumes 1 card
 
-        card = player.hand.find_card(option)
+        removed = []
+        for option in [options] if self.NUMBER_TO_REMOVE == 1 else options:
+            card = player.hand.find_card(option)
+            if card is None:
+                continue
 
-        if card is None:
-            return
+            self.cards_removed.append(card)
+            player.hand.remove_card(card=card)
+            removed.append(card)
         
         json_to_send = {
             "type": "remove cards",
@@ -644,13 +647,10 @@ class TrashCard(AbstractCard):
                 {
                     "id": card.get_id(),
                     "card image url": card.get_url()
-                }
+                } for card in removed
             ]
         }
         player.send_message("animate", json_to_send)
-
-        self.cards_removed.append(card)
-        player.hand.remove_card(card=card)
     
     def undo_prepare_card(self, player):
         for card in self.cards_removed:
@@ -681,6 +681,81 @@ class YellowTrash(TrashCard):
     NAME = "Yellow Trash"
     CARD_COLOUR = "yellow"
     CARD_IMAGE_URL = "cards/trash_yellow.png"
+
+
+class BlackTrash(TrashCard):
+    NUMBER_TO_REMOVE = 1  # TODO: change to 3 once client supports more than 1 answer
+    NAME = "Black Trash"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = "cards/trash_wild.png"
+
+
+class DoJustly(AbstractCard):
+    CARD_FREQUENCY = CardFrequency(1.2, max_cards=4)
+    CARD_TYPE = "Do Justly"
+    CARD_COLOUR = "black"
+    EFFECT_DESCRIPTION = "Choose any card to be removed from your hand. The effects of this card do not apply."
+    NUMBER_TO_GIVE = 1
+
+    def play_card(self, player):
+        options = {}
+        for other_player in self.game.players:
+            if other_player != player:
+                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+        other_player_id = player.ask("Select player to give cards to:", options, options_type="vertical scroll")
+        if other_player_id is None:
+            return
+        other_player = self.game.get_player(other_player_id)
+        cards_to_give = player.ask(
+            "Select cards to give cards to " + other_player.get_name() + ":",
+            player.hand,
+            options_type="cards",
+            number_to_pick=self.NUMBER_TO_GIVE
+        )
+        if cards_to_give is None:
+            return
+
+        if self.NUMBER_TO_GIVE == 1:
+            cards_to_give = [cards_to_give]
+
+        cards_given = []
+        for card_id in cards_to_give:
+            card = player.hand.find_card(card_id)
+            cards_given.append(card)
+            player.hand.remove_card(card)
+            other_player.hand.add_card(card)
+
+        # remove animation
+        json_to_send = {
+            "type": "remove cards",
+            "data": [
+                {
+                    "id": card.get_id(),
+                    "card image url": card.get_url()
+                } for card in cards_given
+            ]
+        }
+        player.send_message("animate", json_to_send)
+
+        # add animation
+        json_to_send = {
+            "type": "pickup",
+            "from": None,
+            "data": [card.get_url() for card in cards_given]
+        }
+        other_player.send_message("animate", json_to_send)
+
+
+class DoJustly1(DoJustly):
+    NAME = "Do Justly -1"
+    NUMBER_TO_GIVE = 1
+    CARD_IMAGE_URL = "cards/do_justly_1.png"
+
+
+class DoJustly3(DoJustly):
+    NAME = "Do Justly -3"
+    NUMBER_TO_GIVE = 1  # TODO: change to 3 once client supports more than 1 answer
+    CARD_IMAGE_URL = "cards/do_justly_3.png"
 
 
 # ~~~~~~~~~~~~~~
@@ -1329,7 +1404,117 @@ class ColourChooser(AbstractCard):
     
     def get_url(self):
         return url_for('static', filename=escape(self.url))
-    
+
+
+class Elevator(AbstractCard):
+    NAME = "Elevator"
+    CARD_IMAGE_URL = 'cards/elevator.png'
+    CARD_COLOUR = "black"
+    CARD_FREQUENCY = CardFrequency(4)
+    CARD_TYPE = "Colour Chooser"
+    EFFECT_DESCRIPTION = "Picks up a random card from the deck and plays it on top as if it was you"
+
+    def play_card(self, player):
+        # play the card as if its being played by the player
+        card = self.game.deck.get_random_card()(self.game)
+        card.prepare_card(player)
+        self.game.planning_pile.add_card(card)
+
+    def can_play_with(self, player, card, is_first_card):
+        return False
+
+
+class SwapCard(AbstractCard):
+    NAME = "Swap card"
+    CARD_IMAGE_URL = 'cards/swap_card.png'
+    CARD_COLOUR = "black"
+    CARD_FREQUENCY = CardFrequency(2)
+    CARD_TYPE = "Swap Colour"
+    EFFECT_DESCRIPTION = "Lets you give a card to a player of your choice. You then get a random one of there cards"
+
+    def play_card(self, player):
+        options = {}
+        for other_player in self.game.players:
+            if other_player != player:
+                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+        other_player_id = player.ask("Select player to give cards to:", options, options_type="vertical scroll")
+        if other_player_id is None:
+            return
+        other_player = self.game.get_player(other_player_id)
+
+        cards_id = player.ask(
+            "Select a card to give to " + other_player.get_name() + ":",
+            player.hand,
+            options_type="cards"
+        )
+        if cards_id is None:
+            return
+
+        card = player.hand.find_card(cards_id)
+        player.hand.remove_card(card)
+        other_player.hand.add_card(card)
+
+        # add/remove animation
+        json_to_send = {"type": "remove cards", "data": [{"id": card.get_id(), "card image url": card.get_url()}]}
+        player.send_message("animate", json_to_send)
+        json_to_send = {
+            "type": "pickup",
+            "from": player.get_id(),
+            "data": [card.get_url()]
+        }
+        other_player.send_message("animate", json_to_send)
+
+        card = random.choice(other_player.hand.get_cards())
+        other_player.hand.remove_card(card)
+        player.hand.add_card(card)
+
+        # add/remove animation
+        json_to_send = {"type": "remove cards", "data": [{"id": card.get_id(), "card image url": card.get_url()}]}
+        other_player.send_message("animate", json_to_send)
+        json_to_send = {
+            "type": "pickup",
+            "from": other_player.get_id(),
+            "data": [card.get_url()]
+        }
+        player.send_message("animate", json_to_send)
+
+
+class Jew(AbstractCard):
+    NAME = "Jew card"
+    CARD_IMAGE_URL = 'cards/jew.png'
+    CARD_COLOUR = "white"
+    CARD_FREQUENCY = CardFrequency(2)
+    CARD_TYPE = "Jew"
+    EFFECT_DESCRIPTION = "Lets you take a card from a player of your choice."
+
+    def play_card(self, player):
+        options = {}
+        for other_player in self.game.players:
+            if other_player != player:
+                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+        other_player_id = player.ask("Select player to take cards from:", options, options_type="vertical scroll")
+        if other_player_id is None:
+            return
+        other_player = self.game.get_player(other_player_id)
+
+        cards_id = player.ask(
+            "Select a card to take from " + other_player.get_name() + ":",
+            other_player.hand,
+            options_type="cards"
+        )
+        if cards_id is None:
+            return
+
+        card = other_player.hand.find_card(cards_id)
+        other_player.hand.remove_card(card)
+        player.hand.add_card(card)
+
+        # add/remove animation
+        json_to_send = {"type": "remove cards", "data": [{"id": card.get_id(), "card image url": card.get_url()}]}
+        other_player.send_message("animate", json_to_send)
+        json_to_send = {"type": "pickup", "from": other_player.get_id(), "data": [card.get_url()]}
+        player.send_message("animate", json_to_send)
+
 
 class ColourSwapper(AbstractCard):
     """

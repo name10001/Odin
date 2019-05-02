@@ -173,7 +173,6 @@ class Player:
         :param question_answer: An array of the players chosen choices for the current question
         :return: None
         """
-        print(question_answer)
         if self._answer_event is not None:
             self._answer_event.send(question_answer)
 
@@ -229,7 +228,8 @@ class Player:
             "pickup size": self.game.pickup,
             "iteration": self.game.iterate_turn_by,
             "players": [],
-            "cant play reason": None
+            "cant play reason": None,
+            "player type": type(self).__name__
         }
 
         # get first 4 cards from deck that are not in planning pile
@@ -369,6 +369,7 @@ class Player:
         Does not check for pickup chains of weather its the players turn
         if you want that, use pickup(self) instead
         :param number: number of cards to add
+        :param display_pickup: TODO Thomas please fill this in
         :return: None
         """
         number = min(settings.player_card_limit - len(self.hand), int(number))

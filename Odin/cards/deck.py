@@ -137,12 +137,14 @@ class Deck:
             n_this_type = card_collection.number_of_type(card.CARD_TYPE)
             return card.CARD_FREQUENCY.get_weight(n_cards, n_this_type, ignore_limit=ignore_limit)
 
-    def get_random_card(self, card_weights):
+    def get_random_card(self, card_weights=None):
         """
         Gets a new random card and returns it.
         :param card_weights: An array of the weights of the cards
         :return: A card class or None if all the weights are zero
         """
+        if card_weights is None:
+            card_weights = self.get_weights()
         try:
             return random.choices(self.cards, weights=card_weights)[0]
         except IndexError:
