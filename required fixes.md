@@ -1,1 +1,0 @@
-Copycat on top of other copycats with the everyone pickup does not stack
