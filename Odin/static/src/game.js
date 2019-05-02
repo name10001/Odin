@@ -47,14 +47,14 @@ class CardStack {
     playAll(options) {
         let card_array = [];
         for(let id of this.cardIds) {
-            card_array.push([id,options]);
+            card_array.push(id);
         }
         game.playCard(card_array);
     }
 
     playSingle(options) {
         let id = this.cardIds[0];
-        game.playCard([[id,options]]);
+        game.playCard([id]);
     }
 
     size() {

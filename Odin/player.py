@@ -21,19 +21,18 @@ class Player:
         self._answer_event = None
         self._question = None
 
-    def play_card(self, card_to_play=None, card_id_to_play=None, chosen_option=None, card_array=None):
+    def play_card(self, card_to_play=None, card_id_to_play=None, card_array=None):
         """
         Takes card out of players hand and adds it to the games played cards.
         Also preforms all actions of the card.
-        It will only play the card if it is allowed to be played and the option is valid
+        It will only play the card if it is allowed to be played
         You can specify a card by its ID with the card itself.
         Can be called again before previous card(s) have finished being played.
         :param card_to_play: The card to play. Can not be used with card_id_to_play or card_array
         :param card_id_to_play: The ID of the card to play. Can not be used with card_to_play or card_array
-        :param chosen_option: The card's chosen option. Can not be used with card_array.
-        :param card_array: A 2D array of cards and there options. E.g [[card, option], [card, options], ...]
+        :param card_array: An array of cards.
         You can use ether the card's ID or the card itself.
-        Can not be used with card_to_play, card_id_to_play or chosen_option
+        Can not be used with card_to_play, card_id_to_play
         :return: None
         """
         # error checking
@@ -41,27 +40,23 @@ class Player:
         if ways != 1:
             raise ValueError("Exactly one of the following needs to be specified: "
                              "card_to_play, card_id_to_play and card_array. Got: " + ways + " ways")
-        if card_array is not None and chosen_option is not None:
-            raise ValueError("card_array and chosen_option can not be used together.")
 
         # add all the cards into card array
         if card_array is None:
             if card_to_play is not None:
-                card_array = [[card_to_play, chosen_option]]
+                card_array = [card_to_play]
             else:
-                card_array = [[card_id_to_play, chosen_option]]
+                card_array = [card_id_to_play]
 
-        # Go through card_array, if its a valid card add it to cards_to_play and set its options.
+        # Go through card_array, if its a valid card add it to cards_to_play.
         # If its not, raise an error
         cards_to_play = []
-        for card, option in card_array:
+        for card in card_array:
             if self.hand.contains(card):
                 card = self.hand.find_card(card)
                 if card is None:
                     raise ValueError("One of the given cards is not valid")
-            if card.is_option_valid(self, option):
-                card.set_option(option)
-                cards_to_play.append(card)
+            cards_to_play.append(card)
 
         # add all cards to self.cards_to_play. If self.play_card already running, stop
         was_empty = len(self._play_cards_stack) == 0
@@ -73,13 +68,12 @@ class Player:
         # play all the cards
         cards_played = []
         while len(self._play_cards_stack) > 0:
-
-            card = self._play_cards_stack[-1]
-            if not self._can_be_played(card):
-                self._play_cards_stack.pop(-1)
-                continue
-
             index = len(self._play_cards_stack) - 1
+            card = self._play_cards_stack[index]
+
+            if not self._can_be_played(card):
+                self._play_cards_stack.pop(index)
+                continue
 
             # do not change order
             self.hand.remove_card(card)
@@ -101,7 +95,7 @@ class Player:
         }
         self.game.send_to_all_players("animate", json_to_send)
 
-    def ask(self, options=None, title="Pick option:", options_type="buttons", number_to_pick=1, allow_cancel=True):
+    def ask(self, title, options, options_type="buttons", number_to_pick=1, allow_cancel=True):
         """
         Asks the player a question. This can be done at any time.
         :param title: The title of the question or the question itself. E.g. "Pick a card"
@@ -266,7 +260,7 @@ class Player:
                     "name": card.get_name(),
                     "can be played": self._can_be_played(card),
                     "pick options separately": card.get_pick_options_separately(),
-                    "options": card.get_options(self)
+                    "options": None
                 }
             )
 

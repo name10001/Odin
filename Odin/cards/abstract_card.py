@@ -2,8 +2,6 @@ from flask import *
 import cards
 from cards.card_frequency import CardFrequency
 from util.extended_formatter import extended_formatter
-import textwrap
-from cards.card_collection import CardCollection
 
 
 class AbstractCard:
@@ -21,7 +19,6 @@ class AbstractCard:
     _PICK_OPTIONS_SEPARATELY = False
 
     def __init__(self, game):
-        self.option = None
         self.game = game
         self.id = self._make_id()
 
@@ -117,31 +114,6 @@ class AbstractCard:
         """
         return extended_formatter.format("{cls.NAME!h}_card_{id}", cls=self, id=id(self))
 
-    def get_options(self, player):
-        """
-        gets all the options for a card
-        For example, the 'Fuck you' card requires you to pick a player.
-        In that case this function would return a list of players
-        :return: a Dictionary where the key is an value and the ID is what the player should see.
-                 Or None if no options are needed
-        """
-        return None
-
-    def is_option_valid(self, player, option):
-        """
-        Is the given option valid
-        :param player: the player who owns the card
-        :param option: option to test
-        :return: True if it is valid, False if its not
-        """
-        if option is 0:
-            return False
-        options = self.get_options(player)
-        if options is not None:
-            if option not in options["options"]:
-                return False
-        return True
-
     @classmethod
     def get_compatibility_description(cls):
         if cls.COMPATIBILITY_DESCRIPTION is not None:
@@ -161,42 +133,6 @@ class AbstractCard:
             to_return += " Also compatible with {cls.CARD_TYPE} cards of any colour."
 
         return extended_formatter.format(to_return, cls=cls)
-    
-    @classmethod
-    def _create_options(cls, options, title="Pick option:", options_type="buttons", number_to_pick=1):
-        """
-        Generates options json to send to the player
-        :param options: A list, set, dict or CardCollection of options
-        :param title:
-        :param options_type:
-        :param number_to_pick:
-        :return:
-        """
-        # wraps the text. This should be done in the front end not here
-        title = textwrap.fill(title, 25)
-
-        options_as_dict = {}
-
-        # convert everything to a dict
-        if isinstance(options, dict):
-            options_as_dict = options
-        elif options_type == "cards":
-            for card in options:
-                # TODO: once implemented in front change "card.get_name()" to "card.get_url()"
-                options_as_dict[card.get_id()] = card.get_name()
-        elif isinstance(options, CardCollection):
-            for card in options:
-                options_as_dict[card.get_id()] = card.get_name()
-        else:
-            for item in options:
-                options_as_dict[item] = item
-
-        return {
-            "title": str(title),
-            "number to pick": int(number_to_pick),
-            "type": options_type,
-            "options": options_as_dict
-        }
 
     def __gt__(self, other):
         """
