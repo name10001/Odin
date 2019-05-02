@@ -152,9 +152,6 @@ class AbstractCard:
         else:
             return self.get_id() > other.get_id()
 
-    def set_option(self, option):
-        self.option = option
-
     def __lt__(self, other):
         return not self.__gt__(other)
 

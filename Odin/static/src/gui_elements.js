@@ -1,7 +1,4 @@
 function drawText(text, x, y, textAlign, fontSize, maxWidth, colour) {
-    /*if(outline == undefined) {
-        outline = false;
-    }*/
     if(colour == undefined) {
         colour = "#fff";
     }
@@ -9,12 +6,6 @@ function drawText(text, x, y, textAlign, fontSize, maxWidth, colour) {
     ctx.textAlign = textAlign;
     ctx.fillStyle = colour;
     ctx.fillText(text,Math.floor(x),Math.floor(y),maxWidth);
-
-    /*if(outline){
-        ctx.strokeStyle = "#000";
-        ctx.lineWidth = GUI_SCALE*0.1;
-        ctx.strokeText(text,Math.floor(x),Math.floor(y),maxWidth);
-    }*/
 }
 
 class Button {
@@ -76,13 +67,16 @@ class CardStackPanel {
     draw(x,y,width,height) {
         let stackSize = this.cardStack.size();
 
+        this.helpButton.draw(x+GUI_SCALE, y + (CARD_HEIGHT+1.5)*GUI_SCALE, true);
+        this.playallButton.draw(x+GUI_SCALE*4.5, y + (CARD_HEIGHT+1.5)*GUI_SCALE, 
+            this.cardStack.allowedToPlay && !this.cardStack.pickOptionsSeparately);
+
+        if(stackSize == 0) return;
         //draw card
         ctx.drawImage(this.cardStack.image,
             x+GUI_SCALE/2, y+GUI_SCALE/2,
             GUI_SCALE*CARD_WIDTH, GUI_SCALE*CARD_HEIGHT);
         
-        this.helpButton.draw(x+GUI_SCALE, y + (CARD_HEIGHT+1.5)*GUI_SCALE, true);
-        this.playallButton.draw(x+GUI_SCALE*4.5, y + (CARD_HEIGHT+1.5)*GUI_SCALE, this.cardStack.allowedToPlay && !this.cardStack.pickOptionsSeparately);
         //draw stack size
         if(stackSize>1) {
             ctx.fillStyle = "#fff";
@@ -96,7 +90,6 @@ class CardStackPanel {
                 x+GUI_SCALE/2, y+GUI_SCALE/2,
                 GUI_SCALE*CARD_WIDTH, GUI_SCALE*CARD_HEIGHT);
         }
-
     }
 
     click(x,y) {

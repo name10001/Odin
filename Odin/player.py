@@ -16,6 +16,7 @@ class Player:
         self.turns_left = 1
         self.state = "not turn"
         self._play_cards_stack = []  # see self.play_card()
+        self.player_pickup_amount = 0  # 
 
         # setting up question stuff see self.ask()
         self._answer_event = None
@@ -195,6 +196,9 @@ class Player:
 
         self.game.planning_pile.clear()
 
+        for player in self.game.players:
+            player.player_pickup_amount = 0
+
         # send wining message to everyone but this player
         if self.had_won():
             self.game.send_to_all_players("popup message", self.name + " has won!")
@@ -273,7 +277,8 @@ class Player:
                     "number of cards": len(player.hand),
                     "is turn": player.is_turn(),
                     "is you": player == self,
-                    "turns left": player.turns_left
+                    "turns left": player.turns_left,
+                    "pickup amount": player.player_pickup_amount
                 }
             )
 

@@ -635,6 +635,15 @@ class TrashCard(AbstractCard):
         if card is None:
             return
         
+        json_to_send = {
+            "type": "remove cards",
+            "data": [{
+                "id": card.get_id(),
+                "card image url": card.get_url()
+            }]
+        }
+        player.send_message("animate", json_to_send)
+
         self.cards_removed.append(card)
         player.hand.remove_card(card=card)
     
@@ -898,9 +907,17 @@ class Plus(AbstractCard):
             self.pickup_amount = 2
         
         self.game.pickup = 0
+
+        for other_player in self.game.players:
+            if other_player != player:
+                other_player.player_pickup_amount += self.pickup_amount
     
     def undo_prepare_card(self, player):
         self.game.pickup = self.old_pickup
+
+        for other_player in self.game.players:
+            if other_player != player:
+                other_player.player_pickup_amount -= self.pickup_amount
 
     def play_card(self, player):
         for other_player in self.game.players:
@@ -926,6 +943,7 @@ class FuckYou(AbstractCard):
         super().__init__(*args, **kwargs)
         self.pickup_amount = 0
         self.old_pickup = 0
+        self.chosen_player_id = None
 
     def prepare_card(self, player):
         self.old_pickup = self.game.pickup
@@ -939,24 +957,36 @@ class FuckYou(AbstractCard):
         if self.pickup_amount == 0:
             self.pickup_amount = 5
         
-        self.game.pickup = 0
-    
-    def undo_prepare_card(self, player):
-        self.game.pickup = self.old_pickup
-
-    def play_card(self, player):
-        if len(self.game.players) == 1:
-            return None
-
+        
         options = {}
 
         for other_player in self.game.players:
             if other_player != player:
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
 
-        chosen_player_id = player.ask("Select player to pickup cards:", options, options_type="vertical scroll")
+        self.chosen_player_id = player.ask("Select player to pickup cards:", options, options_type="vertical scroll")
+        
+        if self.chosen_player_id != None:
+            other_player = self.game.get_player(self.chosen_player_id)
 
-        self.game.get_player(chosen_player_id).add_new_cards(self.pickup_amount)
+            other_player.player_pickup_amount += self.pickup_amount
+
+        
+        self.game.pickup = 0
+    
+    def undo_prepare_card(self, player):
+        self.game.pickup = self.old_pickup
+
+        if self.chosen_player_id != None:
+            other_player = self.game.get_player(self.chosen_player_id)
+
+            other_player.player_pickup_amount -= self.pickup_amount
+
+    def play_card(self, player):
+        if len(self.game.players) == 1:
+            return None
+
+        self.game.get_player(self.chosen_player_id).add_new_cards(self.pickup_amount)
         self.pickup_amount = 0
 
 
@@ -1014,13 +1044,25 @@ class Genocide(AbstractCard):
         """
         On play this will remove all the types from everyone's hands
         """
+        
+        json_to_send = {
+            "type": "genocide",
+            "cards to remove": [],
+            "banned": self.to_ban
+        }
+
         # remove from deck and players hands
         if self.category == "type":
             for game_player in self.game.players:
-                game_player.hand.remove_type(self.to_ban)
+                removed_cards = game_player.hand.remove_type(self.to_ban)
+                json_to_send["cards to remove"] = [{"id": card.get_id(), "card image url": card.get_url()} for card in removed_cards]
+                game_player.send_message("animate", json_to_send)
         elif self.category == "colour":
             for game_player in self.game.players:
-                game_player.hand.remove_colour(self.to_ban)
+                removed_cards = game_player.hand.remove_colour(to_ban)
+                json_to_send["banned"] = self.to_ban.capitalize()
+                json_to_send["cards to remove"] = [{"id": card.get_id(), "card image url": card.get_url()} for card in removed_cards]
+                game_player.send_message("animate", json_to_send)
         else:
             print("Warning: got unknown category:", self.category)
 
@@ -1035,26 +1077,27 @@ class Jesus(AbstractCard):
     EFFECT_DESCRIPTION = "Choose any person (including yourself) to reset their entire hand " \
                          "back to a value of 15 cards."
 
-    def get_options(self, player):
+    def prepare_card(self, player):
         options = {}
         for other_player in self.game.players:
             if other_player != player:
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
             else:
                 options[other_player.get_id()] = other_player.get_name() + "(You)"
-
-        return self._create_options(options, title="Select player to reset their hand:", options_type="vertical scroll")
+        self.other_player_id = player.ask("Select player to reset their hand:", options, options_type="vertical scroll")
 
     def play_card(self, player):
-        options = {}
-        for other_player in self.game.players:
-            if other_player != player:
-                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
-            else:
-                options[other_player.get_id()] = other_player.get_name() + "(You)"
-        other_player_id = player.ask("Select player to reset their hand:", options, options_type="vertical scroll")
+        other_player = self.game.get_player(self.other_player_id)
 
-        other_player = self.game.get_player(other_player_id)
+        json_to_send = {
+            "type": "remove cards",
+            "data": [{
+                "id": card.get_id(),
+                "card image url": card.get_url()
+            } for card in player.hand]
+        }
+        player.send_message("animate", json_to_send)
+
         other_player.hand.clear()
         other_player.add_new_cards(settings.jesus_card_number)
 
@@ -1113,10 +1156,22 @@ class Thanos(AbstractCard):
         """
         total = len(player.hand)
         num_to_remove = math.ceil(total / 2)
+
+        removed = []
         for i in range(0, num_to_remove):
             index = random.randrange(0, total)
+            removed.append(player.hand.cards_list[index])
             player.hand.remove_card(index=index)
             total -= 1
+        
+        json_to_send = {
+            "type": "thanos",
+            "data": [{
+                "id": card.get_id(),
+                "card image url": card.get_url()
+            } for card in removed]
+        }
+        player.send_message("animate", json_to_send)
 
 
 class CopyCat(AbstractCard):

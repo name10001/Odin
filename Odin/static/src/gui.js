@@ -59,6 +59,8 @@ class Gui {
         this.stalin.src = '/static/stalin.png';
         this.cardBack = new Image;
         this.cardBack.src = '/static/cards/back.png';
+        this.skull = new Image;
+        this.skull.src = '/static/skull.png';
     }
 
     updateCards(cardPanels) {
@@ -230,6 +232,9 @@ class Gui {
                 //name
                 drawText(player.name,px+fontSize/2,py+pheight/2+fontSize/3,"left",fontSize,fontSize*5,"#fff");
                 drawText(player.nCards,px+pwidth-fontSize/2,py+pheight/2+fontSize/3,"right",fontSize,fontSize*4,"#fff");
+                if(player.nPickup!=0) {
+                    drawText((player.nPickup ? "+" : "") + player.nPickup, px+fontSize*5, py+pheight/2+fontSize/3, "left", fontSize, undefined, "#fff");
+                }
 
                 //adjust size for non-turn players
                 if(i==game.turn) {
@@ -363,26 +368,8 @@ class Gui {
     animatePlayCards(cards) {
         if(game.yourTurn) {
             // cards from your hand
-            let wait = 0;
             let planningPilePosition = this.getPlanningPilePosition();
-            let waitIncr = this.getCardWaitIncrement(cards.length);
-            let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
-            let movingCard;
-            for(let card of cards) {
-                let index = game.cardIndices[card['id']];
-                let position = this.cardScroller.getPositionOf(index);
-                let image = game.allImages[card['card image url']];
-                movingCard = new AnimatedCard(position, planningPilePosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
-                this.movingCards.push(movingCard);
-                wait += waitIncr;
-                if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
-                soundDisplacement += waitIncr;
-            }
-            if(movingCard != undefined) {
-                movingCard.place = function() {
-                    game.finishedEvent();
-                }
-            }else game.finishedEvent();
+            this.animateMoveCardsFromHand(cards, planningPilePosition, function() {game.finishedEvent();});
         }
         else {
             // cards from another person's hand
@@ -406,6 +393,47 @@ class Gui {
                 }
             }else game.finishedEvent();
         }
+    }
+
+    /**
+     * Animate removing cards from your hand
+     */
+    animateRemoveCards(cards, finishEvent=true) {
+        // cards from your hand
+        let offscreen = {x:canvas.width, y:canvas.height/2};
+        this.animateMoveCardsFromHand(cards, offscreen, 
+            finishEvent ? function() {game.finishedEvent();} : null);
+    }
+
+    animateMoveCardsFromHand(cards, endPosition, finishedFunction=null, cardPlaceFunction=null) {
+        let wait = 0;
+        let waitIncr = this.getCardWaitIncrement(cards.length);
+        let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
+        let movingCard;
+        for(let card of cards) {
+            let index = game.cardIndices[card['id']];
+            let position = this.cardScroller.getPositionOf(index);
+            let image = game.allImages[card['card image url']];
+            movingCard = new AnimatedCard(position, endPosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, 
+                soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
+            movingCard.index = index;
+            movingCard.release = function() {
+                gui.cardScroller.items[this.index].cardStack.pop();
+            }
+            if(cardPlaceFunction!=null) {
+                movingCard.place = cardPlaceFunction;
+            }
+            this.movingCards.push(movingCard);
+            wait += waitIncr;
+            if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
+            soundDisplacement += waitIncr;
+        }
+        if(finishedFunction!=null) {
+            if(movingCard != undefined) {
+                movingCard.place = finishedFunction;
+            }else finishedFunction();
+        }
+        
     }
 
     /**
@@ -499,10 +527,6 @@ class Gui {
         this.movingCards.reverse();
 
 
-    }
-
-    communistAnimation(yourCards) {
-        this.currentAnimation = new CommunistAnimation(yourCards);
     }
 
     /**

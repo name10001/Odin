@@ -1,7 +1,8 @@
 class Player {
-    constructor(name, nCards) {
+    constructor(name, nCards, nPickup) {
         this.name = name;
         this.nCards = nCards;
+        this.nPickup = nPickup;
     }
 }
 
@@ -55,6 +56,10 @@ class CardStack {
     playSingle(options) {
         let id = this.cardIds[0];
         game.playCard([id]);
+    }
+
+    pop() {
+        this.cardIds.splice(0, 1);
     }
 
     size() {
@@ -197,7 +202,7 @@ class Game {
                     this.yourTurn = false;
                 }
             }
-            this.players.push(new Player(player['name'],player['number of cards']));
+            this.players.push(new Player(player['name'],player['number of cards'],player['pickup amount']));
         }
 
         
@@ -234,11 +239,36 @@ class Game {
                 }));
             }
             break;
+        // REMOVE CARD
+        case "remove cards":
+            this.addEvent(new GameEvent(function() {
+                gui.animateRemoveCards(data["data"]);
+            }));
+            break;
         //COMMUNIST CARD
         case "communist":
             this.addEvent(new GameEvent(function() {
-                gui.communistAnimation(data["your cards"]);
+                gui.currentAnimation = new CommunistAnimation(data["your cards"]);
             }));
+            break;
+        //THANOS
+        case "thanos":
+            this.addEvent(new GameEvent(function() {
+                gui.currentAnimation = new ThanosAnimation(data["data"]);
+            }));
+            break;
+        //THANOS
+        case "genocide":
+            console.log("seen animation");
+            this.addEvent(new GameEvent(function() {
+                gui.currentAnimation = new GenocideAnimation(data["cards to remove"], data['banned']);
+            }));
+            break;
+        //SOUND EFFECT - FOR THINGS LIKE 69 NICE
+        case "sound":
+            let audio = new Audio(data["sound"]);
+            audio.play();
+            break;
         }
     }
 
