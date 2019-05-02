@@ -927,9 +927,17 @@ class Plus(AbstractCard):
             self.pickup_amount = 2
         
         self.game.pickup = 0
+
+        for other_player in self.game.players:
+            if other_player != player:
+                other_player.player_pickup_amount += self.pickup_amount
     
     def undo_prepare_card(self, player):
         self.game.pickup = self.old_pickup
+
+        for other_player in self.game.players:
+            if other_player != player:
+                other_player.player_pickup_amount -= self.pickup_amount
 
     def play_card(self, player):
         for other_player in self.game.players:
