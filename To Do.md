@@ -4,26 +4,23 @@ Here are all the tasks that are being planned
 ## Current Tasks
 
 ### Isaac:
-* Do COMP261 and SWEN221 please
 * Separated out networking stuff from Player into Client class
 * Add the ability for cards to ask the player questions as they are being played.
 Example of protocol in 'options example.txt'
 
 ### Thomas:
 * Improve options menu
-* Genocide animation
-* Thanos animation
 * Capatilist animation
-* 69 nice
 * Swap hand animation
-* Add indicators to the chosen players for Fuck You and Jesus cards
+* Jesus Animation?? (maybe just another sound idk)
+* More indicators for players: Jesus card, thanos, capitalist, communist, feeling blue, trash, swap hand
 * Other UI improvements
 
 ## Future Tasks
 
 * Make a proper game end screen
-* Further balance out the gameplay
 * Add some options to the games when you create them
+* Further balance out the gameplay
 
 ## Cards to implement
 * Trash cards

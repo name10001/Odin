@@ -912,6 +912,9 @@ class Plus(AbstractCard):
 
         if hasattr(played_on, 'pickup_amount'):  # allows you to place multiple and duplicate the effects
             self.pickup_amount = played_on.pickup_amount
+        elif isinstance(played_on, CopyCat):  # copycat copy pickup amount
+            if hasattr(played_on.copied, 'pickup_amount'): 
+                self.pickup_amount = played_on.copied.pickup_amount
         
         if self.pickup_amount == 0:
             self.pickup_amount = 2
@@ -963,6 +966,9 @@ class FuckYou(AbstractCard):
 
         if hasattr(played_on, 'pickup_amount'):  # allows you to place multiple and duplicate the effects
             self.pickup_amount = played_on.pickup_amount
+        elif isinstance(played_on, CopyCat):  # copycat copy pickup amount
+            if hasattr(played_on.copied, 'pickup_amount'): 
+                self.pickup_amount = played_on.copied.pickup_amount
         
         if self.pickup_amount == 0:
             self.pickup_amount = 5
@@ -1231,6 +1237,7 @@ class CopyCat(AbstractCard):
         else:
             copy_class = top_card.__class__
         self.copied = copy_class(self.game)  # copied card is re-initialized
+        self.copied.id = self.get_id()
         self.copied.prepare_card(player)
 
     def undo_prepare_card(self, player):

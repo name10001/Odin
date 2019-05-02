@@ -1,5 +1,6 @@
 from cards.abstract_card import AbstractCard
 import cards
+from cards.all_other_cards import *
 from cards.card_frequency import CardFrequency
 import random
 
@@ -448,13 +449,18 @@ class SixtyNine(NumberCard):
         is_bottom = True
         n_cards = 0
         for card in self.game.planning_pile:
-            if isinstance(card, SixtyNine):
-                if card is self and is_bottom is True:
-                    n_cards += 1
-                elif n_cards > 0:
-                    n_cards += 1
-                
-                is_bottom = False
+            if not isinstance(card, SixtyNine):
+                if not isinstance(card, CopyCat):
+                    continue
+                if not isinstance(card.copied, SixtyNine):
+                    continue
+            
+            if card.get_id() == self.get_id() and is_bottom is True:
+                n_cards += 1
+            elif n_cards > 0:
+                n_cards += 1
+            
+            is_bottom = False
         
         # play sound effect if more than 1 69 card
         if n_cards > 0:
