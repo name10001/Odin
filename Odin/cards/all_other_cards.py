@@ -194,12 +194,17 @@ class PickupTimes2(AbstractCard):
     EFFECT_DESCRIPTION = "If a pickup chain is active, this card will double the pickup chain's value. " \
                          "If played outside of a pickup chain this will do nothing."
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.old_pickup = None
+
     def prepare_card(self, player):
         self.old_pickup = self.game.pickup
         self.game.pickup *= 2
     
     def undo_prepare_card(self, player):
-        self.game.pickup = self.old_pickup
+        if self.old_pickup is not None:
+            self.game.pickup = self.old_pickup
 
 
 class PickupPower2(AbstractCard):
@@ -213,6 +218,10 @@ class PickupPower2(AbstractCard):
     EFFECT_DESCRIPTION = "If a pickup chain is active, this card will square the pickup chain's value. " \
                          "If played outside of a pickup chain this will do nothing."
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.old_pickup = None
+
     def prepare_card(self, player):
         self.old_pickup = self.game.pickup
         # Only way of checking for "infinite" numbers that seemed to work
@@ -221,7 +230,9 @@ class PickupPower2(AbstractCard):
         self.game.pickup *= self.game.pickup
 
     def undo_prepare_card(self, player):
-        self.game.pickup = self.old_pickup  # float conversion doesn't work on very large numbers so we have to do this
+        if self.old_pickup is not None:
+            # float conversion doesn't work on very large numbers so we have to do this
+            self.game.pickup = self.old_pickup
 
 
 class PickupFactorial(AbstractCard):
@@ -236,6 +247,10 @@ class PickupFactorial(AbstractCard):
                          "If played outside of a pickup chain this will begin a pickup chain of value 1, since 0! = 1."
     MAX_FACTORIAL = 171  # 171! is when it reaches infinity
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.old_pickup = None
+
     def prepare_card(self, player):
         self.old_pickup = self.game.pickup
         if self.game.pickup > self.MAX_FACTORIAL:
@@ -244,7 +259,8 @@ class PickupFactorial(AbstractCard):
         self.game.pickup = math.factorial(self.game.pickup)
 
     def undo_prepare_card(self, player):
-        self.game.pickup = self.old_pickup
+        if self.old_pickup is not None:
+            self.game.pickup = self.old_pickup
 
 
 # ~~~~~~~~~~~~~~
@@ -377,11 +393,12 @@ class EA(AbstractCard):
 
         # asks the player if they want to play the cards
         option = player.ask(
-             "Would you like the game to automatically pick cards?",
+            "Would you like the game to automatically pick cards?",
             {
                 "pick for me": "Yes",
                 "let me pick": "No, let me pick"
-            }
+            },
+            image=self.get_url()
         )
 
         # play cards
@@ -548,7 +565,7 @@ class AllOfSameColour(AbstractCard):
         }
         if self.PICK_NUMBERS is True:
             options["server pick numbers"] = "Yes: Only Numbers"
-        option = player.ask("Would you like the game to automatically pick cards?", options)
+        option = player.ask("Would you like the game to automatically pick cards?", options, image=self.get_url())
         
         if option == "server pick all":
             for card in reversed(player.hand):
@@ -626,7 +643,8 @@ class TrashCard(AbstractCard):
             title,
             player.hand,
             options_type="cards",
-            number_to_pick=self.NUMBER_TO_REMOVE
+            number_to_pick=self.NUMBER_TO_REMOVE,
+            image=self.get_url()
         )
         if options is None:
             return
@@ -687,7 +705,12 @@ class DoJustly(AbstractCard):
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
         if len(options) == 0:
             return
-        other_player_id = player.ask("Select player to give cards to:", options, options_type="vertical scroll")
+        other_player_id = player.ask(
+            "Select player to give cards to:",
+            options,
+            options_type="vertical scroll",
+            image=self.get_url()
+        )
         if other_player_id is None:
             return
         other_player = self.game.get_player(other_player_id)
@@ -695,7 +718,8 @@ class DoJustly(AbstractCard):
             "Select cards to give cards to " + other_player.get_name() + ":",
             player.hand,
             options_type="cards",
-            number_to_pick=self.NUMBER_TO_GIVE
+            number_to_pick=self.NUMBER_TO_GIVE,
+            image=self.get_url()
         )
         if cards_to_give is None:
             return
@@ -894,7 +918,8 @@ class SwapHand(AbstractCard):
         player_id = player.ask(
             "Pick a player to swap hands with:",
             options,
-            options_type="vertical scroll"
+            options_type="vertical scroll",
+            image=self.get_url()
         )
         swap_with = self.game.get_player(player_id)
 
@@ -1017,7 +1042,12 @@ class FuckYou(AbstractCard):
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
 
         if len(options) > 0:
-            chosen_player_id = player.ask("Select player to pickup cards:", options, options_type="vertical scroll")
+            chosen_player_id = player.ask(
+                "Select player to pickup cards:",
+                options,
+                options_type="vertical scroll",
+                image=self.get_url()
+            )
             if chosen_player_id is not None:
                 self.chosen_player = self.game.get_player(chosen_player_id)
 
@@ -1075,7 +1105,12 @@ class Genocide(AbstractCard):
             if card_type not in self.UNBANNABLE_TYPES:
                 options["type " + card_type] = "Type: " + card_type
 
-        option = player.ask("Select card type/colour to ban:", options, options_type="vertical scroll")
+        option = player.ask(
+            "Select card type/colour to ban:",
+            options,
+            options_type="vertical scroll",
+            image=self.get_url()
+        )
 
         self.category, self.to_ban = option.split(' ', 1)
 
@@ -1149,7 +1184,12 @@ class Jesus(AbstractCard):
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
             else:
                 options[other_player.get_id()] = other_player.get_name() + "(You)"
-        other_player_id = player.ask("Select player to reset their hand:", options, options_type="vertical scroll")
+        other_player_id = player.ask(
+            "Select player to reset their hand:",
+            options,
+            options_type="vertical scroll",
+            image=self.get_url()
+        )
         other_player = self.game.get_player(other_player_id)
 
         if other_player is None:
@@ -1341,7 +1381,8 @@ class ColourChooser(AbstractCard):
                 "blue": "Blue",
                 "yellow": "Yellow"
             },
-            allow_cancel=True
+            allow_cancel=True,
+            image=self.get_url()
         )
 
         self.colour = option
@@ -1362,7 +1403,7 @@ class Elevator(AbstractCard):
     NAME = "Elevator"
     CARD_IMAGE_URL = 'cards/elevator.png'
     CARD_COLOUR = "black"
-    CARD_FREQUENCY = CardFrequency(4, starting=0, elevator=0)
+    CARD_FREQUENCY = CardFrequency(100, starting=0, elevator=0)
     CARD_TYPE = "Elevator"
     EFFECT_DESCRIPTION = "Picks up a random card from the deck and plays it on top as if it was you."
     COMPATIBILITY_DESCRIPTION = "Can be played on any card."
@@ -1381,7 +1422,6 @@ class Elevator(AbstractCard):
             return False
         if self.game.pickup != 0 and self.can_be_on_pickup() is False:
             return False
-        
         return True
 
 
@@ -1401,7 +1441,12 @@ class SwapCard(AbstractCard):
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
         if len(options) == 0:
             return
-        other_player_id = player.ask("Select player to give cards to:", options, options_type="vertical scroll")
+        other_player_id = player.ask(
+            "Select player to give cards to:",
+            options,
+            options_type="vertical scroll",
+            image=self.get_url()
+        )
         if other_player_id is None:
             return
         other_player = self.game.get_player(other_player_id)
@@ -1409,7 +1454,8 @@ class SwapCard(AbstractCard):
         cards_id = player.ask(
             "Select a card to give to " + other_player.get_name() + ":",
             player.hand,
-            options_type="cards"
+            options_type="cards",
+            image=self.get_url()
         )
         if cards_id is None:
             return
@@ -1442,7 +1488,12 @@ class Jew(AbstractCard):
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
         if len(options) == 0:
             return
-        other_player_id = player.ask("Select player to take cards from:", options, options_type="vertical scroll")
+        other_player_id = player.ask(
+            "Select player to take cards from:",
+            options,
+            options_type="vertical scroll",
+            image=self.get_url()
+        )
         if other_player_id is None:
             return
         other_player = self.game.get_player(other_player_id)
@@ -1450,7 +1501,8 @@ class Jew(AbstractCard):
         cards_id = player.ask(
             "Select a card to take from " + other_player.get_name() + ":",
             other_player.hand,
-            options_type="cards"
+            options_type="cards",
+            image=self.get_url()
         )
         if cards_id is None:
             return
@@ -1514,7 +1566,8 @@ class ColourSwapper(AbstractCard):
                 {
                     self.COLOUR_1: self.COLOUR_1.capitalize(),
                     self.COLOUR_2: self.COLOUR_2.capitalize()
-                }
+                },
+                image=self.get_url()
             )
         self.url = 'cards/switch_' + self.colour + '.png'
     
