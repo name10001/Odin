@@ -35,7 +35,8 @@ class CardStack {
         this.cardIds.push(id);
     }
 
-    playAll(options) {
+    playAll() {
+        if(this.cardIds.length == 0) return;
         let card_array = [];
         for(let id of this.cardIds) {
             card_array.push(id);
@@ -43,7 +44,8 @@ class CardStack {
         game.playCard(card_array);
     }
 
-    playSingle(options) {
+    playSingle() {
+        if(this.cardIds.length == 0) return;
         let id = this.cardIds[0];
         game.playCard([id]);
     }

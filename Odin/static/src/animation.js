@@ -290,13 +290,12 @@ class ThanosAnimation {
         this.cardWidth = CARD_WIDTH * GUI_SCALE;
         this.cardHeight = CARD_HEIGHT * GUI_SCALE;
         this.cardPosition = {x:canvas.width/2-this.cardWidth/2, y:canvas.height/2-this.cardHeight/2};
-        this.eventNum = 2;
+        this.eventNum = 3;
 
         let cardPlaceFunction = function() {
             gui.currentAnimation.nextTopCard();
         }
         let finishedFunction = function() {
-            gui.currentAnimation.nextTopCard();
             gui.currentAnimation.snap();
         }
         gui.animateMoveCardsFromHand(cardsToRemove, this.cardPosition, finishedFunction, cardPlaceFunction);

@@ -23,6 +23,9 @@ class Player:
         self._answer_event = None
         self._question = None
 
+        # animation stuff
+        self._cards_played_to_animate = []  # animate all the cards either before a question is asked or at the end of the play_card method
+
     def play_card(self, card_to_play=None, card_id_to_play=None, card_array=None):
         """
         Takes card out of players hand and adds it to the games played cards.
@@ -68,7 +71,6 @@ class Player:
             return
 
         # play all the cards
-        cards_played = []
         while len(self._play_cards_stack) > 0:
             index = len(self._play_cards_stack) - 1
             card = self._play_cards_stack[index]
@@ -81,11 +83,12 @@ class Player:
             self.hand.remove_card(card)
             card.prepare_card(self)
             self.game.planning_pile.add_card(card)
-            cards_played.append(card)
+            self._cards_played_to_animate.append(card)
 
             self._play_cards_stack.pop(index)
 
-        self.game.animate_card_transfer(cards_played, cards_from=self, cards_to="discard")
+        self.game.animate_card_transfer(self._cards_played_to_animate, cards_from=self, cards_to="planning")
+        self._cards_played_to_animate.clear()
 
     def ask(self, title, options, options_type="buttons", number_to_pick=1, allow_cancel=True):
         """
@@ -124,6 +127,11 @@ class Player:
         else:
             for item in options:
                 options_as_dict[item] = item
+
+        # send play cards animation before you send the options
+        if len(self._cards_played_to_animate) > 0:
+            self.game.animate_card_transfer(self._cards_played_to_animate, cards_from=self, cards_to="planning")
+            self._cards_played_to_animate.clear()
 
         # generate json for question
         self._question = {

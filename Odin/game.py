@@ -172,6 +172,7 @@ class Game:
         This method should not be used for custom animations
         Locations:
         - "deck"
+        - "planning"
         - "discard"
         - player object
         :param cards: list of cards being transferred
@@ -196,13 +197,14 @@ class Game:
                 }
                 cards_from.send_message("animate", json_to_send)
                 return
-            elif cards_to == "discard":
-                # card play animation - atm this doesn't even need a player id
+            elif cards_to == "planning":
+                # card prepare animation - atm this doesn't even need a player id
                 json_to_send = {
                     "type": "play cards",
                     "cards": [
                         {
                             "id": card.get_id(),
+                            "name": card.get_name(),
                             "card image url": card.get_url()
                         } for card in cards
                     ]
@@ -224,6 +226,10 @@ class Game:
                 cards_to.send_message("animate", json_to_send)
             elif cards_to == "discard":
                 # elevator card or other similar cards TODO
+                return
+        elif cards_from == "planning":
+            if cards_to == "discard":
+                # card play animation TODO
                 return
 
     def get_top_card(self):

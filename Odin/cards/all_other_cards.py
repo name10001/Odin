@@ -888,7 +888,10 @@ class SwapHand(AbstractCard):
         for other_player in self.game.players:
             if other_player != player:
                 options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
-
+        
+        if len(options) == 0:
+            return
+        
         player_id = player.ask(
             "Pick a player to swap hands with:",
             options,
@@ -1380,11 +1383,11 @@ class Elevator(AbstractCard):
 
 
 class SwapCard(AbstractCard):
-    NAME = "Swap card"
+    NAME = "Swap Card"
     CARD_IMAGE_URL = 'cards/swap_card.png'
     CARD_COLOUR = "black"
     CARD_FREQUENCY = CardFrequency(2.2, max_cards=4, starting=0)
-    CARD_TYPE = "Swap Colour"
+    CARD_TYPE = "Swap Card"
     EFFECT_DESCRIPTION = "Pick a card to give to a player of your choice. This is swapped with a random card from their hand."
 
     def play_card(self, player):
@@ -1421,7 +1424,7 @@ class SwapCard(AbstractCard):
 
 
 class Jew(AbstractCard):
-    NAME = "Jew card"
+    NAME = "Jew"
     CARD_IMAGE_URL = 'cards/jew.png'
     CARD_COLOUR = "white"
     CARD_FREQUENCY = CardFrequency(1.7, max_cards=4, starting=0)

@@ -3,7 +3,7 @@ const CARD_RATIO = 300.0/469.0;
 const CARD_WIDTH = 9;
 const CARD_HEIGHT = CARD_WIDTH/CARD_RATIO;
 const MIN_WIDTH = 48;//in terms of GUI_SCALE units
-const MIN_HEIGHT = 65;
+const MIN_HEIGHT = 64;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -140,10 +140,6 @@ function resize() {
 
     if (width<height) GUI_SCALE = width;
     else GUI_SCALE = height;
-
-    if(width/height < 0.9) LAYOUT_TYPE = 0;//Tall
-    else if(width/height > 1.4) LAYOUT_TYPE = 2;//Wide
-    else LAYOUT_TYPE = 1;//Square
 
     gui.setCardDimensions();
 }

@@ -81,7 +81,11 @@ class Gui {
     }
 
     getDiscardWidth() {
-        return GUI_SCALE*(15+CARD_WIDTH);
+        return GUI_SCALE*(1+2*CARD_WIDTH);
+    }
+
+    getDiscardHeight() {
+        return GUI_SCALE*(CARD_HEIGHT+8);
     }
 
     getButtonsWidth() {
@@ -104,6 +108,18 @@ class Gui {
         let freeSpace = this.getFreeSpace();
         if(freeSpace > GUI_SCALE + this.getButtonsWidth()) freeSpace -= GUI_SCALE + this.getButtonsWidth();
         return canvas.width - freeSpace;
+    }
+
+    /**
+     * 0 = vertical
+     * 1 = horizontal
+     */
+    getLayoutType() {
+        let freeSpace = this.getFreeSpace();
+
+        if(freeSpace > GUI_SCALE + this.getButtonsWidth()) return 1;
+
+        return 0;
     }
 
     /**
@@ -145,24 +161,33 @@ class Gui {
 
         let bottomY = this.getBottomY();
         let leftX = this.getDiscardX();
+        let layoutType = this.getLayoutType();
+
+        //draw deck
+        let deckY = bottomY-this.getDiscardHeight()-this.CARD_HEIGHT;
+        ctx.drawImage(this.cardBack, leftX, deckY, this.CARD_WIDTH, this.CARD_HEIGHT);
 
         //draw discard pile
         if(game.topCards.length>0) {
-            let gap = (this.getDiscardWidth()-this.CARD_WIDTH)/game.topCards.length;
-            let x = leftX + (game.topCards.length-1)*gap;
+            let gap = (this.getDiscardHeight()-this.CARD_HEIGHT)/game.topCards.length;
+            let x = leftX;
             let y = bottomY-this.CARD_HEIGHT;
             for(let image of game.topCards) {
                 ctx.drawImage(image, x, y, this.CARD_WIDTH, this.CARD_HEIGHT);
                 ctx.drawImage(this.transparentImage,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
-                x-=gap;
+                y-=gap;
             }
         }
         //draw planning cards
         if(game.planningCards.length>0) {
-            let x = leftX-GUI_SCALE;
-            let y = bottomY-this.CARD_HEIGHT-GUI_SCALE;
+            let x = leftX+GUI_SCALE+this.CARD_WIDTH;
+            let y = bottomY-this.CARD_HEIGHT;
             let gap = GUI_SCALE*2;
-            let maxGap = (y-GUI_SCALE)/(game.planningCards.length-1);
+
+            let maxGap = (y-GUI_SCALE*10)/(game.planningCards.length-1);
+            if(layoutType==1) {
+                maxGap = (y-GUI_SCALE)/(game.planningCards.length-1);
+            }
             if(maxGap < gap) gap = maxGap;
             for(let card of game.planningCards) {
                 ctx.drawImage(card.image,x,y,this.CARD_WIDTH,this.CARD_HEIGHT);
@@ -344,9 +369,24 @@ class Gui {
     }
 
     getPlanningPilePosition() {
-        let x = this.getDiscardX()-GUI_SCALE;
-        let y = this.getBottomY()-this.CARD_HEIGHT-GUI_SCALE;
-        return {x, y};
+        let x = this.getDiscardX()+this.CARD_WIDTH+GUI_SCALE;
+        let y = this.getBottomY()-this.CARD_HEIGHT;
+
+        let layoutType = this.getLayoutType();
+        let gap = GUI_SCALE*2;
+
+        if (game.planningCards.length == 0) {
+            return {x, y, gap};
+        }
+
+        let maxGap = (y-GUI_SCALE*10)/(game.planningCards.length-1);
+        if(layoutType==1) {
+            maxGap = (y-GUI_SCALE)/(game.planningCards.length-1);
+        }
+        if(maxGap < gap) gap = maxGap;
+
+        y -= gap * (game.planningCards.length-1);
+        return {x, y, gap};
     }
 
     /**
@@ -356,12 +396,17 @@ class Gui {
         if(game.yourTurn) {
             // cards from your hand
             let planningPilePosition = this.getPlanningPilePosition();
-            this.animateMoveCardsFromHand(cards, planningPilePosition, function() {game.finishedEvent();});
+            this.animateMoveCardsFromHand(cards, planningPilePosition, function() {
+                game.finishedEvent();
+            }, function() {
+                game.planningCards.push(new CardStack(this.id, this.cardStack.name, this.cardStack.url, true));
+            });
         }
         else {
             // cards from another person's hand
             let wait = 0;
             let planningPilePosition = this.getPlanningPilePosition();
+            planningPilePosition.y -= GUI_SCALE*2;
             let position = {x:canvas.width/2, y:-this.CARD_HEIGHT};
             let waitIncr = this.getCardWaitIncrement(cards.length);
             let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
@@ -369,6 +414,13 @@ class Gui {
             for(let card of cards) {
                 let image = game.allImages[card['card image url']];
                 movingCard = new AnimatedCard(position, planningPilePosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
+                
+                movingCard.id = card["id"];
+                movingCard.name = card["name"];
+                movingCard.url = card["card image url"];
+                movingCard.place = function() {
+                    game.planningCards.push(new CardStack(this.id, this.name, this.url, true));
+                }
                 this.movingCards.push(movingCard);
                 wait += waitIncr;
                 if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
@@ -376,6 +428,7 @@ class Gui {
             }
             if(movingCard != undefined) {
                 movingCard.place = function() {
+                    game.planningCards.push(new CardStack(this.id, this.name, this.url, true));
                     game.finishedEvent();
                 }
             }else game.finishedEvent();
@@ -404,6 +457,8 @@ class Gui {
             movingCard = new AnimatedCard(position, endPosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, 
                 soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
             movingCard.index = index;
+            movingCard.cardStack = game.yourStacks[index];
+            movingCard.id = card["id"];
             movingCard.release = function() {
                 gui.cardScroller.items[this.index].cardStack.pop();
             }
@@ -417,7 +472,17 @@ class Gui {
         }
         if(finishedFunction!=null) {
             if(movingCard != undefined) {
-                movingCard.place = finishedFunction;
+                if(cardPlaceFunction != null) {
+                    movingCard.cardPlaceFunction = cardPlaceFunction;
+                    movingCard.finishedFunction = finishedFunction;
+                    movingCard.place = function() {
+                        this.cardPlaceFunction();
+                        this.finishedFunction();
+                    }
+                }
+                else {
+                    movingCard.place = finishedFunction;
+                }
             }else finishedFunction();
         }
         
@@ -452,10 +517,7 @@ class Gui {
     animateUndoAll() {
         //begin position
         let position = this.getPlanningPilePosition();
-        let gap = GUI_SCALE*2;
-        let maxGap = (position.y-GUI_SCALE)/(game.planningCards.length-1);
-        if(maxGap < gap) gap = maxGap;
-        position.y -= gap * (game.planningCards.length-1);
+        let gap = position.gap;
 
         //end position
         let endPosition = game.yourTurn ? {x:canvas.width/2, y:this.getBottomY()+GUI_SCALE*3.5} : {x:canvas.width/2, y:-this.CARD_HEIGHT};
@@ -584,27 +646,4 @@ class Gui {
 
         this.cardScroller.scroll(dt);
     }
-
-    /**
-     * Is called when you make a decision in the options menu
-     */
-    pickOption(card, pickedOption) {
-        if(this.playAll) {
-            card.playAll(pickedOption);
-            
-        }else {
-            card.playSingle(pickedOption);
-        }
-        
-        this.cancelOptions();
-    }
-
-    /**
-     * Exit options menu
-     */
-    cancelOptions() {
-        this.popup = null;
-        this.playAll = false;
-    }
-
 }
