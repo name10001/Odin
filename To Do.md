@@ -9,7 +9,6 @@ Here are all the tasks that are being planned
 * Improve and refactor networking
 
 ### Thomas:
-* Document the animate messages
 * Improve options menu
 * Capatilist animation
 * Swap hand animation
@@ -30,6 +29,7 @@ Here are all the tasks that are being planned
 
 
 ## Cards that need to change for legal reasons
-* Jew card -- new name
-* genocide -- new image
-* slavery card -- new image??
+* Jew card 
+* genocide
+* slavery card
+* Nazi card
