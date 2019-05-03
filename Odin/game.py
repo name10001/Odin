@@ -187,7 +187,7 @@ class Game:
                 # card remove
                 json_to_send = {
                     "type": "remove cards",
-                    "data": [
+                    "cards": [
                         {
                             "id": card.get_id(),
                             "card image url": card.get_url()
@@ -200,7 +200,7 @@ class Game:
                 # card play animation - atm this doesn't even need a player id
                 json_to_send = {
                     "type": "play cards",
-                    "data": [
+                    "cards": [
                         {
                             "id": card.get_id(),
                             "card image url": card.get_url()
@@ -215,7 +215,11 @@ class Game:
                 json_to_send = {
                     "type": "pickup",
                     "from": None,
-                    "data": [card.get_url() for card in cards]
+                    "cards": [{
+                        "id": card.get_id(),
+                        "name": card.get_name(),
+                        "card image url": card.get_url()
+                     } for card in cards]
                 }
                 cards_to.send_message("animate", json_to_send)
             elif cards_to == "discard":

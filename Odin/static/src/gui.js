@@ -305,26 +305,13 @@ class Gui {
     play(cardStack) {
         if(!cardStack.allowedToPlay) return;
 
-        if(cardStack.optionIds.length>0) {
-            this.popup = new OptionsWindow(cardStack);
-        }
-        else {
-            this.popup = null;
-            cardStack.playSingle();
-        }
+         cardStack.playSingle();
     }
 
     playAllCards(cardStack) {
         if(!cardStack.allowedToPlay) return;
 
-        if(cardStack.optionIds.length>0) {
-            this.popup = new OptionsWindow(cardStack);
-            this.playAll = true;
-        }
-        else {
-            this.popup = null;
-            cardStack.playAll();
-        }
+        cardStack.playAll();
     }
 
     /**
@@ -511,9 +498,26 @@ class Gui {
         
         let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
         let movingCard;
-        for(let url of cards) {
+        for(let card of cards) {
+            let name = card["name"];
+            let url = card["card image url"];
             let image = game.allImages[url];
+
             movingCard = new AnimatedCard(startPosition, endPosition, 600, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.pickupSound : null);
+            movingCard.id = card["id"];
+            if(name in game.cardNameIndices) {
+                movingCard.index = game.cardNameIndices[name];
+                movingCard.cardStack = game.yourStacks[movingCard.index];
+            }
+            else {
+                movingCard.index = game.yourStacks.length;
+                movingCard.cardStack = game.createCardStack(undefined, name, url, true, this.cardScroller.items);
+            }
+            movingCard.place = function() {
+                this.cardStack.addCard(this.id);
+                game.cardIndices[this.id] = this.index;
+            }
+            
             this.movingCards.push(movingCard);
             wait+=waitIncr;
             if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
@@ -521,6 +525,8 @@ class Gui {
         }
         if(movingCard != undefined) {
             movingCard.place = function() {
+                this.cardStack.addCard(this.id);
+                game.cardIndices[this.id] = this.index;
                 game.finishedEvent();
             }
         }else game.finishedEvent();

@@ -16,28 +16,18 @@ class GameEvent {
  * A stack of cards in your hand
  */
 class CardStack {
-    constructor(id, name, url, allowedToPlay, pickOptionsSeparately, options) {
+    constructor(id, name, url, allowedToPlay) {
         this.allowedToPlay = allowedToPlay;
-        this.options = options;
         this.url = url;
         this.name = name;
-        this.pickOptionsSeparately = pickOptionsSeparately;
         this.card = game.allCards[name];
         this.image = game.allImages[url];
-        this.cardIds = [id];
-        
-        //options
-        this.optionStrings = [];
-        this.optionIds = [];
-        if(options!=null) {
-            this.optionTitle = options["title"];
-            this.optionType = options["type"];
-            if(options!=null) {
-                for(let id of Object.keys(options["options"])) {
-                    this.optionIds.push(id);
-                    this.optionStrings.push(options["options"][id]);
-                }
-            }
+
+        if(id != undefined) {
+            this.cardIds = [id];
+        }
+        else {
+            this.cardIds = [];
         }
     }
 
@@ -88,6 +78,7 @@ class Card {
 class Game {
     constructor() {
         this.yourStacks = [];
+        this.cardNameIndices = {};
         this.cardIndices = {};
         this.topCards = [];
         this.planningCards = [];
@@ -138,10 +129,23 @@ class Game {
         }
     }
 
+    createCardStack(id, name, url, canPlay, cardStackPanels) {
+        let cardStack = new CardStack(id, name, url, canPlay);
+        this.yourStacks.push(cardStack);
+        if (id!=undefined) {
+            this.cardIndices[id] = this.yourStacks.length - 1;
+        }
+        this.cardNameIndices[name] = this.yourStacks.length - 1;
+        cardStackPanels.push(new CardStackPanel(cardStack));
+
+        return cardStack;
+    }
+
     update(update) {
 
         this.yourStacks.length = 0;
         this.cardIndices = {};
+        this.cardNameIndices = {};
         let canPlay = 0;
 
         let cardStackPanels = [];
@@ -157,10 +161,8 @@ class Game {
                     continue;
                 }
             }
-            lastStack = new CardStack(card['card id'], card['name'], card['card image url'], card['can be played'], card['pick options separately'], card['options']);
-            this.yourStacks.push(lastStack);
-            this.cardIndices[card['card id']] = this.yourStacks.length - 1;
-            cardStackPanels.push(new CardStackPanel(lastStack));
+            lastStack = this.createCardStack(card['card id'], card['name'], 
+                    card['card image url'], card['can be played'], cardStackPanels);
         }
         gui.updateCards(cardStackPanels);
 
@@ -172,7 +174,7 @@ class Game {
         //update planning cards
         this.planningCards.length = 0;
         for(let card of update['planning pile']) {
-            this.planningCards.push(new CardStack(card['card id'], card['name'], card['card image url'], true, false, null));
+            this.planningCards.push(new CardStack(card['card id'], card['name'], card['card image url'], true));
         }
 
         //update pickup
@@ -216,7 +218,7 @@ class Game {
         // ADD CARDS TO PLANNING PILE
         case "play cards":
             this.addEvent(new GameEvent(function() {
-                    gui.animatePlayCards(data["data"]);
+                    gui.animatePlayCards(data["cards"]);
                 }));
             break;
         // UNDO
@@ -235,32 +237,32 @@ class Game {
         case "pickup":
             if(data["from"] == null) {
                 this.addEvent(new GameEvent(function() {
-                    gui.animatePickup(data["data"]);  // pickup cards from deck
+                    gui.animatePickup(data["cards"]);  // pickup cards from deck
                 }));
             }
             break;
         // REMOVE CARD
         case "remove cards":
             this.addEvent(new GameEvent(function() {
-                gui.animateRemoveCards(data["data"]);
+                gui.animateRemoveCards(data["cards"]);
             }));
             break;
         //COMMUNIST CARD
         case "communist":
             this.addEvent(new GameEvent(function() {
-                gui.currentAnimation = new CommunistAnimation(data["your cards"]);
+                gui.currentAnimation = new CommunistAnimation(data["cards"]);
             }));
             break;
         //THANOS
         case "thanos":
             this.addEvent(new GameEvent(function() {
-                gui.currentAnimation = new ThanosAnimation(data["data"]);
+                gui.currentAnimation = new ThanosAnimation(data["cards"]);
             }));
             break;
         //THANOS
         case "genocide":
             this.addEvent(new GameEvent(function() {
-                gui.currentAnimation = new GenocideAnimation(data["cards to remove"], data['banned']);
+                gui.currentAnimation = new GenocideAnimation(data["cards"], data['banned']);
             }));
             break;
         //SOUND EFFECT - FOR THINGS LIKE 69 NICE

@@ -482,7 +482,7 @@ class EA100(EA):
 
 
 class Fuck(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(1.2, 0.5, starting=0)
+    CARD_FREQUENCY = CardFrequency(1.2, 0.5)
     CARD_TYPE = "Fuckin' M8"
     CARD_COLOUR = "Abstract"
     COMPATIBILITY_DESCRIPTION = "This card is only compatible with other {cls.CARD_COLOUR} cards or " \
@@ -843,10 +843,12 @@ class Communist(AbstractCard):
 
             json_to_send = {
                 "type": "communist",
-                "your cards": []
+                "cards": [{
+                    "id": card.get_id(),
+                    "name": card.get_name(),
+                    "card image url": card.get_url()
+                } for card in player.hand]
             }
-            for card in player.hand:
-                json_to_send["your cards"].append(card.get_url())
 
             player.send_message("animate", json_to_send)
             i += number_of_cards_each
@@ -1111,7 +1113,7 @@ class Genocide(AbstractCard):
 
         json_to_send = {
             "type": "genocide",
-            "cards to remove": [],
+            "cards": [],
             "banned": self.to_ban
         }
 
@@ -1119,7 +1121,7 @@ class Genocide(AbstractCard):
         if self.category == "type":
             for game_player in self.game.players:
                 removed_cards = game_player.hand.remove_type(self.to_ban)
-                json_to_send["cards to remove"] = [
+                json_to_send["cards"] = [
                     {
                         "id": card.get_id(),
                         "card image url": card.get_url()
@@ -1130,7 +1132,7 @@ class Genocide(AbstractCard):
             for game_player in self.game.players:
                 removed_cards = game_player.hand.remove_colour(self.to_ban)
                 json_to_send["banned"] = self.to_ban.capitalize()
-                json_to_send["cards to remove"] = [
+                json_to_send["cards"] = [
                     {
                         "id": card.get_id(),
                         "card image url": card.get_url()
@@ -1239,7 +1241,7 @@ class Thanos(AbstractCard):
         
         json_to_send = {
             "type": "thanos",
-            "data": [{
+            "cards": [{
                 "id": card.get_id(),
                 "card image url": card.get_url()
             } for card in removed]
