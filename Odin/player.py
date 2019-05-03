@@ -1,5 +1,6 @@
 import flask_server as fs
 from cards.card_collection import CardCollection
+import cards
 import settings
 from eventlet import event
 from flask import request
@@ -54,11 +55,17 @@ class Player:
         # If its not, raise an error
         cards_to_play = []
         for card in card_array:
+            # check if its a card id
             if self.hand.contains(card):
                 card = self.hand.find_card(card)
                 if card is None:
-                    raise ValueError("One of the given cards is not valid")
-            cards_to_play.append(card)
+                    raise ValueError("One of the given card IDs cant be found in the players hand")
+            if not isinstance(card, cards.AbstractCard):
+                raise ValueError("One of the given cards is not valid")
+            if self.hand.contains(card.get_id()):
+                cards_to_play.append(card)
+            else:
+                raise ValueError("One of the given cards cant be found in the players hand")
 
         # add all cards to self.cards_to_play. If self.play_card already running, stop
         was_empty = len(self._play_cards_stack) == 0
@@ -69,23 +76,25 @@ class Player:
 
         # play all the cards
         cards_played = []
-        while len(self._play_cards_stack) > 0:
-            index = len(self._play_cards_stack) - 1
-            card = self._play_cards_stack[index]
+        try:
+            while len(self._play_cards_stack) > 0:
+                index = len(self._play_cards_stack) - 1
+                card = self._play_cards_stack[index]
 
-            if not self._can_be_played(card):
+                if not self._can_be_played(card):
+                    self._play_cards_stack.pop(index)
+                    continue
+
+                # do not change order
+                self.hand.remove_card(card)
+                card.prepare_card(self)
+                self.game.planning_pile.add_card(card)
+                cards_played.append(card)
+
                 self._play_cards_stack.pop(index)
-                continue
-
-            # do not change order
-            self.hand.remove_card(card)
-            card.prepare_card(self)
-            self.game.planning_pile.add_card(card)
-            cards_played.append(card)
-
-            self._play_cards_stack.pop(index)
-
-        self.game.animate_card_transfer(cards_played, cards_from=self, cards_to="discard")
+        finally:
+            self._play_cards_stack.clear()
+            self.game.animate_card_transfer(cards_played, cards_from=self, cards_to="discard")
 
     def ask(self, title, options, options_type="buttons", number_to_pick=1, allow_cancel=True):
         """

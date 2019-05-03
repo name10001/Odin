@@ -879,9 +879,6 @@ class SwapHand(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a player and you will swap your entire hand with theirs upon play."
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def play_card(self, player):        
         options = {}
 
@@ -1136,9 +1133,6 @@ class Jesus(AbstractCard):
     EFFECT_DESCRIPTION = "Choose any person (including yourself) to reset their entire hand " \
                          "back to a value of 15 cards."
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def play_card(self, player):
         options = {}
         for other_player in self.game.players:
@@ -1385,7 +1379,8 @@ class SwapCard(AbstractCard):
     CARD_COLOUR = "black"
     CARD_FREQUENCY = CardFrequency(2.2, max_cards=4, starting=0)
     CARD_TYPE = "Swap Colour"
-    EFFECT_DESCRIPTION = "Pick a card to give to a player of your choice. This is swapped with a random card from their hand."
+    EFFECT_DESCRIPTION = "Pick a card to give to a player of your choice. " \
+                         "This is swapped with a random card from their hand."
 
     def play_card(self, player):
         options = {}

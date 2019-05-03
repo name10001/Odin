@@ -3,6 +3,7 @@ from cards.the_boring_cards import *
 from cards.all_other_cards import *
 from cards.card_frequency import *
 from cards.deck import Deck
+from cards.abstract_card import AbstractCard
 from flask import url_for
 
 all_cards = [
