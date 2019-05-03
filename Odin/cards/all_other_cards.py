@@ -617,7 +617,7 @@ class TrashCard(AbstractCard):
         super().__init__(*args, **kwargs)
         self.cards_removed = []
 
-    def prepare_card(self, player):
+    def play_card(self, player):
         title = "Pick a card to remove:"
         if self.NUMBER_TO_REMOVE > 1:
             title = "Pick " + str(self.NUMBER_TO_REMOVE) + " cards to remove:"
@@ -640,15 +640,7 @@ class TrashCard(AbstractCard):
             player.hand.remove_card(card=card)
         
         self.game.animate_card_transfer(self.cards_removed, cards_from=player)
-    
-    def undo_prepare_card(self, player):
-        for card in self.cards_removed:
-            player.hand.add_card(card)
         
-        self.game.animate_card_transfer(self.cards_removed, cards_to=player)
-        
-        self.cards_removed.clear()
-
         
 class BlueTrash(TrashCard):
     NAME = "Blue Trash"
@@ -889,17 +881,8 @@ class SwapHand(AbstractCard):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.swap_with = None
 
-    def prepare_card(self, player):
-        # get the options
-        for card in self.game.planning_pile:
-            if isinstance(card, SwapHand):
-                return None
-
-        if len(self.game.players) == 1:
-            return None
-
+    def play_card(self, player):        
         options = {}
 
         for other_player in self.game.players:
@@ -911,17 +894,17 @@ class SwapHand(AbstractCard):
             options,
             options_type="vertical scroll"
         )
-        self.swap_with = self.game.get_player(player_id)
+        swap_with = self.game.get_player(player_id)
 
-    def play_card(self, player):
-        if self.swap_with is None:
+        if swap_with is None:
             return
+
         # TODO custom animation for this
-        self.game.animate_card_transfer(player.hand, cards_to=self.swap_with, cards_from=player)
-        self.game.animate_card_transfer(self.swap_with.hand, cards_to=player, cards_from=self.swap_with)
+        self.game.animate_card_transfer(player.hand, cards_to=swap_with, cards_from=player)
+        self.game.animate_card_transfer(swap_with.hand, cards_to=player, cards_from=swap_with)
         hand = player.hand
-        player.hand = self.swap_with.hand
-        self.swap_with.hand = hand
+        player.hand = swap_with.hand
+        swap_with.hand = hand
 
 
 class FeelingBlue(AbstractCard):
@@ -1155,9 +1138,8 @@ class Jesus(AbstractCard):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.other_player = None
 
-    def prepare_card(self, player):
+    def play_card(self, player):
         options = {}
         for other_player in self.game.players:
             if other_player != player:
@@ -1165,16 +1147,15 @@ class Jesus(AbstractCard):
             else:
                 options[other_player.get_id()] = other_player.get_name() + "(You)"
         other_player_id = player.ask("Select player to reset their hand:", options, options_type="vertical scroll")
-        self.other_player = self.game.get_player(other_player_id)
+        other_player = self.game.get_player(other_player_id)
 
-    def play_card(self, player):
-        if self.other_player is None:
+        if other_player is None:
             return
 
-        self.game.animate_card_transfer(self.other_player.hand, cards_from=self.other_player)
+        self.game.animate_card_transfer(other_player.hand, cards_from=other_player)
 
-        self.other_player.hand.clear()
-        self.other_player.add_new_cards(settings.jesus_card_number)
+        other_player.hand.clear()
+        other_player.add_new_cards(settings.jesus_card_number)
 
 
 class FreeTurn(AbstractCard):
