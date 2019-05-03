@@ -175,7 +175,7 @@ class Game:
         - "discard"
         - player object
         :param cards: list of cards being transferred
-        :param cards_from: locaiton where the cards are from
+        :param cards_from: location where the cards are from
         :param cards_to: location where the cards are going to
         """
         if isinstance(cards_from, Player):
@@ -210,7 +210,7 @@ class Game:
 
                 self.send_to_all_players("animate", json_to_send)
         elif cards_from == "deck":
-            if(isinstance(cards_to, Player)):
+            if isinstance(cards_to, Player):
                 # picking up from the deck
                 json_to_send = {
                     "type": "pickup",

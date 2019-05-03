@@ -96,7 +96,7 @@ class Player:
             self._play_cards_stack.clear()
             self.game.animate_card_transfer(cards_played, cards_from=self, cards_to="discard")
 
-    def ask(self, title, options, options_type="buttons", number_to_pick=1, allow_cancel=True):
+    def ask(self, title, options, options_type="buttons", number_to_pick=1, allow_cancel=True, image=None):
         """
         Asks the player a question. This can be done at any time.
         :param title: The title of the question or the question itself. E.g. "Pick a card"
@@ -111,6 +111,8 @@ class Player:
         "vertical scroll" shows a list of buttons with a scrollbar
         :param number_to_pick: The number of choices to pick. Usual 1
         :param allow_cancel: Should the player be allowed to cancel the question. If they do, None is returned
+        :param image: An image url to go along with the question.
+        If this is being called from a card, the cards image is a good thing to put here.
         :return: A List of the chosen choices or the choice itself if number_to_pick is 0.
         E.g. "Blue_Six_card_12345" or "server" or ["Green_Two_card_54321", "Blue_Pickup_2_card_56443", ...]
         It will return None if and only if the player cancels
@@ -140,7 +142,8 @@ class Player:
             "number to pick": int(number_to_pick),
             "type": options_type,
             "options": options_as_dict,
-            "allow cancel": allow_cancel
+            "allow cancel": allow_cancel,
+            "image": str(image)
         }
 
         # send the question and wait for a reply. If the reply is not valid, send it again
