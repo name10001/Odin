@@ -50,7 +50,7 @@ $(document).ready(function() {
     });
 
     socket.on('connect', function () {
-        socket.emit("initial game connection", GAME_ID);
+        socket.emit("game message", GAME_ID, "initialise", null);
     });
 
     socket.on('popup message', function (message) {

@@ -18,18 +18,26 @@ class WaitingRoom:
         self.game = None
         self.game_id = game_id
         self.last_modified = time()
+        self.settings = {
+            "number-of-cards": 25,
+            "show-planning-pile": True
+        }
 
-    def get_player(self, player_id):
+    def message(self, message_type, data):
         """
-        checks to see if a player exists in this waiting room
-        :param player_id: id of player to look for
-        :return: returns the player if found, else None
+
+        :param message_type: The type of message that
+        :param data:
         :return:
         """
-        if player_id in self._players:
-            return self._players[player_id]
+        if message_type == "join":
+            self._joined_waiting_room()
+        elif message_type == "start":
+            self._start()
+        elif message_type == "setting change":
+            self._handle_change_setting(data)
         else:
-            return None
+            print("got unknown message:", message_type, data)
 
     def render(self):
         """
@@ -42,12 +50,12 @@ class WaitingRoom:
                 if self.running:
                     return self.game.render_game()
                 else:
-                    return render_template("waiting room.html", game=self)
+                    return render_template("waiting room.html", waiting_room=self, settings=settings)
             else:
                 return render_template("login.html")
         elif request.method == 'POST':
             name = request.form['player_name'][0:20]  # limit to 20 characters
-            player_id = self.make_player_id(name)
+            player_id = self._make_player_id(name)
             self._players[player_id] = name
             session['player_id'] = player_id
             if self.running is False:
@@ -59,28 +67,48 @@ class WaitingRoom:
         else:
             return "What the Fuck Did You Just Bring Upon This Cursed Land!"
 
-    def joined_waiting_room(self):
+    def _handle_change_setting(self, data):
+        """
+        Change a setting about the game from data given by the player
+        :param data: the message data sent from the client
+        :return:
+        """
+        if not isinstance(data, list) or len(data) != 2:
+            return
+
+        setting, value = data
+
+        if setting not in self.settings or type(self.settings[setting]) != type(value):
+            return
+
+        self.settings[setting] = value
+
+        fs.socket_io.emit("setting changed", [setting, value], room=self.game_id, include_self=False)
+
+    def _joined_waiting_room(self):
         """
         Sends then all the joined players. If new players join latter it will also send them
         :return: None
         """
         self.modify()
+        for setting in self.settings:
+            fs.socket_io.emit("setting changed", [setting, self.settings[setting]])
         join_room(self.game_id)
         for player in self._players:
             emit("user joined", self._players[player])
 
-    def start(self):
+    def _start(self):
         """
         starts the a new game and tells everyone to refresh
         :return: None
         """
         self.modify()
         self.running = True
-        self.game = Game(self.game_id, self._players, self, starting_number_of_cards=settings.starting_cards)
+        self.game = Game(self.game_id, self._players, self, starting_number_of_cards=self.settings["number-of-cards"])
         with fs.app.app_context():
             fs.socket_io.emit("refresh", room=self.game_id)
 
-    def make_player_id(self, player_name):
+    def _make_player_id(self, player_name):
         """
         makes and ID that is unique to itself and is human readable
         """
@@ -94,6 +122,17 @@ class WaitingRoom:
             id_safe += "_" + str(num)
 
         return id_safe
+
+    def get_player(self, player_id):
+        """
+        checks to see if a player exists in this waiting room
+        :param player_id: id of player to look for
+        :return: returns the player if found, else None
+        """
+        if player_id in self._players:
+            return self._players[player_id]
+        else:
+            return None
 
     def modify(self):
         self.last_modified = time()

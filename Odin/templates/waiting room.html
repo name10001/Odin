@@ -8,16 +8,19 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 
         <script>
+            var GAME_ID = '{{ waiting_room.get_id() }}';
 			$(document).ready(function() {
 				// SocketIO
 				socket = io.connect(location.host, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
 				socket.on('connect', function() {
 				    $("list-of-players").html("");
-					socket.emit("waiting room", "{{ game.get_id() }}");
+					socket.emit("waiting room message", GAME_ID, "join", null);
 				});
 				socket.on('message', function(data) {
 					console.log(data);
@@ -31,6 +34,45 @@
 				    name_node.appendChild(text_node);
 					document.getElementById("list-of-players").appendChild(name_node);
 				});
+
+				$("#number-of-cards").change(function() {
+				    theInput = document.getElementById("number-of-cards");
+				    let num = parseInt(theInput.value);
+				    if (num < 5) {
+				        num = 5;
+				    } else if (num > {{ settings.player_card_limit }}) {
+				        num = {{ settings.player_card_limit }};
+				    }
+				    theInput.value = num;
+				    socket.emit("waiting room message", GAME_ID, "setting change", ["number-of-cards", num]);
+				});
+				var justChangedCheckBox = false;
+				$("#show-planning-pile").change(function() {
+				    if (justChangedCheckBox) {
+				        justChangedCheckBox = false;
+				        return;
+				    }
+				    theInput = $("#show-planning-pile");
+				    socket.emit("waiting room message", GAME_ID, "setting change", ["show-planning-pile", theInput.prop('checked')]);
+				});
+				socket.on('setting changed', function(data) {
+				    if (data[0] == "number-of-cards") {
+				        document.getElementById("number-of-cards").value = data[1];
+				    } else if (data[0] == "show-planning-pile") {
+				        checkBox = $("#show-planning-pile");
+				        if (data[1] == true) {
+				            justChangedCheckBox = true;
+				            checkBox.bootstrapToggle("on");
+				        } else if (data[1] == false) {
+				            justChangedCheckBox = true;
+				            checkBox.bootstrapToggle("off");
+				        } else {
+				            throw data[1] + " is not a valid state for show-planning-pile";
+				        }
+				    } else {
+				        throw "No item called '" + data[0] + "' found";
+				    }
+				})
 			});
         </script>
 
@@ -55,7 +97,7 @@
 
             <div class="panel-heading">
                 <h2 style="text-align:center;">
-                    ID: <strong>{{ game.get_id() }}</strong>
+                    ID: <strong>{{ waiting_room.get_id() }}</strong>
                 </h2>
                 <div class="input-group">
                     <input
@@ -78,6 +120,21 @@
                 </div>
             </div>
             <div class="panel-body">
+                <div class="form-group row">
+                    <div class="col-xs-4">
+                        <label for="number-of-cards">Starting number of cards</label>
+                        <input class="form-control" id="number-of-cards" type="number" min="5" max="{{ settings.player_card_limit }}" step="1">
+                    </div>
+                    <div class="col-xs-4">
+                        <label for="show-planning-pile">Show other players planing pile</label>
+                        <input type="checkbox" checked data-toggle="toggle" id="show-planning-pile" data-width="172">
+                    </div>
+                    <div class="col-xs-4">
+                        <label for="something-else">Something else that i cant think of yet</label>
+                        <input class="form-control" id="something-else" type="text">
+                    </div>
+                </div>
+                <br />
                 <h4>
                     Waiting players:
                 </h4>
@@ -86,7 +143,7 @@
                 </ul>
             </div>
             <div class="panel-footer">
-                <button type="button" class="btn btn-primary" onclick="socket.emit('start game', '{{ game.get_id() }}')">
+                <button type="button" class="btn btn-primary" onclick="socket.emit('waiting room message', GAME_ID, 'start', null)">
                     Start Game
                 </button>
             </div>

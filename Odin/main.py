@@ -56,23 +56,10 @@ def render_game(game_id):
         return render_template("index.html", message="Game not found")
 
 
-@fs.socket_io.on('waiting room')
-def waiting_room(game_id):
+@fs.socket_io.on('waiting room message')
+def waiting_room(game_id, message, data):
     if game_id in games:
-        return games[game_id].joined_waiting_room()
-
-
-@fs.socket_io.on('start game')
-def waiting_room(game_id):
-    if game_id in games:
-        games[game_id].start()
-
-
-@fs.socket_io.on('initial game connection')
-def initial_game_connection(game_id):
-    if game_id in games:
-        if games[game_id].is_running():
-            games[game_id].get_game().initial_connection()
+        return games[game_id].message(message, data)
 
 
 @fs.socket_io.on('game message')

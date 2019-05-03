@@ -13,11 +13,10 @@ class Game:
 
     def __init__(self, game_id, players, waiting_room, starting_number_of_cards=50):
         """
-
-        :param game_id:
-        :param players: A dict of players with the key as player id and the player name as the value
-        :param waiting_room:
-        :param starting_number_of_cards:
+        :param game_id: The ID of the game.
+        :param players: A dict of players with the key as player id and the player name as the value.
+        :param waiting_room: The waiting room that the game was made in.
+        :param starting_number_of_cards: The number of cards each player starts with.
         """
         self.game_id = game_id
         self.waiting_room = waiting_room
@@ -121,12 +120,14 @@ class Game:
         Sends updates to all the players and observers in this game
         :return:
         """
+        start_time = time()
         for player in self.players:
             if player != exclude:
                 player.card_update()
         for observer in self.observers:
             if observer != exclude:
                 observer.card_update()
+        print("Card update, took: " + str(time() - start_time) + "s")
 
     def message(self, message, data):
         """
@@ -136,35 +137,38 @@ class Game:
         :return: None
         """
         self.waiting_room.modify()
+
+        if message == "initialise":
+            self.initial_connection()
+            return
+
+        # Game user messages from here and below
         player = self.get_user(session['player_id'])
         if player is None:
             return
 
-        print(player.get_name(), message, data)
-
-        start_time = time()
+        print(player.get_name(), message, data)  # for debugging
 
         if message == "play card":
             player.play_card(card_id_to_play=data[0])
+            self.update_users()
         elif message == "play cards":
             player.play_card(card_array=data)
+            self.update_users()
         elif message == "finished turn":
             if player == self.turn:
                 self.next_turn()
+                self.update_users()
         elif message == "undo":
             player.undo()
+            self.update_users()
         elif message == "undo all":
             player.undo_all()
+            self.update_users()
         elif message == "answer":
             player.answer_question(data)
-            return
         else:
             print("got unknown message from player:", message)
-
-        print("processed message, took: " + str(time() - start_time) + "s")
-        start_time = time()
-        self.update_users()
-        print("updated player, took: " + str(time() - start_time) + "s")
     
     def animate_card_transfer(self, cards, cards_from="deck", cards_to="deck"):
         """

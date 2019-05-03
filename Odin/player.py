@@ -25,7 +25,8 @@ class Player:
         self._question = None
 
         # animation stuff
-        self._cards_played_to_animate = []  # animate all the cards either before a question is asked or at the end of the play_card method
+        # animate all the cards either before a question is asked or at the end of the play_card method
+        self._cards_played_to_animate = []
         self._cards_finished_to_animate = []
 
     def play_card(self, card_to_play=None, card_id_to_play=None, card_array=None):
@@ -102,7 +103,8 @@ class Player:
     
     def refresh_card_play_animation(self):
         """
-        Whenever an animation or question is asked, update the card play animation so the player can see what card is on top and what is left
+        Whenever an animation or question is asked, update the card play animation
+        so the player can see what card is on top and what is left
         """
         # send play cards animation before you send the options
         if len(self._cards_played_to_animate) > 0:
@@ -111,7 +113,6 @@ class Player:
         if len(self._cards_finished_to_animate) > 0:
             self.game.animate_card_transfer(self._cards_finished_to_animate, cards_from="planning", cards_to="discard")
             self._cards_finished_to_animate.clear()
-
 
     def ask(self, title, options, options_type="buttons", number_to_pick=1, allow_cancel=True, image=None):
         """
@@ -209,7 +210,6 @@ class Player:
             if can_play is False:
                 return False
 
-        
         # play cards from planing pile
         for card in self.game.planning_pile:
             self._cards_finished_to_animate.append(card)

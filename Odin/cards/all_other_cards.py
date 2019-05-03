@@ -2,7 +2,7 @@ from cards.abstract_card import AbstractCard
 from cards.card_frequency import CardFrequency
 import random
 import math
-from flask import *
+from flask import url_for
 from decimal import Decimal
 import settings
 
@@ -1119,8 +1119,6 @@ class Genocide(AbstractCard):
             self.game.deck.ban_type(self.to_ban)
         elif self.category == "colour":
             self.game.deck.ban_colour(self.to_ban)
-        else:
-            print("Warning: got unknown category:", self.category)
     
     def undo_prepare_card(self, player):
         # add to deck
@@ -1163,8 +1161,6 @@ class Genocide(AbstractCard):
                     } for card in removed_cards
                 ]
                 game_player.send_message("animate", json_to_send)
-        else:
-            print("Warning: got unknown category:", self.category)
 
 
 class Jesus(AbstractCard):
@@ -1396,14 +1392,14 @@ class ColourChooser(AbstractCard):
         return self.colour
     
     def get_url(self):
-        return url_for('static', filename=escape(self.url))
+        return url_for('static', filename=self.url)
 
 
 class Elevator(AbstractCard):
     NAME = "Elevator"
     CARD_IMAGE_URL = 'cards/elevator.png'
     CARD_COLOUR = "black"
-    CARD_FREQUENCY = CardFrequency(100, starting=0, elevator=0)
+    CARD_FREQUENCY = CardFrequency(2, starting=0, elevator=0)
     CARD_TYPE = "Elevator"
     EFFECT_DESCRIPTION = "Picks up a random card from the deck and plays it on top as if it was you."
     COMPATIBILITY_DESCRIPTION = "Can be played on any card."
@@ -1432,7 +1428,7 @@ class SwapCard(AbstractCard):
     CARD_FREQUENCY = CardFrequency(2.2, max_cards=4, starting=0)
     CARD_TYPE = "Swap Card"
     EFFECT_DESCRIPTION = "Pick a card to give to a player of your choice. " \
-            "This is swapped with a random card from their hand."
+                         "This is swapped with a random card from their hand."
 
     def play_card(self, player):
         options = {}
@@ -1591,7 +1587,7 @@ class ColourSwapper(AbstractCard):
             or self.colours_are_compatible(card.get_colour(), self.COLOUR_2)
     
     def get_url(self):
-        return url_for('static', filename=escape(self.url))
+        return url_for('static', filename=self.url)
 
     @staticmethod
     def colours_are_compatible(colour_1, colour_2):
