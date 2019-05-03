@@ -389,11 +389,15 @@ class Gui {
         return {x, y, gap};
     }
 
+    getDeckPosition() {
+        return {x:this.getDiscardX(), y:this.getBottomY()-this.getDiscardHeight()-this.CARD_HEIGHT};
+    }
+
     /**
      * Animate a list of cards being played
      */
-    animatePlayCards(cards) {
-        if(game.yourTurn) {
+    animatePlayCards(cards, fromDeck=false) {
+        if(game.yourTurn && !fromDeck) {
             // cards from your hand
             let planningPilePosition = this.getPlanningPilePosition();
             this.animateMoveCardsFromHand(cards, planningPilePosition, function() {
@@ -401,38 +405,74 @@ class Gui {
             }, function() {
                 game.planningCards.push(new CardStack(this.id, this.cardStack.name, this.cardStack.url, true));
             });
+            return;
         }
-        else {
-            // cards from another person's hand
-            let wait = 0;
-            let planningPilePosition = this.getPlanningPilePosition();
-            planningPilePosition.y -= GUI_SCALE*2;
-            let position = {x:canvas.width/2, y:-this.CARD_HEIGHT};
-            let waitIncr = this.getCardWaitIncrement(cards.length);
-            let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
-            let movingCard;
-            for(let card of cards) {
-                let image = game.allImages[card['card image url']];
-                movingCard = new AnimatedCard(position, planningPilePosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
-                
-                movingCard.id = card["id"];
-                movingCard.name = card["name"];
-                movingCard.url = card["card image url"];
-                movingCard.place = function() {
-                    game.planningCards.push(new CardStack(this.id, this.name, this.url, true));
-                }
-                this.movingCards.push(movingCard);
-                wait += waitIncr;
-                if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
-                soundDisplacement += waitIncr;
+        // cards from another person's hand
+        let wait = 0;
+        let planningPilePosition = this.getPlanningPilePosition();
+        planningPilePosition.y -= GUI_SCALE*2;
+
+        //position either deck or from the player on their turn
+        let position = fromDeck ? this.getDeckPosition() : {x:canvas.width/2, y:-this.CARD_HEIGHT};
+        
+        let waitIncr = this.getCardWaitIncrement(cards.length);
+        let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
+        let movingCard;
+        for(let card of cards) {
+            let image = game.allImages[card['card image url']];
+            movingCard = new AnimatedCard(position, planningPilePosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
+            
+            movingCard.id = card["id"];
+            movingCard.name = card["name"];
+            movingCard.url = card["card image url"];
+            movingCard.place = function() {
+                game.planningCards.push(new CardStack(this.id, this.name, this.url, true));
             }
-            if(movingCard != undefined) {
-                movingCard.place = function() {
-                    game.planningCards.push(new CardStack(this.id, this.name, this.url, true));
-                    game.finishedEvent();
-                }
-            }else game.finishedEvent();
+            this.movingCards.push(movingCard);
+            wait += waitIncr;
+            if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
+            soundDisplacement += waitIncr;
         }
+        if(movingCard != undefined) {
+            movingCard.place = function() {
+                game.planningCards.push(new CardStack(this.id, this.name, this.url, true));
+                game.finishedEvent();
+            }
+        }else game.finishedEvent();
+    }
+
+    animateFinishPlayCards(cards) {
+        //TODO
+        let startPosition = {x:this.getDiscardX() + GUI_SCALE + this.CARD_WIDTH, y:this.getBottomY()-this.CARD_HEIGHT};
+        let endPosition = {x:this.getDiscardX(), y: this.getBottomY()-this.CARD_HEIGHT};
+
+        let wait = 0;
+        let waitIncr = this.getCardWaitIncrement(cards.length);
+        let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
+        let movingCard;
+        for(let card of cards) {
+            let image = game.allImages[card['card image url']];
+            movingCard = new AnimatedCard(startPosition, endPosition, 300, wait, image, this.CARD_WIDTH, this.CARD_HEIGHT, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
+
+            movingCard.release = function() {
+                game.planningCards.splice(0,1);
+            }
+            movingCard.place = function() {
+                game.topCards.splice(0,1);
+                game.topCards.push(this.image);
+            }
+            this.movingCards.push(movingCard);
+            wait += waitIncr;
+            if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
+            soundDisplacement += waitIncr;
+        }
+        if(movingCard != undefined) {
+            movingCard.place = function() {
+                game.topCards.splice(0,1);
+                game.topCards.push(this.image);
+                game.finishedEvent();
+            }
+        }else game.finishedEvent();
     }
 
     /**
@@ -440,8 +480,7 @@ class Gui {
      */
     animateRemoveCards(cards, finishEvent=true) {
         // cards from your hand
-        let offscreen = {x:canvas.width, y:canvas.height/2};
-        this.animateMoveCardsFromHand(cards, offscreen, 
+        this.animateMoveCardsFromHand(cards, this.getDeckPosition(), 
             finishEvent ? function() {game.finishedEvent();} : null);
     }
 
@@ -555,7 +594,7 @@ class Gui {
     animatePickup(cards) {
         let wait = 0;
         let waitIncr = this.getCardWaitIncrement(cards.length);
-        let startPosition = {x:canvas.width, y: canvas.height/2};
+        let startPosition = this.getDeckPosition();
         let endPosition =  {x:canvas.width/2, y:this.getBottomY()+GUI_SCALE*3.5};
         
         let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;

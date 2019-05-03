@@ -220,7 +220,13 @@ class Game {
         // ADD CARDS TO PLANNING PILE
         case "play cards":
             this.addEvent(new GameEvent(function() {
-                    gui.animatePlayCards(data["cards"]);
+                    gui.animatePlayCards(data["cards"],data["from deck"]);
+                }));
+            break;
+        // ADD PLANNING CARDS TO DISCARD PILE
+        case "finish cards":
+            this.addEvent(new GameEvent(function() {
+                    gui.animateFinishPlayCards(data["cards"]);
                 }));
             break;
         // UNDO
@@ -269,8 +275,11 @@ class Game {
             break;
         //SOUND EFFECT - FOR THINGS LIKE 69 NICE
         case "sound":
-            let audio = new Audio(data["sound"]);
-            audio.play();
+            this.addEvent(new GameEvent(function() {
+                let audio = new Audio(data["sound"]);
+                audio.play();
+                game.finishedEvent();
+            }));
             break;
         }
     }

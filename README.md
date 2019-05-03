@@ -1,4 +1,4 @@
-# Oдин
+﻿# Oдин
 The best fricken card game ever. <br />
 A humorous extenuation of Uno.
 If you like cards against humanity you may like this. <br />
@@ -76,13 +76,13 @@ You will probably get a popup asking to let it though your firewall.
 Say yes otherwise the game will only be accessible from your computer
 
 ## How to access game
-One its running it should give you some URLs that you can copy into your web browser of choice
+Once its running, it should give you some URLs that you can copy into your web browser of choice
 (ideally firefox because its the best).
 This should work on any computer in your local network.
 If it doesnt you may need to let it thought your firewall or anti-virus software.<br />
 If you want it to be accessible to everyone on the internet you will need to port forward the game.
 This is different slightly for every network. Google your routers model number plus 'port forwarding'.
-E.g. "Linksys EA8300 port forwarding". Unless you changed it, the port your are forwarding is port 80.
+E.g. "Linksys EA8300 port forwarding". Unless you changed it, the port you are forwarding is port 80.
 
 ## For developers
 We are using the PEP8 code style.

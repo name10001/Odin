@@ -201,6 +201,7 @@ class Game:
                 # card prepare animation - atm this doesn't even need a player id
                 json_to_send = {
                     "type": "play cards",
+                    "from deck": False,
                     "cards": [
                         {
                             "id": card.get_id(),
@@ -224,12 +225,37 @@ class Game:
                      } for card in cards]
                 }
                 cards_to.send_message("animate", json_to_send)
-            elif cards_to == "discard":
-                # elevator card or other similar cards TODO
+            elif cards_to == "planning":
+                # card prepare animation from the deck
+                json_to_send = {
+                    "type": "play cards",
+                    "from deck": True,
+                    "cards": [
+                        {
+                            "id": card.get_id(),
+                            "name": card.get_name(),
+                            "card image url": card.get_url()
+                        } for card in cards
+                    ]
+                }
+
+                self.send_to_all_players("animate", json_to_send)
                 return
         elif cards_from == "planning":
             if cards_to == "discard":
-                # card play animation TODO
+                # card play animation - from prepare to discard pile
+                json_to_send = {
+                    "type": "finish cards",
+                    "cards": [
+                        {
+                            "id": card.get_id(),
+                            "name": card.get_name(),
+                            "card image url": card.get_url()
+                        } for card in cards
+                    ]
+                }
+
+                self.send_to_all_players("animate", json_to_send)
                 return
 
     def get_top_card(self):

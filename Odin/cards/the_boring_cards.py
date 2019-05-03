@@ -471,6 +471,7 @@ class SixtyNine(NumberCard):
                 r = random.randrange(1, 4)
                 file = "/static/sounds/nice_fucked" + str(r) + ".mp3"
 
+            player.refresh_card_play_animation()
             json_to_send = {
                 "type": "sound",
                 "sound": file

@@ -830,6 +830,7 @@ class Communist(AbstractCard):
         # divide it evenly between everyone
         number_of_cards_each = int(len(all_cards) / len(self.game.players))
         i = 0
+        player.refresh_card_play_animation()
         for player in self.game.players:
             player.hand.set_cards(all_cards[i:i+number_of_cards_each])
 
@@ -867,6 +868,7 @@ class Capitalist(AbstractCard):
                 richest_player = player
                 number_of_cards = len(player.hand)
 
+        player.refresh_card_play_animation()
         richest_player.add_new_cards(number_of_cards)
 
 
@@ -878,9 +880,6 @@ class SwapHand(AbstractCard):
     CARD_TYPE = "Swap Hand"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a player and you will swap your entire hand with theirs upon play."
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
     def play_card(self, player):        
         options = {}
@@ -920,6 +919,7 @@ class FeelingBlue(AbstractCard):
     EFFECT_DESCRIPTION = "Upon playing this card, you will be forced to pickup 5 cards."
 
     def play_card(self, player):
+        player.refresh_card_play_animation()
         player.add_new_cards(5)
 
 
@@ -969,6 +969,7 @@ class Plus(AbstractCard):
                 other_player.player_pickup_amount -= self.pickup_amount
 
     def play_card(self, player):
+        player.refresh_card_play_animation()
         for other_player in self.game.players:
             if other_player != player:
                 other_player.add_new_cards(self.pickup_amount)
@@ -1037,6 +1038,7 @@ class FuckYou(AbstractCard):
             return None
 
         if self.chosen_player is not None:
+            player.refresh_card_play_animation()
             self.chosen_player.add_new_cards(self.pickup_amount)
 
         self.pickup_amount = 0
@@ -1096,6 +1098,7 @@ class Genocide(AbstractCard):
         """
         On play this will remove all the types from everyone's hands
         """
+        player.refresh_card_play_animation()
 
         json_to_send = {
             "type": "genocide",
@@ -1138,9 +1141,6 @@ class Jesus(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose any person (including yourself) to reset their entire hand " \
                          "back to a value of 15 cards."
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
     def play_card(self, player):
         options = {}
@@ -1222,6 +1222,8 @@ class Thanos(AbstractCard):
             removed.append(player.hand.cards_list[index])
             player.hand.remove_card(index=index)
             total -= 1
+        
+        player.refresh_card_play_animation()
         
         json_to_send = {
             "type": "thanos",
@@ -1371,7 +1373,8 @@ class Elevator(AbstractCard):
         card.prepare_card(player)
         self.game.planning_pile.add_card(card)
 
-        self.game.animate_card_transfer([card], cards_to="discard")
+        player.refresh_card_play_animation()
+        self.game.animate_card_transfer([card], cards_to="planning")
     
     def can_be_played_on(self, player, card):
         if player.is_turn() is False:
@@ -1388,7 +1391,8 @@ class SwapCard(AbstractCard):
     CARD_COLOUR = "black"
     CARD_FREQUENCY = CardFrequency(2.2, max_cards=4, starting=0)
     CARD_TYPE = "Swap Card"
-    EFFECT_DESCRIPTION = "Pick a card to give to a player of your choice. This is swapped with a random card from their hand."
+    EFFECT_DESCRIPTION = "Pick a card to give to a player of your choice. " \
+            "This is swapped with a random card from their hand."
 
     def play_card(self, player):
         options = {}
