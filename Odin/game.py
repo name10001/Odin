@@ -165,6 +165,62 @@ class Game:
         start_time = time()
         self.update_users()
         print("updated player, took: " + str(time() - start_time) + "s")
+    
+    def animate_card_transfer(self, cards, cards_from="deck", cards_to="deck"):
+        """
+        Animate a card being transferred from one place to another
+        This method should not be used for custom animations
+        Locations:
+        - "deck"
+        - "discard"
+        - player object
+        :param cards: list of cards being transferred
+        :param cards_from: locaiton where the cards are from
+        :param cards_to: location where the cards are going to
+        """
+        if isinstance(cards_from, Player):
+            if isinstance(cards_to, Player):
+                # TODO have a separate animation for this (PLAYER TO PLAYER TRANSFER)
+                self.animate_card_transfer(cards, cards_from=cards_from)
+                self.animate_card_transfer(cards, cards_to=cards_to)
+            elif cards_to == "deck":
+                # card remove
+                json_to_send = {
+                    "type": "remove cards",
+                    "data": [
+                        {
+                            "id": card.get_id(),
+                            "card image url": card.get_url()
+                        } for card in cards
+                    ]
+                }
+                cards_from.send_message("animate", json_to_send)
+                return
+            elif cards_to == "discard":
+                # card play animation - atm this doesn't even need a player id
+                json_to_send = {
+                    "type": "play cards",
+                    "data": [
+                        {
+                            "id": card.get_id(),
+                            "card image url": card.get_url()
+                        } for card in cards
+                    ]
+                }
+
+                self.send_to_all_players("animate", json_to_send)
+        elif cards_from == "deck":
+            if(isinstance(cards_to, Player)):
+                # picking up from the deck
+                json_to_send = {
+                    "type": "pickup",
+                    "from": None,
+                    "data": [card.get_url() for card in cards]
+                }
+                cards_to.send_message("animate", json_to_send)
+            elif cards_to == "discard":
+                # elevator card or other similar cards TODO
+                return
 
     def get_top_card(self):
         """

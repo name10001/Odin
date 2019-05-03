@@ -85,17 +85,7 @@ class Player:
 
             self._play_cards_stack.pop(index)
 
-        # send animation message to all players
-        json_to_send = {
-            "type": "play cards",
-            "data": [
-                {
-                    "id": card.get_id(),
-                    "card image url": card.get_url()
-                } for card in cards_played
-            ]
-        }
-        self.game.send_to_all_players("animate", json_to_send)
+        self.game.animate_card_transfer(cards_played, cards_from=self, cards_to="discard")
 
     def ask(self, title, options, options_type="buttons", number_to_pick=1, allow_cancel=True):
         """
@@ -107,9 +97,9 @@ class Player:
         If its a set or list, the items are what is shown to the player and what get returned.
         If its a card collection, an images of the cards is what the player sees and the card_id(s) is whats returned.
         :param options_type: The type of choice. Available types are "buttons", "vertical scroll" and "cards".
-        "Buttons" shows a ______________??? TODO: Thomas please fill this in
-        "Cards" shows a list of cards in a similar way to the players hand at the bottom of the screen
-        "vertical scroll" shows a _____________??? TODO: Thomas please fill this in
+        "Buttons" shows a list of buttons without a scroll
+        "Cards" shows a list of cards
+        "vertical scroll" shows a list of buttons with a scrollbar
         :param number_to_pick: The number of choices to pick. Usual 1
         :param allow_cancel: Should the player be allowed to cancel the question. If they do, None is returned
         :return: A List of the chosen choices or the choice itself if number_to_pick is 0.
@@ -369,23 +359,16 @@ class Player:
         Does not check for pickup chains of weather its the players turn
         if you want that, use pickup(self) instead
         :param number: number of cards to add
-        :param display_pickup: TODO Thomas please fill this in
+        :param display_pickup: if there should be an animation sent
         :return: None
         """
         number = min(settings.player_card_limit - len(self.hand), int(number))
         cards = self.game.deck.add_random_cards_to(self.hand, number)
 
-        # send you an animation message to show you picking up the cards
-        json_to_send = {
-            "type": "pickup",
-            "from": None,  # use this same message for picking up cards from other players
-            "data": []
-        }
+        if display_pickup is False:
+            return
 
-        for card in cards:
-            json_to_send["data"].append(card.get_url())
-        
-        self.send_message("animate", json_to_send)
+        self.game.animate_card_transfer(cards, cards_to=self)
 
     def initial_connection(self):
         self.set_sid(request.sid)
