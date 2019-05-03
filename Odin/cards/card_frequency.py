@@ -9,7 +9,7 @@ class CardFrequency:
 
     # Frequency is automatically set to zero if you have at least max_cards of this card in your hand
 
-    def __init__(self, small_hand, medium_hand=None, large_hand=None, massive_hand=None, max_cards=None):
+    def __init__(self, small_hand, medium_hand=None, large_hand=None, massive_hand=None, starting=None, elevator=None, max_cards=None):
         """
         Card Frequency.
         If you call CardFrequency(n), then all frequencies will be set n,
@@ -35,6 +35,16 @@ class CardFrequency:
         else:
             self.massive_hand = massive_hand
         
+        if starting is None:
+            self.starting = self.small_hand
+        else:
+            self.starting = starting
+        
+        if elevator is None:
+            self.elevator = self.small_hand
+        else:
+            self.elevator = elevator
+        
         self.max_cards = max_cards
     
     def get_weight(self, n_cards, n_this_type, ignore_limit=False):
@@ -54,10 +64,17 @@ class CardFrequency:
         else:
             return self.massive_hand
 
-    def get_static_weight(self):
+    def get_starting_weight(self):
         """
-        Gets the frequency of a card ignoring the number of cards.
-        This should be used for things like the starting card and the Elevator card
+        Gets the frequency of the card for the starting card
+        Cards that require a player to play it should have a weight of 0
         """
-        return self.medium_hand
+        return self.starting
+    
+    def get_elevator_weight(self):
+        """
+        Gets the frequency of the card to be randomly drawn during an elevator card
+        Some cards like EA or other elevator cards should have a weight of 0
+        """
+        return self.elevator
 

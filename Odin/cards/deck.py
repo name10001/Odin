@@ -109,7 +109,7 @@ class Deck:
 
         return added_cards
     
-    def get_weights(self, card_collection=None, ignore_limit=False):
+    def get_weights(self, card_collection=None, elevator=False, ignore_limit=False):
         """
         Calculates the weights for all the cards.
         :param card_collection: The card_collection to calculate the weights for.
@@ -119,9 +119,9 @@ class Deck:
         :return: The weight of the given cards. The order its the unchanged,
         I.e. weights[0] is the weight for Deck.cards[0].
         """
-        return [self.get_weight(card, card_collection, ignore_limit=ignore_limit) for card in self.cards]
+        return [self.get_weight(card, card_collection, elevator=elevator, ignore_limit=ignore_limit) for card in self.cards]
 
-    def get_weight(self, card, card_collection=None, ignore_limit=False):
+    def get_weight(self, card, card_collection=None, elevator=False, ignore_limit=False):
         """
         Calculates the weights for the given card.
         :param card: The card to get the weight of.
@@ -131,20 +131,23 @@ class Deck:
         :return: The weight of the given card.
         """
         if card_collection is None:
-            return card.CARD_FREQUENCY.get_static_weight()
+            if elevator is True:
+                return card.CARD_FREQUENCY.get_elevator_weight()
+            else:
+                return card.CARD_FREQUENCY.get_starting_weight()
         else:
             n_cards = len(card_collection)
             n_this_type = card_collection.number_of_type(card.CARD_TYPE)
             return card.CARD_FREQUENCY.get_weight(n_cards, n_this_type, ignore_limit=ignore_limit)
 
-    def get_random_card(self, card_weights=None):
+    def get_random_card(self, card_weights=None, elevator=False):
         """
         Gets a new random card and returns it.
         :param card_weights: An array of the weights of the cards
         :return: A card class or None if all the weights are zero
         """
         if card_weights is None:
-            card_weights = self.get_weights()
+            card_weights = self.get_weights(elevator=elevator)
         try:
             return random.choices(self.cards, weights=card_weights)[0]
         except IndexError:
