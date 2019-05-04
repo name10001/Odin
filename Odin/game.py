@@ -185,13 +185,14 @@ class Game:
         """
         if isinstance(cards_from, Player):
             if isinstance(cards_to, Player):
-                # TODO have a separate animation for this (PLAYER TO PLAYER TRANSFER)
+                # TODO have a separate animation for this (PLAYER TO PLAYER TRANSFER) - atm this goes to deck then to the player
                 self.animate_card_transfer(cards, cards_from=cards_from)
                 self.animate_card_transfer(cards, cards_to=cards_to)
             elif cards_to == "deck":
-                # card remove
+                # REMOVE CARDS
                 json_to_send = {
                     "type": "remove cards",
+                    "to": None,
                     "cards": [
                         {
                             "id": card.get_id(),
@@ -200,9 +201,21 @@ class Game:
                     ]
                 }
                 cards_from.send_message("animate", json_to_send)
+
+                json_to_send = {
+                    "type": "player remove cards",
+                    "to": None,
+                    "player": cards_from.get_id(),
+                    "count": len(cards)
+                }
+
+                for other_player in self.players:
+                    if other_player is not cards_from:
+                        other_player.send_message("animate", json_to_send)
+
                 return
             elif cards_to == "planning":
-                # card prepare animation - atm this doesn't even need a player id
+                # card prepare animation from player
                 json_to_send = {
                     "type": "play cards",
                     "from deck": False,
@@ -218,7 +231,7 @@ class Game:
                 self.send_to_all_players("animate", json_to_send)
         elif cards_from == "deck":
             if isinstance(cards_to, Player):
-                # picking up from the deck
+                # PICKUP
                 json_to_send = {
                     "type": "pickup",
                     "from": None,
@@ -229,6 +242,18 @@ class Game:
                      } for card in cards]
                 }
                 cards_to.send_message("animate", json_to_send)
+
+                json_to_send = {
+                    "type": "player pickup",
+                    "from": None,
+                    "player": cards_to.get_id(),
+                    "count": len(cards)
+                }
+
+                for other_player in self.players:
+                    if other_player is not cards_to:
+                        other_player.send_message("animate", json_to_send)
+
             elif cards_to == "planning":
                 # card prepare animation from the deck
                 json_to_send = {

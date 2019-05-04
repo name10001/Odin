@@ -275,6 +275,7 @@ class Player:
         json_to_send = {
             "cards on deck": [],
             "your cards": [],
+            "your id": self.get_id(),
             "planning pile": [],
             "direction": self.game.direction,
             "pickup size": self.game.pickup,
@@ -316,10 +317,7 @@ class Player:
                     "card id": card.get_id(),
                     "card image url": card.get_url(),
                     "name": card.get_name(),
-                    "can be played": self._can_be_played(card),
-                    # TODO: remove the following. Can be done once client no longer uses them
-                    "pick options separately": False,
-                    "options": None
+                    "can be played": self._can_be_played(card)
                 }
             )
 
@@ -328,9 +326,9 @@ class Player:
             json_to_send["players"].append(
                 {
                     "name": player.get_name(),
+                    "id": player.get_id(),
                     "number of cards": len(player.hand),
                     "is turn": player.is_turn(),
-                    "is you": player == self,
                     "turns left": player.turns_left,
                     "pickup amount": player.player_pickup_amount
                 }

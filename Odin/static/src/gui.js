@@ -145,6 +145,24 @@ class Gui {
     getPlayerX() {
         return canvas.width - (canvas.width - this.getTotalWidth())/2 - GUI_SCALE * 2 - this.getButtonsWidth();
     }
+
+    
+    /**
+     * Y distance from one player to the next
+     */
+    getPlayerGapSize() {
+        let pheight = GUI_SCALE*5;
+        let pgap = GUI_SCALE;
+        let totalHeight = pheight + (game.players.length-2) * (pgap + pheight/2);
+        let room = this.getBottomY() - GUI_SCALE*17;
+        if(totalHeight > room) {
+            let ratio = room/totalHeight;
+            pheight*=ratio;
+            pgap*=ratio;
+        }
+        return pheight/2 + pgap;
+
+    }
     
     /**
      * Main game loop for updating the canvas
@@ -236,7 +254,6 @@ class Gui {
                 medFontSize *= ratio;
                 pheight*=ratio;
                 pgap*=ratio;
-
             }
 
             let i = game.turn;
@@ -244,7 +261,7 @@ class Gui {
             do {
                 let player = game.players[i];
                 //box
-                ctx.fillStyle = i==game.yourId ? "#06cbbf" : "#038cde";
+                ctx.fillStyle = i==game.getPlayerIndex() ? "#06cbbf" : "#038cde";
                 ctx.strokeStyle = "#fff";
                 ctx.lineJoin = "round";
                 ctx.lineWidth = pheight*0.1;
@@ -379,6 +396,28 @@ class Gui {
 
     getDeckPosition() {
         return {x:this.getDiscardX(), y:this.getBottomY()-this.getDiscardHeight()-this.CARD_HEIGHT};
+    }
+
+    getPlayerPosition(playerId) {
+        let x = this.getPlayerX();
+
+        let gap = this.getPlayerGapSize();
+        let y = gap;
+
+        let i = game.turn;
+        do {
+            let player = game.players[i];
+            
+            console.log(player.id);
+            if(player.id == playerId) break;
+            y += gap;
+
+            i+=game.direction;
+            if(i<0) i = game.players.length-1;
+            else if(i>=game.players.length) i = 0;
+        }while(i != game.turn);
+
+        return {x,y};
     }
 
     /**
@@ -629,8 +668,63 @@ class Gui {
             }
         }else game.finishedEvent();
         this.movingCards.reverse();
+    }
 
+    /**
+     * Animate a player picking up cards
+     */
+    animatePlayerPickup(playerId, nCards) {
+        let wait = 0;
+        let waitIncr = this.getCardWaitIncrement(nCards);
+        let startPosition = this.getDeckPosition();
+        let endPosition = this.getPlayerPosition(playerId);
+        endPosition.y -= GUI_SCALE/2;
+        let image = this.cardBack;
+        let height = this.getPlayerGapSize();
+        let width = height * CARD_RATIO;
+        let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
+        let movingCard;
+        for(let i = 0; i < nCards; i++) {
+            movingCard = new AnimatedCard(startPosition, endPosition, 400, wait, image, width, height, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.pickupSound : null);
+            this.movingCards.push(movingCard);
+            wait+=waitIncr;
+            if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
+            soundDisplacement += waitIncr;
+        }
+        if(movingCard != undefined) {
+            movingCard.place = function() {
+                game.finishedEvent();
+            }
+        }else game.finishedEvent();
+    }
 
+    /**
+     * Animate a player remove cards
+     */
+    animatePlayerRemove(playerId, nCards) {
+        let wait = 0;
+        let waitIncr = this.getCardWaitIncrement(nCards);
+        let startPosition = this.getPlayerPosition(playerId);
+        startPosition.y -= GUI_SCALE/2;
+        let endPosition = this.getDeckPosition();
+        let height = this.getPlayerGapSize();
+        let width = height * CARD_RATIO;
+        let image = this.cardBack;
+
+        let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
+        let movingCard;
+        for(let i = 0; i < nCards; i++) {
+            movingCard = new AnimatedCard(startPosition, endPosition, 400, wait, image, width, height, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT ? this.playSound : null);
+            this.movingCards.push(movingCard);
+            wait+=waitIncr;
+            if(soundDisplacement >= this.MIN_SOUND_DISPLACEMENT) soundDisplacement -= this.MIN_SOUND_DISPLACEMENT;
+            soundDisplacement += waitIncr;
+        }
+        if(movingCard != undefined) {
+            movingCard.place = function() {
+                game.finishedEvent();
+            }
+        }else game.finishedEvent();
     }
 
     /**

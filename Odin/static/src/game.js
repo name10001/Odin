@@ -1,5 +1,6 @@
 class Player {
-    constructor(name, nCards, nPickup) {
+    constructor(id, name, nCards, nPickup) {
+        this.id = id;
         this.name = name;
         this.nCards = nCards;
         this.nPickup = nPickup;
@@ -71,7 +72,7 @@ class CardStack {
 }
 
 /**
- * Represents a card type. Has a name, image and some info to be used for its description
+ * Represents a card to be used for the help system. Has a name, image and some info to be used for its description
  */
 class Card {
     constructor(card, image) {
@@ -90,21 +91,33 @@ class Card {
  */
 class Game {
     constructor() {
+        //your cards
         this.yourStacks = [];
         this.cardNameIndices = {};
         this.cardIndices = {};
+
+        //top cards
         this.topCards = [];
+        
+        //planning cards
         this.planningCards = [];
+        
         this.yourTurn = false;
-        this.direction = 1;
-        this.yourId = 0;
+        
+        //players
         this.players = [];
+        this.playerIndices = {};
+
+        //some information about the current game/turn
+        this.direction = 1;
         this.pickupAmount = 0;
         this.turn = 0;
         this.turnsLeft = 1;
         this.skip = 0;
         this.turnString = "";
         this.cantPlayReason = null;  // is null if you are allowed to have your turn with the cards you have played
+        
+        //event system
         this.events = [];
 
         //build a list of all cards - use the url as the key
@@ -142,14 +155,25 @@ class Game {
         }
     }
 
+    getPlayerIndex(id=this.yourId) {
+        return this.playerIndices[id];
+    }
+
+    /**
+     * Get player object by id
+     */
+    getPlayer(id=this.yourId) {
+        return this.players[this.getPlayerIndex(id)];
+    }
+
     update(update) {
+        //update the cards in your hand
         this.yourStacks.length = 0;
         gui.cardScroller.items.length = 0;
         this.cardIndices = {};
         this.cardNameIndices = {};
         let canPlay = 0;
 
-        //update the cards in your hand
         for(let card of update['your cards']) {
             if(card['can be played']) canPlay++;
 
@@ -167,6 +191,9 @@ class Game {
             this.planningCards.push(new CardStack(card['card id'], card['name'], card['card image url'], true));
         }
 
+        //your player id
+        this.yourId = update["your id"];
+
         //update pickup
         this.pickupAmount = update['pickup size'];
 
@@ -176,29 +203,34 @@ class Game {
         //can't play reason
         this.cantPlayReason = update['cant play reason'];
         
+        //player iteration amount
+        this.skip = (update['iteration']-1) % this.players.length;
     
         //update players
         this.players.length = 0;
+        this.playerIndices = {};
         for(let player of update['players']) {
-            if(player['is you']) {
-                this.yourId = this.players.length;
-            }
             if(player['is turn']) {
+                //if this player is having their turn now
                 this.turn = this.players.length;
                 this.turnsLeft = player['turns left'];
-                if(player['is you']) {
-                    this.turnString = "Your Turn! Cards Avaliable: " + canPlay + "/" + player['number of cards'];
-                    this.yourTurn = true;
-                }else {
-                    this.turnString = player['name'] + "'s Turn";
-                    this.yourTurn = false;
-                }
             }
-            this.players.push(new Player(player['name'],player['number of cards'],player['pickup amount']));
-        }
 
+            this.playerIndices[player['id']] = this.players.length;
+            this.players.push(new Player(player['id'],player['name'],player['number of cards'],player['pickup amount']));
+        }
         
-        this.skip = (update['iteration']-1) % this.players.length; //tells you how many players will be skipped
+        //check if it's your turn
+        let index = this.getPlayerIndex();
+        if(index == this.turn) {
+            // your turn
+            this.turnString = "Your Turn! Cards Avaliable: " + canPlay + "/" + this.players[index].nCards;
+            this.yourTurn = true;
+        }else {
+            //another person's turn
+            this.turnString = this.players[index].name + "'s Turn";
+            this.yourTurn = false;
+        }
 
         this.finishedEvent();
     }
@@ -284,10 +316,24 @@ class Game {
                 }));
             }
             break;
+        //PLAYER PICKUP
+        case "player pickup":
+            if(data["from"] == null) {
+                this.addEvent(new GameEvent(function() {
+                    gui.animatePlayerPickup(data["player"], data["count"]);
+                }));
+            }
+            break;
         // REMOVE CARD
         case "remove cards":
             this.addEvent(new GameEvent(function() {
                 gui.animateRemoveCards(data["cards"]);
+            }));
+            break;
+        // PLAYER REMOVE CARD
+        case "player remove cards":
+            this.addEvent(new GameEvent(function() {
+                gui.animatePlayerRemove(data["player"], data["count"]);
             }));
             break;
         //COMMUNIST CARD
