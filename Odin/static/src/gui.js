@@ -304,14 +304,13 @@ class Gui {
         }
 
         //DRAW CARD SCROLLER
-        this.cardScroller.draw();
+        this.cardScroller.draw(this.currentAnimation==null && this.popup==null);
         //DRAW POPUP
         if(this.popup!=null) this.popup.draw();
         if(this.currentAnimation!=null) this.currentAnimation.draw(dt);
         
 
         //DRAW MOVING CARDS
-        //TODO
         let cardIndex = 0;
         while(cardIndex < this.movingCards.length) {
             let card = this.movingCards[cardIndex];
@@ -327,28 +326,17 @@ class Gui {
         }
     }
 
-    play(cardStack) {
-        if(!cardStack.allowedToPlay) return;
-
-         cardStack.playSingle();
-    }
-
-    playAllCards(cardStack) {
-        if(!cardStack.allowedToPlay) return;
-
-        cardStack.playAll();
-    }
-
     /**
      * Method when you tap/click a point on the screen
      */
     click() {
-        if(this.currentAnimation!=null) return;
         if(this.popup!=null) {
             this.popup.click();
             return;
         }
         this.cardScroller.click();
+
+        if(this.currentAnimation!=null) return;//don't allow clicking on these buttons if an animation playing
         
         //clciking the end turn button
         if(this.finishButton.isMouseOverThis() && game.yourTurn && game.cantPlayReason==null) {
@@ -649,7 +637,6 @@ class Gui {
      * When you drag the mouse/touch 
      */
     drag() {
-        if(this.currentAnimation!=null) return;
         if(this.popup!=null) {
             this.popup.drag();
             return;
@@ -661,37 +648,33 @@ class Gui {
      * Release the mouse/touch
      */
     release() {
-        if(this.currentAnimation!=null) return;
         if(this.popup!=null) {
             this.popup.release();
             return;
         }
-        this.cardScroller.release();
+        this.cardScroller.release(this.currentAnimation==null && this.popup==null);
     }
 
     /** 
      * Mouse Wheel
      */
     wheel(amount) {
-        if(this.currentAnimation!=null) return;
         if(this.popup!=null) {
             this.popup.wheel(amount);
             return;
         }
         this.cardScroller.setScrollSpeed(amount*0.07);
-        //this.scrollSpeed = -amount * this.CARD_WIDTH;
     }
 
     /**
      * Scrolling 
      */
     scroll(dt) {
-        if(this.currentAnimation!=null) return;
         if(this.popup!=null) {
             this.popup.scroll(dt);
             return;
         }
-
+        
         this.cardScroller.scroll(dt);
     }
 }

@@ -28,8 +28,12 @@ class AbstractCard:
         """
         return True, None
 
-    def prepare_card(self, player):
-        pass
+    def prepare_card(self, player, allow_cancel):
+        """
+        Prepares the card in the planning pile
+        :return: returns if the card should be played (False is usually if you press a cancel button)
+        """
+        return True
     
     def undo_prepare_card(self, player):
         pass

@@ -18,8 +18,9 @@ class Reverse(AbstractCard):
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Reverses the direction of play."
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         self.game.direction *= -1
+        return True
     
     def undo_prepare_card(self, player):
         self.game.direction *= -1
@@ -78,8 +79,9 @@ class Pickup2(AbstractCard):
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 2 to the pickup chain value."
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         self.game.pickup += 2
+        return True
     
     def undo_prepare_card(self, player):
         self.game.pickup -= 2
@@ -142,8 +144,9 @@ class Pickup10(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 10 to the pickup chain value."
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         self.game.pickup += 10
+        return True
     
     def undo_prepare_card(self, player):
         self.game.pickup -= 10
@@ -159,8 +162,9 @@ class Pickup100(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 100 to the pickup chain value."
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         self.game.pickup += 100
+        return True
 
     def undo_prepare_card(self, player):
         self.game.pickup -= 100
@@ -176,8 +180,9 @@ class Pickup4(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 4 to the pickup chain value."
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         self.game.pickup += 4
+        return True
     
     def undo_prepare_card(self, player):
         self.game.pickup -= 4
@@ -198,9 +203,10 @@ class PickupTimes2(AbstractCard):
         super().__init__(*args, **kwargs)
         self.old_pickup = None
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         self.old_pickup = self.game.pickup
         self.game.pickup *= 2
+        return True
     
     def undo_prepare_card(self, player):
         if self.old_pickup is not None:
@@ -222,12 +228,13 @@ class PickupPower2(AbstractCard):
         super().__init__(*args, **kwargs)
         self.old_pickup = None
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         self.old_pickup = self.game.pickup
         # Only way of checking for "infinite" numbers that seemed to work
         if '%.2E' % Decimal(self.game.pickup) == "INF":
-            return
+            return True
         self.game.pickup *= self.game.pickup
+        return True
 
     def undo_prepare_card(self, player):
         if self.old_pickup is not None:
@@ -251,12 +258,13 @@ class PickupFactorial(AbstractCard):
         super().__init__(*args, **kwargs)
         self.old_pickup = None
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         self.old_pickup = self.game.pickup
         if self.game.pickup > self.MAX_FACTORIAL:
             self.game.pickup = self.MAX_FACTORIAL
         
         self.game.pickup = math.factorial(self.game.pickup)
+        return True
 
     def undo_prepare_card(self, player):
         if self.old_pickup is not None:
@@ -274,8 +282,9 @@ class Skip(AbstractCard):
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Skips the next person's turn."
     
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         self.game.iterate_turn_by += 1
+        return True
     
     def undo_prepare_card(self, player):
         self.game.iterate_turn_by -= 1
@@ -378,7 +387,7 @@ class EA(AbstractCard):
         else:
             return True, None
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         needs = self.still_needs
 
         if len(self.game.planning_pile) > 0:
@@ -398,12 +407,14 @@ class EA(AbstractCard):
                 "pick for me": "Yes",
                 "let me pick": "No, let me pick"
             },
-            image=self.get_url()
+            image=self.get_url(), allow_cancel=allow_cancel
         )
+        if option is None:
+            return False
 
         # play cards
         if option != "pick for me":
-            return
+            return True
 
         card_numbers = []
         number_cards = {}
@@ -425,12 +436,14 @@ class EA(AbstractCard):
                     break
             
             if not found:
-                return
+                return True
         except OverflowError:
             print("Warning: Got over flow error in EA card")
 
         for num in number_played_with:
             player.play_card(number_cards[num].pop())
+        
+        return True
 
     def undo_prepare_card(self, player):
         if len(self.game.planning_pile) == 0:
@@ -549,12 +562,12 @@ class YellowFuck(Fuck):
 class AllOfSameColour(AbstractCard):
     CARD_FREQUENCY = CardFrequency(1, max_cards=1, starting=0, elevator=0)
     MULTI_COLOURED = False
-    PICK_NUMBERS = True  # False for 
+    PICK_NUMBERS = True  # False for filthy sharon cause no numbers
 
     def can_play_with(self, player, card, is_first_card):
         return card.get_colour() == self.get_colour()
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         """
         Play all the cards in the players hand that are of the same colour as this one
         """
@@ -565,8 +578,11 @@ class AllOfSameColour(AbstractCard):
         }
         if self.PICK_NUMBERS is True:
             options["server pick numbers"] = "Yes: Only Numbers"
-        option = player.ask("Would you like the game to automatically pick cards?", options, image=self.get_url())
+        option = player.ask("Would you like the game to automatically pick cards?", options, allow_cancel=allow_cancel, image=self.get_url())
         
+        if option is None:
+            return False
+
         if option == "server pick all":
             for card in reversed(player.hand):
                 if card.get_colour() == self.get_colour():
@@ -575,6 +591,8 @@ class AllOfSameColour(AbstractCard):
             for card in reversed(player.hand):
                 if card.get_colour() == self.get_colour() and card.get_type().isnumeric():
                     player.play_card(card_to_play=card)
+        
+        return True
 
 
 class ManOfTheDay(AllOfSameColour):
@@ -643,6 +661,7 @@ class TrashCard(AbstractCard):
             title,
             player.hand,
             options_type="cards",
+            allow_cancel=False,
             number_to_pick=self.NUMBER_TO_REMOVE,
             image=self.get_url()
         )
@@ -713,6 +732,7 @@ class DoJustly(AbstractCard):
             "Select player to give cards to:",
             options,
             options_type="vertical scroll",
+            allow_cancel=False,
             image=self.get_url()
         )
         if other_player_id is None:
@@ -722,6 +742,7 @@ class DoJustly(AbstractCard):
             "Select cards to give cards to " + other_player.get_name() + ":",
             player.hand,
             options_type="cards",
+            allow_cancel=False,
             number_to_pick=self.NUMBER_TO_GIVE,
             image=self.get_url()
         )
@@ -821,9 +842,10 @@ class Pawn(AbstractCard):
             return False
         return super().can_be_played_on(player, card)
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         self.old_pickup = self.game.pickup
         self.game.pickup = 0
+        return True
     
     def undo_prepare_card(self, player):
         self.game.pickup = self.old_pickup
@@ -923,6 +945,7 @@ class SwapHand(AbstractCard):
             "Pick a player to swap hands with:",
             options,
             options_type="vertical scroll",
+            allow_cancel=False,
             image=self.get_url()
         )
         swap_with = self.game.get_player(player_id)
@@ -969,7 +992,7 @@ class Plus(AbstractCard):
         self.pickup_amount = 0
         self.old_pickup = 0
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         self.old_pickup = self.game.pickup
         self.pickup_amount = self.game.pickup
 
@@ -989,6 +1012,8 @@ class Plus(AbstractCard):
         for other_player in self.game.players:
             if other_player != player:
                 other_player.player_pickup_amount += self.pickup_amount
+        
+        return True
     
     def undo_prepare_card(self, player):
         self.game.pickup = self.old_pickup
@@ -1024,7 +1049,7 @@ class FuckYou(AbstractCard):
         self.old_pickup = 0
         self.chosen_player = None
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         self.old_pickup = self.game.pickup
         self.pickup_amount = self.game.pickup
 
@@ -1050,16 +1075,21 @@ class FuckYou(AbstractCard):
                 "Select player to pickup cards:",
                 options,
                 options_type="vertical scroll",
+                allow_cancel=allow_cancel,
                 image=self.get_url()
             )
-            if chosen_player_id is not None:
-                self.chosen_player = self.game.get_player(chosen_player_id)
+            if chosen_player_id is None:
+                self.chosen_player = None
+                return False
 
-                self.chosen_player.player_pickup_amount += self.pickup_amount
+            self.chosen_player = self.game.get_player(chosen_player_id)
+            self.chosen_player.player_pickup_amount += self.pickup_amount
         else:
             self.chosen_player = None
 
         self.game.pickup = 0
+
+        return True
     
     def undo_prepare_card(self, player):
         self.game.pickup = self.old_pickup
@@ -1111,6 +1141,7 @@ class Genocide(AbstractCard):
             "Select card type/colour to ban:",
             options,
             options_type="vertical scroll",
+            allow_cancel=False,
             image=self.get_url()
         )
 
@@ -1175,6 +1206,7 @@ class Jesus(AbstractCard):
             "Select player to reset their hand:",
             options,
             options_type="vertical scroll",
+            allow_cancel=False,
             image=self.get_url()
         )
         other_player = self.game.get_player(other_player_id)
@@ -1199,8 +1231,9 @@ class FreeTurn(AbstractCard):
     EFFECT_DESCRIPTION = "Gain an extra turn. If you play multiple Free Turn cards together " \
                          "you will gain multiple extra turns."
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         player.turns_left += 1
+        return True
 
     def undo_prepare_card(self, player):
         player.turns_left -= 1
@@ -1284,7 +1317,7 @@ class CopyCat(AbstractCard):
     def can_be_played_on(self, player, card):
         return player.is_turn()
     
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         top_card = self.game.get_top_card()
         if isinstance(top_card, CopyCat):
             copy_class = top_card.copied.__class__
@@ -1292,7 +1325,7 @@ class CopyCat(AbstractCard):
             copy_class = top_card.__class__
         self.copied = copy_class(self.game)  # copied card is re-initialized
         self.copied.id = self.get_id()
-        self.copied.prepare_card(player)
+        return self.copied.prepare_card(player, allow_cancel)
 
     def undo_prepare_card(self, player):
         self.copied.undo_prepare_card(player)
@@ -1323,14 +1356,6 @@ class CopyCat(AbstractCard):
 
     def get_type(self):
         return self.type
-    
-    def get_pick_options_separately(self):
-        if self.copied is not None:
-            return self.copied.get_pick_options_separately()
-        elif self.game.get_top_card() is self:  # needed for when game starts with a copy cat card on the played pile
-            return False
-        else:
-            return self.game.get_top_card().get_pick_options_separately()
 
 
 class ColourChooser(AbstractCard):
@@ -1359,7 +1384,7 @@ class ColourChooser(AbstractCard):
         else:
             return True
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         option = player.ask(
             "Choose colour:",
             {
@@ -1368,12 +1393,15 @@ class ColourChooser(AbstractCard):
                 "blue": "Blue",
                 "yellow": "Yellow"
             },
-            allow_cancel=True,
+            allow_cancel=allow_cancel,
             image=self.get_url()
         )
+        if option is None:
+            return False
 
         self.colour = option
         self.url = 'cards/choose_' + option + '.png'
+        return True
 
     def undo_prepare_card(self, player):
         self.url = self.CARD_IMAGE_URL
@@ -1398,7 +1426,7 @@ class Elevator(AbstractCard):
     def play_card(self, player):
         # play the card as if its being played by the player
         card = self.game.deck.get_random_card(elevator=True)(self.game)
-        card.prepare_card(player)
+        card.prepare_card(player, False)
         self.game.planning_pile.add_card(card)
 
         player.refresh_card_play_animation()
@@ -1432,6 +1460,7 @@ class SwapCard(AbstractCard):
             "Select player to give cards to:",
             options,
             options_type="vertical scroll",
+            allow_cancel=False,
             image=self.get_url()
         )
         if other_player_id is None:
@@ -1442,6 +1471,7 @@ class SwapCard(AbstractCard):
             "Select a card to give to " + other_player.get_name() + ":",
             player.hand,
             options_type="cards",
+            allow_cancel=False,
             image=self.get_url()
         )
         if cards_id is None:
@@ -1481,6 +1511,7 @@ class Jew(AbstractCard):
             "Select player to take cards from:",
             options,
             options_type="vertical scroll",
+            allow_cancel=False,
             image=self.get_url()
         )
         if other_player_id is None:
@@ -1491,6 +1522,7 @@ class Jew(AbstractCard):
             "Select a card to take from " + other_player.get_name() + ":",
             other_player.hand,
             options_type="cards",
+            allow_cancel=False,
             image=self.get_url()
         )
         if cards_id is None:
@@ -1526,12 +1558,6 @@ class ColourSwapper(AbstractCard):
         super().__init__(*args, **kwargs)
         self.colour = "colour swapper"  # gets changed to a particular colour after being played
         self.url = self.CARD_IMAGE_URL
-    
-    def get_pick_options_separately(self):
-        top_card = self.game.get_top_card()
-
-        return self.colours_are_compatible(top_card.get_colour(), self.COLOUR_1) \
-            and self.colours_are_compatible(top_card.get_colour(), self.COLOUR_2)
 
     def is_compatible_with(self, player, card):
         if self.colour == "colour swapper":  # compatible if either of the card colours are compatible
@@ -1541,7 +1567,7 @@ class ColourSwapper(AbstractCard):
         else:
             return super().is_compatible_with(player, card)
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         played_on = self.game.get_top_card()
 
         # change colour to the opposite of the one you played on
@@ -1552,15 +1578,21 @@ class ColourSwapper(AbstractCard):
         elif second_compatible and not first_compatible:
             self.colour = self.COLOUR_1
         else:
-            self.colour = player.ask(
+            colour = player.ask(
                 "Select colour:",
                 {
                     self.COLOUR_1: self.COLOUR_1.capitalize(),
                     self.COLOUR_2: self.COLOUR_2.capitalize()
                 },
+                allow_cancel=allow_cancel,
                 image=self.get_url()
             )
+            if colour is None:
+                return False
+            
+            self.colour = colour
         self.url = 'cards/switch_' + self.colour + '.png'
+        return True
     
     def undo_prepare_card(self, player):
         self.colour = "colour swapper"

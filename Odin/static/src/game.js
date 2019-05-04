@@ -326,7 +326,7 @@ class Game {
 
     ask(question) {
         this.addEvent(new GameEvent(function() {
-            gui.popup = new QuestionWindow(question);
+            gui.popup = new OptionWindow(question);
         }));
 
     }
