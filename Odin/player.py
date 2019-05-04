@@ -157,35 +157,45 @@ class Player:
         # send play cards animation before you send the options
         self.refresh_card_play_animation()
 
-        # generate json for question
-        self._question = {
-            "title": str(title),
-            "number to pick": int(number_to_pick),
-            "type": options_type,
-            "options": options_as_dict,
-            "allow cancel": allow_cancel,
-            "image": str(image)
-        }
-
-        # send the question and wait for a reply. If the reply is not valid, send it again
-        valid_answer = False
         question_answer = None
-        while valid_answer is False:
-            self.send_message("ask", self._question)
+        # Only ask the question if there are more options avaliable
+        if len(options_as_dict) > number_to_pick:
+            # generate json for question
+            self._question = {
+                "title": str(title),
+                "number to pick": int(number_to_pick),
+                "type": options_type,
+                "options": options_as_dict,
+                "allow cancel": allow_cancel,
+                "image": str(image)
+            }
 
-            self._answer_event = event.Event()
-            question_answer = self._answer_event.wait()
+            # send the question and wait for a reply. If the reply is not valid, send it again
+            valid_answer = False
+            while valid_answer is False:
+                self.send_message("ask", self._question)
 
-            valid_answer = len(question_answer) == number_to_pick
-            for choice in question_answer:
-                if choice not in self._question['options'] or (choice is None and allow_cancel is True):
-                    valid_answer = False
-                    break
+                self._answer_event = event.Event()
+                question_answer = self._answer_event.wait()
 
-        # clear the question
-        self._question = None
+                valid_answer = len(question_answer) == number_to_pick
+                for choice in question_answer:
+                    if choice not in self._question['options'] or (choice is None and allow_cancel is True):
+                        valid_answer = False
+                        break
 
-        if number_to_pick == 1:
+            # clear the question
+            self._question = None
+        else:
+            # Automatically choose all answers if not enough options avaliable
+            # cases where this occur like:
+            # - there's only 1 option - pick the first one
+            # - there's 3 options and you need to pick 3 - pick all 3
+            # - there's 0 options - return the selected option as an empty array
+            # - less options than the number to pick - eg -3 card when you've got 2 cards left
+            question_answer = [option for option in options_as_dict]
+
+        if len(question_answer) == 1:
             return question_answer[0]
         else:
             return question_answer

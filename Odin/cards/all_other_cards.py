@@ -648,8 +648,12 @@ class TrashCard(AbstractCard):
         )
         if options is None:
             return
+        
+        cards_to_remove = options
+        if not isinstance(options, list):
+            cards_to_remove = [options]
 
-        for option in [options] if self.NUMBER_TO_REMOVE == 1 else options:
+        for option in cards_to_remove:
             card = player.hand.find_card(option)
             if card is None:
                 continue
@@ -724,7 +728,7 @@ class DoJustly(AbstractCard):
         if cards_to_give is None:
             return
 
-        if self.NUMBER_TO_GIVE == 1:
+        if not isinstance(cards_to_give, list):
             cards_to_give = [cards_to_give]
 
         cards_given = []
@@ -1089,12 +1093,10 @@ class Genocide(AbstractCard):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.category = None
-        self.to_ban = None
 
-    def prepare_card(self, player):
+    def play_card(self, player):
         """
-        This will update the list of available cards
+        On play this will remove all the types from everyone's hands
         """
         # generate options
         options = {}
@@ -1112,37 +1114,26 @@ class Genocide(AbstractCard):
             image=self.get_url()
         )
 
-        self.category, self.to_ban = option.split(' ', 1)
+        category, to_ban = option.split(' ', 1)
 
         # remove from deck
-        if self.category == "type":
-            self.game.deck.ban_type(self.to_ban)
-        elif self.category == "colour":
-            self.game.deck.ban_colour(self.to_ban)
-    
-    def undo_prepare_card(self, player):
-        # add to deck
-        if self.category == "type":
-            self.game.deck.unban_type(self.to_ban)
-        elif self.category == "colour":
-            self.game.deck.unban_colour(self.to_ban)
-    
-    def play_card(self, player):
-        """
-        On play this will remove all the types from everyone's hands
-        """
+        if category == "type":
+            self.game.deck.ban_type(to_ban)
+        elif category == "colour":
+            self.game.deck.ban_colour(to_ban)
+
         player.refresh_card_play_animation()
 
         json_to_send = {
             "type": "genocide",
             "cards": [],
-            "banned": self.to_ban
+            "banned": to_ban
         }
 
         # remove from deck and players hands
-        if self.category == "type":
+        if category == "type":
             for game_player in self.game.players:
-                removed_cards = game_player.hand.remove_type(self.to_ban)
+                removed_cards = game_player.hand.remove_type(to_ban)
                 json_to_send["cards"] = [
                     {
                         "id": card.get_id(),
@@ -1150,10 +1141,10 @@ class Genocide(AbstractCard):
                     } for card in removed_cards
                 ]
                 game_player.send_message("animate", json_to_send)
-        elif self.category == "colour":
+        elif category == "colour":
             for game_player in self.game.players:
-                removed_cards = game_player.hand.remove_colour(self.to_ban)
-                json_to_send["banned"] = self.to_ban.capitalize()
+                removed_cards = game_player.hand.remove_colour(to_ban)
+                json_to_send["banned"] = to_ban.capitalize()
                 json_to_send["cards"] = [
                     {
                         "id": card.get_id(),
@@ -1455,6 +1446,8 @@ class SwapCard(AbstractCard):
         )
         if cards_id is None:
             return
+        if cards_id == []:
+            return
 
         card = player.hand.find_card(cards_id)
         player.hand.remove_card(card)
@@ -1501,6 +1494,8 @@ class Jew(AbstractCard):
             image=self.get_url()
         )
         if cards_id is None:
+            return
+        if cards_id == []:
             return
 
         card = other_player.hand.find_card(cards_id)

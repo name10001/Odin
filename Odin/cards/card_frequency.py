@@ -41,7 +41,7 @@ class CardFrequency:
             self.starting = starting
         
         if elevator is None:
-            self.elevator = self.small_hand
+            self.elevator = self.medium_hand
         else:
             self.elevator = elevator
         
