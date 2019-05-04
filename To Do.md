@@ -11,7 +11,6 @@ Here are all the tasks that are being planned
 ### Thomas:
 * Improve options menu
 * Show more card play/pickup animations
-* Fix ghost card slots appearing in your hand
 * Make indicators update after cards get played
 * Capatilist animation
 * Swap hand animation?
@@ -20,8 +19,9 @@ Here are all the tasks that are being planned
 
 ## Future Tasks
 
-* Make a proper game end screen
-* Add some options to the games when you create them
+* Kick players out of the game if they aren't playing anymore
+* Add a time limit for how long you can spend picking cards (Add to waiting room options)
+* Extend waiting room options to allow to individually control cards
 * Further balance out the gameplay
 
 ## Cards to implement
