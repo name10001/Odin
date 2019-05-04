@@ -95,7 +95,10 @@ class WaitingRoom:
             fs.socket_io.emit("setting changed", [setting, self.settings[setting]])
         join_room(self.game_id)
         for player in self._players:
-            emit("user joined", self._players[player])
+            if player == session['player_id']:
+                emit("user joined", self._players[player] + " (You)")
+            else:
+                emit("user joined", self._players[player])
 
     def _start(self):
         """

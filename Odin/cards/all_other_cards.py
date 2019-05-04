@@ -1091,9 +1091,6 @@ class Genocide(AbstractCard):
     UNBANNABLE_COLOURS = ["black", "colour swapper"]  # colour swapper is banned by type instead
     UNBANNABLE_TYPES = []
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def play_card(self, player):
         """
         On play this will remove all the types from everyone's hands

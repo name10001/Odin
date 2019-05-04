@@ -29,8 +29,9 @@
 					location.reload(true);
 				});
 				socket.on('user joined', function(name) {
-				    var name_node = document.createElement("LI");
-				    var text_node = document.createTextNode(name);
+				    let name_node = document.createElement("LI");
+				    name_node.classList.add("list-group-item");
+				    let text_node = document.createTextNode(name);
 				    name_node.appendChild(text_node);
 					document.getElementById("list-of-players").appendChild(name_node);
 				});
@@ -120,27 +121,26 @@
                 </div>
             </div>
             <div class="panel-body">
+                <h4>Waiting players</h4>
+                <ul id="list-of-players" class="list-group">
+
+                </ul>
+                <hr />
+                <h4>Game Settings</h4>
                 <div class="form-group row">
                     <div class="col-xs-4">
                         <label for="number-of-cards">Starting number of cards</label>
                         <input class="form-control" id="number-of-cards" type="number" min="5" max="{{ settings.player_card_limit }}" step="1">
                     </div>
                     <div class="col-xs-4">
-                        <label for="show-planning-pile">Show other players planing pile</label>
+                        <label for="show-planning-pile">Show other players planning pile</label>
                         <input type="checkbox" checked data-toggle="toggle" id="show-planning-pile" data-width="172">
                     </div>
                     <div class="col-xs-4">
-                        <label for="something-else">Something else that i cant think of yet</label>
-                        <input class="form-control" id="something-else" type="text">
+                        <label for="lock-settings">Lock settings</label>
+                        <input type="checkbox" checked data-toggle="toggle" id="lock-settings" data-width="172">
                     </div>
                 </div>
-                <br />
-                <h4>
-                    Waiting players:
-                </h4>
-                <ul id="list-of-players">
-
-                </ul>
             </div>
             <div class="panel-footer">
                 <button type="button" class="btn btn-primary" onclick="socket.emit('waiting room message', GAME_ID, 'start', null)">
