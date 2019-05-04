@@ -225,6 +225,7 @@ class CommunistAnimation {
             for(let cardStack of game.yourStacks) {
                 cardStack.cardIds.length = 0;
             }
+            game.clearEmptyStacks();
             this.removedCards = true;
         }
 
@@ -307,6 +308,7 @@ class ThanosAnimation {
 
     snap() {
         this.eventNum = 1;
+        game.clearEmptyStacks();
     }
 
     draw(dt) {

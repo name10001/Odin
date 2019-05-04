@@ -141,15 +141,15 @@ class DescriptionWindow {
 /**
  * Option in an option window
  */
-class QuestionItem {
+class OptionItem {
     constructor(optionId, optionString) {
         //this.card = card;
         this.optionId = optionId;
         this.button = new Button(CARD_WIDTH*3-0.5,4.5,2,optionString);
     }
 
-    draw(x,y,width,height) {
-        this.button.draw(x+GUI_SCALE*0.25,y+GUI_SCALE*0.25,true);
+    draw(x,y,allowClick) {
+        this.button.draw(x+GUI_SCALE*0.25,y+GUI_SCALE*0.25,allowClick);
     }
 
     click(x,y) {
@@ -164,13 +164,14 @@ class QuestionItem {
 /**
  * Class for the options window
  */
-class QuestionWindow {
-    constructor(question) {
+class OptionWindow {
+    constructor(option) {
         //this.card = card;
         //this.image = card.image;
-        this.optionTitle = question["title"].split("\n");
-        this.optionType = question["type"];
-        this.allowCancel = question["allow cancel"];
+        this.optionTitle = option["title"].split("\n");
+        this.optionType = option["type"];
+        this.allowCancel = option["allow cancel"];
+        this.image = game.allImages[option["image"]];
 
         //Create the scroll container
         this.scrollContainer = new Container();
@@ -192,8 +193,8 @@ class QuestionWindow {
         this.optionsScroller = new ScrollArea(this.scrollContainer,CARD_WIDTH*3,5,3,1);
         this.optionsScroller.scrollOffset = 0;
         let items = [];
-        for(let optionId of Object.keys(question["options"])) {
-            items.push(new QuestionItem(optionId, question["options"][optionId]));
+        for(let optionId of Object.keys(option["options"])) {
+            items.push(new OptionItem(optionId, option["options"][optionId]));
         }
         this.optionsScroller.setItems(items);
 
@@ -246,8 +247,10 @@ class QuestionWindow {
         ctx.fillRect(x,y,width,height);
 
         //draw card
-        //ctx.drawImage(this.image,x+width-GUI_SCALE-cardWidth,y+GUI_SCALE,cardWidth,cardHeight);
-        //this.cancelButton.drawThis(true);
+        ctx.drawImage(this.image,x+width-GUI_SCALE-cardWidth,y+GUI_SCALE,cardWidth,cardHeight);
+        if(this.allowCancel) {
+            this.cancelButton.drawThis(true);
+        }
         
         ctx.strokeStyle = "#fff";
         ctx.fillStyle = "#222";
@@ -260,10 +263,6 @@ class QuestionWindow {
         ctx.strokeStyle = "#fff";
         ctx.fillRect(x+GUI_SCALE*2-1,y+GUI_SCALE*6-1,GUI_SCALE*CARD_WIDTH*3+2,GUI_SCALE*5+2);
         ctx.fillRect(x+GUI_SCALE*2-1,y+height-GUI_SCALE*5.5-1,GUI_SCALE*CARD_WIDTH*3+2,GUI_SCALE*5+2);
-        
-        //ctx.lineWidth = GUI_SCALE/4;
-        //ctx.strokeRect(this.scrollContainer.getLeft(),this.scrollContainer.getTop(),GUI_SCALE*CARD_WIDTH*2,this.scrollContainer.getHeight());
-        
         
         ctx.lineWidth = GUI_SCALE/2;
         ctx.strokeStyle = "#fff";
@@ -296,7 +295,7 @@ class QuestionWindow {
     }
     
     release() {
-        this.optionsScroller.release();
+        this.optionsScroller.release(true);
     }
     wheel(amount) {
         this.optionsScroller.setScrollSpeed(amount*0.07);

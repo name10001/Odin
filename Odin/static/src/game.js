@@ -50,8 +50,19 @@ class CardStack {
         game.playCard([id]);
     }
 
+    /**
+     * Remove a card from the card stack
+     */
     pop() {
         this.cardIds.splice(0, 1);
+    }
+
+    /**
+     * Remove a card from the card stack by id
+     */
+    remove(id) {
+        let index = this.cardIds.indexOf(id);
+        this.cardIds.splice(index, 1);
     }
 
     size() {
@@ -131,42 +142,19 @@ class Game {
         }
     }
 
-    createCardStack(id, name, url, canPlay, cardStackPanels) {
-        let cardStack = new CardStack(id, name, url, canPlay);
-        this.yourStacks.push(cardStack);
-        if (id!=undefined) {
-            this.cardIndices[id] = this.yourStacks.length - 1;
-        }
-        this.cardNameIndices[name] = this.yourStacks.length - 1;
-        cardStackPanels.push(new CardStackPanel(cardStack));
-
-        return cardStack;
-    }
-
     update(update) {
-
         this.yourStacks.length = 0;
+        gui.cardScroller.items.length = 0;
         this.cardIndices = {};
         this.cardNameIndices = {};
         let canPlay = 0;
 
-        let cardStackPanels = [];
-
-        let lastStack = null;
         //update the cards in your hand
         for(let card of update['your cards']) {
             if(card['can be played']) canPlay++;
-            if(lastStack != null) {
-                if(lastStack.name == card['name']) {
-                    lastStack.addCard(card['card id']);
-                    this.cardIndices[card['card id']] = this.yourStacks.length - 1;
-                    continue;
-                }
-            }
-            lastStack = this.createCardStack(card['card id'], card['name'], 
-                    card['card image url'], card['can be played'], cardStackPanels);
+
+            this.addCard(card['card id'], card['name'], card['card image url'], card['can be played']);
         }
-        gui.updateCards(cardStackPanels);
 
         //update cards at the top
         this.topCards.length = 0;
@@ -213,6 +201,53 @@ class Game {
         this.skip = (update['iteration']-1) % this.players.length; //tells you how many players will be skipped
 
         this.finishedEvent();
+    }
+
+    /**
+     * Add a card to your hand
+     */
+    addCard(id, name, url, canPlay) {
+        // add to stack
+        if(name in this.cardNameIndices) {
+            let index = this.cardNameIndices[name];
+            let cardStack = this.yourStacks[index];
+            cardStack.addCard(id);
+            this.cardIndices[id] = index;
+        }
+        else {
+            let index = this.yourStacks.length;
+            let cardStack = new CardStack(id, name, url, canPlay);
+            this.yourStacks.push(cardStack);
+            gui.cardScroller.items.push(new CardStackPanel(cardStack));
+            this.cardNameIndices[name] = index;
+            this.cardIndices[id] = index;
+        }
+    }
+
+    /**
+     * Loop through all stacks and remove stacks which empty
+     * Also recalculate the indices
+     */
+    clearEmptyStacks() {
+        this.cardIndices = {};
+        this.cardNameIndices = {};
+
+        let i = 0;
+        while(i < this.yourStacks.length) {
+            let cardStack = this.yourStacks[i];
+            if(cardStack.cardIds.length == 0) {
+                //delete
+                this.yourStacks.splice(i, 1);
+                gui.cardScroller.items.splice(i, 1);
+            }
+            else {
+                this.cardNameIndices[cardStack.name] = i;
+                for(let id of cardStack.cardIds) {
+                    this.cardIndices[id] = i;
+                }
+                i++;
+            }
+        }
     }
 
     animate(data) {
@@ -291,7 +326,7 @@ class Game {
 
     ask(question) {
         this.addEvent(new GameEvent(function() {
-            gui.popup = new QuestionWindow(question);
+            gui.popup = new OptionWindow(question);
         }));
 
     }

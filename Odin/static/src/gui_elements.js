@@ -64,12 +64,12 @@ class CardStackPanel {
         this.playallButton = new Button(CARD_WIDTH-4.5,3,1.5,"+ALL");
     }
 
-    draw(x,y,width,height) {
+    draw(x,y,allowClick) {
         let stackSize = this.cardStack.size();
 
         this.helpButton.draw(x+GUI_SCALE, y + (CARD_HEIGHT+1.5)*GUI_SCALE, true);
         this.playallButton.draw(x+GUI_SCALE*4.5, y + (CARD_HEIGHT+1.5)*GUI_SCALE, 
-            this.cardStack.allowedToPlay && !this.cardStack.pickOptionsSeparately);
+            this.cardStack.allowedToPlay && allowClick);
 
         if(stackSize == 0) return;
         //draw card
@@ -85,7 +85,7 @@ class CardStackPanel {
         }
 
         //draw transparent overlay if you aren't allowed to play
-        if(!this.cardStack.allowedToPlay) {
+        if(!this.cardStack.allowedToPlay || !allowClick) {
             ctx.drawImage(gui.transparentImage,
                 x+GUI_SCALE/2, y+GUI_SCALE/2,
                 GUI_SCALE*CARD_WIDTH, GUI_SCALE*CARD_HEIGHT);
@@ -98,7 +98,7 @@ class CardStackPanel {
         //clicked the card
         if(x > GUI_SCALE/2 && x<GUI_SCALE*CARD_WIDTH+GUI_SCALE/2 &&
                 y > GUI_SCALE/2 && y<GUI_SCALE*CARD_HEIGHT+GUI_SCALE/2) {
-            gui.play(this.cardStack);
+            if(this.cardStack.allowedToPlay) this.cardStack.playSingle();
             
         }
         //clicked the help button
@@ -109,7 +109,7 @@ class CardStackPanel {
         //clicked the play all button
         else if(x > GUI_SCALE*4.5 && x<GUI_SCALE*CARD_WIDTH &&
             y > GUI_SCALE*(CARD_HEIGHT+1.5) && y<GUI_SCALE*(CARD_HEIGHT+4.5) && !this.cardStack.pickOptionsSeparately) {
-            gui.playAllCards(this.cardStack);
+                if(this.cardStack.allowedToPlay) this.cardStack.playAll();
         }
     }
 
@@ -159,7 +159,7 @@ class ScrollArea {
     /**
      * Draw the scroll area
      */
-    draw() {
+    draw(allowClick=true) {
         let numItems = this.items.length;
         if(numItems<1) return;
 
@@ -181,7 +181,7 @@ class ScrollArea {
         if(this.location == 0) {
             x-=start;
             for(let item of this.items) {
-                item.draw(x,y,width,height);
+                item.draw(x,y,allowClick);
                 x+=width;
             }
         }
@@ -189,7 +189,7 @@ class ScrollArea {
             y-=start;
             for(let item of this.items) {
                 if(y>this.container.getBottom()) break;
-                if(y+height>this.container.getTop()) item.draw(x,y,width,height);
+                if(y+height>this.container.getTop()) item.draw(x,y,allowClick);
                 y+=height;
             }
         }
@@ -375,12 +375,14 @@ class ScrollArea {
         }
     }
 
-    release() {
+    release(allowClick) {
         if(this.clickPosition.x>0 || this.clickPosition.y > 0) {
             let height = this.itemHeight * GUI_SCALE;
             let x = mousePosition.x-this.container.getLeft();
             let y = this.location==0 ? mousePosition.y-this.container.getBottom()+height : mousePosition.y-this.container.getTop();
-            if(!this.dragging) {
+
+            //click on the item (only if allowed and not dragging)
+            if(!this.dragging && allowClick) {
                 let offset = this.getTotalWidth() * this.scrollOffset + this.getMinScroll();
                 let offsetX = this.location==0 ? x + offset : y + offset;
                 let width = this.location==0 ? this.itemWidth * GUI_SCALE : this.itemHeight * GUI_SCALE;
@@ -398,6 +400,7 @@ class ScrollArea {
                 }
             }
 
+            //scrolling speed when release
             if(this.dragging && this.dragTime > 0 && this.items.length > 0) {
                 let dx = this.location == 0 ?  x - this.clickPosition.x : y - this.clickPosition.y;
                 let dt = this.dragTime;

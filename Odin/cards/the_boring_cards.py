@@ -8,11 +8,12 @@ import random
 class NumberCard(AbstractCard):
     CARD_FREQUENCY = CardFrequency(2)
 
-    def prepare_card(self, player):
+    def prepare_card(self, player, allow_cancel):
         if len(self.game.planning_pile) == 0:
-            return
+            return True
         if hasattr(self.game.planning_pile[0], 'still_needs'):
             self.game.planning_pile[0].still_needs -= int(self.get_type())
+        return True
 
     def undo_prepare_card(self, player):
         if len(self.game.planning_pile) == 0:

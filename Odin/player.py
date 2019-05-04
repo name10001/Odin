@@ -91,9 +91,15 @@ class Player:
 
                 # do not change order
                 self.hand.remove_card(card)
-                card.prepare_card(self)
-                self.game.planning_pile.add_card(card)
-                self._cards_played_to_animate.append(card)
+                successful = card.prepare_card(self, True)
+
+                if successful:
+                    self.game.planning_pile.add_card(card)
+                    self._cards_played_to_animate.append(card)
+                else:
+                    # cancel
+                    card.undo_prepare_card(self)
+                    self.hand.add_card(card)
 
                 self._play_cards_stack.pop(index)
         finally:
@@ -177,10 +183,14 @@ class Player:
 
                 self._answer_event = event.Event()
                 question_answer = self._answer_event.wait()
-
+                
                 valid_answer = len(question_answer) == number_to_pick
                 for choice in question_answer:
-                    if choice not in self._question['options'] or (choice is None and allow_cancel is True):
+                    if choice is None and allow_cancel is True:
+                        valid_answer = True
+                        question_answer = None
+                        break
+                    if choice not in self._question['options']:
                         valid_answer = False
                         break
 
@@ -195,6 +205,9 @@ class Player:
             # - less options than the number to pick - eg -3 card when you've got 2 cards left
             question_answer = [option for option in options_as_dict]
 
+        if question_answer is None:
+            return None
+        
         if len(question_answer) == 1:
             return question_answer[0]
         else:
