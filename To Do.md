@@ -11,7 +11,7 @@ Here are all the tasks that are being planned
 ### Thomas:
 * Improve options menu
 * Show more card play/pickup animations
-* Fix ghost card
+* Fix ghost card slots appearing in your hand
 * Make indicators update after cards get played
 * Capatilist animation
 * Swap hand animation?
