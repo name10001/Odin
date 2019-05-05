@@ -228,7 +228,7 @@ class Game {
             this.yourTurn = true;
         }else {
             //another person's turn
-            this.turnString = this.players[index].name + "'s Turn";
+            this.turnString = this.players[this.turn].name + "'s Turn";
             this.yourTurn = false;
         }
 
@@ -315,6 +315,11 @@ class Game {
                     gui.animatePickup(data["cards"]);  // pickup cards from deck
                 }));
             }
+            else {
+                this.addEvent(new GameEvent(function() {
+                    gui.animatePickupFromPlayer(data["cards"], data["from"]); //pickup cards from another player
+                }));
+            }
             break;
         //PLAYER PICKUP
         case "player pickup":
@@ -323,12 +328,23 @@ class Game {
                     gui.animatePlayerPickup(data["player"], data["count"]);
                 }));
             }
+            else {
+                this.addEvent(new GameEvent(function() {
+                    gui.animatePlayerCardTransfer(data['from'], data["player"], data["count"]);
+                }));
+            }
             break;
         // REMOVE CARD
         case "remove cards":
-            this.addEvent(new GameEvent(function() {
-                gui.animateRemoveCards(data["cards"]);
-            }));
+            if(data["to"] == null) {
+                this.addEvent(new GameEvent(function() {
+                    gui.animateRemoveCards(data["cards"]);
+                }));
+            } else {
+                this.addEvent(new GameEvent(function() {
+                    gui.animateRemoveCardsToPlayer(data["cards"], data["to"]);
+                }));
+            }
             break;
         // PLAYER REMOVE CARD
         case "player remove cards":

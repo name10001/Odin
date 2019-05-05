@@ -185,9 +185,39 @@ class Game:
         """
         if isinstance(cards_from, Player):
             if isinstance(cards_to, Player):
-                # TODO have a separate animation for this (PLAYER TO PLAYER TRANSFER) - atm this goes to deck then to the player
-                self.animate_card_transfer(cards, cards_from=cards_from)
-                self.animate_card_transfer(cards, cards_to=cards_to)
+                # Player to player transfer
+                json_to_send = {  # remove
+                    "type": "remove cards",
+                    "to": cards_to.get_id(),
+                    "cards": [
+                        {
+                            "id": card.get_id(),
+                            "card image url": card.get_url()
+                        } for card in cards
+                    ]
+                }
+                cards_from.send_message("animate", json_to_send)
+                json_to_send = {  # pickup
+                    "type": "pickup",
+                    "from": cards_from.get_id(),
+                    "cards": [
+                        {
+                            "id": card.get_id(),
+                            "card image url": card.get_url()
+                        } for card in cards
+                    ]
+                }
+                cards_to.send_message("animate", json_to_send)
+                json_to_send = {  # everyone else
+                    "type": "player pickup",
+                    "from": cards_from.get_id(),
+                    "player": cards_to.get_id(),
+                    "count": len(cards)
+                }
+
+                for other_player in self.players:
+                    if other_player is not cards_from and other_player is not cards_to:
+                        other_player.send_message("animate", json_to_send)
             elif cards_to == "deck":
                 # REMOVE CARDS
                 json_to_send = {

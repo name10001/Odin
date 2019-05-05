@@ -514,6 +514,20 @@ class Gui {
             } : null);
     }
 
+    /**
+     * Animate removing cards from your hand
+     */
+    animateRemoveCardsToPlayer(cards, playerId) {
+        //cards from your hand to another player
+        let endPosition = this.getPlayerPosition(playerId);
+        
+        this.animateMoveCardsFromHand(cards, endPosition, 
+            function() {
+                game.clearEmptyStacks();
+                game.finishedEvent(); 
+            });
+    }
+
     animateMoveCardsFromHand(cards, endPosition, finishedFunction=null, cardPlaceFunction=null) {
         let wait = 0;
         let waitIncr = this.getCardWaitIncrement(cards.length);
@@ -634,10 +648,9 @@ class Gui {
     /**
      * Animate picking up cards
      */
-    animatePickup(cards) {
+    animatePickup(cards, startPosition=this.getDeckPosition()) {
         let wait = 0;
         let waitIncr = this.getCardWaitIncrement(cards.length);
-        let startPosition = this.getDeckPosition();
         let endPosition =  {x:canvas.width/2, y:this.getBottomY()+GUI_SCALE*3.5};
         
         let soundDisplacement = this.MIN_SOUND_DISPLACEMENT;
@@ -669,6 +682,13 @@ class Gui {
         }else game.finishedEvent();
         this.movingCards.reverse();
     }
+    /**
+     * Animate picking up cards from a player
+     */
+    animatePickupFromPlayer(cards, playerId) {
+        let startPosition = this.getPlayerPosition(playerId);
+        this.animatePickup(cards, startPosition);
+    }
 
     /**
      * Animate a player picking up cards
@@ -696,6 +716,15 @@ class Gui {
                 game.finishedEvent();
             }
         }else game.finishedEvent();
+        this.movingCards.reverse();
+    }
+
+    /**
+     * Animate a player giving a card to another player
+     */
+    animatePlayerCardTransfer(fromId, toId, nCards) {
+        console.log("Card from " + fromId + " to " + toId + ": " + nCards);
+        game.finishedEvent();
     }
 
     /**
