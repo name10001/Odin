@@ -10,12 +10,13 @@ Here are all the tasks that are being planned
 
 ### Thomas:
 * Improve options menu
-* Show more card play/pickup animations
+* Show thanos (genocide too?) animations for other people
 * Make indicators update after cards get played
+* "Your turn" messages and such
+* Orange cards and card redesigns
 * Capatilist animation
 * Swap hand animation?
 * Jesus Animation?
-* "Your turn" messages and such
 
 ## Future Tasks
 
