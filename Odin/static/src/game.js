@@ -233,6 +233,7 @@ class Game {
         }
 
         this.finishedEvent();
+        gui.shouldDraw = true;
     }
 
     /**

@@ -378,11 +378,13 @@ class Gui {
             //DRAW POPUP
             if(this.popup!=null) this.popup.draw();
         }
+        this.shouldDraw = false;
 
         //draw animation
-        if(this.currentAnimation!=null) this.currentAnimation.draw(dt);
-        
-        this.shouldDraw = false;
+        if(this.currentAnimation!=null) {
+            this.currentAnimation.draw(dt);
+            this.shouldDraw = true;
+        }
 
         //DRAW MOVING CARDS
         let cardIndex = 0;
