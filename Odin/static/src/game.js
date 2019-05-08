@@ -312,7 +312,7 @@ class Game {
         case "pickup":
             if(data["from"] == null) {
                 this.addEvent(new GameEvent(function() {
-                    gui.animatePickup(data["cards"]);  // pickup cards from deck
+                    gui.animatePickupFromDeck(data["cards"]);  // pickup cards from deck
                 }));
             }
             else {

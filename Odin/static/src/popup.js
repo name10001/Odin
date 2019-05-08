@@ -301,6 +301,7 @@ class OptionWindow {
         this.optionsScroller.setScrollSpeed(amount*0.07);
     }
     scroll(dt) {
+        if(this.optionsScroller.scrollSpeed != 0) gui.shouldDraw = true;
         this.optionsScroller.scroll(dt);
     }
 }

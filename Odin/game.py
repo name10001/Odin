@@ -192,6 +192,7 @@ class Game:
                     "cards": [
                         {
                             "id": card.get_id(),
+                            "name": card.get_name(),
                             "card image url": card.get_url()
                         } for card in cards
                     ]
@@ -203,6 +204,7 @@ class Game:
                     "cards": [
                         {
                             "id": card.get_id(),
+                            "name": card.get_name(),
                             "card image url": card.get_url()
                         } for card in cards
                     ]
@@ -226,6 +228,7 @@ class Game:
                     "cards": [
                         {
                             "id": card.get_id(),
+                            "name": card.get_name(),
                             "card image url": card.get_url()
                         } for card in cards
                     ]

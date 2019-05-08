@@ -44,7 +44,7 @@ class GreenZero(NumberCard):
 
 class PurpleZero(NumberCard):
     NAME = "Purple Zero"
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(0.5)
     CARD_COLOUR = "purple"
     CARD_TYPE = "0"
     CARD_IMAGE_URL = 'cards/0_purple.png'
@@ -441,7 +441,7 @@ class YellowNine(NumberCard):
 # ~~~~~~~~~~~~~~
 
 class SixtyNine(NumberCard):
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(1.2)
     CARD_TYPE = "69"
     EFFECT_DESCRIPTION = "A surprise ;)"
 
@@ -494,6 +494,7 @@ class GreenSixtyNine(SixtyNine):
 
 class PurpleSixtyNine(SixtyNine):
     NAME = "Purple Sixty Nine"
+    CARD_FREQUENCY = CardFrequency(0.6)
     CARD_COLOUR = "purple"
     CARD_IMAGE_URL = 'cards/69_purple.png'
 

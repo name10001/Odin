@@ -231,7 +231,7 @@ class CommunistAnimation {
 
         if(this.timeUntilDone <= 0) {
             gui.currentAnimation = null;
-            gui.animatePickup(this.yourCards);
+            gui.animatePickupFromDeck(this.yourCards);
         }
     }
 }
