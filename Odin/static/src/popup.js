@@ -160,6 +160,29 @@ class OptionItem {
     }
 }
 
+class CardOptionItem {
+    constructor(optionId, cardName, image) {
+        //this.card = card;
+        this.optionIds = [optionId];
+        this.cardName = cardName;
+        this.image = image;
+    }
+
+    addId(id) {
+        this.optionIds.push(id);
+    }
+
+    draw(x,y,allowClick) {
+        ctx.drawImage(this.image, x, y, GUI_SCALE * CARD_WIDTH, GUI_SCALE * CARD_HEIGHT);
+    }
+
+    click(x,y) {
+        game.pickOption(this.optionIds[0]);
+        gui.popup = null;
+        game.finishedEvent();
+    }
+}
+
 /**
  * Class for the options window
  */
@@ -215,8 +238,77 @@ class OptionWindow {
                 }
             }
         }
+        // CARDS
+        else if (this.optionType == "cards") {
+            this.scrollContainer = new Container();
+            this.scrollContainer.window = this;
+            this.getX = function() {return 0;}
+            this.getWidth = function() {return canvas.width;}
+            this.getHeight = function() {
+                return GUI_SCALE * CARD_HEIGHT * 3;
+            }
+            this.getY = function() {
+                return (canvas.height - this.getHeight())/2;
+            }
+            this.scrollContainer.getLeft = function() {
+                return 0;
+            }
+            this.scrollContainer.getRight = function() {
+                return canvas.width;
+            }
+            this.scrollContainer.getTop = function() {
+                return this.window.getY();
+            }
+            this.scrollContainer.getBottom = function() {
+                return this.window.getY() + this.window.getHeight() - GUI_SCALE;
+            }
+
+            //Create cards scroller
+            this.optionsScroller = new ScrollArea(this.scrollContainer, CARD_WIDTH+1,CARD_HEIGHT+1,3,0);
+            let items = [];
+            let cardStack = new CardOptionItem(null, null,)
+            for(let optionId of Object.keys(option["options"])) {
+                let cardName = option["options"][optionId];
+                if(cardStack.cardName == cardName) {
+                    cardStack.addId(optionId);
+                }
+                else {
+                    cardStack = new CardOptionItem(optionId, cardName, game.allCards[cardName].image);
+                    items.push(cardStack);
+                }
+
+            }
+            this.optionsScroller.setItems(items);
+            //click function
+            this.clickItems = function() {
+                this.optionsScroller.click();
+            }
+
+            //draw function
+            this.drawItems = function() {
+                //draw options box
+                this.optionsScroller.draw();
+            }
+
+            //ADD SCROLL FUNCTIONS
+            this.drag = function() {
+                this.optionsScroller.drag();
+
+            }
+            
+            this.release = function() {
+                this.optionsScroller.release(true);
+            }
+            this.wheel = function(amount) {
+                this.optionsScroller.setScrollSpeed(amount*0.07);
+            }
+            this.scroll = function(dt) {
+                if(this.optionsScroller.scrollSpeed != 0) gui.shouldDraw = true;
+                this.optionsScroller.scroll(dt);
+            }
+        }
         // VERTICAL SCROLL
-        else {    
+        else {
             this.scrollContainer = new Container();
             this.scrollContainer.window = this;
             this.scrollContainer.getLeft = function() {
@@ -308,6 +400,11 @@ class OptionWindow {
      * Draw the options window with specified dimensions
      */
     draw() {
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.globalAlpha = 1;
+
         let width = this.getWidth();
         let height = this.getHeight();
         let x = this.getX();
