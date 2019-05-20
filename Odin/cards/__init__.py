@@ -31,7 +31,7 @@ all_cards = [
     EA15, EA20, EA30, EA100,
     BlankBro, Happiness, Elevator, SwapCard, Jew,
     SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos, Odin, CopyCat,
-    ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, Nazi, 
+    ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, BlackHole, 
     ColourChooser, RedBlueSwapper, RedGreenSwapper, RedYellowSwapper, GreenBlueSwapper,
     BlueYellowSwapper, YellowGreenSwapper, BlackWhiteSwapper
 ]
@@ -96,7 +96,7 @@ category_indexes = (
         "index": 7
     },
     {
-        "colours": ('black', 'white'),
+        "colours": ('black', 'white', 'rainbow'),
         "types": (),
         "index": 8
     }

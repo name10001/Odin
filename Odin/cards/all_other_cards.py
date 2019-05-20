@@ -718,6 +718,7 @@ class DoJustly(AbstractCard):
     CARD_FREQUENCY = CardFrequency(1.2, starting=0, max_cards=4)
     CARD_TYPE = "Do Justly"
     CARD_COLOUR = "black"
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a card from your hand to give to another player of your choice."
     NUMBER_TO_GIVE = 1
 
@@ -780,23 +781,24 @@ class DoJustly3(DoJustly):
 # ~~~~~~~~~~~~~~
 
 
-class Nazi(AbstractCard):
+class BlackHole(AbstractCard):
     CARD_FREQUENCY = CardFrequency(0.5, starting=0, elevator=0, max_cards=1)
-    NAME = "Nazi"
-    CARD_TYPE = "Nazi"
-    CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'nazi.png'
+    NAME = "Black Hole"
+    CARD_TYPE = "Black Hole"
+    CARD_COLOUR = "black"
+    CARD_IMAGE_URL = 'black_hole.png'
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Allows you to place as many black cards as you like with this card on your turn."
-    COMPATIBILITY_DESCRIPTION = "Before play: This card is only compatible with white cards. " \
-                                "After play: Regular white card rules apply, such that it is compatible with " \
-                                "any red, green, yellow, blue, purple or white cards."
+    COMPATIBILITY_DESCRIPTION = "Before play: This card is only compatible with black cards. " \
+                                "After play: Regular black card rules apply, such that it is compatible with " \
+                                "any red, green, yellow, blue or black cards."
 
     def can_be_played_on(self, player, card):
         if player.is_turn() is False:
             return False
         if self.game.pickup != 0 and self.can_be_on_pickup() is False:
             return False
-        return card.get_colour() == "white"
+        return card.get_colour() == "black"
 
     def can_play_with(self, player, card, is_first_card):
         return card.get_type() == self.get_type() or card.get_colour() == "black"
@@ -1297,7 +1299,7 @@ class CopyCat(AbstractCard):
     CARD_IMAGE_URL = 'copy_cat.png'
     CARD_FREQUENCY = CardFrequency(3, 2, 1, 1, max_cards=3, starting=0, elevator=0)
     MULTI_COLOURED = False
-    CARD_COLOUR = "black"  # keep this as black, otherwise it shows up as Abstract in the genocide card
+    CARD_COLOUR = "rainbow"
     CARD_TYPE = "Copy Cat"
     EFFECT_DESCRIPTION = "When you play this card, it becomes whatever card " \
                          "it is placed on and all effects apply for that card."
@@ -1308,7 +1310,7 @@ class CopyCat(AbstractCard):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.copied = None
-        self.colour = "black"
+        self.colour = "rainbow"
         self.type = "Copy Cat"
 
     def can_be_played_on(self, player, card):
@@ -1414,7 +1416,7 @@ class ColourChooser(AbstractCard):
 class Elevator(AbstractCard):
     NAME = "Elevator"
     CARD_IMAGE_URL = 'elevator.png'
-    CARD_COLOUR = "black"
+    CARD_COLOUR = "rainbow"
     CARD_FREQUENCY = CardFrequency(2, starting=0, elevator=0)
     CARD_TYPE = "Elevator"
     EFFECT_DESCRIPTION = "Picks up a random card from the deck and plays it on top as if it was you."
@@ -1441,6 +1443,7 @@ class SwapCard(AbstractCard):
     NAME = "Swap Card"
     CARD_IMAGE_URL = 'swap_card.png'
     CARD_COLOUR = "black"
+    MULTI_COLOURED = False
     CARD_FREQUENCY = CardFrequency(2.2, max_cards=4, starting=0)
     CARD_TYPE = "Swap Card"
     EFFECT_DESCRIPTION = "Pick a card to give to a player of your choice. " \
@@ -1495,6 +1498,7 @@ class Jew(AbstractCard):
     CARD_COLOUR = "white"
     CARD_FREQUENCY = CardFrequency(1.7, max_cards=4, starting=0)
     CARD_TYPE = "Jew"
+    MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a card to steal from a player of your choice's hand"
 
     def play_card(self, player):
@@ -1612,19 +1616,6 @@ class ColourSwapper(AbstractCard):
     
     def get_url(self):
         return url_for('static', filename=self.url)
-
-    @staticmethod
-    def colours_are_compatible(colour_1, colour_2):
-        if colour_1 == colour_2:
-            return True
-        elif colour_1 == "white":
-            return colour_2 != "black"
-        elif colour_1 == "black":
-            return colour_2 != "white" and colour_2 != "purple"
-        elif colour_1 == "purple":
-            return colour_2 == "white"
-        else:
-            return colour_2 == "white" or colour_2 == "black"
 
 
 class RedBlueSwapper(ColourSwapper):
