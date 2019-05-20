@@ -1410,7 +1410,7 @@ class ColourChooser(AbstractCard):
         return self.colour
     
     def get_url(self):
-        return url_for('static', filename=self.url)
+        return url_for('static', filename="cards/" + self.url)
 
 
 class Elevator(AbstractCard):
@@ -1615,7 +1615,7 @@ class ColourSwapper(AbstractCard):
             or self.colours_are_compatible(card.get_colour(), self.COLOUR_2)
     
     def get_url(self):
-        return url_for('static', filename=self.url)
+        return url_for('static', filename="cards/" + self.url)
 
 
 class RedBlueSwapper(ColourSwapper):
