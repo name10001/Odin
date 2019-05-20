@@ -29,43 +29,43 @@ class Reverse(AbstractCard):
 class BlueReverse(Reverse):
     NAME = "Blue Reverse"
     CARD_COLOUR = "blue"
-    CARD_IMAGE_URL = 'cards/reverse_blue.png'
+    CARD_IMAGE_URL = 'reverse_blue.png'
 
 
 class GreenReverse(Reverse):
     NAME = "Green Reverse"
     CARD_COLOUR = "green"
-    CARD_IMAGE_URL = 'cards/reverse_green.png'
+    CARD_IMAGE_URL = 'reverse_green.png'
 
 
 class PurpleReverse(Reverse):
     NAME = "Purple Reverse"
     CARD_COLOUR = "purple"
-    CARD_IMAGE_URL = 'cards/reverse_purple.png'
+    CARD_IMAGE_URL = 'reverse_purple.png'
 
 
 class RedReverse(Reverse):
     NAME = "Red Reverse"
     CARD_COLOUR = "red"
-    CARD_IMAGE_URL = 'cards/reverse_red.png'
+    CARD_IMAGE_URL = 'reverse_red.png'
 
 
 class WhiteReverse(Reverse):
     NAME = "White Reverse"
     CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'cards/reverse_white.png'
+    CARD_IMAGE_URL = 'reverse_white.png'
 
 
 class BlackReverse(Reverse):
     NAME = "Black Reverse"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/reverse_wild.png'
+    CARD_IMAGE_URL = 'reverse_wild.png'
 
 
 class YellowReverse(Reverse):
     NAME = "Yellow Reverse"
     CARD_COLOUR = "yellow"
-    CARD_IMAGE_URL = 'cards/reverse_yellow.png'
+    CARD_IMAGE_URL = 'reverse_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -90,43 +90,43 @@ class Pickup2(AbstractCard):
 class BluePickup2(Pickup2):
     NAME = "Blue Pickup 2"
     CARD_COLOUR = "blue"
-    CARD_IMAGE_URL = 'cards/pickup2_blue.png'
+    CARD_IMAGE_URL = 'pickup2_blue.png'
 
 
 class GreenPickup2(Pickup2):
     NAME = "Green Pickup 2"
     CARD_COLOUR = "green"
-    CARD_IMAGE_URL = 'cards/pickup2_green.png'
+    CARD_IMAGE_URL = 'pickup2_green.png'
 
 
 class PurplePickup2(Pickup2):
     NAME = "Purple Pickup 2"
     CARD_COLOUR = "purple"
-    CARD_IMAGE_URL = 'cards/pickup2_purple.png'
+    CARD_IMAGE_URL = 'pickup2_purple.png'
 
 
 class RedPickup2(Pickup2):
     NAME = "Red Pickup 2"
     CARD_COLOUR = "red"
-    CARD_IMAGE_URL = 'cards/pickup2_red.png'
+    CARD_IMAGE_URL = 'pickup2_red.png'
 
 
 class WhitePickup2(Pickup2):
     NAME = "White Pickup 2"
     CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'cards/pickup2_white.png'
+    CARD_IMAGE_URL = 'pickup2_white.png'
 
 
 class BlackPickup2(Pickup2):
     NAME = "Black Pickup 2"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/pickup2_wild.png'
+    CARD_IMAGE_URL = 'pickup2_wild.png'
 
 
 class YellowPickup2(Pickup2):
     NAME = "Yellow Pickup 2"
     CARD_COLOUR = "yellow"
-    CARD_IMAGE_URL = 'cards/pickup2_yellow.png'
+    CARD_IMAGE_URL = 'pickup2_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -139,7 +139,7 @@ class Pickup10(AbstractCard):
     CARD_TYPE = "+10"
     NAME = "Pickup 10"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/pickup10_wild.png'
+    CARD_IMAGE_URL = 'pickup10_wild.png'
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 10 to the pickup chain value."
@@ -157,7 +157,7 @@ class Pickup100(AbstractCard):
     CARD_TYPE = "+100"
     NAME = "Pickup 100"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/pickup100_wild.png'
+    CARD_IMAGE_URL = 'pickup100_wild.png'
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 100 to the pickup chain value."
@@ -175,7 +175,7 @@ class Pickup4(AbstractCard):
     CARD_TYPE = "+4"
     NAME = "Pickup 4"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/pickup4_wild.png'
+    CARD_IMAGE_URL = 'pickup4_wild.png'
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 4 to the pickup chain value."
@@ -193,7 +193,7 @@ class PickupTimes2(AbstractCard):
     CARD_TYPE = "x2"
     NAME = "Pickup x2"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/multiply2_wild.png'
+    CARD_IMAGE_URL = 'multiply2_wild.png'
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "If a pickup chain is active, this card will double the pickup chain's value. " \
@@ -218,7 +218,7 @@ class PickupPower2(AbstractCard):
     CARD_TYPE = "x Squared"
     NAME = "Pickup x Squared"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/power2_wild.png'
+    CARD_IMAGE_URL = 'power2_wild.png'
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "If a pickup chain is active, this card will square the pickup chain's value. " \
@@ -247,7 +247,7 @@ class PickupFactorial(AbstractCard):
     CARD_TYPE = "Factorial"
     NAME = "Pickup Factorial"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/factorial.png'
+    CARD_IMAGE_URL = 'factorial.png'
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "If a pickup chain is active, this card will take the factorial of the pickup chain's value. "\
@@ -293,44 +293,44 @@ class Skip(AbstractCard):
 class BlueSkip(Skip):
     NAME = "Blue Skip"
     CARD_COLOUR = "blue"
-    CARD_IMAGE_URL = 'cards/skip_blue.png'
+    CARD_IMAGE_URL = 'skip_blue.png'
 
 
 class GreenSkip(Skip):
     NAME = "Green Skip"
     CARD_COLOUR = "green"
-    CARD_IMAGE_URL = 'cards/skip_green.png'
+    CARD_IMAGE_URL = 'skip_green.png'
 
 
 class PurpleSkip(Skip):
     NAME = "Purple Skip"
     CARD_COLOUR = "purple"
-    CARD_IMAGE_URL = 'cards/skip_purple.png'
+    CARD_IMAGE_URL = 'skip_purple.png'
 
 
 class RedSkip(Skip):
     NAME = "Red Skip"
     CARD_COLOUR = "red"
-    CARD_IMAGE_URL = 'cards/skip_red.png'
+    CARD_IMAGE_URL = 'skip_red.png'
 
 
 class WhiteSkip(Skip):
     NAME = "White Skip"
     CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'cards/skip_white.png'
+    CARD_IMAGE_URL = 'skip_white.png'
 
 
 class BlackSkip(Skip):
     NAME = "Black Skip"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/skip_wild.png'
+    CARD_IMAGE_URL = 'skip_wild.png'
     NUMBER_IN_DECK = 1
 
 
 class YellowSkip(Skip):
     NAME = "Yellow Skip"
     CARD_COLOUR = "yellow"
-    CARD_IMAGE_URL = 'cards/skip_yellow.png'
+    CARD_IMAGE_URL = 'skip_yellow.png'
 
 # ~~~~~~~~~~~~~~
 #    Blank
@@ -342,7 +342,7 @@ class BlankBro(AbstractCard):
     CARD_FREQUENCY = CardFrequency(4,4,6,12)
     CARD_TYPE = "Just A Blank Bro"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/black.png'
+    CARD_IMAGE_URL = 'black.png'
     MULTI_COLOURED = False
 
 
@@ -351,7 +351,7 @@ class Happiness(AbstractCard):
     CARD_FREQUENCY = CardFrequency(4,4,6,12)
     CARD_TYPE = "Happiness"
     CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'cards/white.png'
+    CARD_IMAGE_URL = 'white.png'
     MULTI_COLOURED = False
 
 
@@ -481,28 +481,28 @@ class EA(AbstractCard):
 class EA15(EA):
     CARD_FREQUENCY = CardFrequency(0.7, 1.5, starting=0, elevator=0)
     NAME = "EA $15"
-    CARD_IMAGE_URL = 'cards/ea_15.png'
+    CARD_IMAGE_URL = 'ea_15.png'
     NUMBER_NEEDED = 15
 
 
 class EA20(EA):
     CARD_FREQUENCY = CardFrequency(0.5, 0.7, 1, starting=0, elevator=0)
     NAME = "EA $20"
-    CARD_IMAGE_URL = 'cards/ea_20.png'
+    CARD_IMAGE_URL = 'ea_20.png'
     NUMBER_NEEDED = 20
 
 
 class EA30(EA):
     CARD_FREQUENCY = CardFrequency(0.25, 0.5, 1, starting=0, elevator=0)
     NAME = "EA $30"
-    CARD_IMAGE_URL = 'cards/ea_30.png'
+    CARD_IMAGE_URL = 'ea_30.png'
     NUMBER_NEEDED = 30
 
 
 class EA100(EA):
     CARD_FREQUENCY = CardFrequency(0, 0, 0.05, starting=0, elevator=0)
     NAME = "EA $100"
-    CARD_IMAGE_URL = 'cards/ea_100.png'
+    CARD_IMAGE_URL = 'ea_100.png'
     NUMBER_NEEDED = 100
 
 
@@ -527,31 +527,31 @@ class Fuck(AbstractCard):
 class BlueFuck(Fuck):
     NAME = "Fuckin' Blue M8"
     CARD_COLOUR = "blue"
-    CARD_IMAGE_URL = 'cards/fuck_blue.png'
+    CARD_IMAGE_URL = 'fuck_blue.png'
 
 
 class GreenFuck(Fuck):
     NAME = "Fuckin' Green M8"
     CARD_COLOUR = "green"
-    CARD_IMAGE_URL = 'cards/fuck_green.png'
+    CARD_IMAGE_URL = 'fuck_green.png'
 
 
 class RedFuck(Fuck):
     NAME = "Fuckin' Red M8"
     CARD_COLOUR = "red"
-    CARD_IMAGE_URL = 'cards/fuck_red.png'
+    CARD_IMAGE_URL = 'fuck_red.png'
 
 
 class BlackFuck(Fuck):
     NAME = "Fuckin' Black M8"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/fuck_black.png'
+    CARD_IMAGE_URL = 'fuck_black.png'
 
 
 class YellowFuck(Fuck):
     NAME = "Fuckin' Yellow M8"
     CARD_COLOUR = "yellow"
-    CARD_IMAGE_URL = 'cards/fuck_yellow.png'
+    CARD_IMAGE_URL = 'fuck_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -598,7 +598,7 @@ class AllOfSameColour(AbstractCard):
 class ManOfTheDay(AllOfSameColour):
     NAME = "Man Of The Day"
     CARD_COLOUR = "yellow"
-    CARD_IMAGE_URL = 'cards/man_of_the_day.png'
+    CARD_IMAGE_URL = 'man_of_the_day.png'
     CARD_TYPE = "Man Of The Day"
     EFFECT_DESCRIPTION = "Allows you to place as many yellow cards as you like with this card on your turn."
 
@@ -606,7 +606,7 @@ class ManOfTheDay(AllOfSameColour):
 class LadyOfTheNight(AllOfSameColour):
     NAME = "Lady Of The Night"
     CARD_COLOUR = "red"
-    CARD_IMAGE_URL = 'cards/lady_of_the_night.png'
+    CARD_IMAGE_URL = 'lady_of_the_night.png'
     CARD_TYPE = "Lady Of The Night"
     EFFECT_DESCRIPTION = "Allows you to place as many red cards as you like with this card on your turn."
 
@@ -614,7 +614,7 @@ class LadyOfTheNight(AllOfSameColour):
 class Smurf(AllOfSameColour):
     NAME = "Smurf"
     CARD_COLOUR = "blue"
-    CARD_IMAGE_URL = 'cards/smurf.png'
+    CARD_IMAGE_URL = 'smurf.png'
     CARD_TYPE = "Smurf"
     EFFECT_DESCRIPTION = "Allows you to place as many blue cards as you like with this card on your turn."
 
@@ -622,7 +622,7 @@ class Smurf(AllOfSameColour):
 class Creeper(AllOfSameColour):
     NAME = "Creeper"
     CARD_COLOUR = "green"
-    CARD_IMAGE_URL = 'cards/creeper.png'
+    CARD_IMAGE_URL = 'creeper.png'
     CARD_TYPE = "Creeper"
     EFFECT_DESCRIPTION = "Allows you to place as many green cards as you like with this card on your turn."
 
@@ -630,7 +630,7 @@ class Creeper(AllOfSameColour):
 class FilthySharon(AllOfSameColour):
     NAME = "Filthy Sharon"
     CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'cards/filthy_sharon.png'
+    CARD_IMAGE_URL = 'filthy_sharon.png'
     CARD_TYPE = "Filthy Sharon"
     PICK_NUMBERS = False
     EFFECT_DESCRIPTION = "Allows you to place as many white cards as you like with this card on your turn."
@@ -686,32 +686,32 @@ class TrashCard(AbstractCard):
 class BlueTrash(TrashCard):
     NAME = "Blue Trash"
     CARD_COLOUR = "blue"
-    CARD_IMAGE_URL = "cards/trash_blue.png"
+    CARD_IMAGE_URL = "trash_blue.png"
 
 
 class GreenTrash(TrashCard):
     NAME = "Green Trash"
     CARD_COLOUR = "green"
-    CARD_IMAGE_URL = "cards/trash_green.png"
+    CARD_IMAGE_URL = "trash_green.png"
 
 
 class RedTrash(TrashCard):
     NAME = "Red Trash"
     CARD_COLOUR = "red"
-    CARD_IMAGE_URL = "cards/trash_red.png"
+    CARD_IMAGE_URL = "trash_red.png"
 
 
 class YellowTrash(TrashCard):
     NAME = "Yellow Trash"
     CARD_COLOUR = "yellow"
-    CARD_IMAGE_URL = "cards/trash_yellow.png"
+    CARD_IMAGE_URL = "trash_yellow.png"
 
 
 class BlackTrash(TrashCard):
     NUMBER_TO_REMOVE = 1  # TODO: change to 3 once client supports more than 1 answer
     NAME = "Black Trash"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = "cards/trash_wild.png"
+    CARD_IMAGE_URL = "trash_wild.png"
 
 
 class DoJustly(AbstractCard):
@@ -765,14 +765,14 @@ class DoJustly(AbstractCard):
 class DoJustly1(DoJustly):
     NAME = "Do Justly -1"
     NUMBER_TO_GIVE = 1
-    CARD_IMAGE_URL = "cards/do_justly_1.png"
+    CARD_IMAGE_URL = "do_justly_1.png"
 
 
 class DoJustly3(DoJustly):
     NAME = "Do Justly -3"
     NUMBER_TO_GIVE = 1  # TODO: change to 3 once client supports more than 1 answer
     EFFECT_DESCRIPTION = "Choose 3 cards from your hand to give to another player of your choice."
-    CARD_IMAGE_URL = "cards/do_justly_3.png"
+    CARD_IMAGE_URL = "do_justly_3.png"
 
 
 # ~~~~~~~~~~~~~~
@@ -785,7 +785,7 @@ class Nazi(AbstractCard):
     NAME = "Nazi"
     CARD_TYPE = "Nazi"
     CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'cards/nazi.png'
+    CARD_IMAGE_URL = 'nazi.png'
     EFFECT_DESCRIPTION = "Allows you to place as many black cards as you like with this card on your turn."
     COMPATIBILITY_DESCRIPTION = "Before play: This card is only compatible with white cards. " \
                                 "After play: Regular white card rules apply, such that it is compatible with " \
@@ -807,7 +807,7 @@ class AtomicBomb(AbstractCard):
     NAME = "Atomic Bomb"
     CARD_TYPE = "Atomic Bomb"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = "cards/explosion.png"
+    CARD_IMAGE_URL = "explosion.png"
     PICKUP_CARDS = ["Atomic Bomb", "^2", "+2", "+4", "+10", "+100", "x2",
                     "x Squared", "Factorial", "Plus", "Fuck You", "Copy Cat", "Pawn"]
     CAN_BE_ON_PICKUP = True
@@ -821,7 +821,7 @@ class AtomicBomb(AbstractCard):
 class Pawn(AbstractCard):
     NAME = "Pawn"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/pawn.png'
+    CARD_IMAGE_URL = 'pawn.png'
     CARD_FREQUENCY = CardFrequency(0.5, starting=0, elevator=0, max_cards=1)
     CARD_TYPE = "Pawn"
     CAN_BE_ON_PICKUP = True
@@ -854,7 +854,7 @@ class Pawn(AbstractCard):
 class Communist(AbstractCard):
     NAME = "Communist"
     CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'cards/communist.png'
+    CARD_IMAGE_URL = 'communist.png'
     CARD_FREQUENCY = CardFrequency(0, 0.8, 0.5, 0.1, starting=0, max_cards=1)
     CARD_TYPE = "Communist"
     MULTI_COLOURED = False
@@ -900,7 +900,7 @@ class Communist(AbstractCard):
 class Capitalist(AbstractCard):
     NAME = "Capitalist"
     CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'cards/capitalist.png'
+    CARD_IMAGE_URL = 'capitalist.png'
     CARD_FREQUENCY = CardFrequency(1, 0.8, 0.4, 0, starting=0, max_cards=2)
     CARD_TYPE = "Capitalist"
     MULTI_COLOURED = False
@@ -925,7 +925,7 @@ class Capitalist(AbstractCard):
 class SwapHand(AbstractCard):
     NAME = "Swap Hand"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/swap_hand.png'
+    CARD_IMAGE_URL = 'swap_hand.png'
     CARD_FREQUENCY = CardFrequency(0, 0.6, 0.3, starting=0, max_cards=1)
     CARD_TYPE = "Swap Hand"
     MULTI_COLOURED = False
@@ -964,7 +964,7 @@ class SwapHand(AbstractCard):
 class FeelingBlue(AbstractCard):
     NAME = "Feeling Blue"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/feeling_blue.png'
+    CARD_IMAGE_URL = 'feeling_blue.png'
     CARD_FREQUENCY = CardFrequency(1.5, starting=0, max_cards=3)
     CARD_TYPE = "Feeling Blue"
     MULTI_COLOURED = False
@@ -978,7 +978,7 @@ class FeelingBlue(AbstractCard):
 class Plus(AbstractCard):
     NAME = "Plus"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/plus_wild.png'
+    CARD_IMAGE_URL = 'plus_wild.png'
     CARD_FREQUENCY = CardFrequency(0.75, 0.75, 0.5, 0.25, starting=0)
     CARD_TYPE = "Plus"
     CAN_BE_ON_PICKUP = True
@@ -1034,7 +1034,7 @@ class Plus(AbstractCard):
 class FuckYou(AbstractCard):
     NAME = "Fuck You"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/fuck_you.png'
+    CARD_IMAGE_URL = 'fuck_you.png'
     CARD_FREQUENCY = CardFrequency(2, 1.5, 1, 0.15, starting=0)
     CARD_TYPE = "Fuck You"
     CAN_BE_ON_PICKUP = True
@@ -1111,7 +1111,7 @@ class FuckYou(AbstractCard):
 class Genocide(AbstractCard):
     NAME = "Genocide"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/genocide.png'
+    CARD_IMAGE_URL = 'genocide.png'
     CARD_FREQUENCY = CardFrequency(0.5, max_cards=4, starting=0)
     MULTI_COLOURED = False
     CARD_TYPE = "Genocide"
@@ -1185,7 +1185,7 @@ class Genocide(AbstractCard):
 class Jesus(AbstractCard):
     NAME = "Jesus"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/jesus.png'
+    CARD_IMAGE_URL = 'jesus.png'
     CARD_FREQUENCY = CardFrequency(1.2, 1, 0.5, 0.7, max_cards=2, starting=0)
     CARD_TYPE = "Jesus"
     MULTI_COLOURED = False
@@ -1222,7 +1222,7 @@ class FreeTurn(AbstractCard):
     CARD_TYPE = "Free Turn"
     NAME = "Free Turn"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/free_turn.png'
+    CARD_IMAGE_URL = 'free_turn.png'
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Gain an extra turn. If you play multiple Free Turn cards together " \
@@ -1239,7 +1239,7 @@ class FreeTurn(AbstractCard):
 class Odin(AbstractCard):
     NAME = "Odin"
     CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'cards/back.png'
+    CARD_IMAGE_URL = 'back.png'
     CARD_FREQUENCY = CardFrequency(1, max_cards=1, starting=0, elevator=0)
     CARD_TYPE = "Odin"
     MULTI_COLOURED = False
@@ -1260,7 +1260,7 @@ class Odin(AbstractCard):
 class Thanos(AbstractCard):
     NAME = "Thanos"
     CARD_COLOUR = "purple"
-    CARD_IMAGE_URL = 'cards/thanos.png'
+    CARD_IMAGE_URL = 'thanos.png'
     CARD_FREQUENCY = CardFrequency(0, 0.5, 1.2, 1.2, max_cards=3, starting=0)
     CARD_TYPE = "Thanos"
     MULTI_COLOURED = False
@@ -1294,7 +1294,7 @@ class Thanos(AbstractCard):
 
 class CopyCat(AbstractCard):
     NAME = "Copy Cat"
-    CARD_IMAGE_URL = 'cards/copy_cat.png'
+    CARD_IMAGE_URL = 'copy_cat.png'
     CARD_FREQUENCY = CardFrequency(3, 2, 1, 1, max_cards=3, starting=0, elevator=0)
     MULTI_COLOURED = False
     CARD_COLOUR = "black"  # keep this as black, otherwise it shows up as Abstract in the genocide card
@@ -1357,15 +1357,15 @@ class CopyCat(AbstractCard):
 
 class ColourChooser(AbstractCard):
     NAME = "Colour Chooser"
-    CARD_IMAGE_URL = 'cards/color_swapper.png'
+    CARD_IMAGE_URL = 'color_swapper.png'
     CARD_COLOUR = "black"
     CARD_FREQUENCY = CardFrequency(2, max_cards=4, starting=0, elevator=2)
     CARD_TYPE = "Colour Chooser"
     EFFECT_DESCRIPTION = "Allows you to change the colour to any of the 4 given colours: red, green, yellow or blue."
     COMPATIBILITY_DESCRIPTION = "Before play: Regular black card, compatible with any black, red, green, blue or " \
                                 "yellow cards. After play: Compatible any cards of the colour picked and black cards."
-    ADDITIONAL_URLS = ['cards/choose_yellow.png', 'cards/choose_blue.png',
-                       'cards/choose_red.png', 'cards/choose_green.png']
+    ADDITIONAL_URLS = ['choose_yellow.png', 'choose_blue.png',
+                       'choose_red.png', 'choose_green.png']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1397,7 +1397,7 @@ class ColourChooser(AbstractCard):
             return False
 
         self.colour = option
-        self.url = 'cards/choose_' + option + '.png'
+        self.url = 'choose_' + option + '.png'
         return True
 
     def undo_prepare_card(self, player):
@@ -1413,7 +1413,7 @@ class ColourChooser(AbstractCard):
 
 class Elevator(AbstractCard):
     NAME = "Elevator"
-    CARD_IMAGE_URL = 'cards/elevator.png'
+    CARD_IMAGE_URL = 'elevator.png'
     CARD_COLOUR = "black"
     CARD_FREQUENCY = CardFrequency(2, starting=0, elevator=0)
     CARD_TYPE = "Elevator"
@@ -1439,7 +1439,7 @@ class Elevator(AbstractCard):
 
 class SwapCard(AbstractCard):
     NAME = "Swap Card"
-    CARD_IMAGE_URL = 'cards/swap_card.png'
+    CARD_IMAGE_URL = 'swap_card.png'
     CARD_COLOUR = "black"
     CARD_FREQUENCY = CardFrequency(2.2, max_cards=4, starting=0)
     CARD_TYPE = "Swap Card"
@@ -1491,7 +1491,7 @@ class SwapCard(AbstractCard):
 
 class Jew(AbstractCard):
     NAME = "Jew"
-    CARD_IMAGE_URL = 'cards/jew.png'
+    CARD_IMAGE_URL = 'jew.png'
     CARD_COLOUR = "white"
     CARD_FREQUENCY = CardFrequency(1.7, max_cards=4, starting=0)
     CARD_TYPE = "Jew"
@@ -1588,7 +1588,7 @@ class ColourSwapper(AbstractCard):
                 return False
             
             self.colour = colour
-        self.url = 'cards/switch_' + self.colour + '.png'
+        self.url = 'switch_' + self.colour + '.png'
         return True
     
     def undo_prepare_card(self, player):
@@ -1629,42 +1629,42 @@ class ColourSwapper(AbstractCard):
 
 class RedBlueSwapper(ColourSwapper):
     NAME = "Red/Blue Colour Swapper"
-    CARD_IMAGE_URL = 'cards/blue_red.png'
+    CARD_IMAGE_URL = 'blue_red.png'
     COLOUR_1 = "red"
     COLOUR_2 = "blue"
 
 
 class RedYellowSwapper(ColourSwapper):
     NAME = "Red/Yellow Colour Swapper"
-    CARD_IMAGE_URL = 'cards/red_yellow.png'
+    CARD_IMAGE_URL = 'red_yellow.png'
     COLOUR_1 = "red"
     COLOUR_2 = "yellow"
 
 
 class RedGreenSwapper(ColourSwapper):
     NAME = "Red/Green Colour Swapper"
-    CARD_IMAGE_URL = 'cards/green_red.png'
+    CARD_IMAGE_URL = 'green_red.png'
     COLOUR_1 = "red"
     COLOUR_2 = "green"
 
 
 class GreenBlueSwapper(ColourSwapper):
     NAME = "Green/Blue Colour Swapper"
-    CARD_IMAGE_URL = 'cards/green_blue.png'
+    CARD_IMAGE_URL = 'green_blue.png'
     COLOUR_1 = "green"
     COLOUR_2 = "blue"
 
 
 class BlueYellowSwapper(ColourSwapper):
     NAME = "Yellow/Blue Colour Swapper"
-    CARD_IMAGE_URL = 'cards/yellow_blue.png'
+    CARD_IMAGE_URL = 'yellow_blue.png'
     COLOUR_1 = "yellow"
     COLOUR_2 = "blue"
 
 
 class YellowGreenSwapper(ColourSwapper):
     NAME = "Yellow/Green Colour Swapper"
-    CARD_IMAGE_URL = 'cards/green_yellow.png'
+    CARD_IMAGE_URL = 'green_yellow.png'
     COLOUR_1 = "yellow"
     COLOUR_2 = "green"
 
@@ -1672,13 +1672,13 @@ class YellowGreenSwapper(ColourSwapper):
 class BlackWhiteSwapper(ColourSwapper):
     NAME = "Black/White Colour Swapper"
     CARD_FREQUENCY = CardFrequency(1.2, starting=0, elevator=0.6)
-    CARD_IMAGE_URL = 'cards/black_white.png'
+    CARD_IMAGE_URL = 'black_white.png'
     COLOUR_1 = "black"
     COLOUR_2 = "white"
     COMPATIBILITY_DESCRIPTION = "Before play: Compatible with all colours. " \
                                 "After play: Depends on the colour you selected. Black is compatible with any red, " \
                                 "blue, green, yellow and black cards. " \
                                 "White is compatible with any red, blue, green, yellow, purple and white cards. "
-    ADDITIONAL_URLS = ['cards/switch_black.png', 'cards/switch_white.png', 'cards/switch_red.png',
-                       'cards/switch_yellow.png', 'cards/switch_green.png', 'cards/switch_blue.png']
+    ADDITIONAL_URLS = ['switch_black.png', 'switch_white.png', 'switch_red.png',
+                       'switch_yellow.png', 'switch_green.png', 'switch_blue.png']
 

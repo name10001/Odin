@@ -9,7 +9,16 @@ class CardFrequency:
 
     # Frequency is automatically set to zero if you have at least max_cards of this card in your hand
 
-    def __init__(self, small_hand, medium_hand=None, large_hand=None, massive_hand=None, starting=None, elevator=None, max_cards=None):
+    def __init__(
+            self,
+            small_hand,
+            medium_hand=None,
+            large_hand=None,
+            massive_hand=None,
+            starting=None,
+            elevator=None,
+            max_cards=None
+    ):
         """
         Card Frequency.
         If you call CardFrequency(n), then all frequencies will be set n,
@@ -17,6 +26,13 @@ class CardFrequency:
         You can also specify a max_cards, where you will no longer be able to
         randomly draw this card if you have at least the max number of cards of that type.
         Set to None if you are allowed to draw as many cards as you like
+        :param small_hand:
+        :param medium_hand:
+        :param large_hand:
+        :param massive_hand:
+        :param starting:
+        :param elevator:
+        :param max_cards:
         """
         self.small_hand = small_hand
 
@@ -51,6 +67,10 @@ class CardFrequency:
         """
         Get the weight of this card in the deck, given you have n_cards in your hand
         and n_this_type of this type of card
+        :param n_cards:
+        :param n_this_type:
+        :param ignore_limit:
+        :return:
         """
         if ignore_limit is False and self.max_cards is not None and n_this_type >= self.max_cards:
             return 0

@@ -31,7 +31,7 @@ class BlueZero(NumberCard):
     CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "blue"
     CARD_TYPE = "0"
-    CARD_IMAGE_URL = 'cards/0_blue.png'
+    CARD_IMAGE_URL = '0_blue.png'
 
 
 class GreenZero(NumberCard):
@@ -39,7 +39,7 @@ class GreenZero(NumberCard):
     CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "green"
     CARD_TYPE = "0"
-    CARD_IMAGE_URL = 'cards/0_green.png'
+    CARD_IMAGE_URL = '0_green.png'
 
 
 class PurpleZero(NumberCard):
@@ -47,7 +47,7 @@ class PurpleZero(NumberCard):
     CARD_FREQUENCY = CardFrequency(0.5)
     CARD_COLOUR = "purple"
     CARD_TYPE = "0"
-    CARD_IMAGE_URL = 'cards/0_purple.png'
+    CARD_IMAGE_URL = '0_purple.png'
 
 
 class RedZero(NumberCard):
@@ -55,7 +55,7 @@ class RedZero(NumberCard):
     CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "red"
     CARD_TYPE = "0"
-    CARD_IMAGE_URL = 'cards/0_red.png'
+    CARD_IMAGE_URL = '0_red.png'
 
 
 class YellowZero(NumberCard):
@@ -63,7 +63,7 @@ class YellowZero(NumberCard):
     CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "yellow"
     CARD_TYPE = "0"
-    CARD_IMAGE_URL = 'cards/0_yellow.png'
+    CARD_IMAGE_URL = '0_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -75,14 +75,14 @@ class BlueOne(NumberCard):
     NAME = "Blue One"
     CARD_COLOUR = "blue"
     CARD_TYPE = "1"
-    CARD_IMAGE_URL = 'cards/1_blue.png'
+    CARD_IMAGE_URL = '1_blue.png'
 
 
 class GreenOne(NumberCard):
     NAME = "Green One"
     CARD_COLOUR = "green"
     CARD_TYPE = "1"
-    CARD_IMAGE_URL = 'cards/1_green.png'
+    CARD_IMAGE_URL = '1_green.png'
 
 
 class PurpleOne(NumberCard):
@@ -90,21 +90,21 @@ class PurpleOne(NumberCard):
     CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "1"
-    CARD_IMAGE_URL = 'cards/1_purple.png'
+    CARD_IMAGE_URL = '1_purple.png'
 
 
 class RedOne(NumberCard):
     NAME = "Red One"
     CARD_COLOUR = "red"
     CARD_TYPE = "1"
-    CARD_IMAGE_URL = 'cards/1_red.png'
+    CARD_IMAGE_URL = '1_red.png'
 
 
 class YellowOne(NumberCard):
     NAME = "Yellow One"
     CARD_COLOUR = "yellow"
     CARD_TYPE = "1"
-    CARD_IMAGE_URL = 'cards/1_yellow.png'
+    CARD_IMAGE_URL = '1_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -116,14 +116,14 @@ class BlueTwo(NumberCard):
     NAME = "Blue Two"
     CARD_COLOUR = "blue"
     CARD_TYPE = "2"
-    CARD_IMAGE_URL = 'cards/2_blue.png'
+    CARD_IMAGE_URL = '2_blue.png'
 
 
 class GreenTwo(NumberCard):
     NAME = "Green Two"
     CARD_COLOUR = "green"
     CARD_TYPE = "2"
-    CARD_IMAGE_URL = 'cards/2_green.png'
+    CARD_IMAGE_URL = '2_green.png'
 
 
 class PurpleTwo(NumberCard):
@@ -131,21 +131,21 @@ class PurpleTwo(NumberCard):
     CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "2"
-    CARD_IMAGE_URL = 'cards/2_purple.png'
+    CARD_IMAGE_URL = '2_purple.png'
 
 
 class RedTwo(NumberCard):
     NAME = "Red Two"
     CARD_COLOUR = "red"
     CARD_TYPE = "2"
-    CARD_IMAGE_URL = 'cards/2_red.png'
+    CARD_IMAGE_URL = '2_red.png'
 
 
 class YellowTwo(NumberCard):
     NAME = "Yellow Two"
     CARD_COLOUR = "yellow"
     CARD_TYPE = "2"
-    CARD_IMAGE_URL = 'cards/2_yellow.png'
+    CARD_IMAGE_URL = '2_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -157,14 +157,14 @@ class BlueThree(NumberCard):
     NAME = "Blue Three"
     CARD_COLOUR = "blue"
     CARD_TYPE = "3"
-    CARD_IMAGE_URL = 'cards/3_blue.png'
+    CARD_IMAGE_URL = '3_blue.png'
 
 
 class GreenThree(NumberCard):
     NAME = "Green Three"
     CARD_COLOUR = "green"
     CARD_TYPE = "3"
-    CARD_IMAGE_URL = 'cards/3_green.png'
+    CARD_IMAGE_URL = '3_green.png'
 
 
 class PurpleThree(NumberCard):
@@ -172,7 +172,7 @@ class PurpleThree(NumberCard):
     CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "3"
-    CARD_IMAGE_URL = 'cards/3_purple.png'
+    CARD_IMAGE_URL = '3_purple.png'
 
 
 class RedThree(NumberCard):
@@ -180,14 +180,14 @@ class RedThree(NumberCard):
     
     CARD_COLOUR = "red"
     CARD_TYPE = "3"
-    CARD_IMAGE_URL = 'cards/3_red.png'
+    CARD_IMAGE_URL = '3_red.png'
 
 
 class YellowThree(NumberCard):
     NAME = "Yellow Three"
     CARD_COLOUR = "yellow"
     CARD_TYPE = "3"
-    CARD_IMAGE_URL = 'cards/3_yellow.png'
+    CARD_IMAGE_URL = '3_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -199,14 +199,14 @@ class BlueFour(NumberCard):
     NAME = "Blue Four"
     CARD_COLOUR = "blue"
     CARD_TYPE = "4"
-    CARD_IMAGE_URL = 'cards/4_blue.png'
+    CARD_IMAGE_URL = '4_blue.png'
 
 
 class GreenFour(NumberCard):
     NAME = "Green Four"
     CARD_COLOUR = "green"
     CARD_TYPE = "4"
-    CARD_IMAGE_URL = 'cards/4_green.png'
+    CARD_IMAGE_URL = '4_green.png'
 
 
 class PurpleFour(NumberCard):
@@ -214,21 +214,21 @@ class PurpleFour(NumberCard):
     CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "4"
-    CARD_IMAGE_URL = 'cards/4_purple.png'
+    CARD_IMAGE_URL = '4_purple.png'
 
 
 class RedFour(NumberCard):
     NAME = "Red Four"
     CARD_COLOUR = "red"
     CARD_TYPE = "4"
-    CARD_IMAGE_URL = 'cards/4_red.png'
+    CARD_IMAGE_URL = '4_red.png'
 
 
 class YellowFour(NumberCard):
     NAME = "Yellow Four"
     CARD_COLOUR = "yellow"
     CARD_TYPE = "4"
-    CARD_IMAGE_URL = 'cards/4_yellow.png'
+    CARD_IMAGE_URL = '4_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -240,14 +240,14 @@ class BlueFive(NumberCard):
     NAME = "Blue Five"
     CARD_COLOUR = "blue"
     CARD_TYPE = "5"
-    CARD_IMAGE_URL = 'cards/5_blue.png'
+    CARD_IMAGE_URL = '5_blue.png'
 
 
 class GreenFive(NumberCard):
     NAME = "Green Five"
     CARD_COLOUR = "green"
     CARD_TYPE = "5"
-    CARD_IMAGE_URL = 'cards/5_green.png'
+    CARD_IMAGE_URL = '5_green.png'
 
 
 class PurpleFive(NumberCard):
@@ -255,21 +255,21 @@ class PurpleFive(NumberCard):
     CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "5"
-    CARD_IMAGE_URL = 'cards/5_purple.png'
+    CARD_IMAGE_URL = '5_purple.png'
 
 
 class RedFive(NumberCard):
     NAME = "Red Five"
     CARD_COLOUR = "red"
     CARD_TYPE = "5"
-    CARD_IMAGE_URL = 'cards/5_red.png'
+    CARD_IMAGE_URL = '5_red.png'
 
 
 class YellowFive(NumberCard):
     NAME = "Yellow Five"
     CARD_COLOUR = "yellow"
     CARD_TYPE = "5"
-    CARD_IMAGE_URL = 'cards/5_yellow.png'
+    CARD_IMAGE_URL = '5_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -281,14 +281,14 @@ class BlueSix(NumberCard):
     NAME = "Blue Six"
     CARD_COLOUR = "blue"
     CARD_TYPE = "6"
-    CARD_IMAGE_URL = 'cards/6_blue.png'
+    CARD_IMAGE_URL = '6_blue.png'
 
 
 class GreenSix(NumberCard):
     NAME = "Green Six"
     CARD_COLOUR = "green"
     CARD_TYPE = "6"
-    CARD_IMAGE_URL = 'cards/6_green.png'
+    CARD_IMAGE_URL = '6_green.png'
 
 
 class PurpleSix(NumberCard):
@@ -296,21 +296,21 @@ class PurpleSix(NumberCard):
     CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "6"
-    CARD_IMAGE_URL = 'cards/6_purple.png'
+    CARD_IMAGE_URL = '6_purple.png'
 
 
 class RedSix(NumberCard):
     NAME = "Red Six"
     CARD_COLOUR = "red"
     CARD_TYPE = "6"
-    CARD_IMAGE_URL = 'cards/6_red.png'
+    CARD_IMAGE_URL = '6_red.png'
 
 
 class YellowSix(NumberCard):
     NAME = "Yellow Six"
     CARD_COLOUR = "yellow"
     CARD_TYPE = "6"
-    CARD_IMAGE_URL = 'cards/6_yellow.png'
+    CARD_IMAGE_URL = '6_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -322,14 +322,14 @@ class BlueSeven(NumberCard):
     NAME = "Blue Seven"
     CARD_COLOUR = "blue"
     CARD_TYPE = "7"
-    CARD_IMAGE_URL = 'cards/7_blue.png'
+    CARD_IMAGE_URL = '7_blue.png'
 
 
 class GreenSeven(NumberCard):
     NAME = "Green Seven"
     CARD_COLOUR = "green"
     CARD_TYPE = "7"
-    CARD_IMAGE_URL = 'cards/7_green.png'
+    CARD_IMAGE_URL = '7_green.png'
 
 
 class PurpleSeven(NumberCard):
@@ -337,21 +337,21 @@ class PurpleSeven(NumberCard):
     CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "7"
-    CARD_IMAGE_URL = 'cards/7_purple.png'
+    CARD_IMAGE_URL = '7_purple.png'
 
 
 class RedSeven(NumberCard):
     NAME = "Red Seven"
     CARD_COLOUR = "red"
     CARD_TYPE = "7"
-    CARD_IMAGE_URL = 'cards/7_red.png'
+    CARD_IMAGE_URL = '7_red.png'
 
 
 class YellowSeven(NumberCard):
     NAME = "Yellow Seven"
     CARD_COLOUR = "yellow"
     CARD_TYPE = "7"
-    CARD_IMAGE_URL = 'cards/7_yellow.png'
+    CARD_IMAGE_URL = '7_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -363,14 +363,14 @@ class BlueEight(NumberCard):
     NAME = "Blue Eight"
     CARD_COLOUR = "blue"
     CARD_TYPE = "8"
-    CARD_IMAGE_URL = 'cards/8_blue.png'
+    CARD_IMAGE_URL = '8_blue.png'
 
 
 class GreenEight(NumberCard):
     NAME = "Green Eight"
     CARD_COLOUR = "green"
     CARD_TYPE = "8"
-    CARD_IMAGE_URL = 'cards/8_green.png'
+    CARD_IMAGE_URL = '8_green.png'
 
 
 class PurpleEight(NumberCard):
@@ -378,21 +378,21 @@ class PurpleEight(NumberCard):
     CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "8"
-    CARD_IMAGE_URL = 'cards/8_purple.png'
+    CARD_IMAGE_URL = '8_purple.png'
 
 
 class RedEight(NumberCard):
     NAME = "Red Eight"
     CARD_COLOUR = "red"
     CARD_TYPE = "8"
-    CARD_IMAGE_URL = 'cards/8_red.png'
+    CARD_IMAGE_URL = '8_red.png'
 
 
 class YellowEight(NumberCard):
     NAME = "Yellow Eight"
     CARD_COLOUR = "yellow"
     CARD_TYPE = "8"
-    CARD_IMAGE_URL = 'cards/8_yellow.png'
+    CARD_IMAGE_URL = '8_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
@@ -404,14 +404,14 @@ class BlueNine(NumberCard):
     NAME = "Blue Nine"
     CARD_COLOUR = "blue"
     CARD_TYPE = "9"
-    CARD_IMAGE_URL = 'cards/9_blue.png'
+    CARD_IMAGE_URL = '9_blue.png'
 
 
 class GreenNine(NumberCard):
     NAME = "Green Nine"
     CARD_COLOUR = "green"
     CARD_TYPE = "9"
-    CARD_IMAGE_URL = 'cards/9_green.png'
+    CARD_IMAGE_URL = '9_green.png'
 
 
 class PurpleNine(NumberCard):
@@ -419,26 +419,27 @@ class PurpleNine(NumberCard):
     CARD_FREQUENCY = CardFrequency(1)
     CARD_COLOUR = "purple"
     CARD_TYPE = "9"
-    CARD_IMAGE_URL = 'cards/9_purple.png'
+    CARD_IMAGE_URL = '9_purple.png'
 
 
 class RedNine(NumberCard):
     NAME = "Red Nine"
     CARD_COLOUR = "red"
     CARD_TYPE = "9"
-    CARD_IMAGE_URL = 'cards/9_red.png'
+    CARD_IMAGE_URL = '9_red.png'
 
 
 class YellowNine(NumberCard):
     NAME = "Yellow Nine"
     CARD_COLOUR = "yellow"
     CARD_TYPE = "9"
-    CARD_IMAGE_URL = 'cards/9_yellow.png'
+    CARD_IMAGE_URL = '9_yellow.png'
 
 
 # ~~~~~~~~~~~~~~
 #   SixtyNines
 # ~~~~~~~~~~~~~~
+
 
 class SixtyNine(NumberCard):
     CARD_FREQUENCY = CardFrequency(1.2)
@@ -478,34 +479,34 @@ class SixtyNine(NumberCard):
                 "sound": file
             }
             self.game.send_to_all_players("animate", json_to_send)
-                
+
 
 class BlueSixtyNine(SixtyNine):
     NAME = "Blue Sixty Nine"
     CARD_COLOUR = "blue"
-    CARD_IMAGE_URL = 'cards/69_blue.png'
+    CARD_IMAGE_URL = '69_blue.png'
 
 
 class GreenSixtyNine(SixtyNine):
     NAME = "Green Sixty Nine"
     CARD_COLOUR = "green"
-    CARD_IMAGE_URL = 'cards/69_green.png'
+    CARD_IMAGE_URL = '69_green.png'
 
 
 class PurpleSixtyNine(SixtyNine):
     NAME = "Purple Sixty Nine"
     CARD_FREQUENCY = CardFrequency(0.6)
     CARD_COLOUR = "purple"
-    CARD_IMAGE_URL = 'cards/69_purple.png'
+    CARD_IMAGE_URL = '69_purple.png'
 
 
 class RedSixtyNine(SixtyNine):
     NAME = "Red Sixty Nine"
     CARD_COLOUR = "red"
-    CARD_IMAGE_URL = 'cards/69_red.png'
+    CARD_IMAGE_URL = '69_red.png'
 
 
 class YellowSixtyNine(SixtyNine):
     NAME = "Yellow Sixty Nine"
     CARD_COLOUR = "yellow"
-    CARD_IMAGE_URL = 'cards/69_yellow.png'
+    CARD_IMAGE_URL = '69_yellow.png'

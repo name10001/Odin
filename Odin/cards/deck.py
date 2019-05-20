@@ -115,11 +115,15 @@ class Deck:
         :param card_collection: The card_collection to calculate the weights for.
         If its None, it will calculate the weights for a medium hand.
         :return: an array of card weights. The order is the same as Deck.cards.
+        :param elevator: TODO fill this in
         :param ignore_limit: Should the card limit be ignored
         :return: The weight of the given cards. The order its the unchanged,
         I.e. weights[0] is the weight for Deck.cards[0].
         """
-        return [self.get_weight(card, card_collection, elevator=elevator, ignore_limit=ignore_limit) for card in self.cards]
+        return [
+            self.get_weight(card, card_collection, elevator=elevator, ignore_limit=ignore_limit)
+            for card in self.cards
+        ]
 
     def get_weight(self, card, card_collection=None, elevator=False, ignore_limit=False):
         """
@@ -127,6 +131,7 @@ class Deck:
         :param card: The card to get the weight of.
         :param card_collection: The card_collection to calculate the weights for.
         If its None, it will calculate the weights for a medium hand.
+        :param elevator: TODO fill this in
         :param ignore_limit: Should the card limit be ignored.
         :return: The weight of the given card.
         """
@@ -144,6 +149,7 @@ class Deck:
         """
         Gets a new random card and returns it.
         :param card_weights: An array of the weights of the cards
+        :param elevator: TODO fill this in
         :return: A card class or None if all the weights are zero
         """
         if card_weights is None:

@@ -7,6 +7,7 @@ from cards.abstract_card import AbstractCard
 from flask import url_for
 
 all_cards = [
+    # numbers
     BlueZero, GreenZero, PurpleZero, RedZero, YellowZero,
     BlueOne, GreenOne, PurpleOne, RedOne, YellowOne,
     BlueTwo, GreenTwo, PurpleTwo, RedTwo, YellowTwo,
@@ -19,6 +20,7 @@ all_cards = [
     BlueNine, GreenNine, PurpleNine, RedNine, YellowNine,
     BlueSixtyNine, GreenSixtyNine, PurpleSixtyNine, RedSixtyNine, YellowSixtyNine,
 
+    # Other cards
     BlueSkip, GreenSkip, PurpleSkip, RedSkip, YellowSkip, WhiteSkip, BlackSkip,
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
     BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck,
@@ -41,7 +43,7 @@ all_types = []
 all_colours = []
 for card in all_cards:
     card_info = {
-        "url": '/static/' + card.CARD_IMAGE_URL,  # default url
+        "url": '/static/cards/' + card.CARD_IMAGE_URL,  # default url
         "name": card.NAME,
         "type": card.CARD_TYPE,
         "colour": card.CARD_COLOUR,
@@ -49,9 +51,9 @@ for card in all_cards:
         "effect description": card.EFFECT_DESCRIPTION,
         "compatibility description": card.get_compatibility_description()
     }
-    all_urls.append('/static/' + card.CARD_IMAGE_URL)
+    all_urls.append('/static/cards/' + card.CARD_IMAGE_URL)
     for url in card.ADDITIONAL_URLS:
-        all_urls.append('/static/' + url)
+        all_urls.append('/static/cards/' + url)
 
     all_card_info.append(card_info)
     if card.CARD_TYPE not in all_types:

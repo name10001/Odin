@@ -103,12 +103,8 @@ class Game:
             return
 
         # increment player index
-        for i in range(0, self.iterate_turn_by):
-            self.player_turn_index += self.direction
-            if self.player_turn_index == -1:
-                self.player_turn_index = len(self.players) - 1
-            elif self.player_turn_index == len(self.players):
-                self.player_turn_index = 0
+        self.player_turn_index += self.direction * self.iterate_turn_by
+        self.player_turn_index %= len(self.players)
 
         self.iterate_turn_by = 1
 
