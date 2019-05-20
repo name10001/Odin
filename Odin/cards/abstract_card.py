@@ -179,3 +179,18 @@ class AbstractCard:
 
     def can_be_on_pickup(self):
         return self.CAN_BE_ON_PICKUP
+
+    @staticmethod
+    def colours_are_compatible(colour_1, colour_2):
+        if colour_1 == colour_2:
+            return True
+        elif colour_1 == "rainbow" or colour_2 == "rainbow":
+            return True
+        elif colour_1 == "white":
+            return colour_2 != "black"
+        elif colour_1 == "black":
+            return colour_2 != "white" and colour_2 != "purple"
+        elif colour_1 == "purple":
+            return colour_2 == "white"
+        else:
+            return colour_2 == "white" or colour_2 == "black"
