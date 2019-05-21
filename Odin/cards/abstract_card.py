@@ -53,23 +53,10 @@ class AbstractCard:
         """
         if card.get_type() == self.get_type():
             return True
-        if card.get_colour() == self.get_colour():
-            return True
         if card.get_colour() == "colour swapper":
             return True
 
-        # white cards can be placed on anything that isn't black
-        if self.get_colour() == "white":
-            return card.get_colour() != "black"
-        # black cards can be placed on any colour, but not purple or white.
-        elif self.get_colour() == "black":
-            return card.get_colour() != "white" and card.get_colour() != "purple"
-        # purple cards can only be placed on white cards (if type/colour different)
-        elif self.get_colour() == "purple":
-            return card.get_colour() == "white"
-        # coloured cards can be placed on black or white cards
-        else:
-            return card.get_colour() == "black" or card.get_colour() == "white"
+        return self.colours_are_compatible(self.get_colour(), card.get_colour())
 
     def can_be_played_on(self, player, card):
         """
@@ -126,6 +113,10 @@ class AbstractCard:
         elif cls.CARD_COLOUR == "white":
             to_return = "This is a regular white card. Compatible with all white, " \
                         "purple, red, green, yellow and blue cards."
+        elif cls.CARD_COLOUR == "rainbow":
+            to_return = "This is a regular rainbow card. Compatible with all cards."
+        elif cls.CARD_COLOUR == "orange":
+            to_return = "This is a regular orange card. Only compatible with other orange cards."
         elif cls.CARD_COLOUR == "purple":
             to_return = "This is a regular purple card. Compatible with all purple and white cards."
         else:
@@ -186,6 +177,8 @@ class AbstractCard:
             return True
         elif colour_1 == "rainbow" or colour_2 == "rainbow":
             return True
+        elif colour_1 == "orange" or colour_2 == "orange":
+            return False
         elif colour_1 == "white":
             return colour_2 != "black"
         elif colour_1 == "black":

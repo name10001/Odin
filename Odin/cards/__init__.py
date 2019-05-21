@@ -8,17 +8,17 @@ from flask import url_for
 
 all_cards = [
     # numbers
-    BlueZero, GreenZero, PurpleZero, RedZero, YellowZero,
-    BlueOne, GreenOne, PurpleOne, RedOne, YellowOne,
-    BlueTwo, GreenTwo, PurpleTwo, RedTwo, YellowTwo,
-    BlueThree, GreenThree, PurpleThree, RedThree, YellowThree,
-    BlueFour, GreenFour, PurpleFour, RedFour, YellowFour,
-    BlueFive, GreenFive, PurpleFive, RedFive, YellowFive, 
-    BlueSix, GreenSix, PurpleSix, RedSix, YellowSix, 
-    BlueSeven, GreenSeven, PurpleSeven, RedSeven, YellowSeven, 
-    BlueEight, GreenEight, PurpleEight, RedEight, YellowEight, 
-    BlueNine, GreenNine, PurpleNine, RedNine, YellowNine,
-    BlueSixtyNine, GreenSixtyNine, PurpleSixtyNine, RedSixtyNine, YellowSixtyNine,
+    BlueZero, GreenZero, OrangeZero, PurpleZero, RedZero, YellowZero,
+    BlueOne, GreenOne, OrangeOne, PurpleOne, RedOne, YellowOne,
+    BlueTwo, GreenTwo, OrangeTwo, PurpleTwo, RedTwo, YellowTwo,
+    BlueThree, GreenThree, OrangeThree, PurpleThree, RedThree, YellowThree,
+    BlueFour, GreenFour, OrangeFour, PurpleFour, RedFour, YellowFour,
+    BlueFive, GreenFive, OrangeFive, PurpleFive, RedFive, YellowFive, 
+    BlueSix, GreenSix, OrangeSix, PurpleSix, RedSix, YellowSix, 
+    BlueSeven, GreenSeven, OrangeSeven, PurpleSeven, RedSeven, YellowSeven, 
+    BlueEight, GreenEight, OrangeEight, PurpleEight, RedEight, YellowEight, 
+    BlueNine, GreenNine, OrangeNine, PurpleNine, RedNine, YellowNine,
+    BlueSixtyNine, GreenSixtyNine, OrangeSixtyNine, PurpleSixtyNine, RedSixtyNine, YellowSixtyNine,
 
     # Other cards
     BlueSkip, GreenSkip, PurpleSkip, RedSkip, YellowSkip, WhiteSkip, BlackSkip,

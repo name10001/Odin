@@ -42,9 +42,17 @@ class GreenZero(NumberCard):
     CARD_IMAGE_URL = '0_green.png'
 
 
+class OrangeZero(NumberCard):
+    NAME = "Orange Zero"
+    CARD_FREQUENCY = CardFrequency(0.1)
+    CARD_COLOUR = "orange"
+    CARD_TYPE = "0"
+    CARD_IMAGE_URL = '0_orange.png'
+
+
 class PurpleZero(NumberCard):
     NAME = "Purple Zero"
-    CARD_FREQUENCY = CardFrequency(0.5)
+    CARD_FREQUENCY = CardFrequency(0.4)
     CARD_COLOUR = "purple"
     CARD_TYPE = "0"
     CARD_IMAGE_URL = '0_purple.png'
@@ -85,9 +93,17 @@ class GreenOne(NumberCard):
     CARD_IMAGE_URL = '1_green.png'
 
 
+class OrangeOne(NumberCard):
+    NAME = "Orange One"
+    CARD_FREQUENCY = CardFrequency(0.2)
+    CARD_COLOUR = "orange"
+    CARD_TYPE = "1"
+    CARD_IMAGE_URL = '1_orange.png'
+
+
 class PurpleOne(NumberCard):
     NAME = "Purple One"
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(0.8)
     CARD_COLOUR = "purple"
     CARD_TYPE = "1"
     CARD_IMAGE_URL = '1_purple.png'
@@ -126,9 +142,17 @@ class GreenTwo(NumberCard):
     CARD_IMAGE_URL = '2_green.png'
 
 
+class OrangeTwo(NumberCard):
+    NAME = "Orange Two"
+    CARD_FREQUENCY = CardFrequency(0.2)
+    CARD_COLOUR = "orange"
+    CARD_TYPE = "2"
+    CARD_IMAGE_URL = '2_orange.png'
+
+
 class PurpleTwo(NumberCard):
     NAME = "Purple Two"
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(0.8)
     CARD_COLOUR = "purple"
     CARD_TYPE = "2"
     CARD_IMAGE_URL = '2_purple.png'
@@ -167,9 +191,17 @@ class GreenThree(NumberCard):
     CARD_IMAGE_URL = '3_green.png'
 
 
+class OrangeThree(NumberCard):
+    NAME = "Orange Three"
+    CARD_FREQUENCY = CardFrequency(0.2)
+    CARD_COLOUR = "orange"
+    CARD_TYPE = "3"
+    CARD_IMAGE_URL = '3_orange.png'
+
+
 class PurpleThree(NumberCard):
     NAME = "Purple Three"
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(0.8)
     CARD_COLOUR = "purple"
     CARD_TYPE = "3"
     CARD_IMAGE_URL = '3_purple.png'
@@ -177,7 +209,6 @@ class PurpleThree(NumberCard):
 
 class RedThree(NumberCard):
     NAME = "Red Three"
-    
     CARD_COLOUR = "red"
     CARD_TYPE = "3"
     CARD_IMAGE_URL = '3_red.png'
@@ -209,9 +240,17 @@ class GreenFour(NumberCard):
     CARD_IMAGE_URL = '4_green.png'
 
 
+class OrangeFour(NumberCard):
+    NAME = "Orange Four"
+    CARD_FREQUENCY = CardFrequency(0.2)
+    CARD_COLOUR = "orange"
+    CARD_TYPE = "4"
+    CARD_IMAGE_URL = '4_orange.png'
+
+
 class PurpleFour(NumberCard):
     NAME = "Purple Four"
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(0.8)
     CARD_COLOUR = "purple"
     CARD_TYPE = "4"
     CARD_IMAGE_URL = '4_purple.png'
@@ -250,9 +289,17 @@ class GreenFive(NumberCard):
     CARD_IMAGE_URL = '5_green.png'
 
 
+class OrangeFive(NumberCard):
+    NAME = "Orange Five"
+    CARD_FREQUENCY = CardFrequency(0.2)
+    CARD_COLOUR = "orange"
+    CARD_TYPE = "5"
+    CARD_IMAGE_URL = '5_orange.png'
+
+
 class PurpleFive(NumberCard):
     NAME = "Purple Five"
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(0.8)
     CARD_COLOUR = "purple"
     CARD_TYPE = "5"
     CARD_IMAGE_URL = '5_purple.png'
@@ -291,9 +338,17 @@ class GreenSix(NumberCard):
     CARD_IMAGE_URL = '6_green.png'
 
 
+class OrangeSix(NumberCard):
+    NAME = "Orange Six"
+    CARD_FREQUENCY = CardFrequency(0.2)
+    CARD_COLOUR = "orange"
+    CARD_TYPE = "6"
+    CARD_IMAGE_URL = '6_orange.png'
+
+
 class PurpleSix(NumberCard):
     NAME = "Purple Six"
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(0.8)
     CARD_COLOUR = "purple"
     CARD_TYPE = "6"
     CARD_IMAGE_URL = '6_purple.png'
@@ -332,9 +387,17 @@ class GreenSeven(NumberCard):
     CARD_IMAGE_URL = '7_green.png'
 
 
+class OrangeSeven(NumberCard):
+    NAME = "Orange Seven"
+    CARD_FREQUENCY = CardFrequency(0.2)
+    CARD_COLOUR = "orange"
+    CARD_TYPE = "7"
+    CARD_IMAGE_URL = '7_orange.png'
+
+
 class PurpleSeven(NumberCard):
     NAME = "Purple Seven"
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(0.8)
     CARD_COLOUR = "purple"
     CARD_TYPE = "7"
     CARD_IMAGE_URL = '7_purple.png'
@@ -373,9 +436,17 @@ class GreenEight(NumberCard):
     CARD_IMAGE_URL = '8_green.png'
 
 
+class OrangeEight(NumberCard):
+    NAME = "Orange Eight"
+    CARD_FREQUENCY = CardFrequency(0.2)
+    CARD_COLOUR = "orange"
+    CARD_TYPE = "8"
+    CARD_IMAGE_URL = '8_orange.png'
+
+
 class PurpleEight(NumberCard):
     NAME = "Purple Eight"
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(0.8)
     CARD_COLOUR = "purple"
     CARD_TYPE = "8"
     CARD_IMAGE_URL = '8_purple.png'
@@ -414,9 +485,17 @@ class GreenNine(NumberCard):
     CARD_IMAGE_URL = '9_green.png'
 
 
+class OrangeNine(NumberCard):
+    NAME = "Orange Nine"
+    CARD_FREQUENCY = CardFrequency(0.2)
+    CARD_COLOUR = "orange"
+    CARD_TYPE = "9"
+    CARD_IMAGE_URL = '9_orange.png'
+
+
 class PurpleNine(NumberCard):
     NAME = "Purple Nine"
-    CARD_FREQUENCY = CardFrequency(1)
+    CARD_FREQUENCY = CardFrequency(0.8)
     CARD_COLOUR = "purple"
     CARD_TYPE = "9"
     CARD_IMAGE_URL = '9_purple.png'
@@ -493,9 +572,16 @@ class GreenSixtyNine(SixtyNine):
     CARD_IMAGE_URL = '69_green.png'
 
 
+class OrangeSixtyNine(SixtyNine):
+    NAME = "Orange Sixty Nine"
+    CARD_FREQUENCY = CardFrequency(0.12)
+    CARD_COLOUR = "orange"
+    CARD_IMAGE_URL = '69_orange.png'
+
+
 class PurpleSixtyNine(SixtyNine):
     NAME = "Purple Sixty Nine"
-    CARD_FREQUENCY = CardFrequency(0.6)
+    CARD_FREQUENCY = CardFrequency(0.48)
     CARD_COLOUR = "purple"
     CARD_IMAGE_URL = '69_purple.png'
 
