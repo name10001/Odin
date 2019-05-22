@@ -388,6 +388,7 @@ class Game {
     }
 
     ask(question) {
+        gui.shouldDraw = true;
         this.addEvent(new GameEvent(function() {
             gui.popup = new OptionWindow(question);
         }));
@@ -397,10 +398,9 @@ class Game {
     pickOption(optionId) {
         socket.emit("game message", GAME_ID, "answer", [optionId]);
     }
-
-    /*sayUno(){
-        socket.emit("game message", GAME_ID, "uno", null);
-    }*/
+    pickOptions(optionIds) {
+        socket.emit("game message", GAME_ID, "answer", optionIds);
+    }
 
     undo() {
         socket.emit("game message", GAME_ID, "undo", null);

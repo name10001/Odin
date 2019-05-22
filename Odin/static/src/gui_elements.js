@@ -181,7 +181,8 @@ class ScrollArea {
         if(this.location == 0) {
             x-=start;
             for(let item of this.items) {
-                item.draw(x,y,allowClick);
+                if(x>this.container.getRight()) break;
+                if(x+width>this.container.getLeft()) item.draw(x,y,allowClick);
                 x+=width;
             }
         }

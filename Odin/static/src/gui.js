@@ -763,8 +763,6 @@ class Gui {
 
         for(let i = 0; i < nCards; i++) {
             if(cards!=null) image = imageArray[i];
-            console.log("pushing new moving card: " + i + ";; " + image.src);
-            console.log(time + ":" + wait)
             movingCard = new AnimatedCard(startPositionCorner, endPositionCorner, time, wait, image, width, height, soundDisplacement>=this.MIN_SOUND_DISPLACEMENT && sound ? this.playSound : null);
             this.movingCards.push(movingCard);
             wait+=waitIncr;

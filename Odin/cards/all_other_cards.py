@@ -708,7 +708,7 @@ class YellowTrash(TrashCard):
 
 
 class BlackTrash(TrashCard):
-    NUMBER_TO_REMOVE = 1  # TODO: change to 3 once client supports more than 1 answer
+    NUMBER_TO_REMOVE = 3
     NAME = "Black Trash"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = "trash_wild.png"
@@ -771,7 +771,7 @@ class DoJustly1(DoJustly):
 
 class DoJustly3(DoJustly):
     NAME = "Do Justly -3"
-    NUMBER_TO_GIVE = 1  # TODO: change to 3 once client supports more than 1 answer
+    NUMBER_TO_GIVE = 3
     EFFECT_DESCRIPTION = "Choose 3 cards from your hand to give to another player of your choice."
     CARD_IMAGE_URL = "do_justly_3.png"
 

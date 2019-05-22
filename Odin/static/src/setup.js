@@ -134,6 +134,7 @@ function mouseWheel(event) {
 function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    gui.shouldDraw = true;
 
     let width = canvas.width/MIN_WIDTH;
     let height = canvas.height/MIN_HEIGHT;

@@ -161,11 +161,12 @@ class OptionItem {
 }
 
 class CardOptionItem {
-    constructor(optionId, cardName, image) {
+    constructor(optionId, cardName, image, window) {
         //this.card = card;
         this.optionIds = [optionId];
         this.cardName = cardName;
         this.image = image;
+        this.window = window;
     }
 
     addId(id) {
@@ -173,13 +174,23 @@ class CardOptionItem {
     }
 
     draw(x,y,allowClick) {
-        ctx.drawImage(this.image, x, y, GUI_SCALE * CARD_WIDTH, GUI_SCALE * CARD_HEIGHT);
+        let stackSize = this.optionIds.length;
+        if(stackSize>0) {
+            ctx.drawImage(this.image, x, y, GUI_SCALE * CARD_WIDTH, GUI_SCALE * CARD_HEIGHT);
+
+            // draw amount
+            if(stackSize > 1) {
+                ctx.fillStyle = "#fff";
+                ctx.fillRect(x, y+GUI_SCALE*CARD_HEIGHT-GUI_SCALE*2.5,GUI_SCALE*5,GUI_SCALE*2.5);
+                drawText("x" + stackSize, x+GUI_SCALE/2, y + GUI_SCALE*CARD_HEIGHT-GUI_SCALE/2, "left", GUI_SCALE * 2, GUI_SCALE*4, "#000");
+            }
+        }
     }
 
     click(x,y) {
-        game.pickOption(this.optionIds[0]);
-        gui.popup = null;
-        game.finishedEvent();
+        if(this.optionIds.length == 0 || this.window.selections.length == this.window.nToPick) return;
+        this.window.selections.push({id:this.optionIds[0], stack:this});
+        this.optionIds.splice(0, 1);
     }
 }
 
@@ -193,7 +204,9 @@ class OptionWindow {
         this.optionTitle = option["title"].split("\n");
         this.optionType = option["type"];
         this.allowCancel = option["allow cancel"];
+        this.nToPick = option["number to pick"];
         this.image = game.allImages[option["image"]];
+        this.selections = [];
 
         //create a cancel button
         if(this.allowCancel) {
@@ -242,19 +255,17 @@ class OptionWindow {
         else if (this.optionType == "cards") {
             this.scrollContainer = new Container();
             this.scrollContainer.window = this;
-            this.getX = function() {return 0;}
-            this.getWidth = function() {return canvas.width;}
-            this.getHeight = function() {
-                return GUI_SCALE * CARD_HEIGHT * 3;
-            }
-            this.getY = function() {
-                return (canvas.height - this.getHeight())/2;
+            
+            this.getWidth = function() {
+                let maxWidth = (6 * CARD_WIDTH) * GUI_SCALE;
+                if(canvas.width-GUI_SCALE < maxWidth) return canvas.width - GUI_SCALE;
+                else return maxWidth;
             }
             this.scrollContainer.getLeft = function() {
-                return 0;
+                return this.window.getX() + GUI_SCALE*(CARD_WIDTH+1);
             }
             this.scrollContainer.getRight = function() {
-                return canvas.width;
+                return this.window.getX() + this.window.getWidth() - GUI_SCALE * (CARD_WIDTH + 1);
             }
             this.scrollContainer.getTop = function() {
                 return this.window.getY();
@@ -263,17 +274,27 @@ class OptionWindow {
                 return this.window.getY() + this.window.getHeight() - GUI_SCALE;
             }
 
+            //confirm/undo buttons
+            this.confirmButton = new Button(CARD_WIDTH,3,1.5,"CONFIRM");
+            this.confirmButton.window = this;
+            this.confirmButton.x = function() {
+                return this.window.getX() + this.window.getWidth() - GUI_SCALE * (1+CARD_WIDTH);
+            }
+            this.confirmButton.y = function() {
+                return this.window.getY() + (CARD_HEIGHT+6) * GUI_SCALE;
+            }
+
             //Create cards scroller
             this.optionsScroller = new ScrollArea(this.scrollContainer, CARD_WIDTH+1,CARD_HEIGHT+1,3,0);
             let items = [];
-            let cardStack = new CardOptionItem(null, null,)
+            let cardStack = new CardOptionItem(null, null);
             for(let optionId of Object.keys(option["options"])) {
                 let cardName = option["options"][optionId];
                 if(cardStack.cardName == cardName) {
                     cardStack.addId(optionId);
                 }
                 else {
-                    cardStack = new CardOptionItem(optionId, cardName, game.allCards[cardName].image);
+                    cardStack = new CardOptionItem(optionId, cardName, game.allCards[cardName].image, this);
                     items.push(cardStack);
                 }
 
@@ -282,12 +303,42 @@ class OptionWindow {
             //click function
             this.clickItems = function() {
                 this.optionsScroller.click();
+                if(this.confirmButton.isMouseOverThis() && this.selections.length == this.nToPick) {
+                    let options = [];
+                    for(let selection of this.selections) options.push(selection.id);
+                    game.pickOptions(options);
+                    gui.popup = null;
+                    game.finishedEvent();
+                }
             }
 
             //draw function
             this.drawItems = function() {
+                let x = this.getX();
+                let y = this.getY();
+                let width = this.getWidth();
+                let height = this.getHeight();
+                
+                //draw selected cards
+                let cx = x + GUI_SCALE*4;
+                let cy = y + GUI_SCALE*10;
+                for(let card of this.selections) {
+                    let image = card.stack.image;
+                    ctx.drawImage(image, cx, cy, GUI_SCALE*CARD_WIDTH, GUI_SCALE*CARD_HEIGHT);
+                    cx += GUI_SCALE*3;
+                }
+
                 //draw options box
                 this.optionsScroller.draw();
+
+                //draw overlay
+                ctx.fillStyle = "#0d3a0d";
+                ctx.fillRect(x,y+height - GUI_SCALE * (CARD_HEIGHT+2)-1, GUI_SCALE * CARD_WIDTH, GUI_SCALE * CARD_HEIGHT+2);
+                ctx.fillRect(x+width-GUI_SCALE*CARD_WIDTH,y+height - GUI_SCALE * (CARD_HEIGHT+2)-1, GUI_SCALE * CARD_WIDTH, GUI_SCALE * CARD_HEIGHT+2);
+
+                // buttons
+                this.confirmButton.drawThis(this.selections.length == this.nToPick);
+
             }
 
             //ADD SCROLL FUNCTIONS
@@ -354,7 +405,6 @@ class OptionWindow {
 
                 //cover up off-screen boxes
                 ctx.fillStyle = "#0d3a0d";
-                ctx.strokeStyle = "#fff";
                 ctx.fillRect(x+GUI_SCALE*2-1,y+GUI_SCALE*6-1,GUI_SCALE*CARD_WIDTH*3+2,GUI_SCALE*5+2);
                 ctx.fillRect(x+GUI_SCALE*2-1,y+height-GUI_SCALE*5.5-1,GUI_SCALE*CARD_WIDTH*3+2,GUI_SCALE*5+2);
             }
