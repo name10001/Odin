@@ -142,7 +142,7 @@ class Player:
         It will return None if and only if the player cancels
         """
 
-        title = textwrap.fill(title, 25)
+        # title = textwrap.fill(title, 25)
     
         options_as_dict = {}
 

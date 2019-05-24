@@ -26,7 +26,7 @@ class DescriptionWindow {
 
         this.exitButton = new Button(CARD_WIDTH-1, 3, 1.5, "EXIT");
         this.exitButton.x = function() {
-            return canvas.width/2 + (CARD_WIDTH+1) * GUI_SCALE;
+            return canvas.width/2 + (CARD_WIDTH*1.25+1) * GUI_SCALE;
         }
         this.exitButton.y = function() {
             return canvas.height/2 - (0.5*CARD_HEIGHT-2) * GUI_SCALE;
@@ -34,7 +34,7 @@ class DescriptionWindow {
 
         this.addButton = new Button(CARD_WIDTH-1, 3, 1.5, "ADD");
         this.addButton.x = function() {
-            return canvas.width/2 + (CARD_WIDTH+1) * GUI_SCALE;
+            return canvas.width/2 + (CARD_WIDTH*1.25+1) * GUI_SCALE;
         }
         this.addButton.y = function() {
             return canvas.height/2 - (0.5*CARD_HEIGHT-6) * GUI_SCALE;
@@ -42,7 +42,7 @@ class DescriptionWindow {
 
         this.addallButton = new Button(CARD_WIDTH-1, 3, 1.5, "ADD ALL");
         this.addallButton.x = function() {
-            return canvas.width/2 + (CARD_WIDTH+1) * GUI_SCALE;
+            return canvas.width/2 + (CARD_WIDTH*1.25+1) * GUI_SCALE;
         }
         this.addallButton.y = function() {
             return canvas.height/2 - (0.5*CARD_HEIGHT-10) * GUI_SCALE;
@@ -50,7 +50,7 @@ class DescriptionWindow {
     }
 
     getWidth() {
-        return (CARD_WIDTH * 4 + 3) * GUI_SCALE;
+        return (CARD_WIDTH * 4.5 + 3) * GUI_SCALE;
     }
     getHeight() {
         return CARD_HEIGHT * 3 * GUI_SCALE;
@@ -86,30 +86,35 @@ class DescriptionWindow {
         this.addButton.drawThis(this.allowedToPlay);
         this.addallButton.drawThis(this.allowedToPlay);
         
-        let descWidth = 3*CARD_WIDTH*GUI_SCALE;
+        let descWidth = 3.5*CARD_WIDTH*GUI_SCALE;
         
         //draw title
-        drawText(this.card.name,x+GUI_SCALE+descWidth/2,y+GUI_SCALE*3,"center",GUI_SCALE*2,descWidth,true);
-        drawText("Effects",x+GUI_SCALE,y+GUI_SCALE*6,"left",GUI_SCALE*1.5,descWidth,true);
-        drawText("Compatibility",x+GUI_SCALE,y+GUI_SCALE*15,"left",GUI_SCALE*1.5,descWidth,true);
+        drawText(this.card.name, x+GUI_SCALE+descWidth/2, y+GUI_SCALE*4, "center", GUI_SCALE*2.5, descWidth, true);
 
         //draw a description
         ctx.fillStyle = "#fff";
         ctx.textAlign = "left";
-        ctx.font = "bold " + Math.round(GUI_SCALE) + "px Arial";
-        let effectLines = getLines(this.card.effectDescription,descWidth);
         y += GUI_SCALE*8;
+        drawText("Effects", x+GUI_SCALE, y, "left", GUI_SCALE*2, descWidth, true);
+        ctx.font = "bold " + Math.round(GUI_SCALE*1.4) + "px Arial";
+        let effectLines = getLines(this.card.effectDescription,descWidth);
+        y+=GUI_SCALE*2;
         for(let line of effectLines) {
             ctx.fillText(line,x+GUI_SCALE,y);
-            y+=GUI_SCALE;
+            y+=GUI_SCALE*1.5;
         }
 
-        y = this.getY() + GUI_SCALE * 17;
+        y+=GUI_SCALE*2;
+        drawText("Compatibility", x+GUI_SCALE, y, "left", GUI_SCALE*2, descWidth, true);
+        ctx.font = "bold " + Math.round(GUI_SCALE*1.4) + "px Arial";
+        y += GUI_SCALE*2;
         let compatibilityLines = getLines(this.card.compatibilityDescription,descWidth);
         for(let line of compatibilityLines) {
             ctx.fillText(line,x+GUI_SCALE,y);
-            y+=GUI_SCALE;
+            y+=GUI_SCALE*1.5;
         }
+        y+=GUI_SCALE/2;
+        ctx.fillText("Pickup chains: " + (this.card.compatiblePickup ? "Compatible" : "Incompatible"), x+GUI_SCALE, y);
 
     }
 
@@ -201,7 +206,7 @@ class OptionWindow {
     constructor(option) {
         //this.card = card;
         //this.image = card.image;
-        this.optionTitle = option["title"].split("\n");
+        this.optionTitle = option["title"];
         this.optionType = option["type"];
         this.allowCancel = option["allow cancel"];
         this.nToPick = option["number to pick"];
@@ -257,15 +262,18 @@ class OptionWindow {
             this.scrollContainer.window = this;
             
             this.getWidth = function() {
-                let maxWidth = (6 * CARD_WIDTH) * GUI_SCALE;
-                if(canvas.width-GUI_SCALE < maxWidth) return canvas.width - GUI_SCALE;
-                else return maxWidth;
+                return canvas.width - GUI_SCALE/2;
+                //let maxWidth = (6 * CARD_WIDTH) * GUI_SCALE;
+                //if(canvas.width-GUI_SCALE < maxWidth) return canvas.width - GUI_SCALE;
+                //else return maxWidth;
             }
             this.scrollContainer.getLeft = function() {
-                return this.window.getX() + GUI_SCALE*(CARD_WIDTH+1);
+                return GUI_SCALE/4;
+                //return this.window.getX() + GUI_SCALE*(CARD_WIDTH+1);
             }
             this.scrollContainer.getRight = function() {
-                return this.window.getX() + this.window.getWidth() - GUI_SCALE * (CARD_WIDTH + 1);
+                return canvas.width - GUI_SCALE/4;
+                //return this.window.getX() + this.window.getWidth() - GUI_SCALE * (CARD_WIDTH + 1);
             }
             this.scrollContainer.getTop = function() {
                 return this.window.getY();
@@ -274,14 +282,23 @@ class OptionWindow {
                 return this.window.getY() + this.window.getHeight() - GUI_SCALE;
             }
 
-            //confirm/undo buttons
+            //confirm button
             this.confirmButton = new Button(CARD_WIDTH,3,1.5,"CONFIRM");
             this.confirmButton.window = this;
             this.confirmButton.x = function() {
-                return this.window.getX() + this.window.getWidth() - GUI_SCALE * (1+CARD_WIDTH);
+                return this.window.getX() + this.window.getWidth()/2 - GUI_SCALE * (CARD_WIDTH+1);
             }
             this.confirmButton.y = function() {
-                return this.window.getY() + (CARD_HEIGHT+6) * GUI_SCALE;
+                return this.window.getY() + (CARD_HEIGHT+11) * GUI_SCALE;
+            }
+            //undo button
+            this.undoButton = new Button(CARD_WIDTH,3,1.5,"UNDO");
+            this.undoButton.window = this;
+            this.undoButton.x = function() {
+                return this.window.getX() + this.window.getWidth()/2 + GUI_SCALE;
+            }
+            this.undoButton.y = function() {
+                return this.window.getY() + (CARD_HEIGHT+11) * GUI_SCALE;
             }
 
             //Create cards scroller
@@ -310,14 +327,21 @@ class OptionWindow {
                     gui.popup = null;
                     game.finishedEvent();
                 }
+                else if(this.undoButton.isMouseOverThis() && this.selections.length > 0) {
+                    for(let selection of this.selections) {
+                        selection.stack.addId(selection.id);
+                    }
+
+                    this.selections.length = 0;
+                }
             }
 
             //draw function
             this.drawItems = function() {
                 let x = this.getX();
                 let y = this.getY();
-                let width = this.getWidth();
-                let height = this.getHeight();
+                //let width = this.getWidth();
+                //let height = this.getHeight();
                 
                 //draw selected cards
                 let cx = x + GUI_SCALE*4;
@@ -332,12 +356,13 @@ class OptionWindow {
                 this.optionsScroller.draw();
 
                 //draw overlay
-                ctx.fillStyle = "#0d3a0d";
-                ctx.fillRect(x,y+height - GUI_SCALE * (CARD_HEIGHT+2)-1, GUI_SCALE * CARD_WIDTH, GUI_SCALE * CARD_HEIGHT+2);
-                ctx.fillRect(x+width-GUI_SCALE*CARD_WIDTH,y+height - GUI_SCALE * (CARD_HEIGHT+2)-1, GUI_SCALE * CARD_WIDTH, GUI_SCALE * CARD_HEIGHT+2);
+                //ctx.fillStyle = "#0d3a0d";
+                //ctx.fillRect(x,y+height - GUI_SCALE * (CARD_HEIGHT+2)-1, GUI_SCALE * CARD_WIDTH, GUI_SCALE * CARD_HEIGHT+2);
+                //ctx.fillRect(x+width-GUI_SCALE*CARD_WIDTH,y+height - GUI_SCALE * (CARD_HEIGHT+2)-1, GUI_SCALE * CARD_WIDTH, GUI_SCALE * CARD_HEIGHT+2);
 
                 // buttons
                 this.confirmButton.drawThis(this.selections.length == this.nToPick);
+                this.undoButton.drawThis(this.selections.length > 0);
 
             }
 
@@ -486,11 +511,16 @@ class OptionWindow {
         ctx.strokeRect(x,y,width,height);
 
         //draw text
-        let textY = y + GUI_SCALE * 7.5;
+        let textY = y + GUI_SCALE * 6.5;
+        let textAreaWidth = width - GUI_SCALE*(1+CARD_WIDTH);
+        let textX = x + textAreaWidth/2;
         let gap = 3 * GUI_SCALE;
-        textY -= gap * this.optionTitle.length/2;
-        for(let optionTitle of this.optionTitle) {
-            drawText(optionTitle, x + GUI_SCALE*(CARD_WIDTH*1.5+2), textY, "center", GUI_SCALE*2.5, GUI_SCALE*CARD_WIDTH*3);
+        ctx.font = "bold " + Math.round(GUI_SCALE*2.5) + "px Arial";
+        let lines = getLines(this.optionTitle, textAreaWidth-GUI_SCALE*2);
+        textY -= (lines.length-1) * gap/2;
+
+        for(let line of lines) {
+            drawText(line, textX, textY, "center", GUI_SCALE*2.5, textAreaWidth-GUI_SCALE*2);
             textY+=gap;
         }
     }
