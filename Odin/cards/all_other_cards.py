@@ -1273,7 +1273,7 @@ class Thanos(AbstractCard):
         removes half the players cards at random
         """
         total = len(player.hand)
-        num_to_remove = math.ceil(total / 2)
+        num_to_remove = math.floor(total / 2)
 
         removed = []
         for i in range(0, num_to_remove):
