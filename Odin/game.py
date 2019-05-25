@@ -221,20 +221,13 @@ class Game:
                     "count": len(cards)
                 }
 
-                possess_from = cards_from.get_possessed_by()
-                possess_to = cards_to.get_possessed_by()
-
                 for player in self.players:
-                    if player is possess_from:
-                        player.send_message("animate", remove_message)
-                    elif player is possess_to:
-                        player.send_message("animate", pickup_message)
-                    elif player is cards_from:
-                        player.send_message("animate", remove_message)
+                    if player is cards_from:
+                        player.send_animation(remove_message)
                     elif player is cards_to:
-                        player.send_message("animate", pickup_message)
+                        player.send_animation(pickup_message)
                     else:
-                        player.send_message("animate", transfer_message)
+                        player.send_animation(transfer_message)
             elif cards_to == "deck":
                 # REMOVE CARDS
                 remove_message = {
@@ -256,13 +249,11 @@ class Game:
                     "count": len(cards)
                 }
 
-                possess_from = cards_from.get_possessed_by()
-
                 for player in self.players:
-                    if player is possess_from or player is cards_from:
-                        player.send_message("animate", remove_message)
+                    if player is cards_from:
+                        player.send_animation(remove_message)
                     else:
-                        player.send_message("animate", transfer_message)
+                        player.send_animation(transfer_message)
 
                 return
             elif cards_to == "planning":
@@ -300,13 +291,11 @@ class Game:
                     "count": len(cards)
                 }
 
-                possess_to = cards_to.get_possessed_by()
-
                 for player in self.players:
-                    if player is cards_to or player is possess_to:
-                        player.send_message("animate", pickup_message)
+                    if player is cards_to:
+                        player.send_animation(pickup_message)
                     else:
-                        player.send_message("animate", transfer_message)
+                        player.send_animation(transfer_message)
 
             elif cards_to == "planning":
                 # card prepare animation from the deck

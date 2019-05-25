@@ -54,7 +54,7 @@ class WaitingRoom:
             else:
                 return render_template("login.html")
         elif request.method == 'POST':
-            name = request.form['player_name'][0:20]  # limit to 20 characters
+            name = request.form['player_name'][0:10]  # limit to 20 characters
             player_id = self._make_player_id(name)
             self._players[player_id] = name
             session['player_id'] = player_id

@@ -24,7 +24,7 @@ class Gui {
 
 
         //finish
-        this.finishButton = new Button(CARD_WIDTH*2+1, 4, 2, "+1");
+        this.finishButton = new Button(CARD_WIDTH*2+4, 4, 2, "+1");
         this.finishButton.x = function() {
             return gui.getButtonX();
         }
@@ -32,7 +32,7 @@ class Gui {
             return gui.getBottomY() - GUI_SCALE*12;
         };
         //undo
-        this.undoButton = new Button(CARD_WIDTH, 3, 1, "UNDO"); 
+        this.undoButton = new Button(CARD_WIDTH+1, 3, 1, "UNDO"); 
         this.undoButton.x = function() {
             return gui.getButtonX();
         }
@@ -40,9 +40,9 @@ class Gui {
             return gui.getBottomY() - GUI_SCALE*7;
         };
         //undo all
-        this.undoAllButton = new Button(CARD_WIDTH, 3, 1, "UNDO ALL");
+        this.undoAllButton = new Button(CARD_WIDTH+1, 3, 1, "UNDO ALL");
         this.undoAllButton.x = function() {
-            return gui.getButtonX() + GUI_SCALE*(1+CARD_WIDTH);
+            return gui.getButtonX() + GUI_SCALE*(3+CARD_WIDTH);
         }
         this.undoAllButton.y = function() {
             return gui.getBottomY() - GUI_SCALE*7;
@@ -94,7 +94,7 @@ class Gui {
     }
 
     getButtonsWidth() {
-        return GUI_SCALE*(1+2*CARD_WIDTH);
+        return GUI_SCALE*(4+2*CARD_WIDTH);
     }
 
     /**
@@ -332,21 +332,25 @@ class Gui {
                     drawText(player.name,px+fontSize/2,py+pheight/2+fontSize/3,"left",fontSize,fontSize*5,"#fff");
                     drawText(player.nCards,px+pwidth-fontSize/2,py+pheight/2+fontSize/3,"right",fontSize,fontSize*4,"#fff");
                     if(player.nPickup!=0) {
-                        drawText((player.nPickup ? "+" : "") + player.nPickup, px+fontSize*6, py+pheight/2+fontSize/3, "left", fontSize, fontSize*4, "#fff");
+                        drawText((player.nPickup ? "+" : "") + player.nPickup, px+fontSize*8, py+pheight/2+fontSize/3, "left", fontSize, fontSize*3, "#fff");
                     }
                     
-                    let iy = py+pgap/2;
+                    let iy = py+fontSize/4;
+                    if(player.nPossessions>0) {
+                        ctx.drawImage(this.possess_icon, px+fontSize*5.8,iy,fontSize/2,fontSize/2);
+                        if(player.nPossessions>1) {
+                            drawText("x" + player.nPossessions, px+fontSize*6.4,iy+fontSize/2,"left",fontSize/2,undefined,"#fff");
+                        }
+                        iy += fontSize *0.6;
+                    }
 
                     //adjust size for non-turn players
                     if(i==game.turn) {
                         //draw extra details about the person's turn
                         if(game.turnsLeft>1) {
-                            ctx.drawImage(this.turn_icon, px+fontSize*6,iy,fontSize/2,fontSize/2);
-                            drawText("x" + game.turnsLeft, px+fontSize*6.6,iy+pgap*0.9,"left",fontSize/2,undefined,"#fff");
+                            ctx.drawImage(this.turn_icon, px+fontSize*5.8,iy,fontSize/2,fontSize/2);
+                            drawText("x" + game.turnsLeft, px+fontSize*6.4,iy+fontSize/2,"left",fontSize/2,undefined,"#fff");
                             iy += fontSize*0.6;
-                        }
-                        if(player.nPossessions>0) {
-                            ctx.drawImage(this.possess_icon, px+fontSize*6,iy,fontSize/2,fontSize/2);
                         }
 
 

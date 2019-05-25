@@ -908,7 +908,8 @@ class Communist(AbstractCard):
                 } for card in player.hand]
             }
 
-            player.send_message("animate", json_to_send)
+            player.send_animation(json_to_send)
+            
             i += number_of_cards_each
 
 
@@ -1183,7 +1184,7 @@ class Genocide(AbstractCard):
                         "card image url": card.get_url()
                     } for card in removed_cards
                 ]
-                game_player.send_message("animate", json_to_send)
+                game_player.send_animation(json_to_send)
         elif category == "colour":
             for game_player in self.game.players:
                 removed_cards = game_player.hand.remove_colour(to_ban)
@@ -1194,7 +1195,7 @@ class Genocide(AbstractCard):
                         "card image url": card.get_url()
                     } for card in removed_cards
                 ]
-                game_player.send_message("animate", json_to_send)
+                game_player.send_animation(json_to_send)
 
 
 class Jesus(AbstractCard):
@@ -1295,6 +1296,9 @@ class Thanos(AbstractCard):
             player.hand.remove_card(index=index)
             total -= 1
         
+        if len(removed) == 0:
+            return
+        
         player.refresh_card_play_animation()
         
         json_to_send = {
@@ -1304,7 +1308,7 @@ class Thanos(AbstractCard):
                 "card image url": card.get_url()
             } for card in removed]
         }
-        player.send_message("animate", json_to_send)
+        player.send_animation(json_to_send)
 
 
 class CopyCat(AbstractCard):
@@ -1509,7 +1513,7 @@ class Possess(AbstractCard):
     NAME = "Possess"
     CARD_IMAGE_URL = 'possess.png'
     CARD_COLOUR = "black"
-    CARD_FREQUENCY = CardFrequency(5)
+    CARD_FREQUENCY = CardFrequency(1, max_cards=4, starting=0)
     CARD_TYPE = "Possess"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a player. On their next turn you get to decide what card(s) they must play from their hand, or force them to pick up."

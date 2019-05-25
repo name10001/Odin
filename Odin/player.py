@@ -163,7 +163,7 @@ class Player:
                 options_as_dict[item] = item
 
         # send play cards animation before you send the options
-        self.refresh_card_play_animation()
+        (self if self.playing_as is None else self.playing_as).refresh_card_play_animation()
 
         question_answer = None
         # Only ask the question if there are more options avaliable
@@ -356,6 +356,22 @@ class Player:
         """
         with fs.app.app_context():
             fs.socket_io.emit(message_type, data, room=self.sid)
+    
+    def send_animation(self, data):
+        """
+        Send an animation message
+        If the player is possessed then the message will be sent to the possessor too.
+        If a player is possessing another player they will not recieve animations
+        :return: If a message was sent
+        """
+        if self.playing_as is None:
+            self.send_message("animate", data)
+            if len(self.possessions) > 0 and self.is_turn():
+                self.possessions[0].send_message("animate", data)
+            
+            return True
+        
+        return False
 
     def pickup(self):
         """
