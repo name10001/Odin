@@ -62,6 +62,10 @@ class Gui {
         this.cardBack.src = '/static/cards/back.png';
         this.skull = new Image;
         this.skull.src = '/static/skull.png';
+        this.turn_icon = new Image;
+        this.turn_icon.src = '/static/turn_icon.png';
+        this.possess_icon = new Image;
+        this.possess_icon.src = '/static/possess_icon.png';
     }
 
     updateCards(cardPanels) {
@@ -330,13 +334,21 @@ class Gui {
                     if(player.nPickup!=0) {
                         drawText((player.nPickup ? "+" : "") + player.nPickup, px+fontSize*6, py+pheight/2+fontSize/3, "left", fontSize, fontSize*4, "#fff");
                     }
+                    
+                    let iy = py+pgap/2;
 
                     //adjust size for non-turn players
                     if(i==game.turn) {
                         //draw extra details about the person's turn
                         if(game.turnsLeft>1) {
-                            drawText(game.turnsLeft + " turns", px+fontSize*6,py+pheight*0.3,"left",fontSize/2,undefined,"#fff");
+                            ctx.drawImage(this.turn_icon, px+fontSize*6,iy,fontSize/2,fontSize/2);
+                            drawText("x" + game.turnsLeft, px+fontSize*6.6,iy+pgap*0.9,"left",fontSize/2,undefined,"#fff");
+                            iy += fontSize*0.6;
                         }
+                        if(player.nPossessions>0) {
+                            ctx.drawImage(this.possess_icon, px+fontSize*6,iy,fontSize/2,fontSize/2);
+                        }
+
 
 
                         py+=pheight/2;
@@ -359,6 +371,8 @@ class Gui {
                             skip--;
                         }
                     }
+
+                    
 
                     py+=pgap+pheight;
                     i+=game.direction;
@@ -483,7 +497,7 @@ class Gui {
      * Animate a list of cards being played
      */
     animatePlayCards(cards, fromDeck=false) {
-        if(game.yourTurn && !fromDeck) {
+        if((game.yourTurn || game.turn == game.getPlayerIndex()) && !fromDeck) {
             // cards from your hand
             let planningPilePosition = this.getPlanningPilePosition();
             this.animateMoveCardsFromHand(cards, planningPilePosition, function() {
@@ -791,7 +805,7 @@ class Gui {
 
         let card = game.planningCards.pop();
         
-        let endPosition = game.yourTurn ? {x:canvas.width/2, y:this.getBottomY()+GUI_SCALE*3.5} : {x:canvas.width/2, y:-this.CARD_HEIGHT};
+        let endPosition = (game.yourTurn || game.turn == game.getPlayerIndex()) ? {x:canvas.width/2, y:this.getBottomY()+GUI_SCALE*3.5} : {x:canvas.width/2, y:-this.CARD_HEIGHT};
         
         let image = card.image;
         
@@ -811,7 +825,7 @@ class Gui {
         let gap = position.gap;
 
         //end position
-        let endPosition = game.yourTurn ? {x:canvas.width/2, y:this.getBottomY()+GUI_SCALE*3.5} : {x:canvas.width/2, y:-this.CARD_HEIGHT};
+        let endPosition = (game.yourTurn || game.turn == game.getPlayerIndex()) ? {x:canvas.width/2, y:this.getBottomY()+GUI_SCALE*3.5} : {x:canvas.width/2, y:-this.CARD_HEIGHT};
 
         let wait = 0;
         let waitIncr = this.getCardWaitIncrement(game.planningCards.length);

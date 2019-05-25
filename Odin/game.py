@@ -142,29 +142,39 @@ class Game:
         player = self.get_user(session['player_id'])
         if player is None:
             return
-
+        
+        # stop a player from having their turn if they're possessed
+        if len(player.possessions) > 0 and player.is_turn():
+            print(player.get_id(), "tried to play but is possessed.")
+            return
+        
         print(player.get_name(), message, data)  # for debugging
 
-        if message == "play card":
-            player.play_card(card_id_to_play=data[0])
-            self.update_users()
-        elif message == "play cards":
-            player.play_card(card_array=data)
-            self.update_users()
-        elif message == "finished turn":
-            if player == self.turn:
-                self.next_turn()
-                self.update_users()
-        elif message == "undo":
-            player.undo()
-            self.update_users()
-        elif message == "undo all":
-            player.undo_all()
-            self.update_users()
-        elif message == "answer":
+        if message == "answer":
             player.answer_question(data)
         else:
-            print("got unknown message from player:", message)
+            # override player due to possession
+            if player.playing_as is not None:
+                player = player.playing_as
+
+            if message == "play card":
+                player.play_card(card_id_to_play=data[0])
+                self.update_users()
+            elif message == "play cards":
+                player.play_card(card_array=data)
+                self.update_users()
+            elif message == "finished turn":
+                if player == self.turn:
+                    self.next_turn()
+                    self.update_users()
+            elif message == "undo":
+                player.undo()
+                self.update_users()
+            elif message == "undo all":
+                player.undo_all()
+                self.update_users()
+            else:
+                print("got unknown message from player:", message)
     
     def animate_card_transfer(self, cards, cards_from="deck", cards_to="deck"):
         """
@@ -182,7 +192,7 @@ class Game:
         if isinstance(cards_from, Player):
             if isinstance(cards_to, Player):
                 # Player to player transfer
-                json_to_send = {  # remove
+                remove_message = {  # remove
                     "type": "remove cards",
                     "to": cards_to.get_id(),
                     "cards": [
@@ -193,8 +203,7 @@ class Game:
                         } for card in cards
                     ]
                 }
-                cards_from.send_message("animate", json_to_send)
-                json_to_send = {  # pickup
+                pickup_message = {  # pickup
                     "type": "pickup",
                     "from": cards_from.get_id(),
                     "cards": [
@@ -205,20 +214,30 @@ class Game:
                         } for card in cards
                     ]
                 }
-                cards_to.send_message("animate", json_to_send)
-                json_to_send = {  # everyone else
+                transfer_message = {  # everyone else
                     "type": "player pickup",
                     "from": cards_from.get_id(),
                     "player": cards_to.get_id(),
                     "count": len(cards)
                 }
 
-                for other_player in self.players:
-                    if other_player is not cards_from and other_player is not cards_to:
-                        other_player.send_message("animate", json_to_send)
+                possess_from = cards_from.get_possessed_by()
+                possess_to = cards_to.get_possessed_by()
+
+                for player in self.players:
+                    if player is possess_from:
+                        player.send_message("animate", remove_message)
+                    elif player is possess_to:
+                        player.send_message("animate", pickup_message)
+                    elif player is cards_from:
+                        player.send_message("animate", remove_message)
+                    elif player is cards_to:
+                        player.send_message("animate", pickup_message)
+                    else:
+                        player.send_message("animate", transfer_message)
             elif cards_to == "deck":
                 # REMOVE CARDS
-                json_to_send = {
+                remove_message = {
                     "type": "remove cards",
                     "to": None,
                     "cards": [
@@ -229,18 +248,21 @@ class Game:
                         } for card in cards
                     ]
                 }
-                cards_from.send_message("animate", json_to_send)
-
-                json_to_send = {
+                
+                transfer_message = {
                     "type": "player remove cards",
                     "to": None,
                     "player": cards_from.get_id(),
                     "count": len(cards)
                 }
 
-                for other_player in self.players:
-                    if other_player is not cards_from:
-                        other_player.send_message("animate", json_to_send)
+                possess_from = cards_from.get_possessed_by()
+
+                for player in self.players:
+                    if player is possess_from or player is cards_from:
+                        player.send_message("animate", remove_message)
+                    else:
+                        player.send_message("animate", transfer_message)
 
                 return
             elif cards_to == "planning":
@@ -261,7 +283,7 @@ class Game:
         elif cards_from == "deck":
             if isinstance(cards_to, Player):
                 # PICKUP
-                json_to_send = {
+                pickup_message = {
                     "type": "pickup",
                     "from": None,
                     "cards": [{
@@ -270,18 +292,21 @@ class Game:
                         "card image url": card.get_url()
                      } for card in cards]
                 }
-                cards_to.send_message("animate", json_to_send)
 
-                json_to_send = {
+                transfer_message = {
                     "type": "player pickup",
                     "from": None,
                     "player": cards_to.get_id(),
                     "count": len(cards)
                 }
 
-                for other_player in self.players:
-                    if other_player is not cards_to:
-                        other_player.send_message("animate", json_to_send)
+                possess_to = cards_to.get_possessed_by()
+
+                for player in self.players:
+                    if player is cards_to or player is possess_to:
+                        player.send_message("animate", pickup_message)
+                    else:
+                        player.send_message("animate", transfer_message)
 
             elif cards_to == "planning":
                 # card prepare animation from the deck

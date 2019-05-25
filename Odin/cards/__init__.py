@@ -30,7 +30,7 @@ all_cards = [
     Pawn, FeelingBlue, Plus, FuckYou, AtomicBomb,
     EA15, EA20, EA30, EA100,
     BlankBro, Happiness, Elevator, SwapCard, Jew,
-    SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos, Odin, CopyCat,
+    SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos, Odin, CopyCat, Possess,
     ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, BlackHole, 
     ColourChooser, RedBlueSwapper, RedGreenSwapper, RedYellowSwapper, GreenBlueSwapper,
     BlueYellowSwapper, YellowGreenSwapper, BlackWhiteSwapper

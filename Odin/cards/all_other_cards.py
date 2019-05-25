@@ -363,8 +363,6 @@ class EA(AbstractCard):
     CARD_COLOUR = "black"
     CARD_TYPE = "EA"
     NUMBER_NEEDED = 0
-    EFFECT_DESCRIPTION = "Requires a fee to be able to play. You must pay the fee when you pay this card with " \
-                         "any number cards such that they all add up to {cls.NUMBER_NEEDED}."
     MULTI_COLOURED = False
 
     def __init__(self, *args, **kwargs):
@@ -480,6 +478,8 @@ class EA(AbstractCard):
 
 class EA15(EA):
     CARD_FREQUENCY = CardFrequency(0.7, 1.5, starting=0, elevator=0)
+    EFFECT_DESCRIPTION = "Requires a fee to be able to play. You must pay the fee when you pay this card with " \
+                         "any number cards such that they all add up to 15."
     NAME = "EA $15"
     CARD_IMAGE_URL = 'ea_15.png'
     NUMBER_NEEDED = 15
@@ -487,6 +487,8 @@ class EA15(EA):
 
 class EA20(EA):
     CARD_FREQUENCY = CardFrequency(0.5, 0.7, 1, starting=0, elevator=0)
+    EFFECT_DESCRIPTION = "Requires a fee to be able to play. You must pay the fee when you pay this card with " \
+                         "any number cards such that they all add up to 20."
     NAME = "EA $20"
     CARD_IMAGE_URL = 'ea_20.png'
     NUMBER_NEEDED = 20
@@ -494,6 +496,8 @@ class EA20(EA):
 
 class EA30(EA):
     CARD_FREQUENCY = CardFrequency(0.25, 0.5, 1, starting=0, elevator=0)
+    EFFECT_DESCRIPTION = "Requires a fee to be able to play. You must pay the fee when you pay this card with " \
+                         "any number cards such that they all add up to 30."
     NAME = "EA $30"
     CARD_IMAGE_URL = 'ea_30.png'
     NUMBER_NEEDED = 30
@@ -501,6 +505,8 @@ class EA30(EA):
 
 class EA100(EA):
     CARD_FREQUENCY = CardFrequency(0, 0, 0.05, starting=0, elevator=0)
+    EFFECT_DESCRIPTION = "Requires a fee to be able to play. You must pay the fee when you pay this card with " \
+                         "any number cards such that they all add up to 100."
     NAME = "EA $100"
     CARD_IMAGE_URL = 'ea_100.png'
     NUMBER_NEEDED = 100
@@ -739,8 +745,15 @@ class DoJustly(AbstractCard):
         if other_player_id is None:
             return
         other_player = self.game.get_player(other_player_id)
+
+
+
+        title = "Pick a card to give:"
+        if self.NUMBER_TO_GIVE > 1:
+            title = "Pick " + str(self.NUMBER_TO_GIVE) + " cards to give:"
+
         cards_to_give = player.ask(
-            "Select cards to give cards to " + other_player.get_name() + ":",
+            title,
             player.hand,
             options_type="cards",
             allow_cancel=False,
@@ -1490,6 +1503,38 @@ class SwapCard(AbstractCard):
         player.hand.add_card(card)
 
         self.game.animate_card_transfer([card], cards_to=player, cards_from=other_player)
+
+
+class Possess(AbstractCard):
+    NAME = "Possess"
+    CARD_IMAGE_URL = 'possess.png'
+    CARD_COLOUR = "black"
+    CARD_FREQUENCY = CardFrequency(5)
+    CARD_TYPE = "Possess"
+    MULTI_COLOURED = False
+    EFFECT_DESCRIPTION = "Choose a player. On their next turn you get to decide what card(s) they must play from their hand, or force them to pick up."
+
+    def play_card(self, player):
+        options = {}
+
+        for other_player in self.game.players:
+            if other_player != player:
+                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+        
+        if len(options) == 0:
+            return
+        
+        player_id = player.ask(
+            "Pick a player to possess:",
+            options,
+            options_type="vertical scroll",
+            allow_cancel=False,
+            image=self.get_url()
+        )
+        chosen_player = self.game.get_player(player_id)
+
+        # TODO have some sort of animation for using the possess card
+        chosen_player.possessions.append(player)
 
 
 class Jew(AbstractCard):

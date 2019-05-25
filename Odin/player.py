@@ -16,6 +16,8 @@ class Player:
         self.name = name
         self.sid = None
         self.turns_left = 1
+        self.possessions = []
+        self.playing_as = None
         self.state = "not turn"
         self._play_cards_stack = []  # see self.play_card()
         self.player_pickup_amount = 0  # 
@@ -141,8 +143,8 @@ class Player:
         E.g. "Blue_Six_card_12345" or "server" or ["Green_Two_card_54321", "Blue_Pickup_2_card_56443", ...]
         It will return None if and only if the player cancels
         """
-
-        # title = textwrap.fill(title, 25)
+        if self.is_turn() and len(self.possessions) > 0:
+            return self.possessions[0].ask(title, options, options_type, number_to_pick, allow_cancel, image)
     
         options_as_dict = {}
 
@@ -251,6 +253,7 @@ class Player:
 
         for player in self.game.players:
             player.player_pickup_amount = 0
+        
 
         # send wining message to everyone but this player
         if self.had_won():
@@ -261,6 +264,12 @@ class Player:
         if self.turns_left > 0:
             return False
         else:
+            # remove possession
+            if len(self.possessions) > 0:
+                possession = self.possessions[0]
+                possession.playing_as = None
+                self.possessions.pop(0)
+            
             self.state = "not turn"
             self.turns_left = 1
             return True
@@ -276,6 +285,7 @@ class Player:
             "cards on deck": [],
             "your cards": [],
             "your id": self.get_id(),
+            "playing as": None if self.playing_as is None else self.playing_as.get_id(),
             "planning pile": [],
             "direction": self.game.direction,
             "pickup size": self.game.pickup,
@@ -311,13 +321,13 @@ class Player:
             )
 
         # get player cards
-        for card in self.hand:
+        for card in (self.hand if self.playing_as is None else self.playing_as.hand):
             json_to_send["your cards"].append(
                 {
                     "card id": card.get_id(),
                     "card image url": card.get_url(),
                     "name": card.get_name(),
-                    "can be played": self._can_be_played(card)
+                    "can be played": (self if self.playing_as is None else self.playing_as)._can_be_played(card)
                 }
             )
 
@@ -329,6 +339,7 @@ class Player:
                     "id": player.get_id(),
                     "number of cards": len(player.hand),
                     "is turn": player.is_turn(),
+                    "possessions": len(player.possessions),
                     "turns left": player.turns_left,
                     "pickup amount": player.player_pickup_amount
                 }
@@ -397,15 +408,22 @@ class Player:
         }
 
         self.game.send_to_all_players("animate", json_to_send)
+    
+    def get_possessed_by(self):
+        """
+        Returns the player that is taking their turn if their turn is currently being possessed
+        """
+        return None if len(self.possessions) == 0 or not self.is_turn() else self.possessions[0]
 
     def _can_be_played(self, card):
         """
         Can the given card be played right now
         :return:
         """
+
         top_card = self.game.played_cards[-1]
         is_first_card = len(self.game.planning_pile) == 0
-
+        
         if self.is_turn() and not is_first_card:
             return card.can_be_played_with(self)
         elif card.can_be_played_on(self, top_card):
@@ -449,6 +467,11 @@ class Player:
         :return:
         """
         self.state = "playing turn"
+
+        # if possessed - let person possessing you have your turn
+        if len(self.possessions) > 0:
+            possession = self.possessions[0]
+            possession.playing_as = self
 
     def set_sid(self, sid):
         self.sid = sid

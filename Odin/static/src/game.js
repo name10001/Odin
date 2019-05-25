@@ -1,9 +1,10 @@
 class Player {
-    constructor(id, name, nCards, nPickup) {
+    constructor(id, name, nCards, nPickup, nPossessions) {
         this.id = id;
         this.name = name;
         this.nCards = nCards;
         this.nPickup = nPickup;
+        this.nPossessions = nPossessions;
     }
 }
 
@@ -167,6 +168,7 @@ class Game {
     }
 
     update(update) {
+        console.log(update);
         //update the cards in your hand
         this.yourStacks.length = 0;
         gui.cardScroller.items.length = 0;
@@ -193,6 +195,9 @@ class Game {
 
         //your player id
         this.yourId = update["your id"];
+        
+        //turn override if you are playing as someone else
+        this.playingAs = update["playing as"];
 
         //update pickup
         this.pickupAmount = update['pickup size'];
@@ -217,16 +222,31 @@ class Game {
             }
 
             this.playerIndices[player['id']] = this.players.length;
-            this.players.push(new Player(player['id'],player['name'],player['number of cards'],player['pickup amount']));
+            this.players.push(new Player(player['id'],player['name'],player['number of cards'],player['pickup amount'],player["possessions"]));
         }
         
         //check if it's your turn
         let index = this.getPlayerIndex();
+        let playingAsIndex = -1;
+        if(this.playingAs != null) playingAsIndex = this.getPlayerIndex(this.playingAs);
         if(index == this.turn) {
-            // your turn
-            this.turnString = "Your Turn! Cards Avaliable: " + canPlay + "/" + this.players[index].nCards;
+            if(this.players[index].nPossessions == 0) {
+                // your turn
+                this.turnString = "Your Turn! Cards Avaliable: " + canPlay + "/" + this.players[index].nCards;
+                this.yourTurn = true;
+            }
+            else {
+                // you are possessed
+                this.turnString = "You are possessed! Someone else is taking your turn.";
+                this.yourTurn = false;
+            }
+        }
+        else if(this.turn == playingAsIndex) {
+            //you are possessing someone else
+            this.turnString = "Possessing " + this.players[playingAsIndex].name + "! Cards Avaliable: " + canPlay + "/" + this.players[playingAsIndex].nCards;
             this.yourTurn = true;
-        }else {
+        }
+        else {
             //another person's turn
             this.turnString = this.players[this.turn].name + "'s Turn";
             this.yourTurn = false;
