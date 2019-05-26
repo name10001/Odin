@@ -391,6 +391,12 @@ class Game {
                 gui.currentAnimation = new GenocideAnimation(data["cards"], data['banned']);
             }));
             break;
+        //POSSESS
+        case "possess":
+            this.addEvent(new GameEvent(function() {
+                gui.currentAnimation = new PossessAnimation(data["possessor"], data["possessed"]);
+            }));
+            break;
         //SOUND EFFECT - FOR THINGS LIKE 69 NICE
         case "sound":
             this.addEvent(new GameEvent(function() {

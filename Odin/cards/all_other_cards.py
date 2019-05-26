@@ -1537,7 +1537,15 @@ class Possess(AbstractCard):
         )
         chosen_player = self.game.get_player(player_id)
 
-        # TODO have some sort of animation for using the possess card
+        json_to_send = {
+            "type": "possess",
+            "possessor": player.get_id(),
+            "possessed": chosen_player.get_id()
+        }
+
+        for other_player in self.game.players:
+            other_player.send_animation(json_to_send)
+
         chosen_player.possessions.append(player)
 
 

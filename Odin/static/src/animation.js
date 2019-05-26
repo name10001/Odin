@@ -388,3 +388,51 @@ class GenocideAnimation {
         ctx.globalAlpha = 1;
     }
 }
+
+/*
+
+
+
+            POSSESS
+
+
+
+*/
+class PossessAnimation {
+    constructor(possessor, possessed) {
+        let audio = new Audio('/static/sounds/possess.mp3');
+        audio.play();
+        this.timer = 2500;
+        let possessorIndex = game.getPlayerIndex(possessor);
+        let possessedIndex = game.getPlayerIndex(possessed);
+        
+        if (possessedIndex == game.getPlayerIndex()) {
+            this.message1 = "You have been possessed by";
+            this.message2 = game.players[possessorIndex].name;
+        }
+        else {
+            this.message1 = game.players[possessedIndex].name + " was possessed";
+            this.message2 = "by " + game.players[possessorIndex].name;
+        }
+    }
+
+    draw(dt) {
+        this.timer -= dt;
+        if(this.timer < 0) {
+            gui.currentAnimation = null;
+            game.finishedEvent();
+            return;
+        }
+
+        if(this.timer < 1000) {
+            ctx.globalAlpha = this.timer/1000;
+        }
+        drawText(this.message1, canvas.width/2, canvas.height/2 - GUI_SCALE*2, "center", GUI_SCALE*4);
+        drawText(this.message2, canvas.width/2, canvas.height/2 + GUI_SCALE*2, "center", GUI_SCALE*4);
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 3;
+        ctx.strokeText(this.message1, canvas.width/2, canvas.height/2 - GUI_SCALE*2);
+        ctx.strokeText(this.message2, canvas.width/2, canvas.height/2 + GUI_SCALE*2);
+        ctx.globalAlpha = 1;
+    }
+}
