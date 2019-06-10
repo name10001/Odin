@@ -255,7 +255,6 @@ class Game:
                     else:
                         player.send_animation(transfer_message)
 
-                return
             elif cards_to == "planning":
                 # card prepare animation from player
                 json_to_send = {
@@ -312,7 +311,6 @@ class Game:
                 }
 
                 self.send_to_all_players("animate", json_to_send)
-                return
         elif cards_from == "planning":
             if cards_to == "discard":
                 # card play animation - from prepare to discard pile
@@ -328,7 +326,32 @@ class Game:
                 }
 
                 self.send_to_all_players("animate", json_to_send)
-                return
+        
+        self.update_players()
+    
+    def update_players(self):
+        """
+        A smaller card_update method which only updates the details about players.
+        Send to everyone
+        """
+        json_to_send = {
+            "players": []
+        }
+        
+        for player in self.players:
+            json_to_send["players"].append(
+                {
+                    "name": player.get_name(),
+                    "id": player.get_id(),
+                    "number of cards": len(player.hand),
+                    "is turn": player.is_turn(),
+                    "possessions": len(player.possessions),
+                    "turns left": player.turns_left,
+                    "pickup amount": player.player_pickup_amount
+                }
+            )
+
+        self.send_to_all_players("card update", json_to_send)
 
     def get_top_card(self):
         """

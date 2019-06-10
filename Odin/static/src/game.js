@@ -114,6 +114,7 @@ class Game {
         this.pickupAmount = 0;
         this.turn = 0;
         this.turnsLeft = 1;
+        this.canPlay = 0;
         this.skip = 0;
         this.turnString = "";
         this.cantPlayReason = null;  // is null if you are allowed to have your turn with the cards you have played
@@ -168,90 +169,106 @@ class Game {
     }
 
     update(update) {
-        console.log(update);
-        //update the cards in your hand
-        this.yourStacks.length = 0;
-        gui.cardScroller.items.length = 0;
-        this.cardIndices = {};
-        this.cardNameIndices = {};
-        let canPlay = 0;
-
-        for(let card of update['your cards']) {
-            if(card['can be played']) canPlay++;
-
-            this.addCard(card['card id'], card['name'], card['card image url'], card['can be played']);
+        // UPDATE CARDS IN YOUR HAND
+        if(update['your cards'] != undefined) {
+            this.yourStacks.length = 0;
+            gui.cardScroller.items.length = 0;
+            this.cardIndices = {};
+            this.cardNameIndices = {};
+            this.canPlay = 0;
+    
+            for(let card of update['your cards']) {
+                if(card['can be played']) this.canPlay++;
+    
+                this.addCard(card['card id'], card['name'], card['card image url'], card['can be played']);
+            }
         }
+
+        // OTHER CARDS
 
         //update cards at the top
-        this.topCards.length = 0;
-        for(let card of update['cards on deck']) {
-            this.topCards.push(this.allImages[card['card image url']]);
+        if(update['cards on deck'] != undefined) {
+            this.topCards.length = 0;
+            for(let card of update['cards on deck']) {
+                this.topCards.push(this.allImages[card['card image url']]);
+            }
         }
         //update planning cards
-        this.planningCards.length = 0;
-        for(let card of update['planning pile']) {
-            this.planningCards.push(new CardStack(card['card id'], card['name'], card['card image url'], true));
+        if(update['planning pile'] != undefined) {
+            this.planningCards.length = 0;
+            for(let card of update['planning pile']) {
+                this.planningCards.push(new CardStack(card['card id'], card['name'], card['card image url'], true));
+            }
         }
 
         //your player id
-        this.yourId = update["your id"];
+        if(update["your id"] != undefined)
+            this.yourId = update["your id"];
         
         //turn override if you are playing as someone else
-        this.playingAs = update["playing as"];
+        if(update["playing as"] != undefined)
+            this.playingAs = update["playing as"];
 
         //update pickup
-        this.pickupAmount = update['pickup size'];
+        if(update["pickup size"] != undefined)
+            this.pickupAmount = update['pickup size'];
 
         //update direction
-        this.direction = update['direction'];
+        if(update["direction"] != undefined)
+            this.direction = update['direction'];
 
         //can't play reason
-        this.cantPlayReason = update['cant play reason'];
+        if(update["cant play reason"] != undefined)
+            this.cantPlayReason = update['cant play reason'];
         
         //player iteration amount
-        this.skip = (update['iteration']-1) % this.players.length;
+        if(update["iteration"] != undefined)
+            this.skip = (update['iteration']-1) % this.players.length;
     
-        //update players
-        this.players.length = 0;
-        this.playerIndices = {};
-        for(let player of update['players']) {
-            if(player['is turn']) {
-                //if this player is having their turn now
-                this.turn = this.players.length;
-                this.turnsLeft = player['turns left'];
+        // UPDATE PLAYERS
+        if(update['players'] != undefined) {
+            this.players.length = 0;
+            this.playerIndices = {};
+            for(let player of update['players']) {
+                if(player['is turn']) {
+                    //if this player is having their turn now
+                    this.turn = this.players.length;
+                    this.turnsLeft = player['turns left'];
+                }
+
+                this.playerIndices[player['id']] = this.players.length;
+                this.players.push(new Player(player['id'],player['name'],player['number of cards'],player['pickup amount'],player["possessions"]));
             }
 
-            this.playerIndices[player['id']] = this.players.length;
-            this.players.push(new Player(player['id'],player['name'],player['number of cards'],player['pickup amount'],player["possessions"]));
-        }
-        
-        //check if it's your turn
-        let index = this.getPlayerIndex();
-        let playingAsIndex = -1;
-        if(this.playingAs != null) playingAsIndex = this.getPlayerIndex(this.playingAs);
-        if(index == this.turn) {
-            if(this.players[index].nPossessions == 0) {
-                // your turn
-                this.turnString = "Your Turn! Cards Avaliable: " + canPlay + "/" + this.players[index].nCards;
+            //check if it's your turn
+            let index = this.getPlayerIndex();
+            let playingAsIndex = -1;
+            if(this.playingAs != null) playingAsIndex = this.getPlayerIndex(this.playingAs);
+            if(index == this.turn) {
+                if(this.players[index].nPossessions == 0) {
+                    // your turn
+                    this.turnString = "Your Turn! Cards Avaliable: " + this.canPlay + "/" + this.players[index].nCards;
+                    this.yourTurn = true;
+                }
+                else {
+                    // you are possessed
+                    this.turnString = "You are possessed! Someone else is taking your turn.";
+                    this.yourTurn = false;
+                }
+            }
+            else if(this.turn == playingAsIndex) {
+                //you are possessing someone else
+                this.turnString = "Possessing " + this.players[playingAsIndex].name + "! Cards Avaliable: " + this.canPlay + "/" + this.players[playingAsIndex].nCards;
                 this.yourTurn = true;
             }
             else {
-                // you are possessed
-                this.turnString = "You are possessed! Someone else is taking your turn.";
+                //another person's turn
+                this.turnString = this.players[this.turn].name + "'s Turn";
                 this.yourTurn = false;
             }
         }
-        else if(this.turn == playingAsIndex) {
-            //you are possessing someone else
-            this.turnString = "Possessing " + this.players[playingAsIndex].name + "! Cards Avaliable: " + canPlay + "/" + this.players[playingAsIndex].nCards;
-            this.yourTurn = true;
-        }
-        else {
-            //another person's turn
-            this.turnString = this.players[this.turn].name + "'s Turn";
-            this.yourTurn = false;
-        }
-
+        
+        
         this.finishedEvent();
         gui.shouldDraw = true;
     }
