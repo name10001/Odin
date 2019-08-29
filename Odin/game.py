@@ -331,10 +331,16 @@ class Game:
     
     def update_players(self):
         """
-        A smaller card_update method which only updates the details about players.
+        A smaller card_update method which only updates the details about players and current effects in action.
+
+        The cost saving is due to not sending the cards again.
+        
         Send to everyone
         """
         json_to_send = {
+            "direction": self.direction,
+            "pickup size": self.pickup,
+            "iteration": self.iterate_turn_by,
             "players": []
         }
         

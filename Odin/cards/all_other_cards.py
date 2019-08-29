@@ -988,6 +988,14 @@ class FeelingBlue(AbstractCard):
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon playing this card, you will be forced to pickup 5 cards."
 
+    def prepare_card(self, player, allow_cancel):
+        player.player_pickup_amount += 5
+
+        return True
+        
+    def undo_prepare_card(self, player):
+        player.player_pickup_amount -= 5
+
     def play_card(self, player):
         player.refresh_card_play_animation()
         player.add_new_cards(5)
