@@ -285,13 +285,13 @@ class Player:
             "cards on deck": [],
             "your cards": [],
             "your id": self.get_id(),
-            "playing as": None if self.playing_as is None else self.playing_as.get_id(),
+            "playing as": "" if self.playing_as is None else self.playing_as.get_id(),
             "planning pile": [],
             "direction": self.game.direction,
             "pickup size": self.game.pickup,
             "iteration": self.game.iterate_turn_by,
             "players": [],
-            "cant play reason": None,
+            "cant play reason": "",
             "player type": type(self).__name__
         }
 

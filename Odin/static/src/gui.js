@@ -277,15 +277,17 @@ class Gui {
             //DRAW BUTTONS
             leftX = this.getButtonX();
             //finish button
+
+            // FIXME: the can't play reason is showing up when it shouldn't
             if(game.planningCards.length==0 || !game.yourTurn) {
                 let pickupAmount = 1;
                 if(game.pickupAmount>0) pickupAmount = game.pickupAmount;
                 this.finishButton.text = "+" + pickupAmount;
             }
             else {
-                this.finishButton.text = game.cantPlayReason==null ? "PLAY CARDS" : game.cantPlayReason;
+                this.finishButton.text = game.cantPlayReason.length == 0 ? "PLAY CARDS" : game.cantPlayReason;
             }
-            this.finishButton.drawThis(game.yourTurn && game.cantPlayReason==null);
+            this.finishButton.drawThis(game.yourTurn && game.cantPlayReason.length == 0);
 
             //undo button(s)
             if(game.planningCards.length>0 && game.yourTurn) {
@@ -435,7 +437,7 @@ class Gui {
         if(this.currentAnimation!=null) return;//don't allow clicking on these buttons if an animation playing
         
         //clciking the end turn button
-        if(this.finishButton.isMouseOverThis() && game.yourTurn && game.cantPlayReason==null) {
+        if(this.finishButton.isMouseOverThis() && game.yourTurn && game.cantPlayReason.length == 0) {
             game.finishTurn();
         }
         //clicking on the undo button

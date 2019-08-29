@@ -117,8 +117,9 @@ class Game {
         this.canPlay = 0;
         this.skip = 0;
         this.turnString = "";
-        this.cantPlayReason = null;  // is null if you are allowed to have your turn with the cards you have played
-        
+        this.cantPlayReason = "";  // is empty if you are allowed to have your turn with the cards you have played
+        this.playingAs = "";
+
         //event system
         this.events = [];
 
@@ -169,6 +170,8 @@ class Game {
     }
 
     update(update) {
+        if (DEBUG) {console.log("CARD UPDATE:"); console.log(update);}
+
         // UPDATE CARDS IN YOUR HAND
         if(update['your cards'] != undefined) {
             this.yourStacks.length = 0;
@@ -218,8 +221,9 @@ class Game {
             this.direction = update['direction'];
 
         //can't play reason
-        if(update["cant play reason"] != undefined)
+        if(update["cant play reason"] != undefined) {
             this.cantPlayReason = update['cant play reason'];
+        }
         
         //player iteration amount
         if(update["iteration"] != undefined)
@@ -243,7 +247,7 @@ class Game {
             //check if it's your turn
             let index = this.getPlayerIndex();
             let playingAsIndex = -1;
-            if(this.playingAs != null) playingAsIndex = this.getPlayerIndex(this.playingAs);
+            if(this.playingAs.length > 0) playingAsIndex = this.getPlayerIndex(this.playingAs);
             if(index == this.turn) {
                 if(this.players[index].nPossessions == 0) {
                     // your turn

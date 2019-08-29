@@ -911,6 +911,8 @@ class Communist(AbstractCard):
             player.send_animation(json_to_send)
             
             i += number_of_cards_each
+        
+        self.game.update_players()
 
 
 class Capitalist(AbstractCard):
@@ -1196,6 +1198,8 @@ class Genocide(AbstractCard):
                     } for card in removed_cards
                 ]
                 game_player.send_animation(json_to_send)
+        
+        self.game.update_players()
 
 
 class Jesus(AbstractCard):
@@ -1309,6 +1313,7 @@ class Thanos(AbstractCard):
             } for card in removed]
         }
         player.send_animation(json_to_send)
+        self.game.update_players()
 
 
 class CopyCat(AbstractCard):
@@ -1547,6 +1552,7 @@ class Possess(AbstractCard):
             other_player.send_animation(json_to_send)
 
         chosen_player.possessions.append(player)
+        self.game.update_players()
 
 
 class Jew(AbstractCard):

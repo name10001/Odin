@@ -5,6 +5,8 @@ const CARD_HEIGHT = CARD_WIDTH/CARD_RATIO;
 const MIN_WIDTH = 48;//in terms of GUI_SCALE units
 const MIN_HEIGHT = 64;
 
+var DEBUG = false;
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
