@@ -19,8 +19,7 @@ class WaitingRoom:
         self.game_id = game_id
         self.last_modified = time()
         self.settings = {
-            "number-of-cards": 25,
-            "show-planning-pile": True
+            "number-of-cards": 25
         }
 
     def message(self, message_type, data):
@@ -36,6 +35,8 @@ class WaitingRoom:
             self._start()
         elif message_type == "setting change":
             self._handle_change_setting(data)
+        elif message_type == "quit":
+            self._left_waiting_room()
         else:
             print("got unknown message:", message_type, data)
 
@@ -87,18 +88,40 @@ class WaitingRoom:
 
     def _joined_waiting_room(self):
         """
-        Sends then all the joined players. If new players join latter it will also send them
+        Sends them all the joined players. If new players join later it will also send them
         :return: None
         """
         self.modify()
         for setting in self.settings:
             fs.socket_io.emit("setting changed", [setting, self.settings[setting]])
         join_room(self.game_id)
+
         for player in self._players:
             if player == session['player_id']:
                 emit("user joined", self._players[player] + " (You)")
             else:
                 emit("user joined", self._players[player])
+    
+    def _left_waiting_room(self):
+        """
+        Tells players that a player has left the game.
+        Returns the player to the index page 
+        :return: None
+        """
+        self.modify()
+
+        leave_room(self.game_id)
+
+        player_id = session['player_id']
+        name = self._players[player_id]
+
+        del self._players[player_id]
+
+        with fs.app.app_context():
+            fs.socket_io.emit("user quit", name, room=self.game_id)
+
+        emit("quit")
+
 
     def _start(self):
         """

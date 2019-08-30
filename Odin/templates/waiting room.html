@@ -21,21 +21,38 @@
 				socket.on('connect', function() {
 				    $("list-of-players").html("");
 					socket.emit("waiting room message", GAME_ID, "join", null);
-				});
+                });
+                // debug message
 				socket.on('message', function(data) {
 					console.log(data);
-				});
+                });
+                // refresh
 				socket.on('refresh', function(data) {
 					location.reload(true);
-				});
+                });
+                // another player joined
 				socket.on('user joined', function(name) {
 				    let name_node = document.createElement("LI");
 				    name_node.classList.add("list-group-item");
 				    let text_node = document.createTextNode(name);
 				    name_node.appendChild(text_node);
 					document.getElementById("list-of-players").appendChild(name_node);
-				});
-
+                });
+                // a player left
+                socket.on('user quit', function(name) {
+                    let playerList = document.getElementById("list-of-players");
+                    for(let node of playerList.getElementsByTagName("LI")) {
+                        if(node.innerHTML == name) {
+                            playerList.removeChild(node);
+                            break;
+                        }
+                    }
+                });
+                // you left
+                socket.on('quit', function() {
+                    location.href = "/";
+                });
+                // change the number of cards
 				$("#number-of-cards").change(function() {
 				    theInput = document.getElementById("number-of-cards");
 				    let num = parseInt(theInput.value);
@@ -47,7 +64,7 @@
 				    theInput.value = num;
 				    socket.emit("waiting room message", GAME_ID, "setting change", ["number-of-cards", num]);
 				});
-				var justChangedCheckBox = false;
+				/*var justChangedCheckBox = false;
 				$("#show-planning-pile").change(function() {
 				    if (justChangedCheckBox) {
 				        justChangedCheckBox = false;
@@ -55,11 +72,11 @@
 				    }
 				    theInput = $("#show-planning-pile");
 				    socket.emit("waiting room message", GAME_ID, "setting change", ["show-planning-pile", theInput.prop('checked')]);
-				});
+				});*/
 				socket.on('setting changed', function(data) {
 				    if (data[0] == "number-of-cards") {
 				        document.getElementById("number-of-cards").value = data[1];
-				    } else if (data[0] == "show-planning-pile") {
+				    } /*else if (data[0] == "show-planning-pile") {
 				        checkBox = $("#show-planning-pile");
 				        if (data[1] == true) {
 				            justChangedCheckBox = true;
@@ -70,7 +87,7 @@
 				        } else {
 				            throw data[1] + " is not a valid state for show-planning-pile";
 				        }
-				    } else {
+				    } */ else {
 				        throw "No item called '" + data[0] + "' found";
 				    }
 				})
@@ -97,7 +114,10 @@
         <div class="panel panel-default">
 
             <div class="panel-heading">
-                <h2 style="text-align:center;">
+                <button type="button" style="float:right; margin-top:5px;" class="btn btn-primary" onclick="socket.emit('waiting room message', GAME_ID, 'quit', null)">
+                    Quit
+                </button>
+                <h2 style="text-align:center; margin-top:5px;">
                     ID: <strong>{{ waiting_room.get_id() }}</strong>
                 </h2>
                 <div class="input-group">
@@ -132,11 +152,12 @@
                         <label for="number-of-cards">Starting number of cards</label>
                         <input class="form-control" id="number-of-cards" type="number" min="5" max="{{ settings.player_card_limit }}" step="1">
                     </div>
+                    <!--
                     <div class="col-xs-4">
                         <label for="show-planning-pile">Show other players planning pile</label>
                         <input type="checkbox" checked data-toggle="toggle" id="show-planning-pile" >
                     </div>
-                    <!--
+                    
                     <div class="col-xs-4">
                         <label for="lock-settings">Lock settings</label>
                         <input type="checkbox" checked data-toggle="toggle" id="lock-settings" >
