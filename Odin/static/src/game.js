@@ -462,7 +462,10 @@ class Game {
     }
 
     finishTurn(){
-        // not currently working!
         socket.emit("game message", GAME_ID, "finished turn", null);
+    }
+
+    quit() {
+        socket.emit("game message", GAME_ID, "quit", null);
     }
 }

@@ -29,6 +29,14 @@ class WaitingRoom:
         :param data:
         :return:
         """
+
+        # check that the message is coming from a valid session
+        if "player_id" not in session:
+            return
+        if session["player_id"] not in self._players:
+            return
+
+        # parse message
         if message_type == "join":
             self._joined_waiting_room()
         elif message_type == "start":
@@ -110,18 +118,23 @@ class WaitingRoom:
         """
         self.modify()
 
-        leave_room(self.game_id)
-
         player_id = session['player_id']
         name = self._players[player_id]
 
-        del self._players[player_id]
+        self.leave_room()
 
         with fs.app.app_context():
             fs.socket_io.emit("user quit", name, room=self.game_id)
 
         emit("quit")
+    
+    def leave_room(self):
+        player_id = session['player_id']
 
+        del session['player_id']
+        leave_room(self.game_id)
+
+        del self._players[player_id]
 
     def _start(self):
         """

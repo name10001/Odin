@@ -14,10 +14,15 @@ class Button {
         this.height = height;
         this.fontSize = fontSize;
         this.text = text;
+        this.image = null;
     }
 
     x() {return 0;}
     y() {return 0;}
+
+    setImage(image) {
+        this.image = image;
+    }
 
     isMouseOver(x, y) {
         return mousePosition.x>x && mousePosition.x<x+this.width * GUI_SCALE &&
@@ -34,13 +39,19 @@ class Button {
     draw(x, y, canPress) {
         let hover = this.isMouseOver(x, y);
         //draw the next turn button
-        ctx.fillStyle = canPress ? "#27ab25" : "#999";
-        ctx.strokeStyle = canPress ? (hover ? "#ffa" : "#fff") : "#ececec";
+        ctx.fillStyle = canPress ? (hover ? "#218c1f" : "#27ab25") : "#999";
+        ctx.strokeStyle = canPress ? "#fff" : "#ececec";
         ctx.lineWidth = this.height*GUI_SCALE*0.1;
         ctx.fillRect(x,y,this.width * GUI_SCALE,this.height * GUI_SCALE);
         ctx.strokeRect(x,y,this.width * GUI_SCALE,this.height * GUI_SCALE);
-        drawText(this.text,x+this.width*GUI_SCALE/2,y+this.height*GUI_SCALE/2+GUI_SCALE*this.fontSize*0.38,"center",
-                this.fontSize*GUI_SCALE,this.width*GUI_SCALE-GUI_SCALE*this.fontSize, ctx.strokeStyle);
+
+        if(this.image != null) {
+            ctx.drawImage(this.image, x, y, this.width * GUI_SCALE, this.height*GUI_SCALE);
+        }
+        else {
+            drawText(this.text,x+this.width*GUI_SCALE/2,y+this.height*GUI_SCALE/2+GUI_SCALE*this.fontSize*0.38,"center",
+                    this.fontSize*GUI_SCALE,this.width*GUI_SCALE-GUI_SCALE*this.fontSize);
+        }
     }
 }
 

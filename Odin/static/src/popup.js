@@ -17,6 +17,105 @@ function getLines(text, maxWidth) {
     return lines;
 }
 
+/**
+ * draw a window
+ * @param {int} x 
+ * @param {int} y 
+ * @param {int} width 
+ * @param {int} height 
+ */
+function drawWindow(x, y, width, height) {
+    // fade the background
+    ctx.globalAlpha = 0.8;
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.globalAlpha = 1;
+
+    //draw the window
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = GUI_SCALE/2;
+    ctx.strokeRect(x+3,y+3,width,height);
+    ctx.fillStyle = "#0d3a0d";
+    ctx.fillRect(x,y,width,height);
+}
+/**
+ * draw the window outline
+ * @param {int} x 
+ * @param {int} y 
+ * @param {int} width 
+ * @param {int} height 
+ */
+function drawWindowOutline(x, y, width, height) {
+    ctx.lineWidth = GUI_SCALE/2;
+    ctx.strokeStyle = "#fff";
+    ctx.strokeRect(x,y,width,height);
+}
+
+class MenuWindow {
+    constructor() {
+        this.resumeButton = new Button(CARD_WIDTH * 2, 4, 2, "RESUME");
+
+        this.resumeButton.x = function() {
+            return canvas.width/2 - CARD_WIDTH * GUI_SCALE;
+        }
+        this.resumeButton.y = function() {
+            return canvas.height/2 - GUI_SCALE*3;
+        }
+
+        this.quitButton = new Button(CARD_WIDTH * 2, 4, 2, "QUIT GAME");
+
+        this.quitButton.x = function() {
+            return canvas.width/2 - CARD_WIDTH * GUI_SCALE;
+        }
+        this.quitButton.y = function() {
+            return canvas.height/2 + GUI_SCALE*3;
+        }
+    }
+
+    getWidth() {
+        return GUI_SCALE * CARD_WIDTH * 3;
+    }
+    getHeight() {
+        return GUI_SCALE * 23;
+    }
+    getX() {
+        return canvas.width/2 - this.getWidth()/2;
+    }
+    getY() {
+        return canvas.height/2 - this.getHeight()/2;
+    }
+
+    draw() {
+        //window
+        drawWindow(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        drawWindowOutline(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+
+        //menu text
+        drawText("MENU", canvas.width/2, canvas.height/2 - GUI_SCALE * 6, "center", GUI_SCALE*2.5);
+        
+        //buttons
+        this.resumeButton.drawThis(true);
+        this.quitButton.drawThis(true);
+    }
+
+    click() {
+        //quit
+        if(this.resumeButton.isMouseOverThis() || mousePosition.x < this.getX() || mousePosition.x > this.getX()+this.getWidth() || mousePosition.y < this.getY() || mousePosition.y > this.getY()+this.getHeight()) {
+            gui.popup = null;
+        }
+        //add
+        else if(this.quitButton.isMouseOverThis()) {
+            game.quit();
+        }
+    }
+
+    drag() {}
+    
+    release() {}
+    wheel(amount) {}
+    scroll(dt) {}
+}
+
 class DescriptionWindow {
     constructor(cardStack) {
         this.image = cardStack.image;
@@ -72,13 +171,8 @@ class DescriptionWindow {
         let cardHeight = GUI_SCALE*CARD_HEIGHT;
 
         //draw the window
-        ctx.strokeStyle = "#000";
-        ctx.lineWidth = GUI_SCALE/2;
-        ctx.strokeRect(x+3,y+3,width,height);
-        ctx.fillStyle = "#0d3a0d";
-        ctx.fillRect(x,y,width,height);
-        ctx.strokeStyle = "#fff";
-        ctx.strokeRect(x,y,width,height);
+        drawWindow(x,y,width,height);
+        drawWindowOutline(x,y,width,height);
 
         //draw card
         ctx.drawImage(this.image,x+width-GUI_SCALE-cardWidth,y+GUI_SCALE,cardWidth,cardHeight);
@@ -89,7 +183,7 @@ class DescriptionWindow {
         let descWidth = 3.5*CARD_WIDTH*GUI_SCALE;
         
         //draw title
-        drawText(this.card.name, x+GUI_SCALE+descWidth/2, y+GUI_SCALE*4, "center", GUI_SCALE*2.5, descWidth, true);
+        drawText(this.card.name, x+GUI_SCALE+descWidth/2, y+GUI_SCALE*4, "center", GUI_SCALE*2.5, descWidth);
 
         //draw a description
         ctx.fillStyle = "#fff";
@@ -475,11 +569,6 @@ class OptionWindow {
      * Draw the options window with specified dimensions
      */
     draw() {
-        ctx.globalAlpha = 0.8;
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.globalAlpha = 1;
-
         let width = this.getWidth();
         let height = this.getHeight();
         let x = this.getX();
@@ -489,11 +578,7 @@ class OptionWindow {
         let cardHeight = GUI_SCALE*CARD_HEIGHT;
 
         //draw the options window
-        ctx.strokeStyle = "#000";
-        ctx.lineWidth = GUI_SCALE/2;
-        ctx.strokeRect(x+3,y+3,width,height);
-        ctx.fillStyle = "#0d3a0d";
-        ctx.fillRect(x,y,width,height);
+        drawWindow(x, y, width, height);
 
         //draw card
         ctx.drawImage(this.image,x+width-GUI_SCALE-cardWidth,y+GUI_SCALE,cardWidth,cardHeight);
@@ -504,11 +589,10 @@ class OptionWindow {
         }
 
         this.drawItems();
-                
-        //overlay white outline
-        ctx.lineWidth = GUI_SCALE/2;
-        ctx.strokeStyle = "#fff";
-        ctx.strokeRect(x,y,width,height);
+        
+        //draw the options window outline
+        drawWindowOutline(x, y, width, height);
+
 
         //draw text
         let textY = y + GUI_SCALE * 6.5;

@@ -1,6 +1,7 @@
 import cards
 from player import Player, Observer
 from flask import *
+from flask_socketio import leave_room
 import random
 from time import time
 from cards.card_collection import CardCollection
@@ -82,6 +83,9 @@ class Game:
         for observer in self.observers:
             if observer.get_id() == user_id:
                 return observer
+        
+        return None
+        
 
     def render_game(self):
         """
@@ -144,7 +148,7 @@ class Game:
             return
         
         # stop a player from having their turn if they're possessed
-        if len(player.possessions) > 0 and player.is_turn():
+        if len(player.possessions) > 0 and player.is_turn() and message != "quit":
             print(player.get_id(), "tried to play but is possessed.")
             return
         
@@ -154,7 +158,7 @@ class Game:
             player.answer_question(data)
         else:
             # override player due to possession
-            if player.playing_as is not None:
+            if player.playing_as is not None and message != "quit":
                 player = player.playing_as
 
             if message == "play card":
@@ -173,6 +177,8 @@ class Game:
             elif message == "undo all":
                 player.undo_all()
                 self.update_users()
+            elif message == "quit":
+                self.remove_player(player)
             else:
                 print("got unknown message from player:", message)
     
@@ -374,6 +380,72 @@ class Game:
         if card_below is None:
             card_below = self.played_cards.get_top_card()
         return card_below
+    
+    def remove_player(self, player):
+        """
+        Removes a player from the game
+        :return: None
+        """
+
+        # adjust current player index to fit with removed player
+        player_index = self.players.index(player)
+        if player.playing_as is not None:
+            player_index = self.players.index(player.playing_as)
+
+        if player_index < self.player_turn_index or (player_index == self.player_turn_index and self.direction == 1):
+            self.player_turn_index -= 1
+
+        # remove the player
+        self.players.remove(player)
+        
+        player.send_message("quit", None)
+
+        self.waiting_room.leave_room()
+
+        # end the game if this was the only player
+        if len(self.players) == 0:
+            self.end_game()
+        # continue the game without that player
+        else:
+            # if the player is being possessed right now, change the possessor playing_as to be None
+            if len(player.possessions) > 0:
+                player.possessions[0].playing_as = None
+
+            # remove all possessions caused by this player
+            for other_player in self.players:
+                i = 0
+                while i < len(other_player.possessions):
+                    if other_player.possessions[i] == player:
+                        other_player.possessions.pop(i)
+                    else:
+                        i += 1
+            
+            if player.playing_as is not None:
+                player = player.playing_as
+            
+            # check if the player is having their turn right now and move to the next player
+            if player.is_turn():
+                player.undo_all()  # undo all cards because they left
+
+                self.player_turn_index += self.direction
+                self.player_turn_index %= len(self.players)
+
+                self.turn = self.players[self.player_turn_index]
+                self.turn.start_turn()
+            
+            self.update_users()
+
+    def end_game(self):
+        """
+        Finish the game and return to the lobby
+
+        TODO add end screen
+
+        :return: None
+        """
+
+        self.waiting_room.running = False
+        self.waiting_room.game = None
 
     def add_observer(self, name, player_id):
         """
@@ -401,4 +473,5 @@ class Game:
         """
         self.waiting_room.modify()
         user = self.get_user(session['player_id'])
-        user.initial_connection()
+        if user is not None:
+            user.initial_connection()

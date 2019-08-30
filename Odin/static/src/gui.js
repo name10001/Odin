@@ -24,13 +24,27 @@ class Gui {
 
 
         //finish
-        this.finishButton = new Button(CARD_WIDTH*2+4, 4, 2, "+1");
+        this.finishButton = new Button(CARD_WIDTH*2-1, 4, 2, "+1");
         this.finishButton.x = function() {
             return gui.getButtonX();
         }
         this.finishButton.y = function() {
             return gui.getBottomY() - GUI_SCALE*12;
         };
+        // menu
+
+        this.menu_icon = new Image;
+        this.menu_icon.src = '/static/menu_icon.png';
+
+        this.menuButton = new Button(4, 4, 2, "");
+        this.menuButton.setImage(this.menu_icon);
+        this.menuButton.x = function() {
+            return gui.getButtonX() + GUI_SCALE*CARD_WIDTH*2;
+        }
+        this.menuButton.y = function() {
+            return gui.getBottomY() - GUI_SCALE*12;
+        }
+
         //undo
         this.undoButton = new Button(CARD_WIDTH+1, 3, 1, "UNDO"); 
         this.undoButton.x = function() {
@@ -288,6 +302,7 @@ class Gui {
                 this.finishButton.text = game.cantPlayReason.length == 0 ? "PLAY CARDS" : game.cantPlayReason;
             }
             this.finishButton.drawThis(game.yourTurn && game.cantPlayReason.length == 0);
+            this.menuButton.drawThis(true);
 
             //undo button(s)
             if(game.planningCards.length>0 && game.yourTurn) {
@@ -447,6 +462,10 @@ class Gui {
         //clicking the undo all button
         else if(this.undoAllButton.isMouseOverThis() && game.planningCards.length>0) {
             game.undoAll();
+        }
+        // clicking the menu button
+        else if(this.menuButton.isMouseOverThis()) {
+            this.popup = new MenuWindow();
         }
     }
 
