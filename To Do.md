@@ -2,7 +2,7 @@
 All the planned bugs and new implementations.
 
 ## Bugs
-* Nothing I'm aware of yet....
+* Test the game ending states. For example Jew card and genocide card
 
 ## Code Design
 * Better organising of "all_other_cards.py"
@@ -12,15 +12,14 @@ All the planned bugs and new implementations.
 * Make more settings for each game. Allow you to customize the frequency of cards.
 * Allow players to be kicked if they are logged out for > 1 min
 * Add a time limit for how long you can spend picking cards (Add to waiting room options)
-* Add a leave feature
 
 ## UI and Animations
+* Change the background
 * Show thanos animations for other people?
 * "Your turn" messages
 * Capatilist animation
 * Swap hand animation?
 * Jesus Animation?
-* Lobby options menu - so you can leave the game
 
 ## Gameplay
 * Add more cards
