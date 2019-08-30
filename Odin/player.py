@@ -258,6 +258,7 @@ class Player:
         # send wining message to everyone but this player
         if self.had_won():
             self.game.send_to_all_players("popup message", self.name + " has won!")
+            self.game.end_game()
 
         # check if player has any more turns left.
         self.turns_left -= 1

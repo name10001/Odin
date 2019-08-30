@@ -436,3 +436,49 @@ class PossessAnimation {
         ctx.globalAlpha = 1;
     }
 }
+
+
+/*
+
+
+
+            SIMPLE TEXT ANIMATION
+
+
+
+*/
+class MessageAnimation {
+    constructor(message) {
+        this.timer = 2500;
+        ctx.font = "bold italic " + Math.round(GUI_SCALE * 4) + "px Arial";
+        this.messages = getLines(message, canvas.width * 0.9);
+    }
+
+    draw(dt) {
+        this.timer -= dt;
+        if(this.timer < 0) {
+            gui.currentAnimation = null;
+            game.finishedEvent();
+            return;
+        }
+
+        if(this.timer < 1000) {
+            ctx.globalAlpha = this.timer/1000;
+        }
+        
+        let fontSize = GUI_SCALE*4;
+        ctx.lineWidth = 3;
+
+        let y = canvas.height/2 - fontSize * 1.2 * (this.messages.length - 1) / 2;
+
+        for(let message of this.messages) {
+            drawText(message, canvas.width/2, y, "center", fontSize);
+            ctx.strokeStyle = "#000";
+            ctx.strokeText(message, canvas.width/2, y);
+            
+            y += fontSize * 1.2;
+        }
+
+        ctx.globalAlpha = 1;
+    }
+}

@@ -399,6 +399,7 @@ class Game:
         self.players.remove(player)
         
         player.send_message("quit", None)
+        self.send_to_all_players("popup message", player.get_name() + " has quit the game!")
 
         self.waiting_room.leave_room()
 
@@ -446,6 +447,8 @@ class Game:
 
         self.waiting_room.running = False
         self.waiting_room.game = None
+
+        self.send_to_all_players("refresh", None);
 
     def add_observer(self, name, player_id):
         """

@@ -55,10 +55,16 @@ $(document).ready(function() {
         socket.emit("game message", GAME_ID, "initialise", null);
     });
 
-    socket.on('popup message', function (message) {
+    /*socket.on('popup message', function (message) {
         $("#message-from-server").html(message);
         $('.modal').modal("show");
 
+    });*/
+
+    socket.on('popup message', function(message) {
+        game.addEvent(new GameEvent(function() {
+            gui.currentAnimation = new MessageAnimation(message);
+        }));
     });
 
     socket.on('card update', function(update) {
@@ -72,6 +78,12 @@ $(document).ready(function() {
     });
     socket.on('ask', function(question) {
         game.ask(question);
+    });
+
+    socket.on("refresh", function() {
+        game.addEvent(new GameEvent(function() {
+            location.reload(true);
+        }));
     });
     // you left
     socket.on('quit', function() {
