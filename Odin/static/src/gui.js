@@ -68,20 +68,29 @@ class Gui {
         this.MIN_SOUND_DISPLACEMENT = 80;  // sounds will be 80ms apart at the minimum
         this.pickupSound = new Audio('/static/sounds/card_pickup.mp3');
         this.playSound = new Audio('/static/sounds/card_play.mp3');
-        this.sovietFlag = new Image;
-        this.sovietFlag.src = '/static/soviet.png';
-        this.stalin = new Image;
-        this.stalin.src = '/static/stalin.png';
-        this.cardBack = new Image;
-        this.cardBack.src = '/static/cards/back.png';
-        this.skull = new Image;
-        this.skull.src = '/static/skull.png';
-        this.turn_icon = new Image;
-        this.turn_icon.src = '/static/turn_icon.png';
-        this.possess_icon = new Image;
-        this.possess_icon.src = '/static/possess_icon.png';
+        this.sovietFlag = this.createImage('/static/soviet.png');
+        this.stalin = this.createImage('/static/stalin.png');
+        this.cardBack = this.createImage('/static/cards/back.png');
+        this.skull = this.createImage('/static/skull.png');
+        this.turn_icon = this.createImage('/static/turn_icon.png');
+        this.possess_icon = this.createImage('/static/possess_icon.png');
     }
 
+    /**
+     * Create an image
+     * @param {String} src 
+     */
+    createImage(src) {
+        let image = new Image;
+        image.src = src;
+        image.onload = function() {gui.shouldDraw = true;}
+        return image;
+    }
+
+    /**
+     * Update the list of card panels on the screen to a new list of card panels
+     * @param {List of cards} cardPanels 
+     */
     updateCards(cardPanels) {
         this.cardScroller.setItems(cardPanels);
     }

@@ -128,6 +128,9 @@ class Game {
         for(let url of ALL_URLS) {
             this.allImages[url] = new Image;
             this.allImages[url].src = url;
+            this.allImages[url].onload = function() {
+                gui.shouldDraw = true;
+            }
         }
         this.allCards = [];
         for(let card of ALL_CARDS) {
