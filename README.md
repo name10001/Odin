@@ -1,14 +1,16 @@
 ﻿# Oдин
 The best fricken card game ever. <br />
-A humorous extenuation of Uno.
-If you like cards against humanity you may like this. <br />
+This game is similar to uno, except with a lot more variety in the cards you can pick up, some of which are humorous in nature. <br /> 
 If you would like to play, go to: [odin-cards.com](http://odin-cards.com)
 
-### A boring message from the developers:
-We do not stand by any message that can be derived from this game.
+
+We do not stand by any political message that can be derived from some of the cards of this game.
 All of this is just for fun and should not be taken seriously.
 
 ## How to install and run
+
+This is if you want to run your own server with this game on it. You may modify this game in any way you like if you choose to do this.
+
 ### Linux
 This will probably works on Mac too however have not tested it and don't know much about Mac computers
 ##### With root access:
@@ -76,8 +78,7 @@ You will probably get a popup asking to let it though your firewall.
 Say yes otherwise the game will only be accessible from your computer
 
 ## How to access game
-Once its running, it should give you some URLs that you can copy into your web browser of choice
-(ideally firefox because its the best).
+Once its running, it should give you some URLs that you can copy into your web browser of choice.
 This should work on any computer in your local network.
 If it doesnt you may need to let it thought your firewall or anti-virus software.<br />
 If you want it to be accessible to everyone on the internet you will need to port forward the game.
