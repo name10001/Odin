@@ -4,11 +4,41 @@ from flask import *
 from flask_socketio import leave_room
 import random
 from time import time
+from cards.deck import AbstractDeck, WeightedDeck
 from cards.card_collection import CardCollection
 
-class Game:
+class AbstractGame:
     """
-    This stores information about a game
+    Defines how a game should behave and implements some methods that do not depend on any front-end implementation.
+    """
+
+    def __init__(self):
+        """
+        Initializes the game.
+
+        No players or cards are dealt.
+        """
+        self.players = []
+
+        self.deck = AbstractDeck()
+        self.played_cards = CardCollection()
+        self.planning_pile = CardCollection()
+
+        self.pickup = 0
+        self.direction = 1  # 1 or -1
+        self.iterate_turn_by = 1
+
+        self.player_turn_index = 0
+        
+
+
+
+class Game(AbstractGame):
+    """
+    A regular game of Odin.
+    It has a game ID and waiting room.
+    Everyone is dealt random cards from a given starting amount.
+
     """
 
     def __init__(self, game_id, players, waiting_room, starting_number_of_cards=50):
@@ -18,19 +48,17 @@ class Game:
         :param waiting_room: The waiting room that the game was made in.
         :param starting_number_of_cards: The number of cards each player starts with.
         """
+        super().__init__()
+
         self.game_id = game_id
         self.waiting_room = waiting_room
         self.starting_number_of_cards = starting_number_of_cards
 
-        self.players = []
         self.observers = []
 
         # setting up cards
-        self.deck = cards.Deck(self)
-        self.played_cards = CardCollection()
+        self.deck = WeightedDeck(self)
         self.deck.add_random_cards_to(self.played_cards, 1, dynamic_weights=False)
-        self.planning_pile = CardCollection()
-        self.pickup = 0
 
         # setup players and turn system
         if len(players) < 2:
@@ -42,12 +70,10 @@ class Game:
         self.player_turn_index = random.randint(0, len(self.players) - 1)
         self.turn = self.players[self.player_turn_index]
         self.turn.start_turn()
-        self.direction = 1  # 1 or -1
-        self.iterate_turn_by = 1
 
     def find_card(self, card_id):
         """
-        Checks to see if a card exists in this came
+        Checks to see if a card exists in this game
         :param card_id: id of card to look for
         :return: returns the card if found, else None
         """

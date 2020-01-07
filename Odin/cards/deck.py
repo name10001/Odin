@@ -2,8 +2,37 @@ from cards.card_frequency import CardFrequency
 import cards
 import random
 
+class AbstractDeck:
+    """
+    An abstract deck defines all methods for how a game's deck works.
 
-class Deck:
+    By default, this abstract deck will not draw cards
+
+    TODO Refactor cards to use this abstract deck.
+
+    """
+
+    def __init__(self):
+        pass
+
+
+    def get_next_card(self, flags):
+        """
+        Returns the next card in the deck.
+        :param flags: any information on how the card was obtained in a dictionary, this can be used to blacklist certain cards from appearing.
+        """
+        return None
+
+
+
+
+class WeightedDeck(AbstractDeck):
+    """
+    A weighted deck will pick the next card based on a weight given to each card.
+    The weight adjusts based on the cards that the player is already holding.
+    """
+
+
     def __init__(self, game):
         self.game = game
         self.cards = []
@@ -61,7 +90,7 @@ class Deck:
         Adds cards at the proper proportion to the given CardCollection.
         :param card_collection: The CardCollection to added the cards to.
         :param number: The number of new cards to add.
-        :param dynamic_weights: Weather of not to take into account the number of cards already in the collection
+        :param dynamic_weights: Whether of not to take into account the number of cards already in the collection
         :return: The list of cards added.
         """
         added_cards = []
@@ -131,7 +160,7 @@ class Deck:
         :param card: The card to get the weight of.
         :param card_collection: The card_collection to calculate the weights for.
         If its None, it will calculate the weights for a medium hand.
-        :param elevator: TODO fill this in
+        :param elevator: If this card was obtained via an elevator card
         :param ignore_limit: Should the card limit be ignored.
         :return: The weight of the given card.
         """
@@ -149,7 +178,7 @@ class Deck:
         """
         Gets a new random card and returns it.
         :param card_weights: An array of the weights of the cards
-        :param elevator: TODO fill this in
+        :param elevator: If this card was obtained via an elevator card
         :return: A card class or None if all the weights are zero
         """
         if card_weights is None:
