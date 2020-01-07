@@ -1,3 +1,0 @@
-BUGS:
-
-Swap hand. The cards you get given from the other player are all the same

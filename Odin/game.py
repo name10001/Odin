@@ -6,7 +6,6 @@ import random
 from time import time
 from cards.card_collection import CardCollection
 
-
 class Game:
     """
     This stores information about a game

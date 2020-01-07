@@ -77,6 +77,13 @@ path/to/python.exe Odin/main.py
 You will probably get a popup asking to let it though your firewall.
 Say yes otherwise the game will only be accessible from your computer
 
+## Running tests
+
+Running tests is fairly easy. Just use a simple command:
+```
+python3 -m unittest Odin/tests.py
+```
+
 ## How to access game
 Once its running, it should give you some URLs that you can copy into your web browser of choice.
 This should work on any computer in your local network.

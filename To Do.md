@@ -6,6 +6,8 @@ All the planned bugs and new implementations.
 
 ## Code Design
 * Better organising of "all_other_cards.py"
+* Allow test cases to be possible
+* Allow the deck to be changed easily through the code, such that different decks could be made.
 
 ## Lobby
 * Make end game screen with stats, goes back to waiting room from here.
