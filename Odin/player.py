@@ -255,7 +255,8 @@ class AbstractPlayer:
         :param show_pickup: if the show_pickup function should be called (usually animation)
         """
         number = min(settings.player_card_limit - len(self.hand), int(number))
-        cards = self.game.deck.add_random_cards_to(self.hand, number)
+
+        cards = self.hand.add_cards_from_deck(self.game, number)
 
         if show_pickup is True:
             self.show_pickup(cards)

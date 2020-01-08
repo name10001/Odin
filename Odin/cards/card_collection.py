@@ -58,6 +58,30 @@ class CardCollection:
             self.card_colours[card.get_colour()] = set()
         self.card_colours[card.get_colour()].add(card)
 
+    def add_cards_from_deck(self, game, number):
+        added_cards = []
+
+        flags = {
+            "card collection": self,
+            "elevator": False
+        }
+
+        picked_up = 0
+        while picked_up < number:
+            card_class = game.deck.get_next_card(flags)
+
+            if card_class is None:  # nothing left in the deck
+                return added_cards
+            
+            card = card_class(game)
+            self.add_card(card)
+            added_cards.append(card)
+
+            picked_up += 1
+
+        return added_cards
+
+
     def index(self, card):
         """
         Gets the index of the given card

@@ -2,36 +2,31 @@ from cards.card_frequency import CardFrequency
 import cards
 import random
 
+
 class AbstractDeck:
     """
-    An abstract deck defines all methods for how a game's deck works.
+    This a very abstracted version of a deck which only has a method to get the next card in the deck and has no implementation
 
-    By default, this abstract deck will not draw cards
+    TODO: Allow card banning through this class instead of WeightedDeck
 
-    TODO Refactor cards to use this abstract deck.
 
     """
-
-    def __init__(self):
-        pass
-
 
     def get_next_card(self, flags):
         """
-        Returns the next card in the deck.
-        :param flags: any information on how the card was obtained in a dictionary, this can be used to blacklist certain cards from appearing.
+        Returns the next card in the deck. This abstracted deck does not have any cards in it.
+        :param flags: any information on how the card was obtained in a dictionary, this can be used to blacklist certain cards from appearing or alter how often certain cards appear.
         """
         return None
-
-
 
 
 class WeightedDeck(AbstractDeck):
     """
     A weighted deck will pick the next card based on a weight given to each card.
     The weight adjusts based on the cards that the player is already holding.
-    """
 
+    TODO make the flag a private field and update it
+    """
 
     def __init__(self, game):
         self.game = game
@@ -49,6 +44,11 @@ class WeightedDeck(AbstractDeck):
         # types and colours not included in all_types and all_colours. Remove and add from these
         self.banned_types = set()
         self.banned_colours = set()
+
+        self._flags = {
+            "card collection": None,
+            "elevator": False
+        }
 
         self._update_cards()
 
@@ -85,72 +85,43 @@ class WeightedDeck(AbstractDeck):
 
                 i += 1
 
-    def add_random_cards_to(self, card_collection, number, dynamic_weights=True):
+        self._update_weights()
+
+    def get_next_card(self, flags):
         """
-        Adds cards at the proper proportion to the given CardCollection.
-        :param card_collection: The CardCollection to added the cards to.
-        :param number: The number of new cards to add.
-        :param dynamic_weights: Whether of not to take into account the number of cards already in the collection
-        :return: The list of cards added.
+        Get the next card in the deck.
+        :param flags: Dictionary which should contain a card collection and whether or not the card was obtained via an elevator card.
+
         """
-        added_cards = []
-        ignore_limit = False
-        # calculate weights
-        if dynamic_weights:
-            card_weights = self.get_weights(card_collection=card_collection, ignore_limit=ignore_limit)
-        else:
-            card_weights = self.get_weights()
+        self._flags = flags
+        self._update_weights()
 
-        picked_up = 0
-        while picked_up < number:
-            # get a random card based upon the weights
-            card_class = self.get_random_card(card_weights)
+        try:
+            return random.choices(self.cards, weights=self._weights)[0]
+        except IndexError:
+            return None
 
-            # If it can't pick up anything, ignore the pickup limit, if it still cant pickup anything, unban all cards.
-            # This should only happen if all the cards have been banned or all the unbaned cards are at there limit.
-            if card_class is None:
-                if ignore_limit is False:
-                    ignore_limit = True
-                else:
-                    self.unban_all()
-                continue
-
-            # add card to card_collection
-            card = card_class(self.game)
-            card_collection.add_card(card)
-            added_cards.append(card)
-
-            if dynamic_weights:
-                # if the amount of cards has surpassed a milestone
-                # as set in the card frequency class, update all frequencies
-                if len(card_collection) in (
-                        CardFrequency.SMALL_HAND+1,
-                        CardFrequency.MEDIUM_HAND+1,
-                        CardFrequency.LARGE_HAND+1
-                ):
-                    card_weights = self.get_weights(card_collection, ignore_limit)
-                else:
-                    # update weights of cards with the same type as the one that was picked up
-                    for index in self.all_types[card_class.CARD_TYPE]:
-                        card_weights[index] = self.get_weight(self.cards[index], card_collection, ignore_limit)
-
-            picked_up += 1
-
-        return added_cards
-    
-    def get_weights(self, card_collection=None, elevator=False, ignore_limit=False):
+    def _update_weights(self):
         """
-        Calculates the weights for all the cards.
-        :param card_collection: The card_collection to calculate the weights for.
-        If its None, it will calculate the weights for a medium hand.
-        :return: an array of card weights. The order is the same as Deck.cards.
-        :param elevator: TODO fill this in
-        :param ignore_limit: Should the card limit be ignored
-        :return: The weight of the given cards. The order its the unchanged,
-        I.e. weights[0] is the weight for Deck.cards[0].
+        Calculates the weights for all the cards given the values self._flags
+        :return: 
         """
-        return [
-            self.get_weight(card, card_collection, elevator=elevator, ignore_limit=ignore_limit)
+
+        self._weights = [
+            self.get_weight(card, self._flags["card collection"],
+                            elevator=self._flags["elevator"], ignore_limit=False)
+            for card in self.cards
+        ]
+
+        # Check that at least one weight is > 0
+        for weight in self._weights:
+            if weight != 0:
+                return
+
+        # Get the weights with ignoring the limit
+        self._weights = [
+            self.get_weight(card, self._flags["card collection"],
+                            elevator=self._flags["elevator"], ignore_limit=True)
             for card in self.cards
         ]
 
@@ -173,20 +144,6 @@ class WeightedDeck(AbstractDeck):
             n_cards = len(card_collection)
             n_this_type = card_collection.number_of_type(card.CARD_TYPE)
             return card.CARD_FREQUENCY.get_weight(n_cards, n_this_type, ignore_limit=ignore_limit)
-
-    def get_random_card(self, card_weights=None, elevator=False):
-        """
-        Gets a new random card and returns it.
-        :param card_weights: An array of the weights of the cards
-        :param elevator: If this card was obtained via an elevator card
-        :return: A card class or None if all the weights are zero
-        """
-        if card_weights is None:
-            card_weights = self.get_weights(elevator=elevator)
-        try:
-            return random.choices(self.cards, weights=card_weights)[0]
-        except IndexError:
-            return None
 
     def ban_colour(self, card_colour):
         """

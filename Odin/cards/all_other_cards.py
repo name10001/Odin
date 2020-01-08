@@ -1454,7 +1454,7 @@ class Elevator(AbstractCard):
 
     def play_card(self, player):
         # play the card as if its being played by the player
-        card = self.game.deck.get_random_card(elevator=True)(self.game)
+        card = self.game.deck.get_top_card({"card collection": None, "elevator": True})(self.game)
         card.prepare_card(player, False)
         self.game.planning_pile.add_card(card)
 

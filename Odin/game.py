@@ -58,7 +58,9 @@ class Game(AbstractGame):
 
         # setting up cards
         self.deck = WeightedDeck(self)
-        self.deck.add_random_cards_to(self.played_cards, 1, dynamic_weights=False)
+        top_card = self.deck.get_next_card({"card collection": None, "elevator": None})(self)
+
+        self.played_cards.add_card(top_card)
 
         # setup players and turn system
         if len(players) < 2:
