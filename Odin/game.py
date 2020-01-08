@@ -7,6 +7,7 @@ from time import time
 from cards.deck import AbstractDeck, WeightedDeck
 from cards.card_collection import CardCollection
 
+
 class AbstractGame:
     """
     Defines how a game should behave and implements some methods that do not depend on any front-end implementation.
@@ -29,8 +30,149 @@ class AbstractGame:
         self.iterate_turn_by = 1
 
         self.player_turn_index = 0
-        
 
+    def get_turn(self):
+        """
+        Get the player who is taking their turn right now
+        """
+        return self.players[self.player_turn_index]
+
+    def next_turn(self):
+        """
+        Proceeds to the next player
+        :return: None
+        """
+        # if player has another turn
+        is_finished = self.get_turn().finish_turn()
+        if is_finished is False:
+            self.update_users()
+            return
+
+        # increment player index
+        self.player_turn_index += self.direction * self.iterate_turn_by
+        self.player_turn_index %= len(self.players)
+
+        self.iterate_turn_by = 1
+
+        self.start_turn()
+        self.update_users()
+
+    def get_top_card(self):
+        """
+        Gets the top card from the planning pile.
+        If there is no card there, then it gets the top card from the played cards pile
+        :return:
+        """
+        if len(self.planning_pile) > 0:
+            return self.planning_pile[-1]
+        return self.played_cards[-1]
+
+    def get_card_below(self, card):
+        """
+        Gets the card below the given card in the planning pile/played cards pile.
+        :param card: must be in the planning pile, or this will just return the top card.
+        """
+        card_below = self.planning_pile.card_below(card)
+        if card_below is None:
+            card_below = self.played_cards.get_top_card()
+        return card_below
+    
+    def add_player(self, player):
+        """
+        Append a new player object to the list of players
+        """
+        self.players.append(player)
+
+    def remove_player(self, player):
+        """
+        Removes a player from the game
+        :param player: the player to remove
+        :return: None
+        """
+
+        # adjust current player index to fit with removed player
+        player_index = self.players.index(player)
+        if player.playing_as is not None:
+            player_index = self.players.index(player.playing_as)
+
+        if player_index < self.player_turn_index or (player_index == self.player_turn_index and self.direction == 1):
+            self.player_turn_index -= 1
+
+        # remove the player
+        self.players.remove(player)
+
+        self.notify_remove_player(player)
+
+        # end the game if this was the only player
+        if len(self.players) == 0:
+            self.end_game()
+        # continue the game without that player
+        else:
+            # if the player is being possessed right now, change the possessor playing_as to be None
+            if len(player.possessions) > 0:
+                player.possessions[0].playing_as = None
+
+            # remove all possessions caused by this player
+            for other_player in self.players:
+                i = 0
+                while i < len(other_player.possessions):
+                    if other_player.possessions[i] == player:
+                        other_player.possessions.pop(i)
+                    else:
+                        i += 1
+
+            if player.playing_as is not None:
+                player = player.playing_as
+
+            # check if the player is having their turn right now and move to the next player
+            if player.is_turn():
+                player.undo_all()  # undo all cards because they left
+
+                self.player_turn_index += self.direction
+                self.player_turn_index %= len(self.players)
+
+                self.start_turn()
+
+            self.update_users()
+    
+    def start_turn(self):
+        """
+        Begin the next player's turn
+        """
+        self.get_turn().start_turn()
+
+    def undo(self):
+        """
+        Undo the top prepared card
+        """
+        self.get_turn().undo()
+        self.get_turn().show_undo()
+        self.update_users()
+
+    def undo_all(self):
+        """
+        Undo all prepared cards
+        """
+        self.get_turn().undo_all()
+        self.get_turn().show_undo_all()
+        self.update_users()
+    
+    def play_cards(self, cards):
+        """
+        Prepare an arrary of cards
+        """
+        self.get_turn().prepare_cards(cards)
+        self.update_users()
+
+    def notify_remove_player(self, player):
+        pass
+
+    def end_game(self, winner=None):
+        pass
+
+
+    def update_users(self, exclude=None):
+        pass
 
 
 class Game(AbstractGame):
@@ -58,7 +200,8 @@ class Game(AbstractGame):
 
         # setting up cards
         self.deck = WeightedDeck(self)
-        top_card = self.deck.get_next_card({"card collection": None, "elevator": None})(self)
+        top_card = self.deck.get_next_card(
+            {"card collection": None, "elevator": None})(self)
 
         self.played_cards.add_card(top_card)
 
@@ -70,8 +213,8 @@ class Game(AbstractGame):
             self.players.append(new_player)
             new_player.pickup(self.starting_number_of_cards, show_pickup=False)
         self.player_turn_index = random.randint(0, len(self.players) - 1)
-        self.turn = self.players[self.player_turn_index]
-        self.turn.start_turn()
+
+        self.start_turn()
 
     def find_card(self, card_id):
         """
@@ -110,9 +253,8 @@ class Game(AbstractGame):
         for observer in self.observers:
             if observer.get_id() == user_id:
                 return observer
-        
+
         return None
-        
 
     def render_game(self):
         """
@@ -121,26 +263,6 @@ class Game(AbstractGame):
         """
         self.waiting_room.modify()
         return render_template("game.html", game=self, cards=cards)
-
-    def next_turn(self):
-        """
-        Proceeds to the next player
-        :return: None
-        """
-        # if player has another turn
-        is_finished = self.turn.finish_turn()
-        if is_finished is False:
-            self.update_users()
-            return
-
-        # increment player index
-        self.player_turn_index += self.direction * self.iterate_turn_by
-        self.player_turn_index %= len(self.players)
-
-        self.iterate_turn_by = 1
-
-        self.turn = self.players[self.player_turn_index]
-        self.turn.start_turn()
 
     def update_users(self, exclude=None):
         """
@@ -173,41 +295,36 @@ class Game(AbstractGame):
         player = self.get_user(session['player_id'])
         if player is None:
             return
-        
+
         # stop a player from having their turn if they're possessed
         if len(player.possessions) > 0 and player.is_turn() and message != "quit":
             print(player.get_id(), "tried to play but is possessed.")
             return
-        
+
         print(player.get_name(), message, data)  # for debugging
 
         if message == "answer":
             player.answer_question(data)
+        elif message == "quit":
+            self.remove_player(player)
         else:
             # override player due to possession
-            if player.playing_as is not None and message != "quit":
+            if player.playing_as is not None:
                 player = player.playing_as
-
-            if message == "play cards":
-                player.prepare_cards(data)
-                self.update_users()
+            
+            if player != self.get_turn():
+                print("got message from player, but it is not their turn.")
+            elif message == "play cards":
+                self.play_cards(data)
             elif message == "finished turn":
-                if player == self.turn:
-                    self.next_turn()
-                    self.update_users()
+                self.next_turn()
             elif message == "undo":
-                player.undo()
-                player.show_undo()
-                self.update_users()
+                self.undo()
             elif message == "undo all":
-                player.undo_all()
-                player.show_undo_all()
-                self.update_users()
-            elif message == "quit":
-                self.remove_player(player)
+                self.undo_all()
             else:
                 print("got unknown message from player:", message)
-    
+
     def animate_card_transfer(self, cards, cards_from="deck", cards_to="deck"):
         """
         Animate a card being transferred from one place to another
@@ -273,7 +390,7 @@ class Game(AbstractGame):
                         } for card in cards
                     ]
                 }
-                
+
                 transfer_message = {
                     "type": "player remove cards",
                     "to": None,
@@ -312,7 +429,7 @@ class Game(AbstractGame):
                         "id": card.get_id(),
                         "name": card.get_name(),
                         "card image url": card.get_url()
-                     } for card in cards]
+                    } for card in cards]
                 }
 
                 transfer_message = {
@@ -358,15 +475,15 @@ class Game(AbstractGame):
                 }
 
                 self.send_to_all_players("animate", json_to_send)
-        
+
         self.update_players()
-    
+
     def update_players(self):
         """
         A smaller card_update method which only updates the details about players and current effects in action.
 
         The cost saving is due to not sending the cards again.
-        
+
         Send to everyone
         """
         json_to_send = {
@@ -375,7 +492,7 @@ class Game(AbstractGame):
             "iteration": self.iterate_turn_by,
             "players": []
         }
-        
+
         for player in self.players:
             json_to_send["players"].append(
                 {
@@ -391,76 +508,12 @@ class Game(AbstractGame):
 
         self.send_to_all_players("card update", json_to_send)
 
-    def get_top_card(self):
-        """
-        Gets the top card from the planning pile.
-        If there is no card there, then it gets the top card from the played cards pile
-        :return:
-        """
-        if len(self.planning_pile) > 0:
-            return self.planning_pile[-1]
-        return self.played_cards[-1]
-
-    def get_card_below(self, card):
-        card_below = self.planning_pile.card_below(card)
-        if card_below is None:
-            card_below = self.played_cards.get_top_card()
-        return card_below
-    
-    def remove_player(self, player):
-        """
-        Removes a player from the game
-        :return: None
-        """
-
-        # adjust current player index to fit with removed player
-        player_index = self.players.index(player)
-        if player.playing_as is not None:
-            player_index = self.players.index(player.playing_as)
-
-        if player_index < self.player_turn_index or (player_index == self.player_turn_index and self.direction == 1):
-            self.player_turn_index -= 1
-
-        # remove the player
-        self.players.remove(player)
-        
+    def notify_remove_player(self, player):
         player.send_message("quit", None)
-        self.send_to_all_players("popup message", player.get_name() + " has quit the game!")
+        self.send_to_all_players(
+            "popup message", player.get_name() + " has quit the game!")
 
         self.waiting_room.leave_room()
-
-        # end the game if this was the only player
-        if len(self.players) == 0:
-            self.end_game()
-        # continue the game without that player
-        else:
-            # if the player is being possessed right now, change the possessor playing_as to be None
-            if len(player.possessions) > 0:
-                player.possessions[0].playing_as = None
-
-            # remove all possessions caused by this player
-            for other_player in self.players:
-                i = 0
-                while i < len(other_player.possessions):
-                    if other_player.possessions[i] == player:
-                        other_player.possessions.pop(i)
-                    else:
-                        i += 1
-            
-            if player.playing_as is not None:
-                player = player.playing_as
-            
-            # check if the player is having their turn right now and move to the next player
-            if player.is_turn():
-                player.undo_all()  # undo all cards because they left
-
-                self.player_turn_index += self.direction
-                self.player_turn_index %= len(self.players)
-
-                self.turn = self.players[self.player_turn_index]
-                self.turn.start_turn()
-            
-            self.update_users()
 
     def end_game(self, winner=None):
         """
@@ -478,7 +531,7 @@ class Game(AbstractGame):
         self.waiting_room.running = False
         self.waiting_room.game = None
 
-        self.send_to_all_players("refresh", None);
+        self.send_to_all_players("refresh", None)
 
     def add_observer(self, name, player_id):
         """

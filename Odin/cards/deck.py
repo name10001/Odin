@@ -3,13 +3,11 @@ import cards
 import random
 
 
+# TODO make a deck which is limited in size?
+
 class AbstractDeck:
     """
     This a very abstracted version of a deck which only has a method to get the next card in the deck and has no implementation
-
-    TODO: Allow card banning through this class instead of WeightedDeck
-
-
     """
 
     def get_next_card(self, flags):
@@ -18,6 +16,27 @@ class AbstractDeck:
         :param flags: any information on how the card was obtained in a dictionary, this can be used to blacklist certain cards from appearing or alter how often certain cards appear.
         """
         return None
+    
+    def ban_colour(self, card_colour):
+        pass
+
+    def ban_type(self, card_type):
+        pass
+
+    def unban_colour(self, card_colour):
+        pass
+
+    def unban_type(self, card_type):
+        pass
+
+    def unban_all(self):
+        pass
+
+    def get_unbanned_types(self):
+        return {}
+
+    def get_unbanned_colours(self):
+        return {}
 
 
 class WeightedDeck(AbstractDeck):
