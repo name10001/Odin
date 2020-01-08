@@ -937,7 +937,7 @@ class Capitalist(AbstractCard):
                 richest_player = player
                 number_of_cards = len(player.hand)
 
-        richest_player.add_new_cards(number_of_cards)
+        richest_player.pickup(number_of_cards)
 
 
 class SwapHand(AbstractCard):
@@ -998,7 +998,7 @@ class FeelingBlue(AbstractCard):
 
     def play_card(self, player):
         player.refresh_card_play_animation()
-        player.add_new_cards(5)
+        player.pickup(5)
 
 
 class Plus(AbstractCard):
@@ -1052,7 +1052,7 @@ class Plus(AbstractCard):
         player.refresh_card_play_animation()
         for other_player in self.game.players:
             if other_player != player:
-                other_player.add_new_cards(self.pickup_amount)
+                other_player.pickup(self.pickup_amount)
         
         self.pickup_amount = 0  # prevent people from duplicating the pickup amount
 
@@ -1129,7 +1129,7 @@ class FuckYou(AbstractCard):
 
         if self.chosen_player is not None:
             player.refresh_card_play_animation()
-            self.chosen_player.add_new_cards(self.pickup_amount)
+            self.chosen_player.pickup(self.pickup_amount)
 
         self.pickup_amount = 0
 
@@ -1242,7 +1242,7 @@ class Jesus(AbstractCard):
         self.game.animate_card_transfer(other_player.hand, cards_from=other_player)
 
         other_player.hand.clear()
-        other_player.add_new_cards(settings.jesus_card_number)
+        other_player.pickup(settings.jesus_card_number)
 
 
 class FreeTurn(AbstractCard):

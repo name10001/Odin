@@ -66,7 +66,7 @@ class Game(AbstractGame):
         for player in players:
             new_player = Player(self, players[player], player)
             self.players.append(new_player)
-            new_player.add_new_cards(self.starting_number_of_cards, False)
+            new_player.pickup(self.starting_number_of_cards, show_pickup=False)
         self.player_turn_index = random.randint(0, len(self.players) - 1)
         self.turn = self.players[self.player_turn_index]
         self.turn.start_turn()
@@ -195,9 +195,11 @@ class Game(AbstractGame):
                     self.update_users()
             elif message == "undo":
                 player.undo()
+                player.show_undo()
                 self.update_users()
             elif message == "undo all":
                 player.undo_all()
+                player.show_undo_all()
                 self.update_users()
             elif message == "quit":
                 self.remove_player(player)
@@ -458,7 +460,7 @@ class Game(AbstractGame):
             
             self.update_users()
 
-    def end_game(self):
+    def end_game(self, winner=None):
         """
         Finish the game and return to the lobby
 
@@ -466,6 +468,10 @@ class Game(AbstractGame):
 
         :return: None
         """
+
+        if winner is not None:
+            self.send_to_all_players(
+                "popup message", winner.name + " has won!")
 
         self.waiting_room.running = False
         self.waiting_room.game = None
