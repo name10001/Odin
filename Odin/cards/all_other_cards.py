@@ -439,7 +439,7 @@ class EA(AbstractCard):
             print("Warning: Got over flow error in EA card")
 
         for num in number_played_with:
-            player.play_card(number_cards[num].pop())
+            player.prepare_cards([number_cards[num].pop().get_id()])
         
         return True
 
@@ -592,11 +592,11 @@ class AllOfSameColour(AbstractCard):
         if option == "server pick all":
             for card in reversed(player.hand):
                 if card.get_colour() == self.get_colour():
-                    player.play_card(card_to_play=card)
+                    player.prepare_cards([card.get_id()])
         elif option == "server pick numbers":
             for card in reversed(player.hand):
                 if card.get_colour() == self.get_colour() and card.get_type().isnumeric():
-                    player.play_card(card_to_play=card)
+                    player.prepare_cards([card.get_id()])
         
         return True
 

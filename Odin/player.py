@@ -7,20 +7,126 @@ from flask import request
 import textwrap
 
 
-class Player:
+class AbstractPlayer:
+    """
+    Abstraction for a player which contains most methods a player should be able to do.
+
+    Note that all instances of "game" in this class must only use methods and fields from the AbstractGame class.
+    """
+
     def __init__(self, game, name, player_id):
         self.name = name
         self.game = game
         self.player_id = player_id
         self.hand = CardCollection(sort=True)
-        self.name = name
-        self.sid = None
+
         self.turns_left = 1
         self.possessions = []
         self.playing_as = None
         self.state = "not turn"
         self._play_cards_stack = []  # see self.play_card()
-        self.player_pickup_amount = 0  # 
+        self.player_pickup_amount = 0  #
+
+    def prepare_cards(self, card_array):
+        """
+        Play an array of cards in order.
+        :param card_array: an array of all cards to play in order by their id
+        """
+
+        # Check that the cards supplied in card_array are contained within this player's hand, and build a new array of card objects.
+        cards_to_play = []
+        for card in card_array:
+            # check if its a card id
+            if self.hand.contains(card):
+                card = self.hand.find_card(card)
+                if card is None:
+                    raise ValueError(
+                        "One of the given card IDs cant be found in the players hand")
+            if not isinstance(card, cards.AbstractCard):
+                raise ValueError("One of the given cards is not valid")
+            if self.hand.contains(card.get_id()):
+                cards_to_play.append(card)
+            else:
+                raise ValueError(
+                    "One of the given cards cant be found in the players hand")
+
+        # Add cards to the stack of cards being prepared right now, exit this method to avoid issues with concurrency if other cards are already being played.
+        was_empty = len(self._play_cards_stack) == 0
+        for card in cards_to_play:
+            self._play_cards_stack.append(card)
+        if was_empty is False:
+            return
+
+        # prepare all the cards
+        while len(self._play_cards_stack) > 0:
+            index = len(self._play_cards_stack) - 1
+            card = self._play_cards_stack[index]
+
+            if not self._can_be_played(card):
+                self._play_cards_stack.pop(index)
+                continue
+
+            # do not change order
+            self.hand.remove_card(card)
+            successful = card.prepare_card(self, True)
+
+            if successful:
+                self.game.planning_pile.add_card(card)
+                self.prepare_card(card)
+            else:
+                # cancel
+                card.undo_prepare_card(self)
+                self.hand.add_card(card)
+
+            self._play_cards_stack.pop(index)
+
+        self.finish_prepare_cards()
+
+    def prepare_card(self, card):
+        """
+        When a card is successfully prepared, run this method (useful for animation)
+        :param card: Card successfully prepared
+        """
+        pass
+
+    def finish_prepare_cards(self):
+        """
+        When all cards are successfully prepared, run this method (useful for animation)
+        """
+        pass
+
+    def _can_be_played(self, card):
+        """
+        Can the given card be played right now
+        :return:
+        """
+
+        top_card = self.game.played_cards[-1]
+        is_first_card = len(self.game.planning_pile) == 0
+
+        if self.is_turn() and not is_first_card:
+            return card.can_be_played_with(self)
+        elif card.can_be_played_on(self, top_card):
+            return True
+        else:
+            return False
+    
+    def is_turn(self):
+        return self.state == "playing turn"
+
+
+class Player(AbstractPlayer):
+    """
+    A player that is controlled by a client of a webserver.
+
+    Has the ability to see animations and answer questions.
+    """
+
+    def __init__(self, game, name, player_id):
+        super().__init__(game, name, player_id)
+
+        self.game = game
+        self.sid = None
 
         # setting up question stuff see self.ask()
         self._answer_event = None
@@ -31,84 +137,101 @@ class Player:
         self._cards_played_to_animate = []
         self._cards_finished_to_animate = []
 
-    def play_card(self, card_to_play=None, card_id_to_play=None, card_array=None):
+
+    def prepare_card(self, card):
         """
-        Takes card out of players hand and adds it to the games played cards.
-        Also preforms all actions of the card.
-        It will only play the card if it is allowed to be played
-        You can specify a card by its ID with the card itself.
-        Can be called again before previous card(s) have finished being played.
-        :param card_to_play: The card to play. Can not be used with card_id_to_play or card_array
-        :param card_id_to_play: The ID of the card to play. Can not be used with card_to_play or card_array
-        :param card_array: An array of cards.
-        You can use ether the card's ID or the card itself.
-        Can not be used with card_to_play, card_id_to_play
-        :return: None
+        Prepare a card for animation
+        :param card: Card successfully prepared
         """
-        # error checking
-        ways = (card_array is not None) + (card_to_play is not None) + (card_id_to_play is not None)
-        if ways != 1:
-            raise ValueError("Exactly one of the following needs to be specified: "
-                             "card_to_play, card_id_to_play and card_array. Got: " + ways + " ways")
+        self._cards_played_to_animate.append(card)
 
-        # add all the cards into card array
-        if card_array is None:
-            if card_to_play is not None:
-                card_array = [card_to_play]
-            else:
-                card_array = [card_id_to_play]
+    def finish_prepare_cards(self):
+        """
+        Finish preparing cards by playing the animation of cards transferring to the planning pile
+        """
+        self.game.animate_card_transfer(
+            self._cards_played_to_animate, cards_from=self, cards_to="planning")
+        self._cards_played_to_animate.clear()
 
-        # Go through card_array, if its a valid card add it to cards_to_play.
-        # If its not, raise an error
-        cards_to_play = []
-        for card in card_array:
-            # check if its a card id
-            if self.hand.contains(card):
-                card = self.hand.find_card(card)
-                if card is None:
-                    raise ValueError("One of the given card IDs cant be found in the players hand")
-            if not isinstance(card, cards.AbstractCard):
-                raise ValueError("One of the given cards is not valid")
-            if self.hand.contains(card.get_id()):
-                cards_to_play.append(card)
-            else:
-                raise ValueError("One of the given cards cant be found in the players hand")
+    # def play_card(self, card_to_play=None, card_id_to_play=None, card_array=None):
+    #     """
+    #     Takes card out of players hand and adds it to the games played cards.
+    #     Also preforms all actions of the card.
+    #     It will only play the card if it is allowed to be played
+    #     You can specify a card by its ID with the card itself.
+    #     Can be called again before previous card(s) have finished being played.
+    #     :param card_to_play: The card to play. Can not be used with card_id_to_play or card_array
+    #     :param card_id_to_play: The ID of the card to play. Can not be used with card_to_play or card_array
+    #     :param card_array: An array of cards.
+    #     You can use ether the card's ID or the card itself.
+    #     Can not be used with card_to_play, card_id_to_play
+    #     :return: None
+    #     """
+    #     # error checking
+    #     ways = (card_array is not None) + (card_to_play is not None) + \
+    #         (card_id_to_play is not None)
+    #     if ways != 1:
+    #         raise ValueError("Exactly one of the following needs to be specified: "
+    #                          "card_to_play, card_id_to_play and card_array. Got: " + ways + " ways")
 
-        # add all cards to self.cards_to_play. If self.play_card already running, stop
-        was_empty = len(self._play_cards_stack) == 0
-        for card in cards_to_play:
-            self._play_cards_stack.append(card)
-        if was_empty is False:
-            return
+    #     # add all the cards into card array
+    #     if card_array is None:
+    #         if card_to_play is not None:
+    #             card_array = [card_to_play]
+    #         else:
+    #             card_array = [card_id_to_play]
 
-        # play all the cards
-        try:
-            while len(self._play_cards_stack) > 0:
-                index = len(self._play_cards_stack) - 1
-                card = self._play_cards_stack[index]
+    #     # Go through card_array, if its a valid card add it to cards_to_play.
+    #     # If its not, raise an error
+    #     cards_to_play = []
+    #     for card in card_array:
+    #         # check if its a card id
+    #         if self.hand.contains(card):
+    #             card = self.hand.find_card(card)
+    #             if card is None:
+    #                 raise ValueError(
+    #                     "One of the given card IDs cant be found in the players hand")
+    #         if not isinstance(card, cards.AbstractCard):
+    #             raise ValueError("One of the given cards is not valid")
+    #         if self.hand.contains(card.get_id()):
+    #             cards_to_play.append(card)
+    #         else:
+    #             raise ValueError(
+    #                 "One of the given cards cant be found in the players hand")
 
-                if not self._can_be_played(card):
-                    self._play_cards_stack.pop(index)
-                    continue
+    #     # add all cards to self.cards_to_play. If self.play_card already running, stop
+    #     was_empty = len(self._play_cards_stack) == 0
+    #     for card in cards_to_play:
+    #         self._play_cards_stack.append(card)
+    #     if was_empty is False:
+    #         return
 
-                # do not change order
-                self.hand.remove_card(card)
-                successful = card.prepare_card(self, True)
+    #     # play all the cards
+    #     try:
+    #         while len(self._play_cards_stack) > 0:
+    #             index = len(self._play_cards_stack) - 1
+    #             card = self._play_cards_stack[index]
 
-                if successful:
-                    self.game.planning_pile.add_card(card)
-                    self._cards_played_to_animate.append(card)
-                else:
-                    # cancel
-                    card.undo_prepare_card(self)
-                    self.hand.add_card(card)
+    #             if not self._can_be_played(card):
+    #                 self._play_cards_stack.pop(index)
+    #                 continue
 
-                self._play_cards_stack.pop(index)
-        finally:
-            self._play_cards_stack.clear()
-            self.game.animate_card_transfer(self._cards_played_to_animate, cards_from=self, cards_to="planning")
-            self._cards_played_to_animate.clear()
-    
+    #             # do not change order
+    #             self.hand.remove_card(card)
+    #             successful = card.prepare_card(self, True)
+
+    #             if successful:
+    #                 self.game.planning_pile.add_card(card)
+    #                 self._cards_played_to_animate.append(card)
+    #             else:
+    #                 # cancel
+    #                 card.undo_prepare_card(self)
+    #                 self.hand.add_card(card)
+
+    #             self._play_cards_stack.pop(index)
+    #     finally:
+    #         self._play_cards_stack.clear()
+
     def refresh_card_play_animation(self):
         """
         Whenever an animation or question is asked, update the card play animation
@@ -116,10 +239,12 @@ class Player:
         """
         # send play cards animation before you send the options
         if len(self._cards_played_to_animate) > 0:
-            self.game.animate_card_transfer(self._cards_played_to_animate, cards_from=self, cards_to="planning")
+            self.game.animate_card_transfer(
+                self._cards_played_to_animate, cards_from=self, cards_to="planning")
             self._cards_played_to_animate.clear()
         if len(self._cards_finished_to_animate) > 0:
-            self.game.animate_card_transfer(self._cards_finished_to_animate, cards_from="planning", cards_to="discard")
+            self.game.animate_card_transfer(
+                self._cards_finished_to_animate, cards_from="planning", cards_to="discard")
             self._cards_finished_to_animate.clear()
 
     def ask(self, title, options, options_type="buttons", number_to_pick=1, allow_cancel=True, image=None):
@@ -145,7 +270,7 @@ class Player:
         """
         if self.is_turn() and len(self.possessions) > 0:
             return self.possessions[0].ask(title, options, options_type, number_to_pick, allow_cancel, image)
-    
+
         options_as_dict = {}
 
         # convert everything to a dict
@@ -185,7 +310,7 @@ class Player:
 
                 self._answer_event = event.Event()
                 question_answer = self._answer_event.wait()
-                
+
                 valid_answer = len(question_answer) == number_to_pick
                 for choice in question_answer:
                     if choice is None and allow_cancel is True:
@@ -209,7 +334,7 @@ class Player:
 
         if question_answer is None:
             return None
-        
+
         if len(question_answer) == 1:
             return question_answer[0]
         else:
@@ -240,9 +365,10 @@ class Player:
             self._cards_finished_to_animate.append(card)
             card.play_card(self)
             self.game.played_cards.add_card(card)
-        
+
         if len(self._cards_finished_to_animate) > 0:
-            self.game.animate_card_transfer(self._cards_finished_to_animate, cards_from="planning", cards_to="discard")
+            self.game.animate_card_transfer(
+                self._cards_finished_to_animate, cards_from="planning", cards_to="discard")
             self._cards_finished_to_animate.clear()
 
         # if there is a pickup and the player did not play, make them pick it up
@@ -253,11 +379,11 @@ class Player:
 
         for player in self.game.players:
             player.player_pickup_amount = 0
-        
 
         # send wining message to everyone but this player
         if self.had_won():
-            self.game.send_to_all_players("popup message", self.name + " has won!")
+            self.game.send_to_all_players(
+                "popup message", self.name + " has won!")
             self.game.end_game()
 
         # check if player has any more turns left.
@@ -270,7 +396,7 @@ class Player:
                 possession = self.possessions[0]
                 possession.playing_as = None
                 self.possessions.pop(0)
-            
+
             self.state = "not turn"
             self.turns_left = 1
             return True
@@ -312,7 +438,7 @@ class Player:
             can_play, reason = card.ready_to_play()
             if can_play is False:
                 json_to_send["cant play reason"] = reason
-            
+
             json_to_send["planning pile"].append(
                 {
                     "card image url": card.get_url(),
@@ -357,7 +483,7 @@ class Player:
         """
         with fs.app.app_context():
             fs.socket_io.emit(message_type, data, room=self.sid)
-    
+
     def send_animation(self, data):
         """
         Send an animation message
@@ -369,9 +495,9 @@ class Player:
             self.send_message("animate", data)
             if len(self.possessions) > 0 and self.is_turn():
                 self.possessions[0].send_message("animate", data)
-            
+
             return True
-        
+
         return False
 
     def pickup(self):
@@ -418,35 +544,19 @@ class Player:
             return
         for i in range(0, len(self.game.planning_pile)):
             self.undo(False)
-        
+
         # send a message to all players
         json_to_send = {
             "type": "undo all"
         }
 
         self.game.send_to_all_players("animate", json_to_send)
-    
+
     def get_possessed_by(self):
         """
         Returns the player that is taking their turn if their turn is currently being possessed
         """
         return None if len(self.possessions) == 0 or not self.is_turn() else self.possessions[0]
-
-    def _can_be_played(self, card):
-        """
-        Can the given card be played right now
-        :return:
-        """
-
-        top_card = self.game.played_cards[-1]
-        is_first_card = len(self.game.planning_pile) == 0
-        
-        if self.is_turn() and not is_first_card:
-            return card.can_be_played_with(self)
-        elif card.can_be_played_on(self, top_card):
-            return True
-        else:
-            return False
 
     def add_new_cards(self, number, display_pickup=True):
         """
@@ -501,12 +611,13 @@ class Player:
 
     def get_id(self):
         return self.player_id
-    
-    def is_turn(self):
-        return self.state == "playing turn"
 
 
 class Observer (Player):
+    """
+    Observes a game, but does not interact with it. 
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.hand.clear()

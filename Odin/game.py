@@ -186,11 +186,8 @@ class Game(AbstractGame):
             if player.playing_as is not None and message != "quit":
                 player = player.playing_as
 
-            if message == "play card":
-                player.play_card(card_id_to_play=data[0])
-                self.update_users()
-            elif message == "play cards":
-                player.play_card(card_array=data)
+            if message == "play cards":
+                player.prepare_cards(data)
                 self.update_users()
             elif message == "finished turn":
                 if player == self.turn:
