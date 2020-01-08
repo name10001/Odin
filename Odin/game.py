@@ -77,6 +77,16 @@ class AbstractGame:
             card_below = self.played_cards.get_top_card()
         return card_below
     
+    def get_player(self, player_id):
+        """
+        Gets the player from this game with the given id
+        :param player_id: id of player to look for
+        :return: returns the player if found, else None
+        """
+        for player in self.players:
+            if player.get_id() == player_id:
+                return player
+    
     def add_player(self, player):
         """
         Append a new player object to the list of players
@@ -230,16 +240,6 @@ class Game(AbstractGame):
             if card is not None:
                 return card
         return None
-
-    def get_player(self, player_id):
-        """
-        Gets the player from this game with the given id
-        :param player_id: id of player to look for
-        :return: returns the player if found, else None
-        """
-        for player in self.players:
-            if player.get_id() == player_id:
-                return player
 
     def get_user(self, user_id):
         """

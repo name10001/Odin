@@ -213,8 +213,7 @@ class AbstractPlayer:
             card.play_card(self)
             self.game.played_cards.add_card(card)
 
-        if len(self._cards_finished_to_animate) > 0:
-            self.show_finished_cards()
+        self.show_finished_cards()
 
         # if there is a pickup and the player did not play, make them pick it up
         if len(self.game.planning_pile) == 0:
@@ -390,9 +389,10 @@ class Player(AbstractPlayer):
         """
         Finish playing cards by playing the animation of cards transferring to the discard pile
         """
-        self.game.animate_card_transfer(
-            self._cards_finished_to_animate, cards_from="planning", cards_to="discard")
-        self._cards_finished_to_animate.clear()
+        if len(self._cards_finished_to_animate) > 0:
+            self.game.animate_card_transfer(
+                self._cards_finished_to_animate, cards_from="planning", cards_to="discard")
+            self._cards_finished_to_animate.clear()
 
     def refresh_card_play_animation(self):
         """
