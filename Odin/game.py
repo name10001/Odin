@@ -76,7 +76,7 @@ class AbstractGame:
         if card_below is None:
             card_below = self.played_cards.get_top_card()
         return card_below
-    
+
     def get_player(self, player_id):
         """
         Gets the player from this game with the given id
@@ -86,7 +86,7 @@ class AbstractGame:
         for player in self.players:
             if player.get_id() == player_id:
                 return player
-    
+
     def add_player(self, player):
         """
         Append a new player object to the list of players
@@ -144,12 +144,28 @@ class AbstractGame:
                 self.start_turn()
 
             self.update_users()
-    
+
     def start_turn(self):
         """
         Begin the next player's turn
         """
         self.get_turn().start_turn()
+
+    def check_winner(self):
+        """
+        Check if someone has won the game. If more than one player has one then a tie occurs.
+        """
+
+        winners = []
+
+        for player in self.players:
+            if player.had_won():
+                winners.append(player)
+
+        if len(winners) == 1:
+            self.end_game(winner=winners[0])
+        elif len(winners) > 1:
+            self.end_game(winners=winners)
 
     def undo(self):
         """
@@ -166,7 +182,7 @@ class AbstractGame:
         self.get_turn().undo_all()
         self.get_turn().show_undo_all()
         self.update_users()
-    
+
     def play_cards(self, cards):
         """
         Prepare an arrary of cards
@@ -177,11 +193,13 @@ class AbstractGame:
     def notify_remove_player(self, player):
         pass
 
-    def end_game(self, winner=None):
+    def end_game(self, winner=None, winners=None):
         pass
 
-
     def update_users(self, exclude=None):
+        pass
+
+    def animate_card_transfer(self, cards, cards_from="deck", cards_to="deck"):
         pass
 
 
@@ -311,7 +329,7 @@ class Game(AbstractGame):
             # override player due to possession
             if player.playing_as is not None:
                 player = player.playing_as
-            
+
             if player != self.get_turn():
                 print("got message from player, but it is not their turn.")
             elif message == "play cards":
@@ -515,7 +533,7 @@ class Game(AbstractGame):
 
         self.waiting_room.leave_room()
 
-    def end_game(self, winner=None):
+    def end_game(self, winner=None, winners=None):
         """
         Finish the game and return to the lobby
 
@@ -527,6 +545,10 @@ class Game(AbstractGame):
         if winner is not None:
             self.send_to_all_players(
                 "popup message", winner.name + " has won!")
+        elif winners is not None:
+            for winner in winners:
+                self.send_to_all_players(
+                    "popup message", winner.name + " has won!")
 
         self.waiting_room.running = False
         self.waiting_room.game = None

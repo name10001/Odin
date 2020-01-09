@@ -151,7 +151,7 @@ class AbstractCard:
         return not self.__gt__(other)
 
     def get_url(self):
-        return url_for('static', filename="cards/" + escape(self.CARD_IMAGE_URL))
+        return '/static/cards/' + escape(self.CARD_IMAGE_URL)
 
     def get_category_index(self):
         return cards.get_card_index(self)

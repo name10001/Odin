@@ -1,6 +1,7 @@
 from game import AbstractGame
 from player import AbstractPlayer
 import cards
+from cards import BlankBro
 from cards.deck import AbstractDeck
 
 class TestDeck(AbstractDeck):
@@ -23,11 +24,8 @@ class JustABlankDeck(AbstractDeck):
     Deck which only gives JustABlankBros
     """
 
-    def __init__(self, game):
-        self.game = game
-
     def get_next_card(self, flags):
-        return BlankBro(self.game)
+        return BlankBro
 
 
 class TestPlayer(AbstractPlayer):
@@ -35,7 +33,7 @@ class TestPlayer(AbstractPlayer):
     def __init__(self, game, name, cards, responses=[]):
         super().__init__(game, name, name)
 
-        self.responses = []
+        self.responses = responses
         self.index = 0
 
         for card in cards:
@@ -57,20 +55,20 @@ class TestGame(AbstractGame):
 
         self.game_over = False
     
-    def create_players(self, players):
+    def create(self, players, deck, top_card):
         for player in players:
             self.add_player(player)
 
-    def create_deck(self, deck):
         self.deck = deck
 
-    def create_top_card(self, top_card):
         self.played_cards.add_card(top_card)
 
+        self.start_turn()
 
-    def end_game(self, winner=None):
+    def end_game(self, winner=None, winners=None):
         """
         Set some attributes to show that the game is over
         """
         self.winner = winner
+        self.winners = winners
         self.game_over = True

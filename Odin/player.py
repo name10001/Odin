@@ -231,6 +231,9 @@ class AbstractPlayer:
         # send wining message to everyone but this player
         if self.had_won():
             self.game.end_game(winner=self)
+        else:
+            # check if anyone else won as a result of playing the card
+            self.game.check_winner()
 
         # check if player has any more turns left.
         self.turns_left -= 1
@@ -339,17 +342,20 @@ class AbstractPlayer:
         When all cards are successfully discarded, run this method (useful for animation)
         """
         pass
-    
+
     def show_undo(self):
         """
         When a card is undone, run this method (useful for animation)
         """
         pass
-    
+
     def show_undo_all(self):
         """
         When all cards are successfully undone, run this method (useful for animation)
         """
+        pass
+
+    def refresh_card_play_animation(self):
         pass
 
 
