@@ -52,8 +52,8 @@ class CardTester(unittest.TestCase):
 
         top_card = GreenZero(game)
 
-        cards_to_test = [RedZero(game), GreenZero(game), PurpleZero(game), OrangeZero(game), GreenOne(
-            game), GreenSeven(game), YellowOne(game), RedTwo(game), PurpleEight(game), OrangeNine(game), RedOne(game)]
+        cards_to_test = [RedZero(game), GreenZero(game), PurpleZero(game), OrangeZero(game), GreenSixtyNine(
+            game), GreenSeven(game), YellowSixtyNine(game), RedTwo(game), PurpleEight(game), OrangeNine(game), RedSixtyNine(game)]
         ids = [card.get_id() for card in cards_to_test]
 
         player = TestPlayer(game, "player", cards_to_test)
@@ -163,3 +163,179 @@ class CardTester(unittest.TestCase):
 
         self.assertEqual(len(player_3.hand), 0)
         self.assertEqual(game.winner.get_name(), "player_3")
+
+    def test_pickup_chain(self):
+        """
+        Basic test of a pickup chain between 2 people
+
+        Also tests compatibility
+        """
+
+        game = TestGame()
+
+        top_card = GreenZero(game)
+
+        player_1_cards = [PurplePickup2(game), YellowPickup2(
+            game), BlueEight(game), PickupTimes2(game)]
+        ids1 = [card.get_id() for card in player_1_cards]
+        player_2_cards = [Pickup4(game), PickupPower2(game), GreenNine(game)]
+        ids2 = [card.get_id() for card in player_2_cards]
+
+        player_1 = TestPlayer(game, "player_1", player_1_cards)
+        player_2 = TestPlayer(game, "player_2", player_2_cards)
+
+        deck = JustABlankDeck()
+
+        game.create([player_1, player_2], deck, top_card)
+
+        # Pickup
+        game.next_turn()
+
+        self.assertEqual(len(player_1.hand), 5)
+
+        # Play +4
+
+        game.play_cards([ids2[0]])
+        game.next_turn()
+        self.assertEqual(game.pickup, 4)
+
+        # Try play some cards that don't work
+
+        game.play_cards([ids1[0]])
+        self.assertEqual(len(game.planning_pile), 0)
+        game.play_cards([ids1[2]])
+        self.assertEqual(len(game.planning_pile), 0)
+
+        # +2, x^2, x2
+        game.play_cards([ids1[1]])
+        game.next_turn()
+        game.play_cards([ids2[1]])
+        game.next_turn()
+        game.play_cards([ids1[3]])
+        game.next_turn()
+        self.assertEqual(game.pickup, 72)
+
+        # Pickup 16
+        game.next_turn()
+
+        self.assertEqual(len(player_2.hand), 73)
+        self.assertEqual(len(player_1.hand), 3)
+
+        # pickup 1
+        game.next_turn()
+
+        self.assertEqual(len(player_1.hand), 4)
+
+    def test_pickup_chain_end(self):
+        """
+        Testing possible ending states of a pickup chain (between 3 people).
+
+        Also tests that the "player pickup amount" numbers are accurate
+
+        - Fuck you with nothing
+        - Everyone pickup with nothing
+        - Pawn with nothing (not possible)
+
+        - Pickup chain fuck you
+        - Pickup chain everyone pickup
+        - Pickup chain pawn
+
+        - Double fuck you
+        - double everyone pickup
+        """
+
+        # Setup
+        game = TestGame()
+
+        top_card = BlankBro(game)
+
+        player_1_cards = [FuckYou(game), FuckYou(game), Pickup10(
+            game), Pickup10(game), Plus(game), Plus(game)]
+        player_2_cards = [Plus(game), Pickup10(game), Pawn(
+            game), FuckYou(game), FuckYou(game)]
+        player_3_cards = [Pickup10(game), Plus(game), Pickup10(game)]
+        ids1 = [card.get_id() for card in player_1_cards]
+        ids2 = [card.get_id() for card in player_2_cards]
+        ids3 = [card.get_id() for card in player_3_cards]
+
+        player_1 = TestPlayer(game, "player_1", player_1_cards, [
+                              "player_2", "player_2", "player_2"])
+        player_2 = TestPlayer(game, "player_2", player_2_cards, [
+                              "player_1", "player_3"])
+        player_3 = TestPlayer(game, "player_3", player_3_cards)
+
+        deck = JustABlankDeck()
+
+        game.create([player_1, player_2, player_3], deck, top_card)
+
+        # Begin testing
+        # 6, 5, 3
+        game.play_cards([ids1[0]])
+        self.assertEqual(player_2.player_pickup_amount, 5)
+        game.undo()
+        self.assertEqual(player_2.player_pickup_amount, 0)
+        game.play_cards([ids1[0]])
+        game.next_turn()
+
+        # 5, 10, 3
+        self.assertEqual(len(player_2.hand), 10)
+        game.play_cards([ids2[2]])
+        self.assertEqual(len(game.planning_pile), 0)
+        game.play_cards([ids2[0]])
+        self.assertEqual(player_1.player_pickup_amount, 2)
+        self.assertEqual(player_3.player_pickup_amount, 2)
+        game.undo_all()
+        self.assertEqual(player_1.player_pickup_amount, 0)
+        self.assertEqual(player_3.player_pickup_amount, 0)
+        game.play_cards([ids2[0]])
+
+        game.next_turn()
+
+        #7, 9, 5
+        self.assertEqual(len(player_1.hand), 7)
+        self.assertEqual(len(player_3.hand), 5)
+        game.play_cards([ids3[0]])
+        game.next_turn()
+        game.play_cards([ids1[1]])
+        game.next_turn()
+
+        # 6, 19, 4
+        self.assertEqual(len(player_2.hand), 19)
+        game.play_cards([ids2[1]])
+        game.next_turn()
+        game.play_cards([ids3[1]])
+        game.next_turn()
+
+        # 16, 28, 3
+        self.assertEqual(len(player_1.hand), 16)
+        self.assertEqual(len(player_2.hand), 28)
+        self.assertEqual(len(player_3.hand), 3)
+        game.play_cards([ids1[2]])
+        game.next_turn()
+        game.play_cards([ids2[2]])
+        game.next_turn()
+        game.next_turn()
+
+        # 15 27 4
+        self.assertEqual(len(player_3.hand), 4)
+        game.play_cards([ids1[3]])
+        game.next_turn()
+        game.play_cards([ids2[3], ids2[4]])
+        game.next_turn()
+
+        # 24 25 14
+        self.assertEqual(len(player_1.hand), 24)
+        self.assertEqual(len(player_2.hand), 25)
+        self.assertEqual(len(player_3.hand), 14)
+
+        game.play_cards([ids3[2]])
+        game.next_turn()
+        game.play_cards([ids1[4], ids1[5]])
+        self.assertEqual(player_2.player_pickup_amount, 20)
+        self.assertEqual(player_3.player_pickup_amount, 20)
+        game.next_turn()
+
+        # 22 45 33
+        self.assertEqual(len(player_1.hand), 22)
+        self.assertEqual(len(player_2.hand), 45)
+        self.assertEqual(len(player_3.hand), 33)

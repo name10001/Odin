@@ -81,7 +81,7 @@ Say yes otherwise the game will only be accessible from your computer
 
 Running tests is fairly easy. Just use a simple command:
 ```
-python3 -m unittest Odin/tests.py
+python3 -m unittest Odin/tests/test_cases.py
 ```
 
 ## How to access game

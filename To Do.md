@@ -1,13 +1,8 @@
 # To do
-All the planned bugs and new implementations.
 
-## Bugs
-* Test the game ending states. For example Jew card and genocide card
-
-## Code Design
-* Better organising of "all_other_cards.py"
-* Allow test cases to be possible
-* Allow the deck to be changed easily through the code, such that different decks could be made.
+## Bugs/Testing
+* Test genocide card end states, and check for ties
+* Make testcases for each card. Ideally make the testcases if the implementation changes and don't bother until then.
 
 ## Lobby
 * Make end game screen with stats, goes back to waiting room from here.

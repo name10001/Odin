@@ -202,6 +202,9 @@ class AbstractGame:
     def animate_card_transfer(self, cards, cards_from="deck", cards_to="deck"):
         pass
 
+    def send_animation(self, json_to_send):
+        pass
+
 
 class Game(AbstractGame):
     """
@@ -525,6 +528,9 @@ class Game(AbstractGame):
             )
 
         self.send_to_all_players("card update", json_to_send)
+    
+    def send_animation(self, json_to_send):
+        self.send_to_all_players("animate", json_to_send)
 
     def notify_remove_player(self, player):
         player.send_message("quit", None)

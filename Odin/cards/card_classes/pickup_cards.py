@@ -1,4 +1,5 @@
 from cards.abstract_card import AbstractCard
+from cards import CopyCat
 from cards.card_frequency import CardFrequency
 from decimal import Decimal
 
