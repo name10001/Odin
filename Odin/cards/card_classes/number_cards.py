@@ -1,7 +1,9 @@
 from cards.abstract_card import AbstractCard
 import cards
-from cards.all_other_cards import *
+from cards import CopyCat
 from cards.card_frequency import CardFrequency
+
+from flask import url_for
 import random
 
 

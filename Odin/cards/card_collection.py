@@ -289,3 +289,6 @@ class CardCollection:
 
     def __getitem__(self, key):
         return self.cards_list[key]
+
+    def __str__(self):
+        return str(self.cards_list)

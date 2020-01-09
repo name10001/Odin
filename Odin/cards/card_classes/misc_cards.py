@@ -6,354 +6,6 @@ from flask import url_for
 from decimal import Decimal
 import settings
 
-# ~~~~~~~~~~~~~~
-#    Reverse
-# ~~~~~~~~~~~~~~
-
-
-class Reverse(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(2.2, 2, starting=0)
-    CARD_COLOUR = "blue"
-    CARD_TYPE = "Reverse"
-    CAN_BE_ON_PICKUP = True
-    EFFECT_DESCRIPTION = "Reverses the direction of play."
-
-    def prepare_card(self, player, allow_cancel):
-        self.game.direction *= -1
-        return True
-    
-    def undo_prepare_card(self, player):
-        self.game.direction *= -1
-
-
-class BlueReverse(Reverse):
-    NAME = "Blue Reverse"
-    CARD_COLOUR = "blue"
-    CARD_IMAGE_URL = 'reverse_blue.png'
-
-
-class GreenReverse(Reverse):
-    NAME = "Green Reverse"
-    CARD_COLOUR = "green"
-    CARD_IMAGE_URL = 'reverse_green.png'
-
-
-class PurpleReverse(Reverse):
-    NAME = "Purple Reverse"
-    CARD_COLOUR = "purple"
-    CARD_IMAGE_URL = 'reverse_purple.png'
-
-
-class RedReverse(Reverse):
-    NAME = "Red Reverse"
-    CARD_COLOUR = "red"
-    CARD_IMAGE_URL = 'reverse_red.png'
-
-
-class WhiteReverse(Reverse):
-    NAME = "White Reverse"
-    CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'reverse_white.png'
-
-
-class BlackReverse(Reverse):
-    NAME = "Black Reverse"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'reverse_wild.png'
-
-
-class YellowReverse(Reverse):
-    NAME = "Yellow Reverse"
-    CARD_COLOUR = "yellow"
-    CARD_IMAGE_URL = 'reverse_yellow.png'
-
-
-# ~~~~~~~~~~~~~~
-#    Pickup2
-# ~~~~~~~~~~~~~~
-
-
-class Pickup2(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(2.75, 2.25, 1.2, 0.6, starting=0)
-    CARD_TYPE = "+2"
-    CAN_BE_ON_PICKUP = True
-    EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 2 to the pickup chain value."
-
-    def prepare_card(self, player, allow_cancel):
-        self.game.pickup += 2
-        return True
-    
-    def undo_prepare_card(self, player):
-        self.game.pickup -= 2
-
-
-class BluePickup2(Pickup2):
-    NAME = "Blue Pickup 2"
-    CARD_COLOUR = "blue"
-    CARD_IMAGE_URL = 'pickup2_blue.png'
-
-
-class GreenPickup2(Pickup2):
-    NAME = "Green Pickup 2"
-    CARD_COLOUR = "green"
-    CARD_IMAGE_URL = 'pickup2_green.png'
-
-
-class PurplePickup2(Pickup2):
-    NAME = "Purple Pickup 2"
-    CARD_COLOUR = "purple"
-    CARD_IMAGE_URL = 'pickup2_purple.png'
-
-
-class RedPickup2(Pickup2):
-    NAME = "Red Pickup 2"
-    CARD_COLOUR = "red"
-    CARD_IMAGE_URL = 'pickup2_red.png'
-
-
-class WhitePickup2(Pickup2):
-    NAME = "White Pickup 2"
-    CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'pickup2_white.png'
-
-
-class BlackPickup2(Pickup2):
-    NAME = "Black Pickup 2"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'pickup2_wild.png'
-
-
-class YellowPickup2(Pickup2):
-    NAME = "Yellow Pickup 2"
-    CARD_COLOUR = "yellow"
-    CARD_IMAGE_URL = 'pickup2_yellow.png'
-
-
-# ~~~~~~~~~~~~~~
-# Other pickups
-# ~~~~~~~~~~~~~~
-
-
-class Pickup10(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(3, 2, 1, 0.5, starting=0)
-    CARD_TYPE = "+10"
-    NAME = "Pickup 10"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'pickup10_wild.png'
-    CAN_BE_ON_PICKUP = True
-    MULTI_COLOURED = False
-    EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 10 to the pickup chain value."
-
-    def prepare_card(self, player, allow_cancel):
-        self.game.pickup += 10
-        return True
-    
-    def undo_prepare_card(self, player):
-        self.game.pickup -= 10
-
-
-class Pickup100(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(0.1, 0.05, 0.05, 0.01, starting=0)
-    CARD_TYPE = "+100"
-    NAME = "Pickup 100"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'pickup100_wild.png'
-    CAN_BE_ON_PICKUP = True
-    MULTI_COLOURED = False
-    EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 100 to the pickup chain value."
-
-    def prepare_card(self, player, allow_cancel):
-        self.game.pickup += 100
-        return True
-
-    def undo_prepare_card(self, player):
-        self.game.pickup -= 100
-
-
-class Pickup4(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(6, 4, 2, 1, starting=0)
-    CARD_TYPE = "+4"
-    NAME = "Pickup 4"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'pickup4_wild.png'
-    CAN_BE_ON_PICKUP = True
-    MULTI_COLOURED = False
-    EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 4 to the pickup chain value."
-
-    def prepare_card(self, player, allow_cancel):
-        self.game.pickup += 4
-        return True
-    
-    def undo_prepare_card(self, player):
-        self.game.pickup -= 4
-
-
-class PickupTimes2(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(4, 2, 1, 0.5, starting=0)
-    CARD_TYPE = "x2"
-    NAME = "Pickup x2"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'multiply2_wild.png'
-    CAN_BE_ON_PICKUP = True
-    MULTI_COLOURED = False
-    EFFECT_DESCRIPTION = "If a pickup chain is active, this card will double the pickup chain's value. " \
-                         "If played outside of a pickup chain this will do nothing."
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.old_pickup = None
-
-    def prepare_card(self, player, allow_cancel):
-        self.old_pickup = self.game.pickup
-        self.game.pickup *= 2
-        return True
-    
-    def undo_prepare_card(self, player):
-        if self.old_pickup is not None:
-            self.game.pickup = self.old_pickup
-
-
-class PickupPower2(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(0.1, 0.05, 0.05, 0.01, starting=0)
-    CARD_TYPE = "x Squared"
-    NAME = "Pickup x Squared"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'power2_wild.png'
-    CAN_BE_ON_PICKUP = True
-    MULTI_COLOURED = False
-    EFFECT_DESCRIPTION = "If a pickup chain is active, this card will square the pickup chain's value. " \
-                         "If played outside of a pickup chain this will do nothing."
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.old_pickup = None
-
-    def prepare_card(self, player, allow_cancel):
-        self.old_pickup = self.game.pickup
-        # Only way of checking for "infinite" numbers that seemed to work
-        if '%.2E' % Decimal(self.game.pickup) == "INF":
-            return True
-        self.game.pickup *= self.game.pickup
-        return True
-
-    def undo_prepare_card(self, player):
-        if self.old_pickup is not None:
-            # float conversion doesn't work on very large numbers so we have to do this
-            self.game.pickup = self.old_pickup
-
-
-class PickupFactorial(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(0.01, 0.005, 0.005, 0.001, starting=0)
-    CARD_TYPE = "Factorial"
-    NAME = "Pickup Factorial"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'factorial.png'
-    CAN_BE_ON_PICKUP = True
-    MULTI_COLOURED = False
-    EFFECT_DESCRIPTION = "If a pickup chain is active, this card will take the factorial of the pickup chain's value. "\
-                         "If played outside of a pickup chain this will begin a pickup chain of value 1, since 0! = 1."
-    MAX_FACTORIAL = 171  # 171! is when it reaches infinity
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.old_pickup = None
-
-    def prepare_card(self, player, allow_cancel):
-        self.old_pickup = self.game.pickup
-        if self.game.pickup > self.MAX_FACTORIAL:
-            self.game.pickup = self.MAX_FACTORIAL
-        
-        self.game.pickup = math.factorial(self.game.pickup)
-        return True
-
-    def undo_prepare_card(self, player):
-        if self.old_pickup is not None:
-            self.game.pickup = self.old_pickup
-
-
-# ~~~~~~~~~~~~~~
-#    Skip
-# ~~~~~~~~~~~~~~
-
-
-class Skip(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(2.2, 2, starting=0)
-    CARD_TYPE = "Skip"
-    CAN_BE_ON_PICKUP = True
-    EFFECT_DESCRIPTION = "Skips the next person's turn."
-    
-    def prepare_card(self, player, allow_cancel):
-        self.game.iterate_turn_by += 1
-        return True
-    
-    def undo_prepare_card(self, player):
-        self.game.iterate_turn_by -= 1
-
-
-class BlueSkip(Skip):
-    NAME = "Blue Skip"
-    CARD_COLOUR = "blue"
-    CARD_IMAGE_URL = 'skip_blue.png'
-
-
-class GreenSkip(Skip):
-    NAME = "Green Skip"
-    CARD_COLOUR = "green"
-    CARD_IMAGE_URL = 'skip_green.png'
-
-
-class PurpleSkip(Skip):
-    NAME = "Purple Skip"
-    CARD_COLOUR = "purple"
-    CARD_IMAGE_URL = 'skip_purple.png'
-
-
-class RedSkip(Skip):
-    NAME = "Red Skip"
-    CARD_COLOUR = "red"
-    CARD_IMAGE_URL = 'skip_red.png'
-
-
-class WhiteSkip(Skip):
-    NAME = "White Skip"
-    CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'skip_white.png'
-
-
-class BlackSkip(Skip):
-    NAME = "Black Skip"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'skip_wild.png'
-    NUMBER_IN_DECK = 1
-
-
-class YellowSkip(Skip):
-    NAME = "Yellow Skip"
-    CARD_COLOUR = "yellow"
-    CARD_IMAGE_URL = 'skip_yellow.png'
-
-# ~~~~~~~~~~~~~~
-#    Blank
-# ~~~~~~~~~~~~~~
-
-
-class BlankBro(AbstractCard):
-    NAME = "Just A Blank Bro"
-    CARD_FREQUENCY = CardFrequency(4,4,6,12)
-    CARD_TYPE = "Just A Blank Bro"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'black.png'
-    MULTI_COLOURED = False
-
-
-class Happiness(AbstractCard):
-    NAME = "Happiness"
-    CARD_FREQUENCY = CardFrequency(4,4,6,12)
-    CARD_TYPE = "Happiness"
-    CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'white.png'
-    MULTI_COLOURED = False
-
 
 # ~~~~~~~~~~~~~~
 #      EA
@@ -429,10 +81,11 @@ class EA(AbstractCard):
         try:
             found = False
             for i in range(0, len(card_numbers)):
-                found = self._find_cards_to_play(number_played_with, card_numbers, needs, i)
+                found = self._find_cards_to_play(
+                    number_played_with, card_numbers, needs, i)
                 if found is True:
                     break
-            
+
             if not found:
                 return True
         except OverflowError:
@@ -440,7 +93,7 @@ class EA(AbstractCard):
 
         for num in number_played_with:
             player.prepare_cards([number_cards[num].pop().get_id()])
-        
+
         return True
 
     def undo_prepare_card(self, player):
@@ -468,7 +121,8 @@ class EA(AbstractCard):
             return True
         elif needs > 0:
             for i in range(index+1, len(all_cards)):
-                found = self._find_cards_to_play(played_with, all_cards, needs, i)
+                found = self._find_cards_to_play(
+                    played_with, all_cards, needs, i)
                 if found is True:
                     return True
         needs += number
@@ -513,54 +167,6 @@ class EA100(EA):
 
 
 # ~~~~~~~~~~~~~~
-#    Fuck
-# ~~~~~~~~~~~~~~
-
-
-class Fuck(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(1.2, 0.5)
-    CARD_TYPE = "Fuckin' M8"
-    CARD_COLOUR = "Abstract"
-    COMPATIBILITY_DESCRIPTION = "This card is only compatible with other {cls.CARD_COLOUR} cards or " \
-                                "other Fuckin' M8 cards."
-
-    def is_compatible_with(self, player, card):
-        if card.get_colour() == "colour swapper":
-            return card.COLOUR_1 == self.get_colour() or card.COLOUR_2 == self.get_colour()
-        return card.get_colour() == self.get_colour() or card.get_type() == self.get_type()
-
-
-class BlueFuck(Fuck):
-    NAME = "Fuckin' Blue M8"
-    CARD_COLOUR = "blue"
-    CARD_IMAGE_URL = 'fuck_blue.png'
-
-
-class GreenFuck(Fuck):
-    NAME = "Fuckin' Green M8"
-    CARD_COLOUR = "green"
-    CARD_IMAGE_URL = 'fuck_green.png'
-
-
-class RedFuck(Fuck):
-    NAME = "Fuckin' Red M8"
-    CARD_COLOUR = "red"
-    CARD_IMAGE_URL = 'fuck_red.png'
-
-
-class BlackFuck(Fuck):
-    NAME = "Fuckin' Black M8"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'fuck_black.png'
-
-
-class YellowFuck(Fuck):
-    NAME = "Fuckin' Yellow M8"
-    CARD_COLOUR = "yellow"
-    CARD_IMAGE_URL = 'fuck_yellow.png'
-
-
-# ~~~~~~~~~~~~~~
 # all of same colour
 # ~~~~~~~~~~~~~~
 
@@ -584,8 +190,9 @@ class AllOfSameColour(AbstractCard):
         }
         if self.PICK_NUMBERS is True:
             options["server pick numbers"] = "Yes: Only Numbers"
-        option = player.ask("Would you like the game to automatically pick cards?", options, allow_cancel=allow_cancel, image=self.get_url())
-        
+        option = player.ask("Would you like the game to automatically pick cards?",
+                            options, allow_cancel=allow_cancel, image=self.get_url())
+
         if option is None:
             return False
 
@@ -597,7 +204,7 @@ class AllOfSameColour(AbstractCard):
             for card in reversed(player.hand):
                 if card.get_colour() == self.get_colour() and card.get_type().isnumeric():
                     player.prepare_cards([card.get_id()])
-        
+
         return True
 
 
@@ -673,7 +280,7 @@ class TrashCard(AbstractCard):
         )
         if options is None:
             return
-        
+
         cards_to_remove = options
         if not isinstance(options, list):
             cards_to_remove = [options]
@@ -685,10 +292,10 @@ class TrashCard(AbstractCard):
 
             self.cards_removed.append(card)
             player.hand.remove_card(card=card)
-        
+
         self.game.animate_card_transfer(self.cards_removed, cards_from=player)
-        
-        
+
+
 class BlueTrash(TrashCard):
     NAME = "Blue Trash"
     CARD_COLOUR = "blue"
@@ -732,7 +339,8 @@ class DoJustly(AbstractCard):
         options = {}
         for other_player in self.game.players:
             if other_player != player:
-                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+                options[other_player.get_id()] = other_player.get_name() + \
+                    "(" + str(len(other_player.hand)) + ")"
         if len(options) == 0:
             return
         other_player_id = player.ask(
@@ -745,8 +353,6 @@ class DoJustly(AbstractCard):
         if other_player_id is None:
             return
         other_player = self.game.get_player(other_player_id)
-
-
 
         title = "Pick a card to give:"
         if self.NUMBER_TO_GIVE > 1:
@@ -773,7 +379,8 @@ class DoJustly(AbstractCard):
             player.hand.remove_card(card)
             other_player.hand.add_card(card)
 
-        self.game.animate_card_transfer(cards_given, cards_to=other_player, cards_from=player)
+        self.game.animate_card_transfer(
+            cards_given, cards_to=other_player, cards_from=player)
 
 
 class DoJustly1(DoJustly):
@@ -815,55 +422,6 @@ class BlackHole(AbstractCard):
 
     def can_play_with(self, player, card, is_first_card):
         return card.get_type() == self.get_type() or card.get_colour() == "black"
-
-
-class AtomicBomb(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(0, 0.5, 1, 1, starting=0, elevator=0, max_cards=1)
-    NAME = "Atomic Bomb"
-    CARD_TYPE = "Atomic Bomb"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = "explosion.png"
-    PICKUP_CARDS = ["Atomic Bomb", "^2", "+2", "+4", "+10", "+100", "x2",
-                    "x Squared", "Factorial", "Plus", "Fuck You", "Copy Cat", "Pawn"]
-    CAN_BE_ON_PICKUP = True
-    MULTI_COLOURED = False
-    EFFECT_DESCRIPTION = "Allows you to place as many pickup cards as you like with this card on your turn."
-
-    def can_play_with(self, player, card, is_first_card):
-        return card.get_type() in self.PICKUP_CARDS
-
-
-class Pawn(AbstractCard):
-    NAME = "Pawn"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'pawn.png'
-    CARD_FREQUENCY = CardFrequency(0.5, starting=0, elevator=0, max_cards=1)
-    CARD_TYPE = "Pawn"
-    CAN_BE_ON_PICKUP = True
-    EFFECT_DESCRIPTION = "Ends a pickup chain and causes no one to pickup."
-    COMPATIBILITY_DESCRIPTION = "This card can ONLY be used on a pickup chain. " \
-                                "During a pickup chain, regular black rules apply such that this " \
-                                "is compatible with any red, green, blue, yellow or black cards."
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.old_pickup = 0
-
-    def can_be_played_on(self, player, card):
-        """
-        Update method which only lets you place when it's a pickup chain
-        """
-        if self.game.pickup == 0:  # won't let you place outside of pickup chain
-            return False
-        return super().can_be_played_on(player, card)
-
-    def prepare_card(self, player, allow_cancel):
-        self.old_pickup = self.game.pickup
-        self.game.pickup = 0
-        return True
-    
-    def undo_prepare_card(self, player):
-        self.game.pickup = self.old_pickup
 
 
 class Communist(AbstractCard):
@@ -909,9 +467,9 @@ class Communist(AbstractCard):
             }
 
             player.send_animation(json_to_send)
-            
+
             i += number_of_cards_each
-        
+
         self.game.update_players()
 
 
@@ -954,11 +512,12 @@ class SwapHand(AbstractCard):
 
         for other_player in self.game.players:
             if other_player != player:
-                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
-        
+                options[other_player.get_id()] = other_player.get_name() + \
+                    "(" + str(len(other_player.hand)) + ")"
+
         if len(options) == 0:
             return
-        
+
         player_id = player.ask(
             "Pick a player to swap hands with:",
             options,
@@ -972,8 +531,10 @@ class SwapHand(AbstractCard):
             return
 
         # TODO custom animation for this
-        self.game.animate_card_transfer(player.hand, cards_to=swap_with, cards_from=player)
-        self.game.animate_card_transfer(swap_with.hand, cards_to=player, cards_from=swap_with)
+        self.game.animate_card_transfer(
+            player.hand, cards_to=swap_with, cards_from=player)
+        self.game.animate_card_transfer(
+            swap_with.hand, cards_to=player, cards_from=swap_with)
         hand = player.hand
         player.hand = swap_with.hand
         swap_with.hand = hand
@@ -992,146 +553,13 @@ class FeelingBlue(AbstractCard):
         player.player_pickup_amount += 5
 
         return True
-        
+
     def undo_prepare_card(self, player):
         player.player_pickup_amount -= 5
 
     def play_card(self, player):
         player.refresh_card_play_animation()
         player.pickup(5)
-
-
-class Plus(AbstractCard):
-    NAME = "Plus"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'plus_wild.png'
-    CARD_FREQUENCY = CardFrequency(0.75, 0.75, 0.5, 0.25, starting=0)
-    CARD_TYPE = "Plus"
-    CAN_BE_ON_PICKUP = True
-    MULTI_COLOURED = False
-    EFFECT_DESCRIPTION = "If you play this card inside a pickup chain, everyone except yourself " \
-                         "will be forced to pickup the pickup chain value. Outside of a pickup chain, " \
-                         "everyone except yourself is forced to pickup 2 cards."
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.pickup_amount = 0
-        self.old_pickup = 0
-
-    def prepare_card(self, player, allow_cancel):
-        self.old_pickup = self.game.pickup
-        self.pickup_amount = self.game.pickup
-
-        played_on = self.game.get_top_card()
-
-        if hasattr(played_on, 'pickup_amount'):  # allows you to place multiple and duplicate the effects
-            self.pickup_amount = played_on.pickup_amount
-        elif isinstance(played_on, CopyCat):  # copycat copy pickup amount
-            if hasattr(played_on.copied, 'pickup_amount'): 
-                self.pickup_amount = played_on.copied.pickup_amount
-        
-        if self.pickup_amount == 0:
-            self.pickup_amount = 2
-        
-        self.game.pickup = 0
-
-        for other_player in self.game.players:
-            if other_player != player:
-                other_player.player_pickup_amount += self.pickup_amount
-        
-        return True
-    
-    def undo_prepare_card(self, player):
-        self.game.pickup = self.old_pickup
-
-        for other_player in self.game.players:
-            if other_player != player:
-                other_player.player_pickup_amount -= self.pickup_amount
-
-    def play_card(self, player):
-        player.refresh_card_play_animation()
-        for other_player in self.game.players:
-            if other_player != player:
-                other_player.pickup(self.pickup_amount)
-        
-        self.pickup_amount = 0  # prevent people from duplicating the pickup amount
-
-
-class FuckYou(AbstractCard):
-    NAME = "Fuck You"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'fuck_you.png'
-    CARD_FREQUENCY = CardFrequency(2, 1.5, 1, 0.15, starting=0)
-    CARD_TYPE = "Fuck You"
-    CAN_BE_ON_PICKUP = True
-    MULTI_COLOURED = False
-    EFFECT_DESCRIPTION = "If you play this card inside a pickup chain, one person of your choosing will be " \
-                         "forced to pickup the pickup chain value. Outside of a pickup chain, " \
-                         "the person of your choosing is forced to pickup 5 cards."
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.pickup_amount = 0
-        self.old_pickup = 0
-        self.chosen_player = None
-
-    def prepare_card(self, player, allow_cancel):
-        self.old_pickup = self.game.pickup
-        self.pickup_amount = self.game.pickup
-
-        played_on = self.game.get_top_card()
-
-        if hasattr(played_on, 'pickup_amount'):  # allows you to place multiple and duplicate the effects
-            self.pickup_amount = played_on.pickup_amount
-        elif isinstance(played_on, CopyCat):  # copycat copy pickup amount
-            if hasattr(played_on.copied, 'pickup_amount'): 
-                self.pickup_amount = played_on.copied.pickup_amount
-        
-        if self.pickup_amount == 0:
-            self.pickup_amount = 5
-
-        options = {}
-
-        for other_player in self.game.players:
-            if other_player != player:
-                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
-
-        if len(options) > 0:
-            chosen_player_id = player.ask(
-                "Select player to pickup cards:",
-                options,
-                options_type="vertical scroll",
-                allow_cancel=allow_cancel,
-                image=self.get_url()
-            )
-            if chosen_player_id is None:
-                self.chosen_player = None
-                return False
-
-            self.chosen_player = self.game.get_player(chosen_player_id)
-            self.chosen_player.player_pickup_amount += self.pickup_amount
-        else:
-            self.chosen_player = None
-
-        self.game.pickup = 0
-
-        return True
-    
-    def undo_prepare_card(self, player):
-        self.game.pickup = self.old_pickup
-
-        if self.chosen_player is not None:
-            self.chosen_player.player_pickup_amount -= self.pickup_amount
-
-    def play_card(self, player):
-        if len(self.game.players) == 1:
-            return None
-
-        if self.chosen_player is not None:
-            player.refresh_card_play_animation()
-            self.chosen_player.pickup(self.pickup_amount)
-
-        self.pickup_amount = 0
 
 
 class Genocide(AbstractCard):
@@ -1144,7 +572,8 @@ class Genocide(AbstractCard):
     EFFECT_DESCRIPTION = "Pick any colour or type of card to entirely removed from the game. " \
                          "All cards of this colour/type will be removed from everyone's hand " \
                          "and will never be able to be picked up in the future of this game."
-    UNBANNABLE_COLOURS = ["black", "colour swapper"]  # colour swapper is banned by type instead
+    # colour swapper is banned by type instead
+    UNBANNABLE_COLOURS = ["black", "colour swapper"]
     UNBANNABLE_TYPES = []
 
     def play_card(self, player):
@@ -1155,7 +584,8 @@ class Genocide(AbstractCard):
         options = {}
         for card_colour in self.game.deck.get_unbanned_colours():
             if card_colour not in self.UNBANNABLE_COLOURS:
-                options["colour " + card_colour] = "Colour: " + card_colour.capitalize()
+                options["colour " + card_colour] = "Colour: " + \
+                    card_colour.capitalize()
         for card_type in self.game.deck.get_unbanned_types():
             if card_type not in self.UNBANNABLE_TYPES:
                 options["type " + card_type] = "Type: " + card_type
@@ -1206,7 +636,7 @@ class Genocide(AbstractCard):
                     } for card in removed_cards
                 ]
                 game_player.send_animation(json_to_send)
-        
+
         self.game.update_players()
 
 
@@ -1224,7 +654,8 @@ class Jesus(AbstractCard):
         options = {}
         for other_player in self.game.players:
             if other_player != player:
-                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+                options[other_player.get_id()] = other_player.get_name() + \
+                    "(" + str(len(other_player.hand)) + ")"
             else:
                 options[other_player.get_id()] = other_player.get_name() + "(You)"
         other_player_id = player.ask(
@@ -1239,29 +670,11 @@ class Jesus(AbstractCard):
         if other_player is None:
             return
 
-        self.game.animate_card_transfer(other_player.hand, cards_from=other_player)
+        self.game.animate_card_transfer(
+            other_player.hand, cards_from=other_player)
 
         other_player.hand.clear()
         other_player.pickup(settings.jesus_card_number)
-
-
-class FreeTurn(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(4, 3, 2, 1, max_cards=5, starting=0)
-    CARD_TYPE = "Free Turn"
-    NAME = "Free Turn"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'free_turn.png'
-    CAN_BE_ON_PICKUP = True
-    MULTI_COLOURED = False
-    EFFECT_DESCRIPTION = "Gain an extra turn. If you play multiple Free Turn cards together " \
-                         "you will gain multiple extra turns."
-
-    def prepare_card(self, player, allow_cancel):
-        player.turns_left += 1
-        return True
-
-    def undo_prepare_card(self, player):
-        player.turns_left -= 1
 
 
 class Odin(AbstractCard):
@@ -1307,12 +720,12 @@ class Thanos(AbstractCard):
             removed.append(player.hand.cards_list[index])
             player.hand.remove_card(index=index)
             total -= 1
-        
+
         if len(removed) == 0:
             return
-        
+
         player.refresh_card_play_animation()
-        
+
         json_to_send = {
             "type": "thanos",
             "cards": [{
@@ -1327,7 +740,8 @@ class Thanos(AbstractCard):
 class CopyCat(AbstractCard):
     NAME = "Copy Cat"
     CARD_IMAGE_URL = 'copy_cat.png'
-    CARD_FREQUENCY = CardFrequency(3, 2, 1, 1, max_cards=3, starting=0, elevator=0)
+    CARD_FREQUENCY = CardFrequency(
+        3, 2, 1, 1, max_cards=3, starting=0, elevator=0)
     MULTI_COLOURED = False
     CARD_COLOUR = "rainbow"
     CARD_TYPE = "Copy Cat"
@@ -1345,7 +759,7 @@ class CopyCat(AbstractCard):
 
     def can_be_played_on(self, player, card):
         return player.is_turn()
-    
+
     def prepare_card(self, player, allow_cancel):
         top_card = self.game.get_top_card()
         if isinstance(top_card, CopyCat):
@@ -1359,21 +773,21 @@ class CopyCat(AbstractCard):
     def undo_prepare_card(self, player):
         self.copied.undo_prepare_card(player)
         self.copied = None
-    
+
     def play_card(self, player):
         self.copied.play_card(player)
         self.colour = self.copied.get_colour()
         self.type = self.copied.get_type()
-    
+
     def ready_to_play(self):
         return self.copied.ready_to_play()
-    
+
     def can_play_with(self, player, card, is_first_card):
         """
         Can play with other copycats and whatever the copied card can be played with
         """
         return isinstance(card, CopyCat) or self.copied.can_play_with(player, card, is_first_card)
-    
+
     def is_compatible_with(self, player, card):
         if self.copied is None:
             return True
@@ -1387,62 +801,6 @@ class CopyCat(AbstractCard):
         return self.type
 
 
-class ColourChooser(AbstractCard):
-    NAME = "Colour Chooser"
-    CARD_IMAGE_URL = 'color_swapper.png'
-    CARD_COLOUR = "black"
-    CARD_FREQUENCY = CardFrequency(2, max_cards=4, starting=0, elevator=2)
-    CARD_TYPE = "Colour Chooser"
-    EFFECT_DESCRIPTION = "Allows you to change the colour to any of the 4 given colours: red, green, yellow or blue."
-    COMPATIBILITY_DESCRIPTION = "Before play: Regular black card, compatible with any black, red, green, blue or " \
-                                "yellow cards. After play: Compatible any cards of the colour picked and black cards."
-    ADDITIONAL_URLS = ['choose_yellow.png', 'choose_blue.png',
-                       'choose_red.png', 'choose_green.png']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.colour = "black"
-        self.url = self.CARD_IMAGE_URL
-    
-    def is_compatible_with(self, player, card):
-        """
-        This compatibility method is used to prevent white cards from being able to be played on top
-        """
-        if card.get_colour() == "white" or card.get_colour() == "purple":
-            return False
-        else:
-            return True
-
-    def prepare_card(self, player, allow_cancel):
-        option = player.ask(
-            "Choose colour:",
-            {
-                "red": "Red",
-                "green": "Green",
-                "blue": "Blue",
-                "yellow": "Yellow"
-            },
-            allow_cancel=allow_cancel,
-            image=self.get_url()
-        )
-        if option is None:
-            return False
-
-        self.colour = option
-        self.url = 'choose_' + option + '.png'
-        return True
-
-    def undo_prepare_card(self, player):
-        self.url = self.CARD_IMAGE_URL
-        self.colour = "black"
-
-    def get_colour(self):
-        return self.colour
-    
-    def get_url(self):
-        return url_for('static', filename="cards/" + self.url)
-
-
 class Elevator(AbstractCard):
     NAME = "Elevator"
     CARD_IMAGE_URL = 'elevator.png'
@@ -1454,13 +812,14 @@ class Elevator(AbstractCard):
 
     def play_card(self, player):
         # play the card as if its being played by the player
-        card = self.game.deck.get_top_card({"card collection": None, "elevator": True})(self.game)
+        card = self.game.deck.get_top_card(
+            {"card collection": None, "elevator": True})(self.game)
         card.prepare_card(player, False)
         self.game.planning_pile.add_card(card)
 
         player.refresh_card_play_animation()
         self.game.animate_card_transfer([card], cards_to="planning")
-    
+
     def can_be_played_on(self, player, card):
         if player.is_turn() is False:
             return False
@@ -1483,7 +842,8 @@ class SwapCard(AbstractCard):
         options = {}
         for other_player in self.game.players:
             if other_player != player:
-                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+                options[other_player.get_id()] = other_player.get_name() + \
+                    "(" + str(len(other_player.hand)) + ")"
         if len(options) == 0:
             return
         other_player_id = player.ask(
@@ -1513,13 +873,15 @@ class SwapCard(AbstractCard):
         player.hand.remove_card(card)
         other_player.hand.add_card(card)
 
-        self.game.animate_card_transfer([card], cards_to=other_player, cards_from=player)
+        self.game.animate_card_transfer(
+            [card], cards_to=other_player, cards_from=player)
 
         card = random.choice(other_player.hand.get_cards())
         other_player.hand.remove_card(card)
         player.hand.add_card(card)
 
-        self.game.animate_card_transfer([card], cards_to=player, cards_from=other_player)
+        self.game.animate_card_transfer(
+            [card], cards_to=player, cards_from=other_player)
 
 
 class Possess(AbstractCard):
@@ -1536,11 +898,12 @@ class Possess(AbstractCard):
 
         for other_player in self.game.players:
             if other_player != player:
-                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
-        
+                options[other_player.get_id()] = other_player.get_name() + \
+                    "(" + str(len(other_player.hand)) + ")"
+
         if len(options) == 0:
             return
-        
+
         player_id = player.ask(
             "Pick a player to possess:",
             options,
@@ -1576,7 +939,8 @@ class Jew(AbstractCard):
         options = {}
         for other_player in self.game.players:
             if other_player != player:
-                options[other_player.get_id()] = other_player.get_name() + "(" + str(len(other_player.hand)) + ")"
+                options[other_player.get_id()] = other_player.get_name() + \
+                    "(" + str(len(other_player.hand)) + ")"
         if len(options) == 0:
             return
         other_player_id = player.ask(
@@ -1606,141 +970,5 @@ class Jew(AbstractCard):
         other_player.hand.remove_card(card)
         player.hand.add_card(card)
 
-        self.game.animate_card_transfer([card], cards_to=player, cards_from=other_player)
-
-
-class ColourSwapper(AbstractCard):
-    """
-    Abstract double-colour swapper card
-    """
-    CARD_FREQUENCY = CardFrequency(0.8, starting=0, elevator=0.4)
-    CARD_TYPE = "Colour Swapper"
-    COLOUR_1 = "black"
-    COLOUR_2 = "black"
-    CARD_COLOUR = "colour swapper"
-    EFFECT_DESCRIPTION = "When played on one of the colours shown on the card, this card will swap to the " \
-                         "opposite card. If played on a colour that is not shown on the card " \
-                         "you get to choose the colour it switches to."
-    COMPATIBILITY_DESCRIPTION = "Before play: Compatible with any {cls.COLOUR_1}," \
-                                "{cls.COLOUR_2}, white or black cards. \n" \
-                                "After play: Compatible with any cards of the chosen colour, white or black cards. " \
-                                "Note: when playing multiple, the colours must be compatible too."
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.colour = "colour swapper"  # gets changed to a particular colour after being played
-        self.url = self.CARD_IMAGE_URL
-
-    def is_compatible_with(self, player, card):
-        if self.colour == "colour swapper":  # compatible if either of the card colours are compatible
-            if self.colours_are_compatible(card.get_colour(), self.COLOUR_1) \
-                    or self.colours_are_compatible(card.get_colour(), self.COLOUR_2):
-                return True
-        else:
-            return super().is_compatible_with(player, card)
-
-    def prepare_card(self, player, allow_cancel):
-        played_on = self.game.get_top_card()
-
-        # change colour to the opposite of the one you played on
-        first_compatible = self.colours_are_compatible(played_on.get_colour(), self.COLOUR_1)
-        second_compatible = self.colours_are_compatible(played_on.get_colour(), self.COLOUR_2)
-        if first_compatible and not second_compatible:
-            self.colour = self.COLOUR_2
-        elif second_compatible and not first_compatible:
-            self.colour = self.COLOUR_1
-        else:
-            colour = player.ask(
-                "Select colour:",
-                {
-                    self.COLOUR_1: self.COLOUR_1.capitalize(),
-                    self.COLOUR_2: self.COLOUR_2.capitalize()
-                },
-                allow_cancel=allow_cancel,
-                image=self.get_url()
-            )
-            if colour is None:
-                return False
-            
-            self.colour = colour
-        self.url = 'switch_' + self.colour + '.png'
-        return True
-    
-    def undo_prepare_card(self, player):
-        self.colour = "colour swapper"
-        self.url = self.CARD_IMAGE_URL
-
-    def get_colour(self):
-        return self.colour
-    
-    def can_be_played_with(self, player):
-        """
-        Can only play multiple if the card is compatible with the top card in the planning pile
-        """
-        card = self.game.planning_pile.get_top_card()
-
-        if card.get_type() != self.get_type():
-            return False
-        
-        return self.colours_are_compatible(card.get_colour(), self.COLOUR_1) \
-            or self.colours_are_compatible(card.get_colour(), self.COLOUR_2)
-    
-    def get_url(self):
-        return url_for('static', filename="cards/" + self.url)
-
-
-class RedBlueSwapper(ColourSwapper):
-    NAME = "Red/Blue Colour Swapper"
-    CARD_IMAGE_URL = 'blue_red.png'
-    COLOUR_1 = "red"
-    COLOUR_2 = "blue"
-
-
-class RedYellowSwapper(ColourSwapper):
-    NAME = "Red/Yellow Colour Swapper"
-    CARD_IMAGE_URL = 'red_yellow.png'
-    COLOUR_1 = "red"
-    COLOUR_2 = "yellow"
-
-
-class RedGreenSwapper(ColourSwapper):
-    NAME = "Red/Green Colour Swapper"
-    CARD_IMAGE_URL = 'green_red.png'
-    COLOUR_1 = "red"
-    COLOUR_2 = "green"
-
-
-class GreenBlueSwapper(ColourSwapper):
-    NAME = "Green/Blue Colour Swapper"
-    CARD_IMAGE_URL = 'green_blue.png'
-    COLOUR_1 = "green"
-    COLOUR_2 = "blue"
-
-
-class BlueYellowSwapper(ColourSwapper):
-    NAME = "Yellow/Blue Colour Swapper"
-    CARD_IMAGE_URL = 'yellow_blue.png'
-    COLOUR_1 = "yellow"
-    COLOUR_2 = "blue"
-
-
-class YellowGreenSwapper(ColourSwapper):
-    NAME = "Yellow/Green Colour Swapper"
-    CARD_IMAGE_URL = 'green_yellow.png'
-    COLOUR_1 = "yellow"
-    COLOUR_2 = "green"
-
-
-class BlackWhiteSwapper(ColourSwapper):
-    NAME = "Black/White Colour Swapper"
-    CARD_FREQUENCY = CardFrequency(1.2, starting=0, elevator=0.6)
-    CARD_IMAGE_URL = 'black_white.png'
-    COLOUR_1 = "black"
-    COLOUR_2 = "white"
-    COMPATIBILITY_DESCRIPTION = "Before play: Compatible with all colours. " \
-                                "After play: Depends on the colour you selected. Black is compatible with any red, " \
-                                "blue, green, yellow and black cards. " \
-                                "White is compatible with any red, blue, green, yellow, purple and white cards. "
-    ADDITIONAL_URLS = ['switch_black.png', 'switch_white.png', 'switch_red.png',
-                       'switch_yellow.png', 'switch_green.png', 'switch_blue.png']
-
+        self.game.animate_card_transfer(
+            [card], cards_to=player, cards_from=other_player)

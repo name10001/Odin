@@ -1,6 +1,12 @@
 from random import choice
-from cards.the_boring_cards import *
-from cards.all_other_cards import *
+
+from cards.card_classes.colour_swap_cards import *
+from cards.card_classes.misc_cards import *
+from cards.card_classes.number_cards import *
+from cards.card_classes.pickup_cards import *
+from cards.card_classes.simple_cards import *
+from cards.card_classes.turn_cards import *
+
 from cards.card_frequency import *
 from cards.abstract_card import AbstractCard
 from flask import url_for
@@ -19,20 +25,31 @@ all_cards = [
     BlueNine, GreenNine, OrangeNine, PurpleNine, RedNine, YellowNine,
     BlueSixtyNine, GreenSixtyNine, OrangeSixtyNine, PurpleSixtyNine, RedSixtyNine, YellowSixtyNine,
 
-    # Other cards
+    # Turn cards
     BlueSkip, GreenSkip, PurpleSkip, RedSkip, YellowSkip, WhiteSkip, BlackSkip,
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
+    FreeTurn,
+    
+    # Simple Cards
+    BlankBro, Happiness, 
     BlueFuck, GreenFuck, RedFuck, YellowFuck, BlackFuck,
-    BlueTrash, GreenTrash, RedTrash, YellowTrash, BlackTrash, DoJustly1, DoJustly3,
+
+    # Pickup Cards
     BluePickup2, GreenPickup2, PurplePickup2, RedPickup2, YellowPickup2, WhitePickup2, BlackPickup2,
     Pickup10, Pickup4, PickupTimes2, PickupPower2, Pickup100, PickupFactorial,
-    Pawn, FeelingBlue, Plus, FuckYou, AtomicBomb,
-    EA15, EA20, EA30, EA100,
-    BlankBro, Happiness, Elevator, SwapCard, Jew,
-    SwapHand, Communist, Capitalist, Genocide, Jesus, FreeTurn, Thanos, Odin, CopyCat, Possess,
-    ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, BlackHole, 
+    Pawn, Plus, FuckYou, AtomicBomb,
+
+    # Colour Swap
     ColourChooser, RedBlueSwapper, RedGreenSwapper, RedYellowSwapper, GreenBlueSwapper,
-    BlueYellowSwapper, YellowGreenSwapper, BlackWhiteSwapper
+    BlueYellowSwapper, YellowGreenSwapper, BlackWhiteSwapper,
+
+    # Other Cards
+    BlueTrash, GreenTrash, RedTrash, YellowTrash, BlackTrash, DoJustly1, DoJustly3,
+    EA15, EA20, EA30, EA100,
+     Elevator, SwapCard, Jew, FeelingBlue,
+    SwapHand, Communist, Capitalist, Genocide, Jesus,  Thanos, Odin, CopyCat, Possess,
+    ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, BlackHole
+    
 ]
 
 # find information about all cards

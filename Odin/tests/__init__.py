@@ -1,9 +1,12 @@
 from game import AbstractGame
 from player import AbstractPlayer
+import cards
 from cards.deck import AbstractDeck
 
-
 class TestDeck(AbstractDeck):
+    """
+    Deck with a set array of cards
+    """
 
     def __init__(self, cards):
         self.cards = cards
@@ -14,6 +17,17 @@ class TestDeck(AbstractDeck):
 
         self.index += 1
         return card
+
+class JustABlankDeck(AbstractDeck):
+    """
+    Deck which only gives JustABlankBros
+    """
+
+    def __init__(self, game):
+        self.game = game
+
+    def get_next_card(self, flags):
+        return BlankBro(self.game)
 
 
 class TestPlayer(AbstractPlayer):

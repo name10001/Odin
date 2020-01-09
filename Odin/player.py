@@ -339,6 +339,18 @@ class AbstractPlayer:
         When all cards are successfully discarded, run this method (useful for animation)
         """
         pass
+    
+    def show_undo(self):
+        """
+        When a card is undone, run this method (useful for animation)
+        """
+        pass
+    
+    def show_undo_all(self):
+        """
+        When all cards are successfully undone, run this method (useful for animation)
+        """
+        pass
 
 
 class Player(AbstractPlayer):
