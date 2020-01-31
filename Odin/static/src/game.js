@@ -120,6 +120,9 @@ class Game {
         this.cantPlayReason = "";  // is empty if you are allowed to have your turn with the cards you have played
         this.playingAs = "";
 
+        // chat messages
+        this.chat = [];
+
         //event system
         this.events = [];
 
@@ -301,6 +304,13 @@ class Game {
         }
     }
 
+    receive_chat_message(data) {
+        if(DEBUG) {
+            console.log("Message from " + data["player"] + ": " + data["message"]);
+        }
+        this.chat.push(data);
+    }
+
     /**
      * Loop through all stacks and remove stacks which empty
      * Also recalculate the indices
@@ -470,5 +480,9 @@ class Game {
 
     quit() {
         socket.emit("game message", GAME_ID, "quit", null);
+    }
+
+    send_chat(message) {
+        socket.emit("game message", GAME_ID, "chat", message);
     }
 }

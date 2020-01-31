@@ -79,6 +79,9 @@ $(document).ready(function() {
     socket.on('ask', function(question) {
         game.ask(question);
     });
+    socket.on('chat', function(data) {
+        game.receive_chat_message(data);
+    });
 
     socket.on("refresh", function() {
         game.addEvent(new GameEvent(function() {

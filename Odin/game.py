@@ -226,6 +226,7 @@ class Game(AbstractGame):
         self.game_id = game_id
         self.waiting_room = waiting_room
         self.starting_number_of_cards = starting_number_of_cards
+        self.chat = []
 
         self.observers = []
 
@@ -328,6 +329,9 @@ class Game(AbstractGame):
             player.answer_question(data)
         elif message == "quit":
             self.remove_player(player)
+        elif message == "chat":
+            print("chat")
+            self.send_chat_message(player.get_name(), data)
         else:
             # override player due to possession
             if player.playing_as is not None:
@@ -345,6 +349,12 @@ class Game(AbstractGame):
                 self.undo_all()
             else:
                 print("got unknown message from player:", message)
+
+    def send_chat_message(self, player_name, message):
+        data = {"player": player_name, "message": message}
+        self.send_to_all_players("chat", data)
+        self.chat.append(data)
+        print(data)
 
     def animate_card_transfer(self, cards, cards_from="deck", cards_to="deck"):
         """
@@ -528,7 +538,7 @@ class Game(AbstractGame):
             )
 
         self.send_to_all_players("card update", json_to_send)
-    
+
     def send_animation(self, json_to_send):
         self.send_to_all_players("animate", json_to_send)
 

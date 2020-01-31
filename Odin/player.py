@@ -596,8 +596,15 @@ class Player(AbstractPlayer):
     def initial_connection(self):
         self.set_sid(request.sid)
         self.card_update()
+
+        # Get all chat messages
+        for chat in self.game.chat:
+            self.send_message("chat", chat)
+
+        # Reask question
         if self._question is not None:
             self.send_message("ask", self._question)
+
 
     def set_sid(self, sid):
         self.sid = sid
