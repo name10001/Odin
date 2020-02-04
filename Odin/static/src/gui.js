@@ -72,8 +72,6 @@ class Gui {
         this.stalin = this.createImage('/static/stalin.png');
         this.cardBack = this.createImage('/static/cards/back.png');
         this.skull = this.createImage('/static/skull.png');
-        this.turn_icon = this.createImage('/static/turn_icon.png');
-        this.possess_icon = this.createImage('/static/possess_icon.png');
     }
 
     /**
@@ -362,25 +360,21 @@ class Gui {
                     }
                     
                     let iy = py+fontSize/4;
-                    if(player.nPossessions>0) {
-                        ctx.drawImage(this.possess_icon, px+fontSize*5.8,iy,fontSize/2,fontSize/2);
-                        if(player.nPossessions>1) {
-                            drawText("x" + player.nPossessions, px+fontSize*6.4,iy+fontSize/2,"left",fontSize/2,undefined,"#fff");
+
+                    // draw all effects
+                    for(let effect of player.effects) {
+                        let effectImage = effect["image"];
+                        let effectAmount = effect["amount left"];
+
+                        ctx.drawImage(effectImage, px+fontSize*5.8,iy,fontSize/2,fontSize/2);
+                        if(effectAmount>1) {
+                            drawText("x" + effectAmount, px+fontSize*6.4,iy+fontSize/2,"left",fontSize/2,undefined,"#fff");
                         }
                         iy += fontSize *0.6;
                     }
 
                     //adjust size for non-turn players
                     if(i==game.turn) {
-                        //draw extra details about the person's turn
-                        if(game.turnsLeft>1) {
-                            ctx.drawImage(this.turn_icon, px+fontSize*5.8,iy,fontSize/2,fontSize/2);
-                            drawText("x" + game.turnsLeft, px+fontSize*6.4,iy+fontSize/2,"left",fontSize/2,undefined,"#fff");
-                            iy += fontSize*0.6;
-                        }
-
-
-
                         py+=pheight/2;
                         px+=this.CARD_WIDTH;
                         pwidth-=this.CARD_WIDTH;

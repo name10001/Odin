@@ -1,10 +1,16 @@
 class Player {
-    constructor(id, name, nCards, nPickup, nPossessions) {
+    constructor(id, name, nCards, nPickup, isPossessed, effects) {
         this.id = id;
         this.name = name;
         this.nCards = nCards;
         this.nPickup = nPickup;
-        this.nPossessions = nPossessions;
+        this.isPossessed = isPossessed;
+        this.effects = [];
+        for(let effect of effects) {
+            let image = game.allImages[effect["url"]];
+            let amount = effect["amount left"];
+            this.effects.push({"image": image, "amount left": amount});
+        }
     }
 }
 
@@ -113,7 +119,6 @@ class Game {
         this.direction = 1;
         this.pickupAmount = 0;
         this.turn = 0;
-        this.turnsLeft = 1;
         this.canPlay = 0;
         this.skip = 0;
         this.turnString = "";
@@ -243,11 +248,10 @@ class Game {
                 if(player['is turn']) {
                     //if this player is having their turn now
                     this.turn = this.players.length;
-                    this.turnsLeft = player['turns left'];
                 }
 
                 this.playerIndices[player['id']] = this.players.length;
-                this.players.push(new Player(player['id'],player['name'],player['number of cards'],player['pickup amount'],player["possessions"]));
+                this.players.push(new Player(player['id'],player['name'],player['number of cards'],player['pickup amount'],player["is possessed"],player["effects"]));
             }
 
             //check if it's your turn
@@ -255,7 +259,7 @@ class Game {
             let playingAsIndex = -1;
             if(this.playingAs.length > 0) playingAsIndex = this.getPlayerIndex(this.playingAs);
             if(index == this.turn) {
-                if(this.players[index].nPossessions == 0) {
+                if(!this.players[index].isPossessed) {
                     // your turn
                     this.turnString = "Your Turn! Cards Avaliable: " + this.canPlay + "/" + this.players[index].nCards;
                     this.yourTurn = true;

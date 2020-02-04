@@ -6,6 +6,7 @@ from cards.card_classes.number_cards import *
 from cards.card_classes.pickup_cards import *
 from cards.card_classes.simple_cards import *
 from cards.card_classes.turn_cards import *
+from cards.effect import *
 
 from cards.card_frequency import *
 from cards.abstract_card import AbstractCard
@@ -52,11 +53,16 @@ all_cards = [
     
 ]
 
+all_effects = [
+    FireEffect, FreezeEffect
+]
+
 # find information about all cards
 all_card_info = []
 all_urls = []
 all_types = []
 all_colours = []
+
 for card in all_cards:
     card_info = {
         "url": '/static/cards/' + card.CARD_IMAGE_URL,  # default url
@@ -76,6 +82,13 @@ for card in all_cards:
         all_types.append(card.CARD_TYPE)
     if card.CARD_COLOUR not in all_colours:
         all_colours.append(card.CARD_COLOUR)
+
+# effect images
+for effect in all_effects:
+    all_urls.append('/static/effects/' + effect.EFFECT_IMAGE_URL)
+all_urls.append('/static/effects/possess.png')
+all_urls.append('/static/effects/free_turn.png')
+
 
 # highest one takes priority!
 # don't mix "types" and "colours", only use one per index

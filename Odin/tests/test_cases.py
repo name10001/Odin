@@ -30,15 +30,15 @@ class CardTester(unittest.TestCase):
         # Play the game
 
         game.play_cards([player_1_cards[0].get_id()])
-        game.next_turn()
+        game.finish_turn()
         game.play_cards([player_2_cards[0].get_id()])
-        game.next_turn()
+        game.finish_turn()
         game.play_cards([player_1_cards[1].get_id()])
-        game.next_turn()
+        game.finish_turn()
         game.play_cards([player_2_cards[1].get_id()])
-        game.next_turn()
+        game.finish_turn()
         game.play_cards([player_1_cards[2].get_id()])
-        game.next_turn()
+        game.finish_turn()
 
         # Check player 1 is the winner
         self.assertEqual(game.winner.get_name(), "player_1")
@@ -93,7 +93,7 @@ class CardTester(unittest.TestCase):
         game.play_cards([ids[0]])
         self.assertEqual(len(game.planning_pile), 3)
 
-        game.next_turn()
+        game.finish_turn()
 
         self.assertEqual(game.get_top_card().get_id(), ids[10])
 
@@ -136,7 +136,7 @@ class CardTester(unittest.TestCase):
 
         # Player 1 steal from 2
         game.play_cards([test_card_1])
-        game.next_turn()
+        game.finish_turn()
 
         self.assertTrue(player_1.hand.find_card(steal1) is not None)
         self.assertTrue(player_2.hand.find_card(steal1) is None)
@@ -146,17 +146,17 @@ class CardTester(unittest.TestCase):
         self.assertEqual(len(game.planning_pile), 0)
 
         game.play_cards([test_card_3])
-        game.next_turn()
+        game.finish_turn()
 
         self.assertTrue(player_2.hand.find_card(steal2) is not None)
         self.assertTrue(player_3.hand.find_card(steal2) is None)
 
         game.play_cards([test_card_4])
-        game.next_turn()
+        game.finish_turn()
 
         # Player 1 steal last card from player 3
         game.play_cards([test_card_5])
-        game.next_turn()
+        game.finish_turn()
 
         self.assertTrue(player_1.hand.find_card(steal3) is not None)
         self.assertTrue(player_3.hand.find_card(steal3) is None)
@@ -189,14 +189,14 @@ class CardTester(unittest.TestCase):
         game.create([player_1, player_2], deck, top_card)
 
         # Pickup
-        game.next_turn()
+        game.finish_turn()
 
         self.assertEqual(len(player_1.hand), 5)
 
         # Play +4
 
         game.play_cards([ids2[0]])
-        game.next_turn()
+        game.finish_turn()
         self.assertEqual(game.pickup, 4)
 
         # Try play some cards that don't work
@@ -208,21 +208,21 @@ class CardTester(unittest.TestCase):
 
         # +2, x^2, x2
         game.play_cards([ids1[1]])
-        game.next_turn()
+        game.finish_turn()
         game.play_cards([ids2[1]])
-        game.next_turn()
+        game.finish_turn()
         game.play_cards([ids1[3]])
-        game.next_turn()
+        game.finish_turn()
         self.assertEqual(game.pickup, 72)
 
         # Pickup 16
-        game.next_turn()
+        game.finish_turn()
 
         self.assertEqual(len(player_2.hand), 73)
         self.assertEqual(len(player_1.hand), 3)
 
         # pickup 1
-        game.next_turn()
+        game.finish_turn()
 
         self.assertEqual(len(player_1.hand), 4)
 
@@ -275,7 +275,7 @@ class CardTester(unittest.TestCase):
         game.undo()
         self.assertEqual(player_2.player_pickup_amount, 0)
         game.play_cards([ids1[0]])
-        game.next_turn()
+        game.finish_turn()
 
         # 5, 10, 3
         self.assertEqual(len(player_2.hand), 10)
@@ -289,39 +289,39 @@ class CardTester(unittest.TestCase):
         self.assertEqual(player_3.player_pickup_amount, 0)
         game.play_cards([ids2[0]])
 
-        game.next_turn()
+        game.finish_turn()
 
         #7, 9, 5
         self.assertEqual(len(player_1.hand), 7)
         self.assertEqual(len(player_3.hand), 5)
         game.play_cards([ids3[0]])
-        game.next_turn()
+        game.finish_turn()
         game.play_cards([ids1[1]])
-        game.next_turn()
+        game.finish_turn()
 
         # 6, 19, 4
         self.assertEqual(len(player_2.hand), 19)
         game.play_cards([ids2[1]])
-        game.next_turn()
+        game.finish_turn()
         game.play_cards([ids3[1]])
-        game.next_turn()
+        game.finish_turn()
 
         # 16, 28, 3
         self.assertEqual(len(player_1.hand), 16)
         self.assertEqual(len(player_2.hand), 28)
         self.assertEqual(len(player_3.hand), 3)
         game.play_cards([ids1[2]])
-        game.next_turn()
+        game.finish_turn()
         game.play_cards([ids2[2]])
-        game.next_turn()
-        game.next_turn()
+        game.finish_turn()
+        game.finish_turn()
 
         # 15 27 4
         self.assertEqual(len(player_3.hand), 4)
         game.play_cards([ids1[3]])
-        game.next_turn()
+        game.finish_turn()
         game.play_cards([ids2[3], ids2[4]])
-        game.next_turn()
+        game.finish_turn()
 
         # 24 25 14
         self.assertEqual(len(player_1.hand), 24)
@@ -329,11 +329,11 @@ class CardTester(unittest.TestCase):
         self.assertEqual(len(player_3.hand), 14)
 
         game.play_cards([ids3[2]])
-        game.next_turn()
+        game.finish_turn()
         game.play_cards([ids1[4], ids1[5]])
         self.assertEqual(player_2.player_pickup_amount, 20)
         self.assertEqual(player_3.player_pickup_amount, 20)
-        game.next_turn()
+        game.finish_turn()
 
         # 22 45 33
         self.assertEqual(len(player_1.hand), 22)

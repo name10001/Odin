@@ -42,11 +42,6 @@ class AbstractGame:
         Proceeds to the next player
         :return: None
         """
-        # if player has another turn
-        is_finished = self.get_turn().finish_turn()
-        if is_finished is False:
-            self.update_users()
-            return
 
         # increment player index
         self.player_turn_index += self.direction * self.iterate_turn_by
@@ -188,6 +183,13 @@ class AbstractGame:
         Prepare an arrary of cards
         """
         self.get_turn().prepare_cards(cards)
+        self.update_users()
+    
+    def finish_turn(self):
+        """
+        Finish the current player's turn
+        """
+        self.get_turn().finish_turn()
         self.update_users()
 
     def notify_remove_player(self, player):
@@ -342,7 +344,7 @@ class Game(AbstractGame):
             elif message == "play cards":
                 self.play_cards(data)
             elif message == "finished turn":
-                self.next_turn()
+                self.finish_turn()
             elif message == "undo":
                 self.undo()
             elif message == "undo all":
@@ -525,17 +527,7 @@ class Game(AbstractGame):
         }
 
         for player in self.players:
-            json_to_send["players"].append(
-                {
-                    "name": player.get_name(),
-                    "id": player.get_id(),
-                    "number of cards": len(player.hand),
-                    "is turn": player.is_turn(),
-                    "possessions": len(player.possessions),
-                    "turns left": player.turns_left,
-                    "pickup amount": player.player_pickup_amount
-                }
-            )
+            json_to_send["players"].append(player.get_player_json())
 
         self.send_to_all_players("card update", json_to_send)
 

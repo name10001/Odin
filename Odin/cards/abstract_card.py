@@ -5,7 +5,7 @@ from util.extended_formatter import extended_formatter
 
 
 class AbstractCard:
-    CARD_IMAGE_URL = 'cards/generic.png'
+    CARD_IMAGE_URL = 'generic.png'
     COMPATIBILITY_DESCRIPTION = None  # generate this using get_compatibility_description()
     EFFECT_DESCRIPTION = 'No effects.'  # default description of the cards effects
     CARD_FREQUENCY = CardFrequency(0)
