@@ -29,7 +29,7 @@ all_cards = [
     # Turn cards
     BlueSkip, GreenSkip, PurpleSkip, RedSkip, YellowSkip, WhiteSkip, BlackSkip,
     BlueReverse, GreenReverse, PurpleReverse, RedReverse, YellowReverse, WhiteReverse, BlackReverse,
-    FreeTurn,
+    FreeTurn, Freeze,
     
     # Simple Cards
     BlankBro, Happiness, 

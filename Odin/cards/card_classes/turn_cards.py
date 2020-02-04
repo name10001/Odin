@@ -1,7 +1,7 @@
 from cards.abstract_card import AbstractCard
 from cards.card_frequency import CardFrequency
 from flask import url_for
-from cards.effect import FreeTurnEffect
+from cards.effect import FreeTurnEffect, FreezeEffect
 
 # ~~~~~~~~~~~~~~
 #    Reverse
@@ -158,3 +158,41 @@ class FreeTurn(AbstractCard):
         effect.n_turns -= 1
         if effect.n_turns == 0:
             player.remove_effect(effect)
+
+class Freeze(AbstractCard):
+    CARD_FREQUENCY = CardFrequency(1.4, 0.9, 0.5, 0.2, max_cards=4, starting=0)
+    CARD_TYPE = "Freeze"
+    NAME = "Freeze"
+    CARD_COLOUR = "white"
+    CARD_IMAGE_URL = "freeze.png"
+    CAN_BE_ON_PICKUP = False
+    MULTI_COLOURED = False
+    EFFECT_DESCRIPTION = "Choose a player to have their turn skipped for 3 turns."
+
+    def play_card(self, player):
+        options = {}
+
+        for other_player in self.game.players:
+            if other_player != player:
+                options[other_player.get_id()] = other_player.get_name() + \
+                    "(" + str(len(other_player.hand)) + ")"
+
+        if len(options) == 0:
+            return
+
+        player_id = player.ask(
+            "Pick a player to freeze for 3 turns:",
+            options,
+            options_type="vertical scroll",
+            allow_cancel=False,
+            image=self.get_url()
+        )
+        chosen_player = self.game.get_player(player_id)
+
+        effect = chosen_player.get_effect("Freeze")
+        
+        if effect is None:
+            effect = FreezeEffect(chosen_player, 3)
+            chosen_player.add_effect(effect)
+        else:
+            effect.n_turns += 3

@@ -347,7 +347,6 @@ class CardTester(unittest.TestCase):
 
         - Test on its own
 
-
         - Test 2 at once
 
         - Test 1 from an elevator
@@ -382,7 +381,7 @@ class CardTester(unittest.TestCase):
         game.undo()
         self.assertEqual(player_2.effects[0].n_turns, 1)
         game.undo()
-        self.assertEquals(len(player_2.effects), 0)
+        self.assertEqual(len(player_2.effects), 0)
 
         game.finish_turn()
         self.assertEqual(game.get_turn().get_id(), "player_1")
@@ -413,5 +412,63 @@ class CardTester(unittest.TestCase):
         # Check number of cards per player
         self.assertEqual(len(player_1.hand), 3)
         self.assertEqual(len(player_2.hand), 3)
+
+    def test_freeze_card(self):
+        """
+        Tests the freeze card
+
+        - Test 1
+        - Test multiple
+        
+        """
+
+        # Setup
+        game = TestGame()
+
+        top_card = Happiness(game)
+
+        player_1_cards = [Freeze(game), BlankBro(game)]
+        player_2_cards = [Freeze(game), Freeze(game), BlankBro(game)]
+        ids1 = [card.get_id() for card in player_1_cards]
+        ids2 = [card.get_id() for card in player_2_cards]
+
+        player_1 = TestPlayer(game, "player_1", player_1_cards, ["player_2"])
+        player_2 = TestPlayer(game, "player_2", player_2_cards, ["player_1", "player_1"])
+
+        deck = JustABlankDeck()
+
+        game.create([player_1, player_2], deck, top_card)
+
+        # Test 1, Should freeze for 3 turns
+        self.assertEqual(game.get_turn().get_id(), "player_1")
+        game.play_cards([ids1[0]])
+        game.finish_turn()
+        self.assertEqual(player_2.effects[0].n_turns, 2)
+        self.assertEqual(game.get_turn().get_id(), "player_1")
+        game.finish_turn()
+        self.assertEqual(player_2.effects[0].n_turns, 1)
+        self.assertEqual(game.get_turn().get_id(), "player_1")
+        game.finish_turn()
+        self.assertEqual(len(player_2.effects), 0)
+        self.assertEqual(game.get_turn().get_id(), "player_1")
+        game.finish_turn()
+        self.assertEqual(game.get_turn().get_id(), "player_2")
+
+        # Test 2, Freeze twice, should freeze for 6 turns
+        game.play_cards([ids2[0], ids2[1]])
+        game.finish_turn()
+
+        for i in range(5):
+            self.assertEqual(player_1.effects[0].n_turns, 5-i)
+            self.assertEqual(game.get_turn().get_id(), "player_2")
+            game.finish_turn()
+        
+        self.assertEqual(len(player_1.effects), 0)
+        self.assertEqual(game.get_turn().get_id(), "player_2")
+        game.finish_turn()
+
+        self.assertEqual(game.get_turn().get_id(), "player_1")
+
+
 
 
