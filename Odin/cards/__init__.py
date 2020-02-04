@@ -48,7 +48,7 @@ all_cards = [
     BlueTrash, GreenTrash, RedTrash, YellowTrash, BlackTrash, DoJustly1, DoJustly3,
     EA15, EA20, EA30, EA100,
      Elevator, SwapCard, Steal, FeelingBlue,
-    SwapHand, Communist, Capitalist, Genocide, Jesus,  Thanos, Odin, CopyCat, Possess,
+    SwapHand, Communist, Capitalist, Genocide, Jesus,  Thanos, Odin, CopyCat, Possess, Fire,
     ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, BlackHole
     
 ]
@@ -86,7 +86,7 @@ for card in all_cards:
 # effect images
 for effect in all_effects:
     all_urls.append('/static/effects/' + effect.EFFECT_IMAGE_URL)
-all_urls.append('/static/effects/free_turn.png')
+all_urls.append('/static/effects/possess.png')
 
 
 # highest one takes priority!

@@ -1,5 +1,6 @@
 from cards.abstract_card import AbstractCard
 from cards.card_frequency import CardFrequency
+from cards.effect import FireEffect
 import random
 import math
 from flask import url_for
@@ -934,7 +935,7 @@ class Steal(AbstractCard):
     CARD_FREQUENCY = CardFrequency(1.7, starting=0)
     CARD_TYPE = "Steal"
     MULTI_COLOURED = False
-    EFFECT_DESCRIPTION = "Choose a card to steal from a player of your choice's hand"
+    EFFECT_DESCRIPTION = "Choose a card to steal from a player of your choice's hand."
 
     def play_card(self, player):
         options = {}
@@ -973,3 +974,40 @@ class Steal(AbstractCard):
 
         self.game.animate_card_transfer(
             [card], cards_to=player, cards_from=other_player)
+
+class Fire(AbstractCard):
+    NAME = "Fire"
+    CARD_IMAGE_URL = 'fire.png'
+    CARD_COLOUR = "black"
+    CARD_FREQUENCY = CardFrequency(3, 1, starting=0)
+    CARD_TYPE = "Fire"
+    MULTI_COLOURED = False
+    EFFECT_DESCRIPTION = "Choose a player to set on fire for 3 turns. While on fire, they will be forced to pick up 3 cards at the beginning of their turn."
+
+    def play_card(self, player):
+        options = {}
+
+        for other_player in self.game.players:
+            if other_player != player:
+                options[other_player.get_id()] = other_player.get_name() + \
+                    "(" + str(len(other_player.hand)) + ")"
+
+        if len(options) == 0:
+            return
+
+        player_id = player.ask(
+            "Pick a player to set on fire:",
+            options,
+            options_type="vertical scroll",
+            allow_cancel=False,
+            image=self.get_url()
+        )
+        chosen_player = self.game.get_player(player_id)
+
+        effect = chosen_player.get_effect("Fire")
+        
+        if effect is None:
+            effect = FireEffect(chosen_player, 3, 3)
+            chosen_player.add_effect(effect)
+        else:
+            effect.n_turns += 3
