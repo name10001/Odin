@@ -11,7 +11,7 @@
 * Add a time limit for how long you can spend picking cards (Add to waiting room options)
 
 ## UI and Animations
-* Change the background
+* Chat window
 * Show thanos animations for other people?
 * "Your turn" messages
 * Capatilist animation
@@ -33,5 +33,4 @@
 * Card that lets you play any card in your hand with it - maybe make it rainbow so it can go on anything
 * Jigsaw puzzle - can only be played together with other fitting jigsaw puzzles.
 * Radioactive card (orange) - every turn you have this card in your hand you gain an extra card
-* Freeze card (white) - freezes a player for 2? turns such that they cannot make a move (skipped)
 * Shield card - Blocks all effects from other players for 5 turns or so. Notes: Will block skip cards? Blocks communist too, cards are only shared amongst everyone else. Blocks any card swapping/giving. If you're the person with the most cards people shouldn't be able to play capitalist.

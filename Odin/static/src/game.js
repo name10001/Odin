@@ -136,9 +136,9 @@ class Game {
         for(let url of ALL_URLS) {
             this.allImages[url] = new Image;
             this.allImages[url].src = url;
-            this.allImages[url].onload = function() {
+            /*this.allImages[url].onload = function() {
                 gui.shouldDraw = true;
-            }
+            }*/
         }
         this.allCards = [];
         for(let card of ALL_CARDS) {
@@ -186,7 +186,7 @@ class Game {
         // UPDATE CARDS IN YOUR HAND
         if(update['your cards'] != undefined) {
             this.yourStacks.length = 0;
-            gui.cardScroller.items.length = 0;
+            //gui.cardScroller.items.length = 0;
             this.cardIndices = {};
             this.cardNameIndices = {};
             this.canPlay = 0;
@@ -284,7 +284,7 @@ class Game {
         
         
         this.finishedEvent();
-        gui.shouldDraw = true;
+        //gui.shouldDraw = true;
     }
 
     /**
@@ -302,7 +302,7 @@ class Game {
             let index = this.yourStacks.length;
             let cardStack = new CardStack(id, name, url, canPlay);
             this.yourStacks.push(cardStack);
-            gui.cardScroller.items.push(new CardStackPanel(cardStack));
+            //gui.cardScroller.items.push(new CardStackPanel(cardStack));
             this.cardNameIndices[name] = index;
             this.cardIndices[id] = index;
         }
@@ -452,9 +452,9 @@ class Game {
     }
 
     ask(question) {
-        gui.shouldDraw = true;
+        //gui.shouldDraw = true;
         this.addEvent(new GameEvent(function() {
-            gui.popup = new OptionWindow(question);
+            //gui.popup = new OptionWindow(question);
         }));
 
     }

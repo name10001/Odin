@@ -8,15 +8,24 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
         
+        <!-- SocketIO-->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+        <!-- Load React. -->
+        <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+        <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+        
+        <!-- Odin Gameplay-->
         <script type="text/javascript" src="{{ url_for('static', filename='src/game.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/animation.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/gui_elements.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/popup.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/gui.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/react_elements.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/setup.js') }}"></script>
+
         <script>
             //some global variables
             var GAME_ID = "{{ game.get_id() }}";
@@ -48,12 +57,20 @@
                 overflow: hidden; /*  Disable scrollbars */
                 display: block;  /* No floating content on sides */
             }
+            .test {
+                width: 100px;
+                height: 100px;
+                background-color: #ffff00;
+
+            }
             #loginPanel {
                 top: 20vh;
             }
         </style>
     </head>
     <body>
+
+        <!--
         <div class="modal" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -71,7 +88,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <canvas id="canvas"></canvas>
+        </div>-->
+        <div id="root"></div>
     </body>
 </html>

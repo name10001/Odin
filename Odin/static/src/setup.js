@@ -5,7 +5,8 @@ const CARD_HEIGHT = CARD_WIDTH/CARD_RATIO;
 const MIN_WIDTH = 48;//in terms of GUI_SCALE units
 const MIN_HEIGHT = 64;
 
-var DEBUG = true;
+var DEBUG = false;
+
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -15,20 +16,21 @@ function sleep(ms) {
  * Main method - sets up game, gui and listeners
  */
 $(document).ready(function() {
+
     // SETUP GUI
     IS_MOBILE = 'ontouchstart' in document.documentElement;
     game = new Game();
-    gui = new Gui();
+    //gui = new Gui();
     mousePosition = {x:0,y:0};
     mouseMoveVector = {x:0,y:0};
     mousePressed = false;
     
-    canvas = document.getElementById('canvas');
+    //canvas = document.getElementById('canvas');
     resize();
-    ctx = canvas.getContext('2d');
+    //ctx = canvas.getContext('2d');
     
     // EVENTS
-    if(IS_MOBILE) {
+    /*if(IS_MOBILE) {
         canvas.addEventListener('touchstart',touchStart);
         canvas.addEventListener('touchmove',touchMove);
         canvas.addEventListener('touchend',touchEnd);
@@ -39,10 +41,12 @@ $(document).ready(function() {
         canvas.addEventListener('mouseup',mouseUp);
         canvas.addEventListener('mouseleave',mouseLeave);
         canvas.addEventListener('wheel',mouseWheel);
-    }
+    }*/
 
     window.addEventListener('resize',resize);
 
+    
+    ReactDOM.render(React.createElement(OdinGui, {}, null), document.getElementById("root"));
     
     // SocketIO
     socket = io.connect(location.host, {
@@ -153,17 +157,17 @@ function mouseWheel(event) {
  * Resize method, calculates new GUI_SCALE and resizes the canvas
  */
 function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    gui.shouldDraw = true;
+    //canvas.width = window.innerWidth;
+    //canvas.height = window.innerHeight;
+    //gui.shouldDraw = true;
 
-    let width = canvas.width/MIN_WIDTH;
-    let height = canvas.height/MIN_HEIGHT;
+    let width = window.innerWidth/MIN_WIDTH;
+    let height = window.innerHeight/MIN_HEIGHT;
 
     if (width<height) GUI_SCALE = width;
     else GUI_SCALE = height;
 
-    gui.setCardDimensions();
+    //gui.setCardDimensions();
 }
 
 var lastTime = 0;
@@ -173,8 +177,8 @@ function gameLoop(timestamp) {
     lastTime = timestamp;
     
     //update scrolling speed
-    gui.scroll(dt);
-    gui.draw(dt);
+    //gui.scroll(dt);
+    //gui.draw(dt);
 
     requestAnimationFrame(gameLoop);
 }
