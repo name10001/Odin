@@ -1,6 +1,7 @@
 from cards.abstract_card import AbstractCard
 from cards.card_frequency import CardFrequency
 from flask import url_for
+from cards.effect import FreeTurnEffect
 
 # ~~~~~~~~~~~~~~
 #    Reverse
@@ -141,8 +142,19 @@ class FreeTurn(AbstractCard):
                          "you will gain multiple extra turns."
 
     def prepare_card(self, player, allow_cancel):
-        player.turns_left += 1
+
+        effect = player.get_effect("Free Turn")
+        
+        if effect is None:
+            effect = FreeTurnEffect(player, 1)
+            player.add_effect(effect)
+        else:
+            effect.n_turns += 1
+        
         return True
 
     def undo_prepare_card(self, player):
-        player.turns_left -= 1
+        effect = player.get_effect("Free Turn")
+        effect.n_turns -= 1
+        if effect.n_turns == 0:
+            player.remove_effect(effect)

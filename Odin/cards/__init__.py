@@ -54,7 +54,7 @@ all_cards = [
 ]
 
 all_effects = [
-    FireEffect, FreezeEffect
+    FireEffect, FreezeEffect, FreeTurnEffect
 ]
 
 # find information about all cards
@@ -86,7 +86,6 @@ for card in all_cards:
 # effect images
 for effect in all_effects:
     all_urls.append('/static/effects/' + effect.EFFECT_IMAGE_URL)
-all_urls.append('/static/effects/possess.png')
 all_urls.append('/static/effects/free_turn.png')
 
 

@@ -339,3 +339,79 @@ class CardTester(unittest.TestCase):
         self.assertEqual(len(player_1.hand), 22)
         self.assertEqual(len(player_2.hand), 45)
         self.assertEqual(len(player_3.hand), 33)
+
+    def test_free_turn_card(self):
+        """
+        Tests the free turn card.
+        - Test undoing the free turn card.
+
+        - Test on its own
+
+
+        - Test 2 at once
+
+        - Test 1 from an elevator
+        """
+
+        # Setup
+        game = TestGame()
+
+        top_card = BlankBro(game)
+
+        player_1_cards = [FreeTurn(game), Elevator(game)]
+        player_2_cards = [FreeTurn(game), FreeTurn(game)]
+        ids1 = [card.get_id() for card in player_1_cards]
+        ids2 = [card.get_id() for card in player_2_cards]
+
+        player_1 = TestPlayer(game, "player_1", player_1_cards)
+        player_2 = TestPlayer(game, "player_2", player_2_cards)
+
+        deck = TestDeck([BlankBro, BlankBro, BlankBro, BlankBro, BlankBro, FreeTurn, BlankBro])
+
+        game.create([player_1, player_2], deck, top_card)
+
+        
+        
+        self.assertEqual(game.get_turn().get_id(), "player_1")
+        game.finish_turn()
+        self.assertEqual(game.get_turn().get_id(), "player_2")
+
+        # Test undo
+        game.play_cards([ids2[0], ids2[1]])
+        self.assertEqual(player_2.effects[0].n_turns, 2)
+        game.undo()
+        self.assertEqual(player_2.effects[0].n_turns, 1)
+        game.undo()
+        self.assertEquals(len(player_2.effects), 0)
+
+        game.finish_turn()
+        self.assertEqual(game.get_turn().get_id(), "player_1")
+        
+        # Test one on its own
+        game.play_cards([ids1[0]])
+        game.finish_turn()
+        self.assertEqual(game.get_turn().get_id(), "player_1")
+        game.finish_turn()
+        self.assertEqual(game.get_turn().get_id(), "player_2")
+
+        # Test 2
+        game.play_cards([ids2[0], ids2[1]])
+        game.finish_turn()
+        self.assertEqual(game.get_turn().get_id(), "player_2")
+        game.finish_turn()
+        self.assertEqual(game.get_turn().get_id(), "player_2")
+        game.finish_turn()
+        self.assertEqual(game.get_turn().get_id(), "player_1")
+
+        # Test elevator
+        game.play_cards([ids1[1]])
+        game.finish_turn()
+        self.assertEqual(game.get_turn().get_id(), "player_1")
+        game.finish_turn()
+        self.assertEqual(game.get_turn().get_id(), "player_2")
+
+        # Check number of cards per player
+        self.assertEqual(len(player_1.hand), 3)
+        self.assertEqual(len(player_2.hand), 3)
+
+

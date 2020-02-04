@@ -20,7 +20,6 @@ class AbstractPlayer:
         self.player_id = player_id
         self.hand = CardCollection(sort=True)
 
-        self.turns_left = 1
         self.possessions = []
         self.effects = []
 
@@ -41,11 +40,10 @@ class AbstractPlayer:
         if len(self.possessions) > 0:
             possession = self.possessions[0]
             possession.playing_as = self
-        
+
         # Apply all effects
         for effect in self.effects:
             effect.begin_turn()
-
 
     def prepare_cards(self, card_array):
         """
@@ -240,11 +238,9 @@ class AbstractPlayer:
         else:
             # check if anyone else won as a result of playing the card
             self.game.check_winner()
-        
+
         # check if player has any more turns left.
-        self.turns_left -= 1
-        if self.turns_left <= 0:
-            self.next_turn()
+        self.next_turn()
 
     def next_turn(self):
         """
@@ -256,13 +252,16 @@ class AbstractPlayer:
             possession = self.possessions[0]
             possession.playing_as = None
             self.possessions.pop(0)
-        
+
         # Begin to remove effects from the player
         effect_index = 0
+        next_turn = True
+
         while effect_index < len(self.effects):
             effect = self.effects[effect_index]
 
-            effect.end_turn
+            if not effect.end_turn():
+                next_turn = False
 
             effect.n_turns -= 1
             if effect.n_turns <= 0:
@@ -270,12 +269,10 @@ class AbstractPlayer:
             else:
                 effect_index += 1
 
+        if next_turn:
+            self.state = "not turn"
 
-        self.state = "not turn"
-        self.turns_left = 1
-
-        
-        self.game.next_turn()
+            self.game.next_turn()
 
     def pickup(self, number, show_pickup=True):
         """
@@ -289,6 +286,31 @@ class AbstractPlayer:
 
         if show_pickup is True:
             self.show_pickup(cards)
+
+    def add_effect(self, effect):
+        """
+        Add an effect.
+        """
+        self.effects.append(effect)
+
+    def remove_effect(self, effect):
+        """
+        Remove an effect.
+        """
+
+        self.effects.remove(effect)
+
+    def get_effect(self, effect_type):
+        """
+        Get an effect by its type.
+        :return: The effect. None if it does not exist
+        """
+
+        for effect in self.effects:
+            if effect.get_type() == effect_type:
+                return effect
+
+        return None
 
     def _can_be_played(self, card):
         """
@@ -558,45 +580,36 @@ class Player(AbstractPlayer):
             json_to_send["players"].append(player.get_player_json())
 
         self.send_message("card update", json_to_send)
-    
+
     def get_player_json(self):
         # all effect icons
         effect_json = []
         for effect in self.effects:
             effect_json.append(
                 {
-                        "url": effect.get_url(),
-                        "amount left": effect.n_turns
+                    "url": effect.get_url(),
+                    "amount left": effect.n_turns
                 }
             )
-        
-        # free turn effect
-        if self.turns_left > 1:
-            effect_json.append(
-                {
-                        "url": '/static/effects/free_turn.png',
-                        "amount left": self.turns_left
-                }
-            )
+
         # possession effect
         if len(self.possessions) > 0:
             effect_json.append(
                 {
-                        "url": '/static/effects/possess.png',
-                        "amount left": len(self.possessions)
+                    "url": '/static/effects/possess.png',
+                    "amount left": len(self.possessions)
                 }
             )
 
-
         return {
-                "name": self.get_name(),
-                "id": self.get_id(),
-                "number of cards": len(self.hand),
-                "is turn": self.is_turn(),
-                "is possessed": len(self.possessions) > 0,
-                "effects": effect_json,
-                "pickup amount": self.player_pickup_amount
-            }
+            "name": self.get_name(),
+            "id": self.get_id(),
+            "number of cards": len(self.hand),
+            "is turn": self.is_turn(),
+            "is possessed": len(self.possessions) > 0,
+            "effects": effect_json,
+            "pickup amount": self.player_pickup_amount
+        }
 
     def send_message(self, message_type, data):
         """
@@ -660,7 +673,6 @@ class Player(AbstractPlayer):
         # Reask question
         if self._question is not None:
             self.send_message("ask", self._question)
-
 
     def set_sid(self, sid):
         self.sid = sid
