@@ -46,7 +46,7 @@ all_cards = [
     # Other Cards
     BlueTrash, GreenTrash, RedTrash, YellowTrash, BlackTrash, DoJustly1, DoJustly3,
     EA15, EA20, EA30, EA100,
-     Elevator, SwapCard, Jew, FeelingBlue,
+     Elevator, SwapCard, Steal, FeelingBlue,
     SwapHand, Communist, Capitalist, Genocide, Jesus,  Thanos, Odin, CopyCat, Possess,
     ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, BlackHole
     

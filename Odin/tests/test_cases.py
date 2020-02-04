@@ -97,9 +97,9 @@ class CardTester(unittest.TestCase):
 
         self.assertEqual(game.get_top_card().get_id(), ids[10])
 
-    def test_jew_card(self):
+    def test_steal_card(self):
         """
-        Test the Jew Card.
+        Test the Steal Card.
 
         - Standard use of the card with 3 players.
         - Compatibility
@@ -110,9 +110,9 @@ class CardTester(unittest.TestCase):
 
         top_card = GreenZero(game)
 
-        player_1_cards = [Jew(game), Elevator(game)]
-        player_2_cards = [CopyCat(game), BlankBro(game), BlankBro(game)]
-        player_3_cards = [PurpleFour(game), BlankBro(game), BlankBro(game)]
+        player_1_cards = [Steal(game), Elevator(game)]
+        player_2_cards = [CopyCat(game), BlankBro(game), Happiness(game)]
+        player_3_cards = [YellowFour(game), BlankBro(game), BlankBro(game)]
 
         steal1 = player_2_cards[1].get_id()
         steal2 = player_3_cards[1].get_id()
@@ -130,7 +130,7 @@ class CardTester(unittest.TestCase):
                               "player_3", steal2])
         player_3 = TestPlayer(game, "player_3", player_3_cards)
 
-        deck = TestDeck([Jew])
+        deck = TestDeck([Steal])
 
         game.create([player_1, player_2, player_3], deck, top_card)
 

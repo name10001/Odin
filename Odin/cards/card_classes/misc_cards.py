@@ -926,12 +926,12 @@ class Possess(AbstractCard):
         self.game.update_players()
 
 
-class Jew(AbstractCard):
-    NAME = "Jew"
-    CARD_IMAGE_URL = 'jew.png'
-    CARD_COLOUR = "white"
+class Steal(AbstractCard):
+    NAME = "Steal"
+    CARD_IMAGE_URL = 'steal.png'
+    CARD_COLOUR = "black"
     CARD_FREQUENCY = CardFrequency(1.7, max_cards=4, starting=0)
-    CARD_TYPE = "Jew"
+    CARD_TYPE = "Steal"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a card to steal from a player of your choice's hand"
 
