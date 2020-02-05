@@ -302,7 +302,7 @@ class Game {
             let index = this.yourStacks.length;
             let cardStack = new CardStack(id, name, url, canPlay);
             this.yourStacks.push(cardStack);
-            //gui.cardScroller.items.push(new CardStackPanel(cardStack));
+            gui.updateStacks(this.yourStacks);
             this.cardNameIndices[name] = index;
             this.cardIndices[id] = index;
         }

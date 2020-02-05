@@ -45,8 +45,7 @@ $(document).ready(function() {
 
     window.addEventListener('resize',resize);
 
-    
-    ReactDOM.render(React.createElement(OdinGui, {}, null), document.getElementById("root"));
+    gui = ReactDOM.render(React.createElement(OdinGui, {}, null), document.getElementById("root"));
     
     // SocketIO
     socket = io.connect(location.host, {
