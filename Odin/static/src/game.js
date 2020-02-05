@@ -284,6 +284,7 @@ class Game {
         
         
         this.finishedEvent();
+        gui.updateGame(this);
         //gui.shouldDraw = true;
     }
 
@@ -302,7 +303,6 @@ class Game {
             let index = this.yourStacks.length;
             let cardStack = new CardStack(id, name, url, canPlay);
             this.yourStacks.push(cardStack);
-            gui.updateStacks(this.yourStacks);
             this.cardNameIndices[name] = index;
             this.cardIndices[id] = index;
         }
