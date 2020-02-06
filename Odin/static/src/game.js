@@ -211,7 +211,7 @@ class Game {
         if(update['planning pile'] != undefined) {
             this.planningCards.length = 0;
             for(let card of update['planning pile']) {
-                this.planningCards.push(new CardStack(card['card id'], card['name'], card['card image url'], true));
+                this.planningCards.push(card['card image url']);
             }
         }
 

@@ -14,27 +14,83 @@ function getButtonStyle(size) {
     };
 }
 
+
+
 /**
- * The discard pile shows all cards that have been played
+ * Represents a pile of cards. The pile should be contained within a div of a specific height, all cards are aligned to fit within the div.
+ * The top of the pile should be the last card in the array.
  */
-class DiscardPile extends React.Component {
+class CardPile extends React.Component {
     constructor(props) {
         super(props);
     }
 
     render() {
-        //this.props.cards
-        //this.props.height this.props.guiScale
-
+        // calculations such that all cards fit within the stack
         const width = this.props.guiScale * CARD_WIDTH;
         const height = this.props.guiScale * CARD_HEIGHT;
-        const maxGap = this.props.height - height;
+        const totalGap = this.props.height - height;
         const len = this.props.cards.length;
-        const gap = maxGap / (len - 1);
+        const gap = Math.min(totalGap / (len - 1), this.props.maxGap);
 
-        const cards = this.props.cards.map((card, index) => $r('img', {
-            src: card, key: index, style: { position: 'absolute', zIndex: index + '', left: '0', bottom: index * gap + 'px' }, width: width, height: height, alt: 'card'
-        }));
+        const cards = this.props.cards.reduce((result, card, index) => {
+            if (this.props.grey) {
+                // greyed out card
+                const cardStyle = { position: 'absolute', zIndex: index * 2 + '', left: '0' };
+                const greyCardStyle = { position: 'absolute', zIndex: index * 2 + 1 + '', left: '0' };
+
+                if (this.props.alignment == 'bottom-bottom') {
+                    cardStyle.bottom = index * gap + 'px';
+                    greyCardStyle.bottom = index * gap + 'px';
+                }
+                else if (this.props.alignment == 'bottom-top') {
+                    cardStyle.top = index * gap + 'px';
+                    greyCardStyle.top = index * gap + 'px';
+                }
+                else if (this.props.alignment == 'top-top') {
+                    cardStyle.top = (len - 1 - index) * gap + 'px';
+                    greyCardStyle.top = (len - 1 - index) * gap + 'px';
+                }
+                else if (this.props.alignment == 'top-bottom') {
+                    cardStyle.bottom = (len - 1 - index) * gap + 'px';
+                    greyCardStyle.bottom = (len - 1 - index) * gap + 'px';
+                }
+                result.push(
+                    $r('img', {
+                        src: card, key: index + '', style: cardStyle, width: width, height: height
+                    }),
+                    $r('img', {
+                        src: '/static/transparent.png', key: index + 't', style: greyCardStyle, width: width, height: height
+                    })
+                );
+
+            }
+            else {
+                // regular card
+                const cardStyle = { position: 'absolute', zIndex: index + '', left: '0' };
+
+                if (this.props.alignment == 'bottom-bottom') {
+                    cardStyle.bottom = index * gap + 'px';
+                }
+                else if (this.props.alignment == 'bottom-top') {
+                    cardStyle.top = index * gap + 'px';
+                }
+                else if (this.props.alignment == 'top-top') {
+                    cardStyle.top = (len - 1 - index) * gap + 'px';
+                }
+                else if (this.props.alignment == 'top-bottom') {
+                    cardStyle.bottom = (len - 1 - index) * gap + 'px';
+                }
+
+                result.push(
+                    $r('img', {
+                        src: card, key: index, style: cardStyle, width: width, height: height
+                    })
+                );
+            }
+
+            return result;
+        }, []);
 
         return cards;
     }
@@ -48,27 +104,29 @@ function ButtonPanel(props) {
     const btnStyle = getButtonStyle(props.guiScale * 1.4);
 
     // play button
-    const playButton = $r('button', { key: '1', onClick: () => game.finishTurn(), className: props.playAvaliable ? 'btn btn-primary btn-block' : 'btn btn-secondary btn-block', style: btnStyle }, props.playMessage);
+    const playButton = $r('button', props.playAvaliable ? { key: '1', onClick: () => game.finishTurn(), className: 'btn btn-primary btn-block', style: btnStyle } : {
+        key: '1', disabled: true, className: 'btn btn-primary btn-block', style: btnStyle
+    }, props.playMessage);
 
-    if (props.undoAvaliable) {
-        // size of the gap between buttons
-        const gap = props.guiScale / 2 + "px";
+    // size of the gap between buttons
+    const gap = props.guiScale / 2 + "px";
 
-        // undo button
-        const undoButton = $r('div', {
-            key: '2', className: 'col-xs-5', style: { padding: gap + " " + gap + " 0 0" }
-        }, $r('button', { onClick: () => game.undo(), className: 'btn btn-primary btn-block', style: btnStyle }, "UNDO"));
+    // undo button
 
-        // undo all button
-        const undoAllButton = $r('div', {
-            key: '3', className: 'col-xs-7', style: { padding: gap + " 0 0 0" }
-        }, $r('button', { onClick: () => game.undoAll(), className: 'btn btn-primary btn-block', style: btnStyle }, "UNDO ALL"));
+    const undoButton = $r('div', {
+        key: '2', className: 'col-xs-5', style: { padding: gap + " " + gap + " 0 0" }
+    }, $r('button', props.undoAvaliable ? { onClick: () => game.undo(), className: 'btn btn-primary btn-block', style: btnStyle } : {
+        className: 'btn btn-primary btn-block', disabled: true, style: btnStyle
+    }, "UNDO"));
 
-        return [playButton, undoButton, undoAllButton];
-    }
-    else {
-        return playButton;
-    }
+    // undo all button
+    const undoAllButton = $r('div', {
+        key: '3', className: 'col-xs-7', style: { padding: gap + " 0 0 0" }
+    }, $r('button', props.undoAvaliable ? { onClick: () => game.undoAll(), className: 'btn btn-primary btn-block', style: btnStyle } : {
+        className: 'btn btn-primary btn-block', disabled: true, style: btnStyle
+    }, "UNDO ALL"));
+
+    return [playButton, undoButton, undoAllButton];
 }
 
 /**
@@ -100,9 +158,17 @@ function CardPanel(props) {
         cardButtonChildren.push(transparent)
     }
 
-    const cardButton = $r('button', {
-        style: { width: cardWidth, height: cardHeight, margin: props.guiScale / 2 + "px", display: 'block', position: 'relative' }, className: 'transparent-button', onClick: () => props.stack.playSingle()
-    }, cardButtonChildren);
+    const cardProps = {
+        style: { width: cardWidth, height: cardHeight, margin: props.guiScale / 2 + "px", display: 'block', position: 'relative' }, className: 'transparent-button',
+    }
+    if(props.stack.allowedToPlay) {
+        cardProps.onClick = () => props.stack.playSingle();
+    }
+    else {
+        cardProps.disabled = true;
+    }
+
+    const cardButton = $r('button', cardProps, cardButtonChildren);
 
     // help button
     const helpStyle = getButtonStyle(props.guiScale * 1.3);
@@ -116,12 +182,14 @@ function CardPanel(props) {
     addAllStyle.marginRight = props.guiScale + "px";
     addAllStyle.float = "right";
 
-    const addAll = $r('button', {
+    const addAll = $r('button', props.stack.allowedToPlay ? {
         className: 'btn btn-primary', style: addAllStyle, onClick: () => props.stack.playAll()
+    } : {
+        className: 'btn btn-primary', style: addAllStyle, disabled: true
     }, "+ALL");
 
     // return entire card stack
-    return $r('div', { style: { width: width, display: "inline-block" } }, cardButton, help, addAll);
+    return $r('div', { style: { width: width, display: "inline-block", paddingBottom: props.guiScale / 2 + "px" } }, cardButton, help, addAll);
 }
 
 /**
@@ -139,6 +207,8 @@ function scrollHorizontally(e) {
 class CardScroller extends React.Component {
     constructor(props) {
         super(props);
+
+        this.height = 0;
     }
 
     /**
@@ -158,9 +228,7 @@ class CardScroller extends React.Component {
             $r(CardPanel, { key: stack.url, guiScale: this.props.guiScale, stack: stack })
         );
 
-        const height = ((this.props.guiScale * (CARD_HEIGHT + 4)) + 25) + "px";
-
-        return $r('div', { id: 'card-scroller', style: { width: '100%', height: height, overflowX: 'auto', textAlign: 'center', whiteSpace: 'nowrap', position: 'fixed', bottom: '0px' } }, panels);
+        return $r('div', { id: 'card-scroller', style: { width: '100%', overflowX: 'scroll', textAlign: 'center', whiteSpace: 'nowrap', position: 'fixed', bottom: '0px' } }, panels);
     }
 }
 
@@ -288,11 +356,27 @@ class OdinGui extends React.Component {
      * Render the entire game
      */
     render() {
+
+        // card scroller
+        const scroller = $r(CardScroller, { key: 'cs', cardStacks: this.state.game.yourStacks, guiScale: this.state.guiScale });
+
+        // calculating how the central componants should be arranged
+        const cardWidth = this.state.guiScale * CARD_WIDTH;
+        const buttonsWidth = cardWidth * 2.5;
+        const gapSize = this.state.guiScale;
+
+        const containerHeight = this.state.height - (this.state.guiScale * (CARD_HEIGHT + 5) + 25);
+        const containerWidth = cardWidth * 2 + buttonsWidth + gapSize * 2;
+
+
         // discard pile
         const discardHeight = this.state.guiScale * CARD_HEIGHT * 2;
-        const discardPile = $r(DiscardPile, { height: discardHeight, guiScale: this.state.guiScale, cards: this.state.game.topCards });
-        const discardWrapper = $r('div', { key: 'dp', style: { width: this.state.guiScale * CARD_WIDTH + "px", height: discardHeight, position: 'relative' } }, discardPile);
+        const discardPile = $r(CardPile, { height: discardHeight, guiScale: this.state.guiScale, cards: this.state.game.topCards, maxGap: discardHeight / 3, alignment: 'top-bottom', grey: true });
+        const discardWrapper = $r('div', { key: 'dp', style: { width: cardWidth + "px", height: discardHeight, position: 'absolute', bottom: '0' } }, discardPile);
 
+        // planning pile
+        const planningPile = $r(CardPile, { height: containerHeight, guiScale: this.state.guiScale, cards: this.state.game.planningCards, maxGap: this.state.guiScale, alignment: 'bottom-bottom', grey: false });
+        const planningWrapper = $r('div', { key: 'pp', style: { width: cardWidth + "px", height: containerHeight, position: 'absolute', left: cardWidth + gapSize + 'px' } }, planningPile);
 
         // button panel
         let playMessage;
@@ -306,12 +390,16 @@ class OdinGui extends React.Component {
             playMessage = "PLAY CARDS";
         }
 
-        const buttons = $r(ButtonPanel, { undoAvaliable: this.state.game.planningCards.length > 0, playMessage: playMessage, playAvaliable: this.state.game.yourTurn && this.state.game.cantPlayReason.length == 0, guiScale: this.state.guiScale });
-        const buttonsWrapper = $r('div', { key: 'bp', style: { width: this.state.guiScale * CARD_WIDTH * 2.5 + "px" } }, buttons);
+        const buttons = $r(ButtonPanel, {
+            undoAvaliable: this.state.game.planningCards.length > 0 && this.state.game.yourTurn, playMessage: playMessage, playAvaliable: this.state.game.yourTurn && this.state.game.cantPlayReason.length == 0, guiScale: this.state.guiScale
+        });
+        const buttonsWrapper = $r('div', { key: 'bp', style: { position: 'absolute', bottom: '0', left: (cardWidth + gapSize) * 2 + 'px', width: buttonsWidth + "px" } }, buttons);
 
-        // card scroller
-        const scroller = $r(CardScroller, { key: 'cs', cardStacks: this.state.game.yourStacks, guiScale: this.state.guiScale });
+        // container to hold everything in the UI
+        const container = $r('div', {
+            key: 'ctr', style: { margin: 'auto', position: 'relative', width: containerWidth + 'px', height: containerHeight + 'px' }
+        }, [discardWrapper, planningWrapper, buttonsWrapper]);
 
-        return [discardWrapper, buttonsWrapper, scroller];
+        return [container, scroller];
     }
 }
