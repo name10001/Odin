@@ -204,7 +204,7 @@ class Game {
         if(update['cards on deck'] != undefined) {
             this.topCards.length = 0;
             for(let card of update['cards on deck']) {
-                this.topCards.push(this.allImages[card['card image url']]);
+                this.topCards.push(card['card image url']);
             }
         }
         //update planning cards

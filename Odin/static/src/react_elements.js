@@ -1,6 +1,10 @@
 const $r = React.createElement
 
 
+/**
+ * Gets a button style that corresponds to a size in pixels
+ * @param {Number} size 
+ */
 function getButtonStyle(size) {
     size = Math.floor(size);
     return {
@@ -10,66 +14,114 @@ function getButtonStyle(size) {
     };
 }
 
+/**
+ * The discard pile shows all cards that have been played
+ */
+class DiscardPile extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        //this.props.cards
+        //this.props.height this.props.guiScale
+
+        const width = this.props.guiScale * CARD_WIDTH;
+        const height = this.props.guiScale * CARD_HEIGHT;
+        const maxGap = this.props.height - height;
+        const len = this.props.cards.length;
+        const gap = maxGap / (len - 1);
+
+        const cards = this.props.cards.map((card, index) => $r('img', {
+            src: card, key: index, style: { position: 'absolute', zIndex: index + '', left: '0', bottom: index * gap + 'px' }, width: width, height: height, alt: 'card'
+        }));
+
+        return cards;
+    }
+}
 
 /**
  * Represents the "play cards" "undo" and "undo all" buttons
  */
-class ButtonPanel extends React.Component {
-    render() {
+function ButtonPanel(props) {
+    // style of the button in terms of font size
+    const btnStyle = getButtonStyle(props.guiScale * 1.4);
 
-        const playButton = $r('button', { key: '1', onClick: () => game.finishTurn(), className: this.props.playAvaliable ? 'btn btn-primary btn-lg btn-block' : 'btn btn-secondary btn-lg btn-block' }, this.props.playMessage);
+    // play button
+    const playButton = $r('button', { key: '1', onClick: () => game.finishTurn(), className: props.playAvaliable ? 'btn btn-primary btn-block' : 'btn btn-secondary btn-block', style: btnStyle }, props.playMessage);
 
-        if (this.props.undoAvaliable) {
-            // undo buttons
-            const undoButton = $r('div', { key: '2', className: 'col-xs-5', style: { padding: "10px 5px 0 0" } }, $r('button', { onClick: () => game.undo(), className: 'btn btn-primary btn-lg btn-block' }, "UNDO"));
-            const undoAllButton = $r('div', { key: '3', className: 'col-xs-7', style: { padding: "10px 0 0 5px" } }, $r('button', { onClick: () => game.undoAll(), className: 'btn btn-primary btn-lg btn-block' }, "UNDO ALL"));
+    if (props.undoAvaliable) {
+        // size of the gap between buttons
+        const gap = props.guiScale / 2 + "px";
 
-            return [playButton, undoButton, undoAllButton];
-        }
-        else {
-            return playButton;
-        }
+        // undo button
+        const undoButton = $r('div', {
+            key: '2', className: 'col-xs-5', style: { padding: gap + " " + gap + " 0 0" }
+        }, $r('button', { onClick: () => game.undo(), className: 'btn btn-primary btn-block', style: btnStyle }, "UNDO"));
+
+        // undo all button
+        const undoAllButton = $r('div', {
+            key: '3', className: 'col-xs-7', style: { padding: gap + " 0 0 0" }
+        }, $r('button', { onClick: () => game.undoAll(), className: 'btn btn-primary btn-block', style: btnStyle }, "UNDO ALL"));
+
+        return [playButton, undoButton, undoAllButton];
+    }
+    else {
+        return playButton;
     }
 }
 
 /**
  * Represents a panel on the screen with a card and 2 buttons.
  */
-class CardPanel extends React.Component {
-    constructor(props) {
-        super(props);
+function CardPanel(props) {
+    const width = props.guiScale * (CARD_WIDTH + 1) + "px";
+
+    const cardWidth = props.guiScale * CARD_WIDTH + "px";
+    const cardHeight = props.guiScale * CARD_HEIGHT + "px";
+
+    // card click button
+    const cardButtonChildren = [];
+    const card = $r('img', { key: '1', src: props.stack.url, width: cardWidth, height: cardHeight, alt: props.stack.name, style: { position: 'absolute', left: '0', top: '0', zIndex: '1' } });
+
+    cardButtonChildren.push(card);
+    if (props.stack.size() > 1) {
+        // indicator of the size of the stack
+        const numberIndicator = $r('span', {
+            key: '2', style: {
+                backgroundColor: '#fff', position: 'absolute', borderRadius: "3px", left: '0', bottom: '0', padding: '5px 10px', fontSize: props.guiScale * 1.5 + "px", zIndex: '2'
+            }
+        }, "x" + props.stack.size());
+        cardButtonChildren.push(numberIndicator);
+    }
+    if (!props.stack.allowedToPlay) {
+        // make transparent if not allowed to play
+        const transparent = $r('img', { key: '3', src: '/static/transparent.png', width: '100%', height: '100%', style: { position: 'absolute', left: '0', top: '0', zIndex: '3' } });
+        cardButtonChildren.push(transparent)
     }
 
-    render() {
-        const width = this.props.guiScale * (CARD_WIDTH + 1) + "px";
+    const cardButton = $r('button', {
+        style: { width: cardWidth, height: cardHeight, margin: props.guiScale / 2 + "px", display: 'block', position: 'relative' }, className: 'transparent-button', onClick: () => props.stack.playSingle()
+    }, cardButtonChildren);
 
-        const cardWidth = this.props.guiScale * CARD_WIDTH + "px";
-        const cardHeight = this.props.guiScale * CARD_HEIGHT + "px";
+    // help button
+    const helpStyle = getButtonStyle(props.guiScale * 1.3);
+    helpStyle.float = "left";
+    helpStyle.marginLeft = props.guiScale + "px";
 
-        // card click button
-        const card = $r('button', {
-            style: { margin: this.props.guiScale / 2 + "px", display: 'block' }, className: 'transparent-button', onClick: () => this.props.stack.playSingle()
-        }, $r('img', { src: this.props.stack.url, width: cardWidth, height: cardHeight, alt: this.props.stack.name }));
+    const help = $r('button', { className: 'btn btn-primary', style: helpStyle }, "?");
 
-        // help button
-        const helpStyle = getButtonStyle(this.props.guiScale * 1.3);
-        helpStyle.float = "left";
-        helpStyle.marginLeft = this.props.guiScale + "px";
+    // addall button
+    const addAllStyle = getButtonStyle(props.guiScale * 1.3);
+    addAllStyle.marginRight = props.guiScale + "px";
+    addAllStyle.float = "right";
 
-        const help = $r('button', { className: 'btn btn-primary', style: helpStyle }, "?");
+    const addAll = $r('button', {
+        className: 'btn btn-primary', style: addAllStyle, onClick: () => props.stack.playAll()
+    }, "+ALL");
 
-        // addall button
-        const addAllStyle = getButtonStyle(this.props.guiScale * 1.3);
-        addAllStyle.marginRight = this.props.guiScale + "px";
-        addAllStyle.float = "right";
-
-        const addAll = $r('button', {
-            className: 'btn btn-primary', style: addAllStyle, onClick: () => this.props.stack.playAll()
-        }, "+ALL");
-
-        // return entire card stack
-        return $r('div', { style: { width: width, display: "inline-block" } }, card, help, addAll);
-    }
+    // return entire card stack
+    return $r('div', { style: { width: width, display: "inline-block" } }, cardButton, help, addAll);
 }
 
 /**
@@ -128,10 +180,7 @@ class OdinGui extends React.Component {
             width: 0,
             height: 0,
             guiScale: 0,
-            cardStacks: game.yourStacks,
-            planningCards: game.planningCards,
-            yourTurn: game.yourTurn,
-            cantPlayReason: game.cantPlayReason
+            game: game
         };
     }
 
@@ -231,10 +280,7 @@ class OdinGui extends React.Component {
      * @param {*} game
      */
     updateGame(game) {
-        this.state.cardStacks = game.yourStacks;
-        this.state.planningCards = game.planningCards;
-        this.state.cantPlayReason = game.cantPlayReason;
-        this.state.yourTurn = game.yourTurn;
+        this.state.game = game;
         this.setState(this.state);
     }
 
@@ -242,27 +288,30 @@ class OdinGui extends React.Component {
      * Render the entire game
      */
     render() {
+        // discard pile
+        const discardHeight = this.state.guiScale * CARD_HEIGHT * 2;
+        const discardPile = $r(DiscardPile, { height: discardHeight, guiScale: this.state.guiScale, cards: this.state.game.topCards });
+        const discardWrapper = $r('div', { key: 'dp', style: { width: this.state.guiScale * CARD_WIDTH + "px", height: discardHeight, position: 'relative' } }, discardPile);
+
+
         // button panel
         let playMessage;
-        if (game.planningCards.length == 0) {
-            playMessage = "+1";
+        if (this.state.game.planningCards.length == 0) {
+            playMessage = "+" + (this.state.game.pickupAmount == 0 ? '1' : this.state.game.pickupAmount);
         }
-        else if (game.cantPlayReason.length > 0) {
-            playMessage = game.cantPlayReason;
+        else if (this.state.game.cantPlayReason.length > 0) {
+            playMessage = this.state.game.cantPlayReason;
         }
         else {
             playMessage = "PLAY CARDS";
         }
 
-
-        const buttons = $r(ButtonPanel, { undoAvaliable: this.state.planningCards.length > 0, playMessage: playMessage, playAvaliable: this.state.yourTurn && this.state.cantPlayReason.length == 0 });
-        const buttonsWrapper = $r('div', { key: '1', style: { width: this.state.guiScale * CARD_WIDTH * 2.5 + "px" } }, buttons);
-
+        const buttons = $r(ButtonPanel, { undoAvaliable: this.state.game.planningCards.length > 0, playMessage: playMessage, playAvaliable: this.state.game.yourTurn && this.state.game.cantPlayReason.length == 0, guiScale: this.state.guiScale });
+        const buttonsWrapper = $r('div', { key: 'bp', style: { width: this.state.guiScale * CARD_WIDTH * 2.5 + "px" } }, buttons);
 
         // card scroller
-        const scroller = $r(CardScroller, { key: '2', cardStacks: this.state.cardStacks, guiScale: this.state.guiScale });
+        const scroller = $r(CardScroller, { key: 'cs', cardStacks: this.state.game.yourStacks, guiScale: this.state.guiScale });
 
-
-        return [buttonsWrapper, scroller];
+        return [discardWrapper, buttonsWrapper, scroller];
     }
 }
