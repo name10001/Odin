@@ -161,7 +161,7 @@ function CardPanel(props) {
     const cardProps = {
         style: { width: cardWidth, height: cardHeight, margin: props.guiScale / 2 + "px", display: 'block', position: 'relative' }, className: 'transparent-button',
     }
-    if(props.stack.allowedToPlay) {
+    if (props.stack.allowedToPlay) {
         cardProps.onClick = () => props.stack.playSingle();
     }
     else {
@@ -185,8 +185,8 @@ function CardPanel(props) {
     const addAll = $r('button', props.stack.allowedToPlay ? {
         className: 'btn btn-primary', style: addAllStyle, onClick: () => props.stack.playAll()
     } : {
-        className: 'btn btn-primary', style: addAllStyle, disabled: true
-    }, "+ALL");
+            className: 'btn btn-primary', style: addAllStyle, disabled: true
+        }, "+ALL");
 
     // return entire card stack
     return $r('div', { style: { width: width, display: "inline-block", paddingBottom: props.guiScale / 2 + "px" } }, cardButton, help, addAll);
@@ -207,8 +207,6 @@ function scrollHorizontally(e) {
 class CardScroller extends React.Component {
     constructor(props) {
         super(props);
-
-        this.height = 0;
     }
 
     /**
@@ -230,6 +228,51 @@ class CardScroller extends React.Component {
 
         return $r('div', { id: 'card-scroller', style: { width: '100%', overflowX: 'scroll', textAlign: 'center', whiteSpace: 'nowrap', position: 'fixed', bottom: '0px' } }, panels);
     }
+}
+
+function PlayerPanel(props) {
+    return props.player.name + "/" + props.player.nCards;
+}
+
+/**
+ * A list of panels containing information about each player in order of their turn
+ */
+class PlayerListPanel extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const nPlayers = this.props.players.length;
+
+        if (nPlayers == 0) {
+            return "";
+        }
+
+        const maxHeight = this.props.guiScale * 5;
+        const maxGap = this.props.guiScale * 2;
+
+        const totalHeight = maxGap + nPlayers * (maxGap + maxHeight);
+
+        const scale = 1;
+        if (maxHeight > this.props.height) scale = this.props.height / totalHeight;
+
+        const panels = [];
+
+        let i = this.props.turn;
+
+        do {
+            const player = this.props.players[i];
+            panels.push($r(PlayerPanel, {key: i, player, width: i == this.props.turn ? this.props.width * 0.9 : this.props.width, height: maxHeight * scale, gap: maxGap * scale}))
+
+            i += this.props.direction;
+            if (i < 0) i = game.players.length - 1;
+            else if (i >= game.players.length) i = 0;
+        } while (i != this.props.turn);
+
+        return panels;
+    }
+
 }
 
 /**
@@ -362,21 +405,30 @@ class OdinGui extends React.Component {
 
         // calculating how the central componants should be arranged
         const cardWidth = this.state.guiScale * CARD_WIDTH;
-        const buttonsWidth = cardWidth * 2.5;
-        const gapSize = this.state.guiScale;
+        const cardHeight = this.state.guiScale * CARD_HEIGHT;
+        const gapSize = this.state.guiScale * 1.2;
+
+        const buttonsWidth = cardWidth * 2 + gapSize;
+        const buttonsHeight = this.state.guiScale * 6.2;
+
+        const playerListWidth = cardWidth * 2.8;
 
         const containerHeight = this.state.height - (this.state.guiScale * (CARD_HEIGHT + 5) + 25);
-        const containerWidth = cardWidth * 2 + buttonsWidth + gapSize * 2;
-
+        const containerWidth = buttonsWidth + gapSize + playerListWidth;
 
         // discard pile
-        const discardHeight = this.state.guiScale * CARD_HEIGHT * 2;
+        const discardHeight = this.state.guiScale * CARD_HEIGHT * 1.4;
         const discardPile = $r(CardPile, { height: discardHeight, guiScale: this.state.guiScale, cards: this.state.game.topCards, maxGap: discardHeight / 3, alignment: 'top-bottom', grey: true });
-        const discardWrapper = $r('div', { key: 'dp', style: { width: cardWidth + "px", height: discardHeight, position: 'absolute', bottom: '0' } }, discardPile);
+        const discardWrapper = $r('div', { key: 'dp', style: { width: cardWidth + "px", height: discardHeight, position: 'absolute', bottom: buttonsHeight + gapSize + 'px' } }, discardPile);
 
         // planning pile
-        const planningPile = $r(CardPile, { height: containerHeight, guiScale: this.state.guiScale, cards: this.state.game.planningCards, maxGap: this.state.guiScale, alignment: 'bottom-bottom', grey: false });
-        const planningWrapper = $r('div', { key: 'pp', style: { width: cardWidth + "px", height: containerHeight, position: 'absolute', left: cardWidth + gapSize + 'px' } }, planningPile);
+        const planningHeight = containerHeight - buttonsHeight - gapSize * 2;
+        const planningPile = $r(CardPile, { height: planningHeight, guiScale: this.state.guiScale, cards: this.state.game.planningCards, maxGap: this.state.guiScale, alignment: 'bottom-bottom', grey: false });
+        const planningWrapper = $r('div', { key: 'pp', style: { width: cardWidth + "px", height: planningHeight, position: 'absolute', bottom: buttonsHeight + gapSize + 'px', left: cardWidth + gapSize + 'px' } }, planningPile);
+
+        // deck
+        const deckTop = (containerHeight - discardHeight - buttonsHeight - gapSize - cardHeight) / 2;
+        const deckImage = $r('img', { src: '/static/cards/back.png', key: 'di', style: { width: cardWidth + 'px', height: cardHeight + 'px', position: 'absolute', top: deckTop + 'px' } });
 
         // button panel
         let playMessage;
@@ -393,12 +445,16 @@ class OdinGui extends React.Component {
         const buttons = $r(ButtonPanel, {
             undoAvaliable: this.state.game.planningCards.length > 0 && this.state.game.yourTurn, playMessage: playMessage, playAvaliable: this.state.game.yourTurn && this.state.game.cantPlayReason.length == 0, guiScale: this.state.guiScale
         });
-        const buttonsWrapper = $r('div', { key: 'bp', style: { position: 'absolute', bottom: '0', left: (cardWidth + gapSize) * 2 + 'px', width: buttonsWidth + "px" } }, buttons);
+        const buttonsWrapper = $r('div', { key: 'bp', style: { position: 'absolute', bottom: '0', width: buttonsWidth + "px" } }, buttons);
+
+        // player list
+        const playerList = $r(PlayerListPanel, { width: playerListWidth, height: containerHeight, players: this.state.game.players, turn: this.state.game.turn, skip: this.state.game.skip, direction: this.state.game.direction });
+        const playerListWrapper = $r('div', { key: 'plp', style: { position: 'absolute', right: '0', width: playerListWidth, height: containerHeight } }, playerList);
 
         // container to hold everything in the UI
         const container = $r('div', {
             key: 'ctr', style: { margin: 'auto', position: 'relative', width: containerWidth + 'px', height: containerHeight + 'px' }
-        }, [discardWrapper, planningWrapper, buttonsWrapper]);
+        }, [deckImage, discardWrapper, planningWrapper, buttonsWrapper, playerListWrapper]);
 
         return [container, scroller];
     }
