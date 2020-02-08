@@ -59,7 +59,6 @@ all_effects = [
 
 # find information about all cards
 all_card_info = []
-all_urls = []
 all_types = []
 all_colours = []
 
@@ -73,9 +72,6 @@ for card in all_cards:
         "effect description": card.EFFECT_DESCRIPTION,
         "compatibility description": card.get_compatibility_description()
     }
-    all_urls.append('/static/cards/' + card.CARD_IMAGE_URL)
-    for url in card.ADDITIONAL_URLS:
-        all_urls.append('/static/cards/' + url)
 
     all_card_info.append(card_info)
     if card.CARD_TYPE not in all_types:
@@ -83,10 +79,6 @@ for card in all_cards:
     if card.CARD_COLOUR not in all_colours:
         all_colours.append(card.CARD_COLOUR)
 
-# effect images
-for effect in all_effects:
-    all_urls.append('/static/effects/' + effect.EFFECT_IMAGE_URL)
-all_urls.append('/static/effects/possess.png')
 
 
 # highest one takes priority!

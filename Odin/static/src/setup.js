@@ -7,85 +7,61 @@ const MIN_HEIGHT = 64;
 
 var DEBUG = true;
 
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 /**
  * Main method - sets up game, gui and listeners
  */
 $(document).ready(function() {
 
-    // SETUP GUI
-    IS_MOBILE = 'ontouchstart' in document.documentElement;
+    // SETUP GAME
     game = new Game();
-    //gui = new Gui();
-    mousePosition = {x:0,y:0};
-    mouseMoveVector = {x:0,y:0};
-    mousePressed = false;
-    
-    //canvas = document.getElementById('canvas');
-    resize();
-    //ctx = canvas.getContext('2d');
-    
-    // EVENTS
-    /*if(IS_MOBILE) {
-        canvas.addEventListener('touchstart',touchStart);
-        canvas.addEventListener('touchmove',touchMove);
-        canvas.addEventListener('touchend',touchEnd);
-    }
-    else {
-        canvas.addEventListener('mousedown',mouseDown);
-        canvas.addEventListener('mousemove',mouseMove);
-        canvas.addEventListener('mouseup',mouseUp);
-        canvas.addEventListener('mouseleave',mouseLeave);
-        canvas.addEventListener('wheel',mouseWheel);
-    }*/
 
-    window.addEventListener('resize',resize);
+    //SETUP GUI
 
     gui = ReactDOM.render(React.createElement(OdinGui, {}, null), document.getElementById("root"));
     
-    // SocketIO
+    // Setup Socket IO
     socket = io.connect(location.host, {
         'reconnection': true,
         'reconnectionDelay': 500,
         'maxReconnectionAttempts': Infinity
     });
 
+    // initial connection
     socket.on('connect', function () {
         socket.emit("game message", GAME_ID, "initialise", null);
     });
 
-    /*socket.on('popup message', function (message) {
-        $("#message-from-server").html(message);
-        $('.modal').modal("show");
-
-    });*/
-
+    // popup message
     socket.on('popup message', function(message) {
-        game.addEvent(new GameEvent(function() {
-            gui.currentAnimation = new MessageAnimation(message);
-        }));
+        //game.addEvent(new GameEvent(function() {
+        //    gui.currentAnimation = new MessageAnimation(message);
+        //}));
     });
 
+    // update the game
     socket.on('card update', function(update) {
 
         game.addEvent(new GameEvent(function() {
             game.update(update);
         }));
     });
+    
+    // play an animation
     socket.on('animate', function(data) {
         game.animate(data);
     });
+    
+    // ask a question
     socket.on('ask', function(question) {
         game.ask(question);
     });
+
+    // recieve a chat message
     socket.on('chat', function(data) {
         game.receive_chat_message(data);
     });
 
+    // force refresh
     socket.on("refresh", function() {
         game.addEvent(new GameEvent(function() {
             location.reload(true);
@@ -95,89 +71,4 @@ $(document).ready(function() {
     socket.on('quit', function() {
         location.href = "/";
     });
-
-    // BEGIN GAMELOOP
-    gameLoop(0);
 });
-
-function mouseDown(event) {
-    if(event.button == 0) {
-        mousePressed = true;
-        mousePosition.x = event.offsetX;
-        mousePosition.y = event.offsetY;
-        gui.click();
-    }
-}
-function mouseMove(event) {
-    mouseMoveVector.x = event.offsetX - mousePosition.x;
-    mouseMoveVector.y = event.offsetY - mousePosition.y;
-    mousePosition.x = event.offsetX;
-    mousePosition.y = event.offsetY;
-    gui.drag();
-}
-function mouseUp(event) {
-    if(event.button==0) {
-        mousePressed = false;
-        gui.release();
-    }
-}
-
-function touchStart(event) {
-    mousePressed = true;
-    mousePosition.x = event.touches[0].clientX;
-    mousePosition.y = event.touches[0].clientY;
-    gui.click();
-}
-function touchMove(event) {
-    mouseMoveVector.x = event.touches[0].clientX - mousePosition.x;
-    mouseMoveVector.y = event.touches[0].clientY - mousePosition.y;
-    mousePosition.x = event.touches[0].clientX;
-    mousePosition.y = event.touches[0].clientY;
-    gui.drag();
-}
-function touchEnd(event) {
-    mousePressed = false;
-    gui.release();
-    mousePosition.x = 0;
-    mousePosition.y = 0;
-}
-
-function mouseLeave(event) {
-    if(mousePressed) {
-        mousePressed = false;
-        gui.release();
-    }
-}
-function mouseWheel(event) {
-    gui.wheel(Math.sign(event.deltaY));
-}
-
-/**
- * Resize method, calculates new GUI_SCALE and resizes the canvas
- */
-function resize() {
-    //canvas.width = window.innerWidth;
-    //canvas.height = window.innerHeight;
-    //gui.shouldDraw = true;
-
-    let width = window.innerWidth/MIN_WIDTH;
-    let height = window.innerHeight/MIN_HEIGHT;
-
-    if (width<height) GUI_SCALE = width;
-    else GUI_SCALE = height;
-
-    //gui.setCardDimensions();
-}
-
-var lastTime = 0;
-function gameLoop(timestamp) {
-    sleep(2);
-    let dt = timestamp-lastTime;
-    lastTime = timestamp;
-    
-    //update scrolling speed
-    //gui.scroll(dt);
-    //gui.draw(dt);
-
-    requestAnimationFrame(gameLoop);
-}
