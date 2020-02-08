@@ -288,7 +288,7 @@ class Game {
             console.log("Message from " + data["player"] + ": " + data["message"]);
         }
         this.chat.push(data);
-        gui.updateGame(this);
+        gui.updateChat(this.chat);
     }
 
     /**

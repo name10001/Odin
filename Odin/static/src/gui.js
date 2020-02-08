@@ -211,6 +211,8 @@ function scrollHorizontally(e) {
 class CardScroller extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = { hidden: false };
     }
 
     /**
@@ -222,6 +224,15 @@ class CardScroller extends React.Component {
         // Firefox
         document.getElementById('card-scroller').addEventListener("DOMMouseScroll", (e) => scrollHorizontally(e), false);
     }
+
+    hide() {
+        this.setState({ hidden: true });
+    }
+
+
+    unhide() {
+        this.setState({ hidden: false });
+    }
     /**
      * Render all card stack panels
      */
@@ -230,7 +241,8 @@ class CardScroller extends React.Component {
             $r(CardPanel, { key: stack.url, guiScale: this.props.guiScale, stack: stack })
         );
 
-        return $r('div', { id: 'card-scroller', style: { width: '100%', overflowX: 'scroll', textAlign: 'center', whiteSpace: 'nowrap', position: 'fixed', bottom: '0px' } }, panels);
+        console.log(this.state.hidden);
+        return $r('div', { id: 'card-scroller', style: { width: '100%', overflowX: 'scroll', textAlign: 'center', whiteSpace: 'nowrap', position: 'fixed', bottom: '0px', display: this.state.hidden ? 'none' : 'block' } }, panels);
     }
 }
 
@@ -328,7 +340,7 @@ class PlayerListPanel extends React.Component {
 
         const totalHeight = maxGap + nPlayers * (maxGap + maxHeight);
 
-        const scale = 1;
+        let scale = 1;
         if (maxHeight > this.props.height) scale = this.props.height / totalHeight;
 
         const panels = [];
@@ -365,7 +377,9 @@ class ChatWindow extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { message: "" };
+        this.state = { chat: props.chat, message: "" };
+
+        this.endOfChat = React.createRef();
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -376,7 +390,7 @@ class ChatWindow extends React.Component {
      * @param {*} event 
      */
     handleChange(event) {
-        this.setState({ message: event.target.value });
+        this.setState({ chat: this.state.chat, message: event.target.value });
     }
 
     /**
@@ -385,7 +399,28 @@ class ChatWindow extends React.Component {
      */
     handleSubmit(event) {
         game.sendChat(this.state.message);
+        this.setState({ chat: this.state.chat, message: '' });
         event.preventDefault();
+    }
+
+    scrollToBottom() {
+        this.endOfChat.current.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    componentDidMount() {
+        this.scrollToBottom();
+    }
+
+    componentDidUpdate() {
+        this.scrollToBottom();
+    }
+
+    /**
+     * Update the chat and scroll to the bottom
+     * @param {*} chat 
+     */
+    updateChat(chat) {
+        this.setState({ chat, message: this.state.message });
     }
 
     render() {
@@ -396,19 +431,20 @@ class ChatWindow extends React.Component {
         let i = 0;
         allMessages.push($r('p', { key: i++, style: { color: '#999' } }, "-- Beginning of chat --"));
 
-        for (const chat of this.props.chat) {
+        for (const chat of this.state.chat) {
             allMessages.push($r('p', { key: i++ }, [
                 $r('span', { key: 'player', style: { color: '#2e6da4', fontWeight: 'bold' } }, chat['player'] + ": "),
                 chat['message']
             ]));
         }
+        allMessages.push($r('div', { ref: this.endOfChat }));
 
-        const dialog = $r('div', { key: '1', style: { overflowY: 'scroll', height: '70%', display: 'block', fontSize } }, allMessages);
+        const dialog = $r('div', { key: '1', id: 'chat-window', style: { overflowY: 'scroll', height: '70%', display: 'block', fontSize } }, allMessages);
 
         // footer
         const inputStyle = { height: '100%', fontSize, padding: this.props.guiScale / 2 + 'px ' + this.props.guiScale + 'px' };
 
-        const chatEntry = $r('input', { key: '2', id: 'chat-entry', type: 'text', className: 'form-control', placeholder: 'Your message...', style: inputStyle, required: true, onChange: this.handleChange });
+        const chatEntry = $r('input', { key: '2', type: 'text', className: 'form-control', placeholder: 'Your message...', style: inputStyle, required: true, onChange: this.handleChange, value: this.state.message });
         const chatSubmit = $r('span', { key: '3', className: 'input-group-btn' }, $r('button', { type: 'submit', className: 'btn btn-primary', style: inputStyle }, "Send"));
 
         const chatForm = $r('form', { onSubmit: this.handleSubmit, style: { height: '30%' } }, $r('div', { className: 'input-group', style: { height: '100%' } }, [chatEntry, chatSubmit]));
@@ -428,6 +464,9 @@ class OdinGui extends React.Component {
      */
     constructor(props) {
         super(props);
+
+        this.chatRef = React.createRef();
+        this.cardsRef = React.createRef();
 
         this.state = {
             width: 0,
@@ -529,8 +568,17 @@ class OdinGui extends React.Component {
      * Update the size of the gui when resizing the window
      */
     updateSize() {
+        // stop the document from resizing due to the onscreen keyboard, also hide the card scroller
+        if ($(document.activeElement).prop('type') == 'text' && typeof window.orientation !== 'undefined' && this.state.height > window.innerHeight) {
+            this.state.width = window.innerWidth;
+            this.state.height = window.innerHeight;
+            this.cardsRef.current.hide();
+            return;
+        }
+
         const width = window.innerWidth / MIN_WIDTH;
         const height = window.innerHeight / MIN_HEIGHT;
+
         let guiScale;
         if (width < height) guiScale = width;
         else guiScale = height;
@@ -539,6 +587,7 @@ class OdinGui extends React.Component {
         this.state.height = window.innerHeight;
         this.state.guiScale = guiScale;
 
+        this.cardsRef.current.unhide();
         this.setState(this.state);
     }
 
@@ -562,12 +611,20 @@ class OdinGui extends React.Component {
     }
 
     /**
+     * Update the chat
+     * @param {*} chat 
+     */
+    updateChat(chat) {
+        this.chatRef.current.updateChat(chat);
+    }
+
+    /**
      * Render the entire game
      */
     render() {
 
         // card scroller
-        const scroller = $r(CardScroller, { key: 'cs', cardStacks: this.state.game.yourStacks, guiScale: this.state.guiScale });
+        const scroller = $r(CardScroller, { key: 'cs', cardStacks: this.state.game.yourStacks, guiScale: this.state.guiScale, ref: this.cardsRef });
 
         // calculating how the central componants should be arranged
         const cardWidth = this.state.guiScale * CARD_WIDTH;
@@ -629,7 +686,7 @@ class OdinGui extends React.Component {
         const playerListWrapper = $r('div', { key: 'plp', style: { position: 'absolute', textAlign: 'right', right: '0', top: infoHeight + 'px', width: playerListWidth, height: playerListHeight } }, playerList);
 
         // chat window
-        const chatWindow = $r(ChatWindow, { width: playerListWidth, height: chatWindowHeight, guiScale: this.state.guiScale, chat: this.state.game.chat });
+        const chatWindow = $r(ChatWindow, { ref: this.chatRef, width: playerListWidth, height: chatWindowHeight, guiScale: this.state.guiScale, chat: this.state.game.chat });
         const chatWindowWrapper = $r('div', {
             key: 'cw', className: 'panel panel-default', style: { position: 'absolute', width: playerListWidth, height: chatWindowHeight, right: '0', bottom: '0', margin: '0' }
         }, chatWindow);
