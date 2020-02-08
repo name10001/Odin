@@ -20,7 +20,8 @@
         <!-- Odin Gameplay-->
         <script type="text/javascript" src="{{ url_for('static', filename='src/game.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/gui.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='src/setup.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/popup.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/control.js') }}"></script>
 
         <script>
             //some global variables
@@ -33,7 +34,7 @@
             var ALL_CARDS = {{ cards.all_card_info | safe }};
 
             var GUI_SCALE;
-            var game, gui;
+            var game, gui, eventHandler;
         </script>
 
 
@@ -50,12 +51,6 @@
                 overflow: hidden; /*  Disable scrollbars */
                 display: block;  /* No floating content on sides */
             }
-            .test {
-                width: 100px;
-                height: 100px;
-                background-color: #ffff00;
-
-            }
 
             button.transparent-button {
                 background-color: rgba(0,0,0,0);
@@ -63,9 +58,6 @@
                 padding: 0px;
             }
 
-            #loginPanel {
-                top: 20vh;
-            }
             * {
                 user-select: none;
                 -webkit-user-select: none; /* Chrome/Safari */        

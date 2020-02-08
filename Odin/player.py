@@ -606,7 +606,7 @@ class Player(AbstractPlayer):
             "id": self.get_id(),
             "number of cards": len(self.hand),
             "is turn": self.is_turn(),
-            "is possessed": len(self.possessions) > 0,
+            "possessed by": self.possessions[0].name if len(self.possessions) > 0 else "",
             "effects": effect_json,
             "pickup amount": self.player_pickup_amount
         }

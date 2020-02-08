@@ -1,24 +1,24 @@
+/*
+
+game.js has several classes that represent the state of the game and the objects in it.
+
+*/
+
+
+/**
+ * Player object
+ */
 class Player {
-    constructor(id, name, nCards, nPickup, isPossessed, effects) {
+    constructor(id, name, nCards, nPickup, possessedBy, effects) {
         this.id = id;
         this.name = name;
         this.nCards = nCards;
         this.nPickup = nPickup;
-        this.isPossessed = isPossessed;
-        this.effects = [];
-        for (let effect of effects) {
-            let image = effect["url"];
-            let amount = effect["amount left"];
-            this.effects.push({ "image": image, "amount left": amount });
-        }
+        this.possessedBy = possessedBy;
+        this.effects = effects;
     }
 }
 
-class GameEvent {
-    constructor(run) {
-        this.run = run;
-    }
-}
 
 /**
  * A stack of cards in your hand
@@ -81,14 +81,14 @@ class CardStack {
  * Represents a card to be used for the help system. Has a name, image and some info to be used for its description
  */
 class Card {
-    constructor(card, image) {
+    constructor(card, url) {
         this.name = card["name"];
         this.colour = card["colour"];
         this.type = card["type"];
         this.compatiblePickup = card["can be on pickup"];
         this.compatibilityDescription = card["compatibility description"];
         this.effectDescription = card["effect description"];
-        this.image = image;
+        this.url = url;
     }
 }
 
@@ -127,36 +127,10 @@ class Game {
         // chat messages
         this.chat = [];
 
-        //event system
-        this.events = [];
-
         // create list of all cards for the help system
         this.allCards = [];
         for (let card of ALL_CARDS) {
             this.allCards[card["name"]] = new Card(card, card["url"]);
-        }
-    }
-
-    /**
-     * Add a new event to the queue, if the queue is empty, run the event.
-     */
-    addEvent(event) {
-        this.events.push(event);
-        if (this.events.length == 1) {
-            event.run();
-        }
-    }
-
-    /**
-     * Finish the current event in the queue and move onto the next one if it exists
-     */
-    finishedEvent() {
-        if (this.events.length == 0) return;
-
-        this.events.splice(0, 1);
-
-        if (this.events.length > 0) {
-            this.events[0].run();
         }
     }
 
@@ -250,7 +224,7 @@ class Game {
                 }
 
                 this.playerIndices[player['id']] = this.players.length;
-                this.players.push(new Player(player['id'], player['name'], player['number of cards'], player['pickup amount'], player["is possessed"], player["effects"]));
+                this.players.push(new Player(player['id'], player['name'], player['number of cards'], player['pickup amount'], player["possessed by"], player["effects"]));
             }
 
             //check if it's your turn
@@ -258,32 +232,35 @@ class Game {
             let playingAsIndex = -1;
             if (this.playingAs.length > 0) playingAsIndex = this.getPlayerIndex(this.playingAs);
             if (index == this.turn) {
-                if (!this.players[index].isPossessed) {
+                if (this.players[index].possessedBy.length == 0) {
                     // your turn
-                    this.turnString = "Your Turn! Cards Avaliable: " + this.canPlay + "/" + this.players[index].nCards;
+                    this.turnString = "Your Turn!";
                     this.yourTurn = true;
                 }
                 else {
                     // you are possessed
-                    this.turnString = "You are possessed! Someone else is taking your turn.";
+                    this.turnString = this.players[index].possessedBy + "'s Turn (Possessing)";
                     this.yourTurn = false;
                 }
             }
             else if (this.turn == playingAsIndex) {
                 //you are possessing someone else
-                this.turnString = "Possessing " + this.players[playingAsIndex].name + "! Cards Avaliable: " + this.canPlay + "/" + this.players[playingAsIndex].nCards;
+                this.turnString = "Your Turn! (Possessing)";
                 this.yourTurn = true;
             }
             else {
+                if (this.players[this.turn].possessedBy.length > 0) {
+                    this.turnString = this.players[this.turn].possessedBy + "'s Turn (Possessing)";
+                } else {
+                    this.turnString = this.players[this.turn].name + "'s Turn";
+                }
                 //another person's turn
-                this.turnString = this.players[this.turn].name + "'s Turn";
                 this.yourTurn = false;
             }
         }
 
-
-        this.finishedEvent();
         gui.updateGame(this);
+        eventHandler.finishedEvent();
     }
 
     /**
@@ -306,11 +283,12 @@ class Game {
         }
     }
 
-    receive_chat_message(data) {
+    recieveMessage(data) {
         if (DEBUG) {
             console.log("Message from " + data["player"] + ": " + data["message"]);
         }
         this.chat.push(data);
+        gui.updateGame(this);
     }
 
     /**
@@ -335,111 +313,6 @@ class Game {
                 }
                 i++;
             }
-        }
-    }
-
-    animate(data) {
-        switch (data["type"]) {
-            // ADD CARDS TO PLANNING PILE
-            case "play cards":
-                this.addEvent(new GameEvent(function () {
-                    gui.animatePlayCards(data["cards"], data["from deck"]);
-                }));
-                break;
-            // ADD PLANNING CARDS TO DISCARD PILE
-            case "finish cards":
-                this.addEvent(new GameEvent(function () {
-                    gui.animateFinishPlayCards(data["cards"]);
-                }));
-                break;
-            // UNDO
-            case "undo":
-                this.addEvent(new GameEvent(function () {
-                    gui.animateUndo();
-                }));
-                break;
-            // UNDO ALL
-            case "undo all":
-                this.addEvent(new GameEvent(function () {
-                    gui.animateUndoAll();
-                }));
-                break;
-            // PICKUP
-            case "pickup":
-                if (data["from"] == null) {
-                    this.addEvent(new GameEvent(function () {
-                        gui.animatePickupFromDeck(data["cards"]);  // pickup cards from deck
-                    }));
-                }
-                else {
-                    this.addEvent(new GameEvent(function () {
-                        gui.animatePickupFromPlayer(data["cards"], data["from"]); //pickup cards from another player
-                    }));
-                }
-                break;
-            //PLAYER PICKUP
-            case "player pickup":
-                if (data["from"] == null) {
-                    this.addEvent(new GameEvent(function () {
-                        gui.animatePlayerPickup(data["player"], data["count"]);
-                    }));
-                }
-                else {
-                    this.addEvent(new GameEvent(function () {
-                        gui.animatePlayerCardTransfer(data['from'], data["player"], data["count"]);
-                    }));
-                }
-                break;
-            // REMOVE CARD
-            case "remove cards":
-                if (data["to"] == null) {
-                    this.addEvent(new GameEvent(function () {
-                        gui.animateRemoveCards(data["cards"]);
-                    }));
-                } else {
-                    this.addEvent(new GameEvent(function () {
-                        gui.animateRemoveCardsToPlayer(data["cards"], data["to"]);
-                    }));
-                }
-                break;
-            // PLAYER REMOVE CARD
-            case "player remove cards":
-                this.addEvent(new GameEvent(function () {
-                    gui.animatePlayerRemove(data["player"], data["count"]);
-                }));
-                break;
-            //COMMUNIST CARD
-            case "communist":
-                //this.addEvent(new GameEvent(function () {
-                //    gui.currentAnimation = new CommunistAnimation(data["cards"]);
-                //}));
-                break;
-            //THANOS
-            case "thanos":
-                //this.addEvent(new GameEvent(function() {
-                //    gui.currentAnimation = new ThanosAnimation(data["cards"]);
-                //}));
-                break;
-            //GENOCIDE
-            case "genocide":
-                //this.addEvent(new GameEvent(function() {
-                //    gui.currentAnimation = new GenocideAnimation(data["cards"], data['banned']);
-                //}));
-                break;
-            //POSSESS
-            case "possess":
-                //this.addEvent(new GameEvent(function() {
-                //    gui.currentAnimation = new PossessAnimation(data["possessor"], data["possessed"]);
-                //}));
-                break;
-            //SOUND EFFECT - FOR THINGS LIKE 69 NICE
-            case "sound":
-                this.addEvent(new GameEvent(function () {
-                    let audio = new Audio(data["sound"]);
-                    audio.play();
-                    game.finishedEvent();
-                }));
-                break;
         }
     }
 
@@ -480,7 +353,7 @@ class Game {
         socket.emit("game message", GAME_ID, "quit", null);
     }
 
-    send_chat(message) {
+    sendChat(message) {
         socket.emit("game message", GAME_ID, "chat", message);
     }
 }

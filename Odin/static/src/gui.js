@@ -1,5 +1,9 @@
-const $r = React.createElement
+/*
 
+gui.js has all the code for the main parts of the gui that you can interact with.
+
+
+*/
 
 /**
  * Gets a button style that corresponds to a size in pixels
@@ -214,9 +218,9 @@ class CardScroller extends React.Component {
      */
     componentDidMount() {
         // IE9, Chrome, Safari, Opera
-        window.addEventListener("mousewheel", (e) => scrollHorizontally(e), false);
+        document.getElementById('card-scroller').addEventListener("mousewheel", (e) => scrollHorizontally(e), false);
         // Firefox
-        window.addEventListener("DOMMouseScroll", (e) => scrollHorizontally(e), false);
+        document.getElementById('card-scroller').addEventListener("DOMMouseScroll", (e) => scrollHorizontally(e), false);
     }
     /**
      * Render all card stack panels
@@ -228,6 +232,26 @@ class CardScroller extends React.Component {
 
         return $r('div', { id: 'card-scroller', style: { width: '100%', overflowX: 'scroll', textAlign: 'center', whiteSpace: 'nowrap', position: 'fixed', bottom: '0px' } }, panels);
     }
+}
+
+
+/**
+ * Contains simple text with information about the current turn.
+ * Consisting of:
+ * - Who's turn it is.
+ * - Pickup chain (if any)
+ * @param {*} props 
+ */
+function InfoPanel(props) {
+    const turnString = $r('span', { key: '1', style: { color: "#fff", display: 'inline-block', verticalAlign: 'middle', fontSize: props.fontSize, float: 'left' } }, props.turnString);
+
+    if (props.pickupAmount > 0) {
+        const pickupString = $r('span', { key: '2', style: { color: "#fff", fontSize: props.fontSize, float: 'right' } }, '+' + props.pickupAmount);
+
+        return [turnString, pickupString];
+    }
+
+    return turnString;
 }
 
 /**
@@ -268,15 +292,14 @@ function PlayerPanel(props) {
 
 
     // other effects
-    console.log(props.player.effects);
     for (effect of props.player.effects) {
         // effect image
-        effects.push($r('img', { key: effect['image'], src: effect['image'], alt: 'effect', width: imageSize, height: imageSize, style: effectStyle }));
+        effects.push($r('img', { key: effect['url'], src: effect['url'], alt: 'effect', width: imageSize, height: imageSize, style: effectStyle }));
         if (effect['amount left'] > 1) {
-            effects.push($r('span', { key: effect['image'] + 'a', style: { width: props.height * 0.05 + 'px', display: 'inline-block' } }));
-            effects.push($r('span', { key: effect['image'] + 'ag', style: effectStyle }, 'x' + effect['amount left']));
+            effects.push($r('span', { key: effect['url'] + 'a', style: { width: props.height * 0.05 + 'px', display: 'inline-block' } }));
+            effects.push($r('span', { key: effect['url'] + 'ag', style: effectStyle }, 'x' + effect['amount left']));
         }
-        effects.push($r('span', { key: effect['image'] + 'g', style: { width: props.height * 0.1 + 'px', display: 'inline-block' } }));
+        effects.push($r('span', { key: effect['url'] + 'g', style: { width: props.height * 0.1 + 'px', display: 'inline-block' } }));
     }
 
 
@@ -336,6 +359,65 @@ class PlayerListPanel extends React.Component {
 }
 
 /**
+ * Represents the chat window, chat input field and send button
+ */
+class ChatWindow extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = { message: "" };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    /**
+     * Update the chat message
+     * @param {*} event 
+     */
+    handleChange(event) {
+        this.setState({ message: event.target.value });
+    }
+
+    /**
+     * Submission of new chat message
+     * @param {*} event 
+     */
+    handleSubmit(event) {
+        game.sendChat(this.state.message);
+        event.preventDefault();
+    }
+
+    render() {
+        const fontSize = this.props.guiScale + 'px';
+
+        // message dialog window
+        const allMessages = [];
+        let i = 0;
+        allMessages.push($r('p', { key: i++, style: { color: '#999' } }, "-- Beginning of chat --"));
+
+        for (const chat of this.props.chat) {
+            allMessages.push($r('p', { key: i++ }, [
+                $r('span', { key: 'player', style: { color: '#2e6da4', fontWeight: 'bold' } }, chat['player'] + ": "),
+                chat['message']
+            ]));
+        }
+
+        const dialog = $r('div', { key: '1', style: { overflowY: 'scroll', height: '70%', display: 'block', fontSize } }, allMessages);
+
+        // footer
+        const inputStyle = { height: '100%', fontSize, padding: this.props.guiScale / 2 + 'px ' + this.props.guiScale + 'px' };
+
+        const chatEntry = $r('input', { key: '2', id: 'chat-entry', type: 'text', className: 'form-control', placeholder: 'Your message...', style: inputStyle, required: true, onChange: this.handleChange });
+        const chatSubmit = $r('span', { key: '3', className: 'input-group-btn' }, $r('button', { type: 'submit', className: 'btn btn-primary', style: inputStyle }, "Send"));
+
+        const chatForm = $r('form', { onSubmit: this.handleSubmit, style: { height: '30%' } }, $r('div', { className: 'input-group', style: { height: '100%' } }, [chatEntry, chatSubmit]));
+
+        return $r('div', { className: 'panel-body', style: { height: '100%', padding: this.props.guiScale * 0.75 + 'px' } }, [dialog, chatForm]);
+    }
+}
+
+/**
  * OdinGui represents the entire wrapper of the 
  */
 class OdinGui extends React.Component {
@@ -360,7 +442,7 @@ class OdinGui extends React.Component {
      */
     animatePlayCards() {
         console.log("TODO: ANIMATE");
-        game.finishedEvent();
+        eventHandler.finishedEvent();
     }
 
     /**
@@ -368,7 +450,7 @@ class OdinGui extends React.Component {
      */
     animateFinishPlayCards() {
         console.log("TODO: ANIMATE");
-        game.finishedEvent();
+        eventHandler.finishedEvent();
     }
 
     /**
@@ -376,7 +458,7 @@ class OdinGui extends React.Component {
      */
     animateUndoAll() {
         console.log("TODO: ANIMATE");
-        game.finishedEvent();
+        eventHandler.finishedEvent();
     }
 
     /**
@@ -384,7 +466,7 @@ class OdinGui extends React.Component {
      */
     animatePickupFromDeck() {
         console.log("TODO: ANIMATE");
-        game.finishedEvent();
+        eventHandler.finishedEvent();
     }
 
     /**
@@ -392,7 +474,7 @@ class OdinGui extends React.Component {
      */
     animateRemoveCards() {
         console.log("TODO: ANIMATE");
-        game.finishedEvent();
+        eventHandler.finishedEvent();
     }
 
     /**
@@ -400,7 +482,7 @@ class OdinGui extends React.Component {
      */
     animatePickupFromPlayer() {
         console.log("TODO: ANIMATE");
-        game.finishedEvent();
+        eventHandler.finishedEvent();
     }
 
     /**
@@ -408,7 +490,7 @@ class OdinGui extends React.Component {
      */
     animatePlayerPickup() {
         console.log("TODO: ANIMATE");
-        game.finishedEvent();
+        eventHandler.finishedEvent();
     }
 
     /**
@@ -416,7 +498,7 @@ class OdinGui extends React.Component {
      */
     animatePlayerCardTransfer() {
         console.log("TODO: ANIMATE");
-        game.finishedEvent();
+        eventHandler.finishedEvent();
     }
 
     /**
@@ -424,7 +506,23 @@ class OdinGui extends React.Component {
      */
     animateUndo() {
         console.log("TODO: ANIMATE");
-        game.finishedEvent();
+        eventHandler.finishedEvent();
+    }
+
+    /**
+     * Animate playing cards
+     */
+    animateRemoveCardsToPlayer() {
+        console.log("TODO: ANIMATE");
+        eventHandler.finishedEvent();
+    }
+
+    /**
+     * Animate playing cards
+     */
+    animatePlayerRemove() {
+        console.log("TODO: ANIMATE");
+        eventHandler.finishedEvent();
     }
 
     /**
@@ -479,7 +577,9 @@ class OdinGui extends React.Component {
         const buttonsWidth = cardWidth * 2 + gapSize;
         const buttonsHeight = this.state.guiScale * 6.2;
 
-        const playerListWidth = cardWidth * 2.8;
+        const playerListWidth = cardWidth * 2.6;
+
+        const chatWindowHeight = this.state.guiScale * 10;
 
         const containerHeight = this.state.height - (this.state.guiScale * (CARD_HEIGHT + 5) + 25);
         const containerWidth = buttonsWidth + gapSize * 2 + playerListWidth;
@@ -515,17 +615,30 @@ class OdinGui extends React.Component {
         });
         const buttonsWrapper = $r('div', { key: 'bp', style: { position: 'absolute', bottom: '0', width: buttonsWidth + "px" } }, buttons);
 
+        // info panel
+        const infoHeight = this.state.guiScale * 4;
+        const infoPanel = $r(InfoPanel, { fontSize: this.state.guiScale * 1.2, turnString: this.state.game.turnString, pickupAmount: this.state.game.pickupAmount });
+        const infoWrapper = $r('div', { style: { width: playerListWidth, height: infoHeight + 'px', lineHeight: infoHeight + 'px', position: 'absolute', right: '0', top: '0' } }, infoPanel);
+
         // player list
+        const playerListHeight = containerHeight - infoHeight - chatWindowHeight - gapSize;
         const playerList = $r(PlayerListPanel, {
-            width: playerListWidth, height: containerHeight, guiScale: this.state.guiScale, players: this.state.game.players,
+            width: playerListWidth, height: playerListHeight, guiScale: this.state.guiScale, players: this.state.game.players,
             turn: this.state.game.turn, skip: this.state.game.skip, direction: this.state.game.direction, yourId: this.state.game.yourId
         });
-        const playerListWrapper = $r('div', { key: 'plp', style: { position: 'absolute', textAlign: 'right', right: '0', width: playerListWidth, height: containerHeight } }, playerList);
+        const playerListWrapper = $r('div', { key: 'plp', style: { position: 'absolute', textAlign: 'right', right: '0', top: infoHeight + 'px', width: playerListWidth, height: playerListHeight } }, playerList);
+
+        // chat window
+        const chatWindow = $r(ChatWindow, { width: playerListWidth, height: chatWindowHeight, guiScale: this.state.guiScale, chat: this.state.game.chat });
+        const chatWindowWrapper = $r('div', {
+            key: 'cw', className: 'panel panel-default', style: { position: 'absolute', width: playerListWidth, height: chatWindowHeight, right: '0', bottom: '0', margin: '0' }
+        }, chatWindow);
+
 
         // container to hold everything in the UI
         const container = $r('div', {
             key: 'ctr', style: { margin: 'auto', position: 'relative', width: containerWidth + 'px', height: containerHeight + 'px' }
-        }, [deckImage, discardWrapper, planningWrapper, buttonsWrapper, playerListWrapper]);
+        }, [deckImage, discardWrapper, planningWrapper, buttonsWrapper, infoWrapper, playerListWrapper, chatWindowWrapper]);
 
         return [container, scroller];
     }
