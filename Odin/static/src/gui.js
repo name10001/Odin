@@ -179,7 +179,7 @@ function CardPanel(props) {
     helpStyle.float = "left";
     helpStyle.marginLeft = props.guiScale + "px";
 
-    const help = $r('button', { className: 'btn btn-primary', style: helpStyle }, "?");
+    const help = $r('button', { onClick: () => gui.openPopup(() => $r(HelpPopup, { key: '1', card: game.allCards[props.stack.name] }), true), className: 'btn btn-primary', style: helpStyle }, "?");
 
     // addall button
     const addAllStyle = getButtonStyle(props.guiScale * 1.3);
@@ -241,7 +241,6 @@ class CardScroller extends React.Component {
             $r(CardPanel, { key: stack.url, guiScale: this.props.guiScale, stack: stack })
         );
 
-        console.log(this.state.hidden);
         return $r('div', { id: 'card-scroller', style: { width: '100%', overflowX: 'scroll', textAlign: 'center', whiteSpace: 'nowrap', position: 'fixed', bottom: '0px', display: this.state.hidden ? 'none' : 'block' } }, panels);
     }
 }
@@ -467,6 +466,8 @@ class OdinGui extends React.Component {
 
         this.chatRef = React.createRef();
         this.cardsRef = React.createRef();
+        this.popupRef = React.createRef();
+        this.popup = { createPopup: null, canClose: true };
 
         this.state = {
             width: 0,
@@ -587,7 +588,11 @@ class OdinGui extends React.Component {
         this.state.height = window.innerHeight;
         this.state.guiScale = guiScale;
 
-        this.cardsRef.current.unhide();
+
+        if (this.cardsRef.current) {
+            this.cardsRef.current.unhide();
+
+        }
         this.setState(this.state);
     }
 
@@ -619,12 +624,32 @@ class OdinGui extends React.Component {
     }
 
     /**
+     * Open a popup window
+     * @param {*} createPopup 
+     */
+    openPopup(createPopup, canClose) {
+        this.popup = { createPopup, canClose };
+
+        this.popupRef.current.openPopup(this.popup.createPopup, this.popup.canClose);
+    }
+
+    /**
+     * Close the current popup window
+     */
+    closePopup() {
+        this.popupRef.current.closePopup();
+    }
+
+    /**
      * Render the entire game
      */
     render() {
 
         // card scroller
         const scroller = $r(CardScroller, { key: 'cs', cardStacks: this.state.game.yourStacks, guiScale: this.state.guiScale, ref: this.cardsRef });
+
+        // popup
+        const popup = $r(Popup, { key: 'pop', ref: this.popupRef, createComponent: this.popup.createPopup, canClose: this.popup.canClose });
 
         // calculating how the central componants should be arranged
         const cardWidth = this.state.guiScale * CARD_WIDTH;
@@ -697,6 +722,6 @@ class OdinGui extends React.Component {
             key: 'ctr', style: { margin: 'auto', position: 'relative', width: containerWidth + 'px', height: containerHeight + 'px' }
         }, [deckImage, discardWrapper, planningWrapper, buttonsWrapper, infoWrapper, playerListWrapper, chatWindowWrapper]);
 
-        return [container, scroller];
+        return [container, scroller, popup];
     }
 }
