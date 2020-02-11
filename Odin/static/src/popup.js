@@ -57,9 +57,45 @@ class HelpPopup extends React.Component {
     }
 
     render() {
+        // size calculations
+        const windowRatio = 12.0 / 10.0;
 
-        const close = $r('button', { onClick: () => { gui.closePopup(); }, className: 'btn btn-primary' }, "Exit");
+        const height1 = window.innerHeight * 0.8;
+        const height2 = window.innerWidth * 0.8 * windowRatio;
 
-        return $r('div', { className: 'panel panel-default', style: { left: '25%', right: '25%', top: '25%', width: '50%', height: '50%', position: 'fixed', zIndex: '9999' } }, close);
+        const height = Math.min(height1, height2);
+        const width = height / windowRatio;
+
+        const left = window.innerWidth / 2 - width / 2;
+        const top = window.innerHeight / 2 - height / 2;
+
+        const cardWidth = width / 4;
+
+
+        // header
+        const close = $r('button', {
+            key: '1', onClick: () => { gui.closePopup(); }, className: 'btn btn-primary', style: {
+                display: 'inline-block', float: 'right', fontSize: height * 0.03 + 'px', height: '100%', lineHeight: '100%'
+            }
+        }, "X");
+        const title = $r('span', { key: '2', style: { fontSize: height * 0.05 + 'px', float: 'left' } }, this.props.card.name);
+
+        const header = $r('div', { key: '1', className: 'panel-heading', style: { height: height * 0.1 + 'px', padding: '2%'} }, [close, title]);
+
+        // body
+        const image = $r('img', { key: '1', alt: this.props.card.name, width: cardWidth, height: cardWidth / CARD_RATIO, src: this.props.card.url });
+
+        const effectTitle = $r('h5', {key: '1', style: {fontSize: height * 0.04 + 'px'}}, "Effects");
+        const effect = $r('p', {key: '2', style: {fontSize: height * 0.025 + 'px'}}, this.props.card.effectDescription);
+        const compatTitle = $r('h5', {key: '3', style: {fontSize: height * 0.04 + 'px'}}, "Compatibility");
+        const compat = $r('p', {key: '4', style: {fontSize: height * 0.025 + 'px'}}, this.props.card.compatibilityDescription);
+        const pickupChain = $r('p', {key: '5', style: {fontSize: height * 0.025 + 'px'}}, "Pickup chains: " + (this.props.card.compatiblePickup ? "Compatible" : "Incompatible"));
+
+        const body = $r('div', { key: '2', className: 'panel-body' }, [image, effectTitle, effect, compatTitle, compat, pickupChain]);
+
+
+
+        // final creation
+        return $r('div', { className: 'panel panel-default', style: { left: left + 'px', top: top + 'px', width: width + 'px', height: height + 'px', position: 'fixed', zIndex: '9999' } }, [header, body]);
     }
 }
