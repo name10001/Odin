@@ -627,10 +627,10 @@ class OdinGui extends React.Component {
      * Open a popup window
      * @param {*} createPopup 
      */
-    openPopup(createPopup, canClose) {
-        this.popup = { createPopup, canClose };
+    openPopup(createPopup, canClose, closeFunction) {
+        this.popup = { createPopup, canClose, closeFunction };
 
-        this.popupRef.current.openPopup(this.popup.createPopup, this.popup.canClose);
+        this.popupRef.current.openPopup(this.popup);
     }
 
     /**
@@ -649,7 +649,7 @@ class OdinGui extends React.Component {
         const scroller = $r(CardScroller, { key: 'cs', cardStacks: this.state.game.yourStacks, guiScale: this.state.guiScale, ref: this.cardsRef });
 
         // popup
-        const popup = $r(Popup, { key: 'pop', ref: this.popupRef, createComponent: this.popup.createPopup, canClose: this.popup.canClose });
+        const popup = $r(Popup, { key: 'pop', ref: this.popupRef, popup: this.popup });
 
         // calculating how the central componants should be arranged
         const cardWidth = this.state.guiScale * CARD_WIDTH;

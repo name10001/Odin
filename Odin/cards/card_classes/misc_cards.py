@@ -348,7 +348,7 @@ class DoJustly(AbstractCard):
         other_player_id = player.ask(
             "Select player to give cards to:",
             options,
-            options_type="vertical scroll",
+            options_type="buttons",
             allow_cancel=False,
             image=self.get_url()
         )
@@ -523,7 +523,6 @@ class SwapHand(AbstractCard):
         player_id = player.ask(
             "Pick a player to swap hands with:",
             options,
-            options_type="vertical scroll",
             allow_cancel=False,
             image=self.get_url()
         )
@@ -595,7 +594,6 @@ class Genocide(AbstractCard):
         option = player.ask(
             "Select card type/colour to ban:",
             options,
-            options_type="vertical scroll",
             allow_cancel=False,
             image=self.get_url()
         )
@@ -663,7 +661,6 @@ class Jesus(AbstractCard):
         other_player_id = player.ask(
             "Select player to reset their hand:",
             options,
-            options_type="vertical scroll",
             allow_cancel=False,
             image=self.get_url()
         )
@@ -851,7 +848,6 @@ class SwapCard(AbstractCard):
         other_player_id = player.ask(
             "Select player to give cards to:",
             options,
-            options_type="vertical scroll",
             allow_cancel=False,
             image=self.get_url()
         )
@@ -909,7 +905,6 @@ class Possess(AbstractCard):
         player_id = player.ask(
             "Pick a player to possess:",
             options,
-            options_type="vertical scroll",
             allow_cancel=False,
             image=self.get_url()
         )
@@ -948,7 +943,6 @@ class Steal(AbstractCard):
         other_player_id = player.ask(
             "Select player to take cards from:",
             options,
-            options_type="vertical scroll",
             allow_cancel=False,
             image=self.get_url()
         )
@@ -998,7 +992,6 @@ class Fire(AbstractCard):
         player_id = player.ask(
             "Pick a player to set on fire:",
             options,
-            options_type="vertical scroll",
             allow_cancel=False,
             image=self.get_url()
         )

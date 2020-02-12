@@ -183,7 +183,6 @@ class Freeze(AbstractCard):
         player_id = player.ask(
             "Pick a player to freeze for 3 turns:",
             options,
-            options_type="vertical scroll",
             allow_cancel=False,
             image=self.get_url()
         )

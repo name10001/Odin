@@ -322,8 +322,7 @@ class Game {
     }
 
     ask(question) {
-        //TODO allow you to choose the option, ATM this just picks the first option
-        this.pickOption(Object.keys(question['options'])[0]);
+        gui.openPopup(() => $r(QuestionPopup, { key: '1', question }), question["allow cancel"], () => this.pickOption(null));
     }
 
     pickOption(optionId) {

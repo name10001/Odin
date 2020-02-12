@@ -361,7 +361,6 @@ class FuckYou(AbstractCard):
             chosen_player_id = player.ask(
                 "Select player to pickup cards:",
                 options,
-                options_type="vertical scroll",
                 allow_cancel=allow_cancel,
                 image=self.get_url()
             )
