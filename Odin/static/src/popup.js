@@ -127,12 +127,13 @@ class QuestionPopup extends React.Component {
         */
 
         // size calculations
-        const dim = getPopupDimensions(12.0 / 10.0);
+        const dim = getPopupDimensions(11.0 / 10.0);
 
         const cardWidth = dim.width / 4;
+        const cardHeight = cardWidth / CARD_RATIO;
 
         // header
-        const title = $r('span', { key: '1', style: { fontSize: dim.height * 0.04 + 'px'} }, this.props.question["title"]);
+        const title = $r('span', { key: '1', style: { fontSize: dim.height * 0.04 + 'px' } }, this.props.question["title"]);
         let innerHeader = title;
 
         if (this.props.question["allow cancel"]) {
@@ -147,16 +148,38 @@ class QuestionPopup extends React.Component {
         const header = $r('div', { key: '1', className: 'panel-heading', style: { padding: '2%' } }, innerHeader);
 
         // body
-        const image = $r('img', { key: '1', width: cardWidth, height: cardWidth / CARD_RATIO, src: this.props.question["image"] });
+        let body;
+        const image = $r('img', { key: '1', width: cardWidth, height: cardHeight, src: this.props.question["image"], style: { float: 'right' } });
 
         // buttons
+        if (this.props.question["type"] == 'buttons') {
+            const buttons = [];
 
+            for (const optionId of Object.keys(this.props.question["options"])) {
+                const optionString = this.props.question["options"][optionId];
 
-        const body = $r('div', { key: '2', className: 'panel-body' }, image);
+                const button = $r('button', {
+                    key: optionId, onClick: () => {
+                        game.pickOption(optionId);
+                        gui.closePopup();
+                    }, className: 'btn btn-primary btn-block',
+                    style: {
+                        fontSize: dim.height * 0.03 + 'px'
+                    }
+                }, optionString);
 
-        // game.pickOption(Object.keys(question['options'])[0]);
+                buttons.push(button);
+            }
+
+            const buttonScroller = $r('div', { key: '2', style: { width: '70%', height: cardHeight * 2 + 'px', overflowY: 'auto' } }, buttons);
+
+            body = $r('div', { key: '2', className: 'panel-body', style: { padding: '2%' } }, [image, buttonScroller]);
+        }
+        else {
+            body = $r('div', { key: '2', className: 'panel-body', style: { padding: '2%' } }, "TODO");
+        }
 
         // final creation
-        return $r('div', { className: 'panel panel-default', style: { left: dim.left + 'px', top: dim.top + 'px', width: dim.width + 'px', height: dim.height + 'px', position: 'fixed', zIndex: '9999' } }, [header, body]);
+        return $r('div', { className: 'panel panel-default', style: { left: dim.left + 'px', top: dim.top + 'px', width: dim.width + 'px', position: 'fixed', zIndex: '9999' } }, [header, body]);
     }
 }
