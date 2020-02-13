@@ -114,18 +114,55 @@ class HelpPopup extends React.Component {
 class QuestionPopup extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = { pickedOptions: [] };
+    }
+
+    /**
+     * When you pick one of the options on the window
+     * @param {*} optionId 
+     */
+    pickOption(optionId) {
+        const options = this.state.pickedOptions;
+        options.push(optionId);
+        this.setState({ pickedOptions: options });
+
+        if (this.props.question['number to pick'] == 1) {
+            game.pickOption(optionId);
+            gui.closePopup();
+        }
+
+    }
+
+    /**
+     * Confirm your selection of options.
+     * This should only work if all options are selected.
+     */
+    confirmSelection() {
+        if (this.props.question['number to pick'] == this.state.pickedOptions.length) {
+            game.pickOptions(this.state.pickedOptions);
+            gui.closePopup();
+        }
+
+    }
+
+    /**
+     * Undo 1 selection
+     */
+    undo() {
+        const options = this.state.pickedOptions;
+        options.length--;
+        this.setState({ pickedOptions: options });
+    }
+
+    /**
+     * Undo all your selections
+     */
+    undoAll() {
+        this.setState({ pickedOptions: [] });
     }
 
     render() {
-        // canClose
-        /*
-        this.optionTitle = option["title"];
-        this.optionType = option["type"];
-        this.allowCancel = option["allow cancel"];
-        this.nToPick = option["number to pick"];
-        this.image = game.allImages[option["image"]];
-        */
-
         // size calculations
         const dim = getPopupDimensions(11.0 / 10.0);
 
@@ -159,10 +196,7 @@ class QuestionPopup extends React.Component {
                 const optionString = this.props.question["options"][optionId];
 
                 const button = $r('button', {
-                    key: optionId, onClick: () => {
-                        game.pickOption(optionId);
-                        gui.closePopup();
-                    }, className: 'btn btn-primary btn-block',
+                    key: optionId, onClick: () => this.pickOption(optionId), className: 'btn btn-primary btn-block',
                     style: {
                         fontSize: dim.height * 0.03 + 'px'
                     }
@@ -175,8 +209,68 @@ class QuestionPopup extends React.Component {
 
             body = $r('div', { key: '2', className: 'panel-body', style: { padding: '2%' } }, [image, buttonScroller]);
         }
+        // card selector
+        else if (this.props.question["type"] == 'cards') {
+            // cards you've picked so far
+            const pickedCardIds = this.state.pickedOptions;
+            const pickedCards = [];
+            for (const id of pickedCardIds) {
+                pickedCards.push(this.props.question["options"][id]);
+            }
+
+            const selectedCards = $r(CardPile, { key: 'sc', height: cardHeight * 1.4, guiScale: cardHeight / CARD_HEIGHT, cards: pickedCards, maxGap: cardHeight * 0.2, alignment: 'bottom-top', grey: false });
+
+            // confirm button
+            const confirmProps = { key: 'cb', className: 'btn btn-primary btn-block', style: { fontSize: dim.height * 0.03 + 'px' } };
+            if (this.props.question['number to pick'] == this.state.pickedOptions.length) {
+                confirmProps.onClick = () => this.confirmSelection();
+            }
+            else {
+                confirmProps.disabled = true;
+            }
+
+            const confirmButton = $r('button', confirmProps, 'Confirm');
+
+            // undo button
+            const undoProps = { key: 'ub', className: 'btn btn-primary btn-block', style: { fontSize: dim.height * 0.03 + 'px' } };
+            if (this.state.pickedOptions.length > 0) {
+                undoProps.onClick = () => this.undo();
+            }
+            else {
+                undoProps.disabled = true;
+            }
+
+            const undoButton = $r('button', undoProps, 'Undo');
+
+            // undo all button
+            const undoAllProps = { key: 'uab', className: 'btn btn-primary btn-block', style: { fontSize: dim.height * 0.03 + 'px' } };
+            if (this.state.pickedOptions.length > 0) {
+                undoAllProps.onClick = () => this.undoAll();
+            }
+            else {
+                undoAllProps.disabled = true;
+            }
+
+            const undoAllButton = $r('button', undoAllProps, 'Undo All');
+
+            // button div
+            const buttonDiv = $r('div', { style: { width: '36%' } }, [confirmButton, undoButton, undoAllButton]);
+
+            // the card scroller
+            const cards = [];
+            for (const id of Object.keys(this.props.question["options"])) {
+                if (id in pickedCardIds) continue;
+                cards.push($r('img', { key: id, alt: id, src: game.allCards[this.props.question["options"][id]].url, onClick: () => this.pickOption(id), width: cardWidth, height: cardHeight }));
+            }
+
+            const cardDiv = $r('div', { style: { width: dim.width * 0.96 + 'px', overflowX: 'scroll', position: 'absolute', bottom: '0', whiteSpace: 'nowrap' } }, cards);
+
+
+            body = $r('div', { key: '2', className: 'panel-body', style: { padding: '2%', height: dim.height } }, [image, selectedCards, buttonDiv, cardDiv]);
+        }
+        // unsupported question type (only if backend question asking is bad)
         else {
-            body = $r('div', { key: '2', className: 'panel-body', style: { padding: '2%' } }, "TODO");
+            body = $r('div', { key: '2', className: 'panel-body', style: { padding: '2%' } }, "Unsupported question type: " + this.props.question["type"]);
         }
 
         // final creation
