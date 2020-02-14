@@ -27,8 +27,9 @@ class Popup extends React.Component {
     /**
      * Close the popup
      */
-    closePopup() {
-        if (this.state.closeFunction) {
+    closePopup(doCloseFunction) {
+        console.log(doCloseFunction);
+        if (this.state.closeFunction && doCloseFunction) {
             this.state.closeFunction();
         }
         this.setState({ createComponent: null, canClose: true, closeFunction: undefined });
@@ -39,11 +40,11 @@ class Popup extends React.Component {
             let backgroundDiv;
             // make a background that you can click on to exit
             if (this.state.canClose) {
-                backgroundDiv = $r('div', { key: '2', onClick: () => { this.closePopup() }, style: { left: '0', top: '0', width: '100%', height: '100%', position: 'fixed', zIndex: '9998' } });
+                backgroundDiv = $r('div', { key: '2', onClick: () => { this.closePopup(true) }, style: { left: '0', top: '0', width: '100%', height: '100%', position: 'fixed', zIndex: '9998', backgroundColor: '#000', opacity: '0.5' } });
             }
             // make a background that prevents you from clicking the background
             else {
-                backgroundDiv = $r('div', { key: '2', style: { left: '0', top: '0', width: '100%', height: '100%', position: 'fixed', zIndex: '9998' } });
+                backgroundDiv = $r('div', { key: '2', style: { left: '0', top: '0', width: '100%', height: '100%', position: 'fixed', zIndex: '9998', backgroundColor: '#000', opacity: '0.5' } });
             }
             return [backgroundDiv, this.state.createComponent()];
         }
@@ -86,7 +87,7 @@ class HelpPopup extends React.Component {
         // header
         const title = $r('span', { key: '1', style: { fontSize: dim.height * 0.05 + 'px', float: 'left' } }, this.props.card.name);
         const close = $r('button', {
-            key: '2', onClick: () => { gui.closePopup(); }, className: 'btn btn-primary', style: {
+            key: '2', onClick: () => { gui.closePopup(false); }, className: 'btn btn-primary', style: {
                 display: 'inline-block', float: 'right', fontSize: dim.height * 0.03 + 'px', height: '100%', lineHeight: '100%'
             }
         }, "X");
@@ -123,13 +124,15 @@ class QuestionPopup extends React.Component {
      * @param {*} optionId 
      */
     pickOption(optionId) {
+        if (this.props.question['number to pick'] <= this.state.pickedOptions.length) return;
+
         const options = this.state.pickedOptions;
         options.push(optionId);
         this.setState({ pickedOptions: options });
 
         if (this.props.question['number to pick'] == 1) {
             game.pickOption(optionId);
-            gui.closePopup();
+            gui.closePopup(false);
         }
 
     }
@@ -141,7 +144,7 @@ class QuestionPopup extends React.Component {
     confirmSelection() {
         if (this.props.question['number to pick'] == this.state.pickedOptions.length) {
             game.pickOptions(this.state.pickedOptions);
-            gui.closePopup();
+            gui.closePopup(false);
         }
 
     }
@@ -162,11 +165,25 @@ class QuestionPopup extends React.Component {
         this.setState({ pickedOptions: [] });
     }
 
+    /**
+     * Add resize listener
+     */
+    componentDidMount() {
+        if (this.props.question['type'] != 'cards') return;
+
+        const id = 'option-card-scroller';
+        // IE9, Chrome, Safari, Opera
+        document.getElementById(id).addEventListener("mousewheel", (e) => scrollHorizontally(e, id, 120), false);
+        // Firefox
+        document.getElementById(id).addEventListener("DOMMouseScroll", (e) => scrollHorizontally(e, id, 120), false);
+    }
+
     render() {
+
         // size calculations
         const dim = getPopupDimensions(11.0 / 10.0);
 
-        const cardWidth = dim.width / 4;
+        const cardWidth = dim.width / 5;
         const cardHeight = cardWidth / CARD_RATIO;
 
         // header
@@ -175,21 +192,21 @@ class QuestionPopup extends React.Component {
 
         if (this.props.question["allow cancel"]) {
             const close = $r('button', {
-                key: '2', onClick: () => { gui.closePopup(); }, className: 'btn btn-primary', style: {
+                key: '2', onClick: () => { gui.closePopup(true); }, className: 'btn btn-primary', style: {
                     display: 'inline-block', float: 'right', fontSize: dim.height * 0.03 + 'px', height: '100%', lineHeight: '100%'
                 }
             }, "X");
             innerHeader = [close, title];
         }
 
-        const header = $r('div', { key: '1', className: 'panel-heading', style: { padding: '2%' } }, innerHeader);
+        const header = $r('div', { key: '1', className: 'panel-heading', style: { padding: '2%', backgroundColor: '#dedede', borderColor: '#ccc' } }, innerHeader);
 
         // body
         let body;
-        const image = $r('img', { key: '1', width: cardWidth, height: cardHeight, src: this.props.question["image"], style: { float: 'right' } });
 
         // buttons
         if (this.props.question["type"] == 'buttons') {
+            const image = $r('img', { key: '1', width: cardWidth, height: cardHeight, src: this.props.question["image"], style: { float: 'right' } });
             const buttons = [];
 
             for (const optionId of Object.keys(this.props.question["options"])) {
@@ -207,70 +224,105 @@ class QuestionPopup extends React.Component {
 
             const buttonScroller = $r('div', { key: '2', style: { width: '70%', height: cardHeight * 2 + 'px', overflowY: 'auto' } }, buttons);
 
-            body = $r('div', { key: '2', className: 'panel-body', style: { padding: '2%' } }, [image, buttonScroller]);
+            body = $r('div', { key: '2', className: 'panel-body', style: { padding: '2%', backgroundColor: '#eee' } }, [image, buttonScroller]);
         }
         // card selector
         else if (this.props.question["type"] == 'cards') {
-            // cards you've picked so far
+
+            const elements = [];
+
             const pickedCardIds = this.state.pickedOptions;
-            const pickedCards = [];
-            for (const id of pickedCardIds) {
-                pickedCards.push(this.props.question["options"][id]);
-            }
 
-            const selectedCards = $r(CardPile, { key: 'sc', height: cardHeight * 1.4, guiScale: cardHeight / CARD_HEIGHT, cards: pickedCards, maxGap: cardHeight * 0.2, alignment: 'bottom-top', grey: false });
+            if (this.props.question["number to pick"] > 1) {
+                // cards you've picked so far
+                const pickedCards = [];
+                for (const id of pickedCardIds) {
+                    const name = this.props.question["options"][id];
+                    const url = game.allCards[name].url;
+                    pickedCards.push(url);
+                }
 
-            // confirm button
-            const confirmProps = { key: 'cb', className: 'btn btn-primary btn-block', style: { fontSize: dim.height * 0.03 + 'px' } };
-            if (this.props.question['number to pick'] == this.state.pickedOptions.length) {
-                confirmProps.onClick = () => this.confirmSelection();
+                const selectedCards = $r(CardPile, { height: cardHeight * 1.4, guiScale: cardHeight / CARD_HEIGHT, cards: pickedCards, maxGap: cardHeight * 0.2, alignment: 'bottom-top', grey: false });
+
+                // confirm button
+                const confirmProps = { key: 'cb', className: 'btn btn-primary btn-block', style: { fontSize: dim.height * 0.03 + 'px' } };
+                if (this.props.question['number to pick'] == this.state.pickedOptions.length) {
+                    confirmProps.onClick = () => this.confirmSelection();
+                }
+                else {
+                    confirmProps.disabled = true;
+                }
+
+                const confirmButton = $r('button', confirmProps, 'Confirm');
+
+                // undo button
+                const undoProps = { key: 'ub', className: 'btn btn-primary btn-block', style: { fontSize: dim.height * 0.03 + 'px' } };
+                if (this.state.pickedOptions.length > 0) {
+                    undoProps.onClick = () => this.undo();
+                }
+                else {
+                    undoProps.disabled = true;
+                }
+
+                const undoButton = $r('button', undoProps, 'Undo');
+
+                // undo all button
+                const undoAllProps = { key: 'uab', className: 'btn btn-primary btn-block', style: { fontSize: dim.height * 0.03 + 'px' } };
+                if (this.state.pickedOptions.length > 0) {
+                    undoAllProps.onClick = () => this.undoAll();
+                }
+                else {
+                    undoAllProps.disabled = true;
+                }
+
+                const undoAllButton = $r('button', undoAllProps, 'Undo All');
+
+                // button div
+                const buttonDiv = $r('div', { key: '3', style: { width: '50%', float: 'right' } }, [confirmButton, undoButton, undoAllButton]);
+
+                elements.push($r('div', { key: '4', style: { float: 'left', left: cardWidth / 2 + 'px', position: 'relative' } }, selectedCards));
+                elements.push(buttonDiv);
             }
             else {
-                confirmProps.disabled = true;
+                dim.top += cardHeight * 0.6;
             }
 
-            const confirmButton = $r('button', confirmProps, 'Confirm');
+            // generate card stacks
+            const cardStacks = [];
+            const nameIndices = {};
 
-            // undo button
-            const undoProps = { key: 'ub', className: 'btn btn-primary btn-block', style: { fontSize: dim.height * 0.03 + 'px' } };
-            if (this.state.pickedOptions.length > 0) {
-                undoProps.onClick = () => this.undo();
-            }
-            else {
-                undoProps.disabled = true;
-            }
-
-            const undoButton = $r('button', undoProps, 'Undo');
-
-            // undo all button
-            const undoAllProps = { key: 'uab', className: 'btn btn-primary btn-block', style: { fontSize: dim.height * 0.03 + 'px' } };
-            if (this.state.pickedOptions.length > 0) {
-                undoAllProps.onClick = () => this.undoAll();
-            }
-            else {
-                undoAllProps.disabled = true;
-            }
-
-            const undoAllButton = $r('button', undoAllProps, 'Undo All');
-
-            // button div
-            const buttonDiv = $r('div', { style: { width: '36%' } }, [confirmButton, undoButton, undoAllButton]);
-
-            // the card scroller
-            const cards = [];
             for (const id of Object.keys(this.props.question["options"])) {
-                if (id in pickedCardIds) continue;
-                cards.push($r('img', { key: id, alt: id, src: game.allCards[this.props.question["options"][id]].url, onClick: () => this.pickOption(id), width: cardWidth, height: cardHeight }));
+                if (pickedCardIds.includes(id)) continue;
+
+                const name = this.props.question["options"][id];
+                const url = game.allCards[name].url;
+
+                if (name in nameIndices) {
+                    const stack = nameIndices[name];
+                    stack.addCard(id);
+                }
+                else {
+                    const stack = new CardStack(id, name, url, true);
+                    cardStacks.push(stack);
+                    nameIndices[name] = stack;
+                }
             }
 
-            const cardDiv = $r('div', { style: { width: dim.width * 0.96 + 'px', overflowX: 'scroll', position: 'absolute', bottom: '0', whiteSpace: 'nowrap' } }, cards);
+            // generate card buttons
+            const cardButtons = [];
+            for (const stack of cardStacks) {
+                const button = $r(CardButton, { guiScale: cardWidth / CARD_WIDTH, stack, clickFunction: () => this.pickOption(stack.cardIds[0]) });
+                cardButtons.push($r('div', { key: stack.name, style: { display: 'inline-block' } }, button));
+            }
 
+            const cardDiv = $r('div', { key: '2', id: 'option-card-scroller', style: { width: dim.width * 0.96 + 'px', overflowX: 'scroll', position: 'absolute', bottom: '0', whiteSpace: 'nowrap' } }, cardButtons);
+            elements.push(cardDiv);
 
-            body = $r('div', { key: '2', className: 'panel-body', style: { padding: '2%', height: dim.height } }, [image, selectedCards, buttonDiv, cardDiv]);
+            body = $r('div', { key: '2', className: 'panel-body', style: { padding: '2%', height: (this.props.question["number to pick"] == 1 ? cardHeight * 1.3 : dim.height * 0.8) + 'px', position: 'relative', backgroundColor: '#eee' } }, elements);
         }
         // unsupported question type (only if backend question asking is bad)
         else {
-            body = $r('div', { key: '2', className: 'panel-body', style: { padding: '2%' } }, "Unsupported question type: " + this.props.question["type"]);
+            body = $r('div', { key: '2', className: 'panel-body', style: { padding: '2%', backgroundColor: '#eee' } }, "Unsupported question type: " + this.props.question["type"]);
         }
 
         // final creation

@@ -134,15 +134,13 @@ function ButtonPanel(props) {
 }
 
 /**
- * Represents a panel on the screen with a card and 2 buttons.
+ * Represents a singular card button
+ * @param {*} props 
  */
-function CardPanel(props) {
-    const width = props.guiScale * (CARD_WIDTH + 1) + "px";
-
+function CardButton(props) {
     const cardWidth = props.guiScale * CARD_WIDTH + "px";
     const cardHeight = props.guiScale * CARD_HEIGHT + "px";
 
-    // card click button
     const cardButtonChildren = [];
     const card = $r('img', { key: '1', src: props.stack.url, width: cardWidth, height: cardHeight, alt: props.stack.name, style: { position: 'absolute', left: '0', top: '0', zIndex: '1' } });
 
@@ -166,13 +164,22 @@ function CardPanel(props) {
         style: { width: cardWidth, height: cardHeight, margin: props.guiScale / 2 + "px", display: 'block', position: 'relative' }, className: 'transparent-button',
     }
     if (props.stack.allowedToPlay) {
-        cardProps.onClick = () => props.stack.playSingle();
+        cardProps.onClick = props.clickFunction;
     }
     else {
         cardProps.disabled = true;
     }
 
-    const cardButton = $r('button', cardProps, cardButtonChildren);
+    return $r('button', cardProps, cardButtonChildren);;
+}
+
+/**
+ * Represents a panel on the screen with a card and 2 buttons.
+ */
+function CardPanel(props) {
+    const width = props.guiScale * (CARD_WIDTH + 1) + "px";
+
+    const cardButton = $r(CardButton, { guiScale: props.guiScale, stack: props.stack, clickFunction: () => props.stack.playSingle() });
 
     // help button
     const helpStyle = getButtonStyle(props.guiScale * 1.3);
@@ -199,10 +206,10 @@ function CardPanel(props) {
 /**
  * Scrolling function with the mouse wheel
  */
-function scrollHorizontally(e) {
+function scrollHorizontally(e, id, amount) {
     e = window.event || e;
     var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-    document.getElementById('card-scroller').scrollLeft -= (delta * 80); // Multiplied by 40
+    document.getElementById(id).scrollLeft -= (delta * amount); // Multiplied by 40
 }
 
 /**
@@ -219,10 +226,11 @@ class CardScroller extends React.Component {
      * Add resize listener
      */
     componentDidMount() {
+        const id = 'card-scroller'
         // IE9, Chrome, Safari, Opera
-        document.getElementById('card-scroller').addEventListener("mousewheel", (e) => scrollHorizontally(e), false);
+        document.getElementById(id).addEventListener("mousewheel", (e) => scrollHorizontally(e, id, 80), false);
         // Firefox
-        document.getElementById('card-scroller').addEventListener("DOMMouseScroll", (e) => scrollHorizontally(e), false);
+        document.getElementById(id).addEventListener("DOMMouseScroll", (e) => scrollHorizontally(e, id, 80), false);
     }
 
     hide() {
@@ -636,8 +644,8 @@ class OdinGui extends React.Component {
     /**
      * Close the current popup window
      */
-    closePopup() {
-        this.popupRef.current.closePopup();
+    closePopup(doCloseFunction) {
+        this.popupRef.current.closePopup(doCloseFunction);
     }
 
     /**
