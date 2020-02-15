@@ -28,7 +28,6 @@ class Popup extends React.Component {
      * Close the popup
      */
     closePopup(doCloseFunction) {
-        console.log(doCloseFunction);
         if (this.state.closeFunction && doCloseFunction) {
             this.state.closeFunction();
         }

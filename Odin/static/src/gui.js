@@ -200,7 +200,73 @@ function CardPanel(props) {
         }, "+ALL");
 
     // return entire card stack
-    return $r('div', { style: { width: width, display: "inline-block", paddingBottom: props.guiScale / 2 + "px" } }, cardButton, help, addAll);
+    return $r('div', { id: 'hand-' + props.stack.name, style: { width: width, display: "inline-block", paddingBottom: props.guiScale / 2 + "px" } }, cardButton, help, addAll);
+}
+
+/**
+ * Get the position in your hand of a specific card (by card name)
+ * @param {*} cardName name of the card, if non-existant then it comes from the centre
+ */
+function getHandCardPosition(cardName) {
+    let element = document.getElementById('hand-' + cardName);
+
+    if (!element) {
+        element = document.getElementById('card-scroller');
+
+        const bounds = element.getBoundingClientRect();
+        let x = window.innerWidth / 2;
+        let y = bounds.top;
+
+        return { x, y };
+
+    }
+
+    const bounds = element.getBoundingClientRect();
+    let x = bounds.left;
+    let y = bounds.top;
+
+    // if off the screen then adjust
+    if (x < -gui.state.guiScale * CARD_WIDTH) x = -gui.state.guiScale * CARD_WIDTH;
+    if (x > window.innerWidth) x = window.innerWidth;
+
+    return { x, y };
+
+}
+
+/**
+ * Get the position of the planning pile
+ */
+function getPlanningPilePosition() {
+    const bounds = document.getElementById('planning-pile').getBoundingClientRect();
+    let x = bounds.left;
+    let y = bounds.bottom;
+
+    y -= gui.state.guiScale * CARD_HEIGHT;
+    return { x, y };
+
+}
+/**
+ * Get the position of the discard pile
+ */
+function getDiscardPilePosition() {
+    const bounds = document.getElementById('discard-pile').getBoundingClientRect();
+    let x = bounds.left;
+    let y = bounds.bottom;
+
+    y -= gui.state.guiScale * CARD_HEIGHT;
+    return { x, y };
+
+}
+/**
+ * Get the position of the deck pile
+ */
+function getDeckPosition() {
+    const bounds = document.getElementById('deck-pile').getBoundingClientRect();
+    let x = bounds.left;
+    let y = bounds.top;
+
+    return { x, y };
+
 }
 
 /**
@@ -475,6 +541,7 @@ class OdinGui extends React.Component {
         this.chatRef = React.createRef();
         this.cardsRef = React.createRef();
         this.popupRef = React.createRef();
+        this.animationHandler = React.createRef();
         this.popup = { createPopup: null, canClose: true };
 
         this.state = {
@@ -488,17 +555,21 @@ class OdinGui extends React.Component {
     /**
      * Animate playing cards
      */
-    animatePlayCards() {
-        console.log("TODO: ANIMATE");
-        eventHandler.finishedEvent();
+    animatePlayCards(cards, fromDeck) {
+        if (!fromDeck) {
+            for (const card of cards) {
+                card['startPos'] = getHandCardPosition(card['name']);
+            }
+        }
+
+        this.playCardAnimation('play-cards', cards, getDeckPosition(), getPlanningPilePosition(), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
     }
 
     /**
      * Animate playing cards
      */
-    animateFinishPlayCards() {
-        console.log("TODO: ANIMATE");
-        eventHandler.finishedEvent();
+    animateFinishPlayCards(cards) {
+        this.playCardAnimation('play-cards', cards, getPlanningPilePosition(), getDiscardPilePosition(), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
     }
 
     /**
@@ -574,6 +645,25 @@ class OdinGui extends React.Component {
     }
 
     /**
+     * Play an animation of cards moving from one end of the screen to another
+     * @param {String} id Identification of the animation
+     * @param {Array} cards Array of cards
+     * @param {*} startPos Starting position 
+     * @param {*} endPos Ending position
+     * @param {Number} cardWidth width of the cards
+     * @param {Number} cardHeight height of the cards
+     * @param {Number} travelTime time for a card to travel from the start to the end (ms)
+     * @param {Number} gap gap between each card beginning to move
+     * @param {Boolean} reverse if the z-depth of each card should be reversed
+     */
+    playCardAnimation(id, cards, startPos, endPos, cardWidth, cardHeight, travelTime = 400, gap = 100, reverse = false) {
+        this.getAnimationHandler().playAnimation(id, () => $r(CardAnimation, {
+            key: id, id, startPos, endPos, cardWidth, cardHeight, cards, travelTime, gap, reverse
+        }), () => eventHandler.finishedEvent());
+
+    }
+
+    /**
      * Update the size of the gui when resizing the window
      */
     updateSize() {
@@ -624,6 +714,13 @@ class OdinGui extends React.Component {
     }
 
     /**
+     * Get the animation handler object
+     */
+    getAnimationHandler() {
+        return this.animationHandler.current;
+    }
+
+    /**
      * Update the chat
      * @param {*} chat 
      */
@@ -659,6 +756,9 @@ class OdinGui extends React.Component {
         // popup
         const popup = $r(Popup, { key: 'pop', ref: this.popupRef, popup: this.popup });
 
+        // animation handler
+        const animationHandler = $r(AnimationHandler, { key: 'ani', ref: this.animationHandler });
+
         // calculating how the central componants should be arranged
         const cardWidth = this.state.guiScale * CARD_WIDTH;
         const cardHeight = this.state.guiScale * CARD_HEIGHT;
@@ -677,16 +777,16 @@ class OdinGui extends React.Component {
         // discard pile
         const discardHeight = this.state.guiScale * CARD_HEIGHT * 1.4;
         const discardPile = $r(CardPile, { height: discardHeight, guiScale: this.state.guiScale, cards: this.state.game.topCards, maxGap: discardHeight / 3, alignment: 'top-bottom', grey: true });
-        const discardWrapper = $r('div', { key: 'dp', style: { width: cardWidth + "px", height: discardHeight, position: 'absolute', bottom: buttonsHeight + gapSize + 'px' } }, discardPile);
+        const discardWrapper = $r('div', { key: 'dp', id: 'discard-pile', style: { width: cardWidth + "px", height: discardHeight, position: 'absolute', bottom: buttonsHeight + gapSize + 'px' } }, discardPile);
 
         // planning pile
         const planningHeight = containerHeight - buttonsHeight - gapSize * 2;
         const planningPile = $r(CardPile, { height: planningHeight, guiScale: this.state.guiScale, cards: this.state.game.planningCards, maxGap: this.state.guiScale, alignment: 'bottom-bottom', grey: false });
-        const planningWrapper = $r('div', { key: 'pp', style: { width: cardWidth + "px", height: planningHeight, position: 'absolute', bottom: buttonsHeight + gapSize + 'px', left: cardWidth + gapSize + 'px' } }, planningPile);
+        const planningWrapper = $r('div', { key: 'pp', id: 'planning-pile', style: { width: cardWidth + "px", height: planningHeight, position: 'absolute', bottom: buttonsHeight + gapSize + 'px', left: cardWidth + gapSize + 'px' } }, planningPile);
 
         // deck
         const deckTop = (containerHeight - discardHeight - buttonsHeight - gapSize - cardHeight) / 2;
-        const deckImage = $r('img', { src: '/static/cards/back.png', key: 'di', style: { width: cardWidth + 'px', height: cardHeight + 'px', position: 'absolute', top: deckTop + 'px' } });
+        const deckImage = $r('img', { src: '/static/cards/back.png', id: 'deck-pile', key: 'di', style: { width: cardWidth + 'px', height: cardHeight + 'px', position: 'absolute', top: deckTop + 'px' } });
 
         // button panel
         let playMessage;
@@ -730,6 +830,6 @@ class OdinGui extends React.Component {
             key: 'ctr', style: { margin: 'auto', position: 'relative', width: containerWidth + 'px', height: containerHeight + 'px' }
         }, [deckImage, discardWrapper, planningWrapper, buttonsWrapper, infoWrapper, playerListWrapper, chatWindowWrapper]);
 
-        return [container, scroller, popup];
+        return [container, scroller, popup, animationHandler];
     }
 }

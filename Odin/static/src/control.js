@@ -2,6 +2,13 @@
 
 control.js initialises the game, gui and handles game events.
 
+TODO:
+- Finish creating all animations
+- Display a cross for skipping turns
+- Reformat the header and add a quit button
+
+
+
 */
 
 const CARD_RATIO = 300.0 / 469.0;
