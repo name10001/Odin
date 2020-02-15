@@ -43,6 +43,10 @@ class AnimationHandler extends React.Component {
         }
     }
 
+    hasAnimation(id) {
+        return id in this.state.animations;
+    }
+
     /**
      * Render all animations
      */
@@ -96,9 +100,9 @@ class AbsAnimation extends React.Component {
         const t = timestamp - this.beginTime;
         this.update(t);
 
-        if(this.running) {
+        if (this.running) {
             window.requestAnimationFrame((timestamp) => this.loop(timestamp));
-        } 
+        }
     }
 
     /**
@@ -147,7 +151,7 @@ class MovingCard extends React.Component {
      */
     update(t) {
         const state = {};
-        
+
         const dx = this.props.endPos.x - this.props.startPos.x;
         const dy = this.props.endPos.y - this.props.startPos.y;
         const dt = this.props.endTime - this.props.startTime;
@@ -166,13 +170,22 @@ class MovingCard extends React.Component {
             state.y = 0;
         }
 
+        // has just started moving
+        if (!this.state.show && state.show) {
+            this.props.moveStartFunction({ id: this.props.id, name: this.props.name, url: this.props.url });
+        }
+        // has just ended moving
+        else if (this.state.show && !state.show) {
+            this.props.moveEndFunction({ id: this.props.id, name: this.props.name, url: this.props.url });
+        }
+
         this.setState(state);
     }
 
     render() {
         if (!this.state.show) return "";
         return $r('img', {
-            src: this.props.url, width: this.props.cardWidth, height: this.props.cardHeight, style: {
+            src: this.props.url, alt: this.props.name, width: this.props.cardWidth, height: this.props.cardHeight, style: {
                 position: 'fixed', backgroundColor: '#ff0', left: this.state.x, top: this.state.y, zIndex: 8000
             }
         });
@@ -188,12 +201,11 @@ class CardAnimation extends AbsAnimation {
 
         this.cards = [];
 
-        console.log("got here");
-
         let t = 0;
         for (const cardProps of props.cards) {
-            const card = { startTime: t, endTime: t + props.travelTime, id: cardProps['id'], url: cardProps['card image url'], ref: React.createRef() };
+            const card = { startTime: t, endTime: t + props.travelTime, id: cardProps['id'], name: cardProps['name'], url: cardProps['url'], ref: React.createRef() };
             if (cardProps['startPos'] !== undefined) card.startPos = cardProps['startPos'];
+            if (cardProps['endPos'] !== undefined) card.endPos = cardProps['endPos'];
 
             this.cards.push(card); // TODO adjust the times
 
@@ -221,8 +233,9 @@ class CardAnimation extends AbsAnimation {
 
         for (const card of this.cards) {
             cards.push($r(MovingCard, {
-                ref: card.ref, startPos: card.startPos !== undefined ? card.startPos : this.props.startPos, endPos: this.props.endPos, startTime: card.startTime,
-                endTime: card.endTime, url: card.url, cardWidth: this.props.cardWidth, cardHeight: this.props.cardHeight, key: card.id
+                ref: card.ref, startPos: card.startPos !== undefined ? card.startPos : this.props.startPos, endPos: card.endPos !== undefined ? card.endPos : this.props.endPos, startTime: card.startTime,
+                endTime: card.endTime, url: card.url, cardWidth: this.props.cardWidth, cardHeight: this.props.cardHeight, key: card.id, id: card.id, name: card.name,
+                moveStartFunction: this.props.moveStartFunction, moveEndFunction: this.props.moveEndFunction
             }));
         }
 

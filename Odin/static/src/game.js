@@ -167,7 +167,7 @@ class Game {
             for (let card of update['your cards']) {
                 if (card['can be played']) this.canPlay++;
 
-                this.addCard(card['card id'], card['name'], card['card image url'], card['can be played']);
+                this.addCard(card['id'], card['name'], card['url'], card['can be played']);
             }
         }
 
@@ -177,14 +177,14 @@ class Game {
         if (update['cards on deck'] != undefined) {
             this.topCards.length = 0;
             for (let card of update['cards on deck']) {
-                this.topCards.push(card['card image url']);
+                this.topCards.push(card['url']);
             }
         }
         //update planning cards
         if (update['planning pile'] != undefined) {
             this.planningCards.length = 0;
             for (let card of update['planning pile']) {
-                this.planningCards.push(card['card image url']);
+                this.planningCards.push(card);
             }
         }
 
@@ -292,27 +292,16 @@ class Game {
     }
 
     /**
-     * Loop through all stacks and remove stacks which empty
-     * Also recalculate the indices
+     * Remove a card from your hand
+     * @param {*} id 
      */
-    clearEmptyStacks() {
-        this.cardIndices = {};
-        this.cardNameIndices = {};
+    removeCard(id) {
+        const index = this.cardIndices[id];
 
-        let i = 0;
-        while (i < this.yourStacks.length) {
-            let cardStack = this.yourStacks[i];
-            if (cardStack.cardIds.length == 0) {
-                //delete
-                this.yourStacks.splice(i, 1);
-            }
-            else {
-                this.cardNameIndices[cardStack.name] = i;
-                for (let id of cardStack.cardIds) {
-                    this.cardIndices[id] = i;
-                }
-                i++;
-            }
+        this.yourStacks[index].remove(id);
+
+        if (this.yourStacks[index].cardIds.length == 0) {
+            this.yourStacks.splice(index, 1);
         }
     }
 
@@ -327,9 +316,11 @@ class Game {
 
     pickOption(optionId) {
         socket.emit("game message", GAME_ID, "answer", [optionId]);
+        eventHandler.finishedEvent();
     }
     pickOptions(optionIds) {
         socket.emit("game message", GAME_ID, "answer", optionIds);
+        eventHandler.finishedEvent();
     }
 
     undo() {

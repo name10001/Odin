@@ -192,7 +192,10 @@ $(document).ready(() => {
 
     // ask a question
     socket.on('ask', function (question) {
-        game.ask(question);
+
+        eventHandler.addEvent(() => {
+            game.ask(question);
+        });
     });
 
     // recieve a chat message

@@ -543,8 +543,8 @@ class Player(AbstractPlayer):
         for card in self.game.played_cards[-settings.played_cards_to_show:]:
             json_to_send["cards on deck"].append(
                 {
-                    "card image url": card.get_url(),
-                    "card id": card.get_id(),
+                    "url": card.get_url(),
+                    "id": card.get_id(),
                     "name": card.get_name(),
                     "card can be undone": False
                 }
@@ -558,9 +558,9 @@ class Player(AbstractPlayer):
 
             json_to_send["planning pile"].append(
                 {
-                    "card image url": card.get_url(),
+                    "url": card.get_url(),
                     "name": card.get_name(),
-                    "card id": card.get_id()
+                    "id": card.get_id()
                 }
             )
 
@@ -568,8 +568,8 @@ class Player(AbstractPlayer):
         for card in (self.hand if self.playing_as is None else self.playing_as.hand):
             json_to_send["your cards"].append(
                 {
-                    "card id": card.get_id(),
-                    "card image url": card.get_url(),
+                    "id": card.get_id(),
+                    "url": card.get_url(),
                     "name": card.get_name(),
                     "can be played": (self if self.playing_as is None else self.playing_as)._can_be_played(card)
                 }

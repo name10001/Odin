@@ -381,7 +381,7 @@ class Game(AbstractGame):
                         {
                             "id": card.get_id(),
                             "name": card.get_name(),
-                            "card image url": card.get_url()
+                            "url": card.get_url()
                         } for card in cards
                     ]
                 }
@@ -392,7 +392,7 @@ class Game(AbstractGame):
                         {
                             "id": card.get_id(),
                             "name": card.get_name(),
-                            "card image url": card.get_url()
+                            "url": card.get_url()
                         } for card in cards
                     ]
                 }
@@ -419,7 +419,7 @@ class Game(AbstractGame):
                         {
                             "id": card.get_id(),
                             "name": card.get_name(),
-                            "card image url": card.get_url()
+                            "url": card.get_url()
                         } for card in cards
                     ]
                 }
@@ -446,7 +446,7 @@ class Game(AbstractGame):
                         {
                             "id": card.get_id(),
                             "name": card.get_name(),
-                            "card image url": card.get_url()
+                            "url": card.get_url()
                         } for card in cards
                     ]
                 }
@@ -461,7 +461,7 @@ class Game(AbstractGame):
                     "cards": [{
                         "id": card.get_id(),
                         "name": card.get_name(),
-                        "card image url": card.get_url()
+                        "url": card.get_url()
                     } for card in cards]
                 }
 
@@ -487,7 +487,7 @@ class Game(AbstractGame):
                         {
                             "id": card.get_id(),
                             "name": card.get_name(),
-                            "card image url": card.get_url()
+                            "url": card.get_url()
                         } for card in cards
                     ]
                 }
@@ -502,7 +502,7 @@ class Game(AbstractGame):
                         {
                             "id": card.get_id(),
                             "name": card.get_name(),
-                            "card image url": card.get_url()
+                            "url": card.get_url()
                         } for card in cards
                     ]
                 }

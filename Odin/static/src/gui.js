@@ -184,13 +184,13 @@ function CardPanel(props) {
     // help button
     const helpStyle = getButtonStyle(props.guiScale * 1.3);
     helpStyle.float = "left";
-    helpStyle.marginLeft = props.guiScale + "px";
+    helpStyle.marginLeft = props.guiScale * 0.8 + "px";
 
     const help = $r('button', { onClick: () => gui.openPopup(() => $r(HelpPopup, { key: '1', card: game.allCards[props.stack.name] }), true), className: 'btn btn-primary', style: helpStyle }, "?");
 
     // addall button
     const addAllStyle = getButtonStyle(props.guiScale * 1.3);
-    addAllStyle.marginRight = props.guiScale + "px";
+    addAllStyle.marginRight = props.guiScale * 0.8 + "px";
     addAllStyle.float = "right";
 
     const addAll = $r('button', props.stack.allowedToPlay ? {
@@ -236,7 +236,7 @@ function getHandCardPosition(cardName) {
 /**
  * Get the position of the planning pile
  */
-function getPlanningPilePosition() {
+function getPlanningPileBottomPosition() {
     const bounds = document.getElementById('planning-pile').getBoundingClientRect();
     let x = bounds.left;
     let y = bounds.bottom;
@@ -245,6 +245,24 @@ function getPlanningPilePosition() {
     return { x, y };
 
 }
+
+
+/**
+ * Get the position of the planning pile
+ */
+function getPlanningPileTopPosition() {
+    const bounds = document.getElementById('planning-pile').getBoundingClientRect();
+
+    let x = bounds.left;
+    let y = bounds.bottom;
+
+    y -= gui.state.guiScale * (game.planningCards.length + CARD_HEIGHT);
+    if (y < gui.state.guiScale) y = gui.state.guiScale;
+    return { x, y };
+
+}
+
+
 /**
  * Get the position of the discard pile
  */
@@ -312,7 +330,7 @@ class CardScroller extends React.Component {
      */
     render() {
         const panels = this.props.cardStacks.map((stack) =>
-            $r(CardPanel, { key: stack.url, guiScale: this.props.guiScale, stack: stack })
+            $r(CardPanel, { key: stack.name, guiScale: this.props.guiScale, stack: stack })
         );
 
         return $r('div', { id: 'card-scroller', style: { width: '100%', overflowX: 'scroll', textAlign: 'center', whiteSpace: 'nowrap', position: 'fixed', bottom: '0px', display: this.state.hidden ? 'none' : 'block' } }, panels);
@@ -562,38 +580,86 @@ class OdinGui extends React.Component {
             }
         }
 
-        this.playCardAnimation('play-cards', cards, getDeckPosition(), getPlanningPilePosition(), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
+        this.playCardAnimation('play-cards', cards, (card) => {
+            if (!fromDeck) game.removeCard(card.id);
+            this.updateGame(game);
+        }, (card) => {
+            game.planningCards.push(card);
+            this.updateGame(game);
+        }, getDeckPosition(), getPlanningPileTopPosition(), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
     }
 
     /**
-     * Animate playing cards
+     * Animate cards moving from planning pile to discard pile
      */
     animateFinishPlayCards(cards) {
-        this.playCardAnimation('play-cards', cards, getPlanningPilePosition(), getDiscardPilePosition(), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
+        this.playCardAnimation('finish-play-cards', cards, () => {
+            game.planningCards.splice(0, 1);
+            this.updateGame(game);
+        }, (card) => {
+            game.topCards.splice(0, 1);
+            game.topCards.push(card.url);
+            this.updateGame(game);
+        }, getPlanningPileBottomPosition(), getDiscardPilePosition(), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
     }
 
+
+
     /**
-     * Animate playing cards
+     * Animate undo all
      */
     animateUndoAll() {
-        console.log("TODO: ANIMATE");
-        eventHandler.finishedEvent();
+        const cards = game.planningCards.slice();
+
+        for (const card of cards) {
+            card['endPos'] = getHandCardPosition(card['name']);
+        }
+
+        this.playCardAnimation('undo-cards', cards, () => {
+            game.planningCards.pop();
+            this.updateGame(game);
+        }, (card) => {
+            game.addCard(card.id, card.name, card.url, false);
+            this.updateGame(game);
+        }, getPlanningPileBottomPosition(), null, this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 200, true);
+    }
+
+    /**
+     * Animate single undo
+     */
+    animateUndo() {
+        const card = game.planningCards.pop();
+
+        this.playCardAnimation('undo-cards', [card], () => {
+            this.updateGame(game);
+        }, () => {
+            this.updateGame(game);
+        }, getPlanningPileTopPosition(), getHandCardPosition(card['name']), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
     }
 
     /**
      * Animate playing cards
      */
-    animatePickupFromDeck() {
-        console.log("TODO: ANIMATE");
-        eventHandler.finishedEvent();
+    animatePickupFromDeck(cards) {
+
+        this.playCardAnimation('add-cards', cards, () => {}, (card) => {
+            game.addCard(card.id, card.name, card.url, false);
+            this.updateGame(game);
+        }, getDeckPosition(), getHandCardPosition(null), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 500);
     }
 
     /**
      * Animate playing cards
      */
-    animateRemoveCards() {
-        console.log("TODO: ANIMATE");
-        eventHandler.finishedEvent();
+    animateRemoveCards(cards) {
+        for (const card of cards) {
+              card['startPos'] = getHandCardPosition(card['name']);
+        }
+
+        this.playCardAnimation('remove-cards', cards, (card) => {
+            game.removeCard(card.id);
+            this.updateGame(game);
+        }, (card) => {}, getDeckPosition(), getDeckPosition(), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 350);
     }
 
     /**
@@ -623,14 +689,6 @@ class OdinGui extends React.Component {
     /**
      * Animate playing cards
      */
-    animateUndo() {
-        console.log("TODO: ANIMATE");
-        eventHandler.finishedEvent();
-    }
-
-    /**
-     * Animate playing cards
-     */
     animateRemoveCardsToPlayer() {
         console.log("TODO: ANIMATE");
         eventHandler.finishedEvent();
@@ -648,6 +706,8 @@ class OdinGui extends React.Component {
      * Play an animation of cards moving from one end of the screen to another
      * @param {String} id Identification of the animation
      * @param {Array} cards Array of cards
+     * @param {Function} moveStartFunction function to call when a card starts moving
+     * @param {Function} moveEndFunction function to call when a card starts moving
      * @param {*} startPos Starting position 
      * @param {*} endPos Ending position
      * @param {Number} cardWidth width of the cards
@@ -656,9 +716,17 @@ class OdinGui extends React.Component {
      * @param {Number} gap gap between each card beginning to move
      * @param {Boolean} reverse if the z-depth of each card should be reversed
      */
-    playCardAnimation(id, cards, startPos, endPos, cardWidth, cardHeight, travelTime = 400, gap = 100, reverse = false) {
+    playCardAnimation(id, cards, moveStartFunction, moveEndFunction, startPos, endPos, cardWidth, cardHeight, travelTime=200, reverse = false) {
+        let maxWaitTime = travelTime * 6;
+        let gap = (maxWaitTime - maxWaitTime * Math.exp(-0.1*cards.length))/cards.length;
+
+        // generate unique id
+        while (this.getAnimationHandler().hasAnimation(id)) {
+            id += "_";
+        }
+
         this.getAnimationHandler().playAnimation(id, () => $r(CardAnimation, {
-            key: id, id, startPos, endPos, cardWidth, cardHeight, cards, travelTime, gap, reverse
+            key: id, id, moveStartFunction, moveEndFunction, startPos, endPos, cardWidth, cardHeight, cards, travelTime, gap, reverse
         }), () => eventHandler.finishedEvent());
 
     }
@@ -781,7 +849,7 @@ class OdinGui extends React.Component {
 
         // planning pile
         const planningHeight = containerHeight - buttonsHeight - gapSize * 2;
-        const planningPile = $r(CardPile, { height: planningHeight, guiScale: this.state.guiScale, cards: this.state.game.planningCards, maxGap: this.state.guiScale, alignment: 'bottom-bottom', grey: false });
+        const planningPile = $r(CardPile, { height: planningHeight, guiScale: this.state.guiScale, cards: this.state.game.planningCards.map((card) => card['url']), maxGap: this.state.guiScale, alignment: 'bottom-bottom', grey: false });
         const planningWrapper = $r('div', { key: 'pp', id: 'planning-pile', style: { width: cardWidth + "px", height: planningHeight, position: 'absolute', bottom: buttonsHeight + gapSize + 'px', left: cardWidth + gapSize + 'px' } }, planningPile);
 
         // deck
