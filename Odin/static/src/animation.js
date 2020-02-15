@@ -176,6 +176,9 @@ class MovingCard extends React.Component {
         }
         // has just ended moving
         else if (this.state.show && !state.show) {
+            if (this.props.sound !== undefined) {
+                playSound(this.props.sound);
+            }
             this.props.moveEndFunction({ id: this.props.id, name: this.props.name, url: this.props.url });
         }
 
@@ -186,7 +189,7 @@ class MovingCard extends React.Component {
         if (!this.state.show) return "";
         return $r('img', {
             src: this.props.url, alt: this.props.name, width: this.props.cardWidth, height: this.props.cardHeight, style: {
-                position: 'fixed', backgroundColor: '#ff0', left: this.state.x, top: this.state.y, zIndex: 8000
+                position: 'fixed', left: this.state.x, top: this.state.y, zIndex: 8000
             }
         });
     }
@@ -203,7 +206,7 @@ class CardAnimation extends AbsAnimation {
 
         let t = 0;
         for (const cardProps of props.cards) {
-            const card = { startTime: t, endTime: t + props.travelTime, id: cardProps['id'], name: cardProps['name'], url: cardProps['url'], ref: React.createRef() };
+            const card = { startTime: t, endTime: t + props.travelTime, id: cardProps['id'], name: cardProps['name'], url: cardProps['url'], sound: cardProps['sound'], ref: React.createRef() };
             if (cardProps['startPos'] !== undefined) card.startPos = cardProps['startPos'];
             if (cardProps['endPos'] !== undefined) card.endPos = cardProps['endPos'];
 
@@ -217,6 +220,8 @@ class CardAnimation extends AbsAnimation {
     }
 
     update(t) {
+        let now = performance.now();
+
         let finished = true;
         for (const card of this.cards) {
             if (!card.ref.current) continue;
@@ -234,7 +239,7 @@ class CardAnimation extends AbsAnimation {
         for (const card of this.cards) {
             cards.push($r(MovingCard, {
                 ref: card.ref, startPos: card.startPos !== undefined ? card.startPos : this.props.startPos, endPos: card.endPos !== undefined ? card.endPos : this.props.endPos, startTime: card.startTime,
-                endTime: card.endTime, url: card.url, cardWidth: this.props.cardWidth, cardHeight: this.props.cardHeight, key: card.id, id: card.id, name: card.name,
+                endTime: card.endTime, url: card.url, cardWidth: this.props.cardWidth, cardHeight: this.props.cardHeight, key: card.id, id: card.id, name: card.name, sound: card.sound,
                 moveStartFunction: this.props.moveStartFunction, moveEndFunction: this.props.moveEndFunction
             }));
         }

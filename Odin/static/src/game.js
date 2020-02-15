@@ -258,7 +258,7 @@ class Game {
                 this.yourTurn = false;
             }
         }
-
+        
         gui.updateGame(this);
         eventHandler.finishedEvent();
     }
@@ -296,13 +296,47 @@ class Game {
      * @param {*} id 
      */
     removeCard(id) {
+        if (!(id in this.cardIndices)) return;
         const index = this.cardIndices[id];
+        if (!this.cardIndices[index]) return;
 
         this.yourStacks[index].remove(id);
 
         if (this.yourStacks[index].cardIds.length == 0) {
             this.yourStacks.splice(index, 1);
         }
+    }
+
+    /**
+     * Get the message in the play button
+     */
+    getPlayButtonMessage() {
+        let playMessage;
+        if (this.planningCards.length == 0) {
+            playMessage = "+" + (this.pickupAmount == 0 ? '1' : this.pickupAmount);
+        }
+        else if (this.cantPlayReason.length > 0) {
+            playMessage = this.cantPlayReason;
+        }
+        else {
+            playMessage = "PLAY CARDS";
+        }
+
+        return playMessage;
+    }
+
+    /**
+     * Get if the undo buttons are avaliable
+     */
+    undoAvaliable() {
+        return this.planningCards.length > 0 && this.yourTurn;
+    }
+
+    /**
+     * Get if the play button is avaliable
+     */
+    playAvaliable() {
+        return this.yourTurn && this.cantPlayReason.length == 0;
     }
 
     playCard(card_array) {

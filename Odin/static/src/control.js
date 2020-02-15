@@ -53,6 +53,15 @@ class EventHandler {
     }
 }
 
+/**
+ * Play a sound effect
+ * @param {*} sound 
+ */
+function playSound(sound) {
+    let audio = new Audio(sound);
+    audio.play();
+}
+
 
 /**
  * Main method - sets up game, gui and listeners
@@ -182,8 +191,7 @@ $(document).ready(() => {
             //SOUND EFFECT - FOR THINGS LIKE 69 NICE
             case "sound":
                 eventHandler.addEvent(() => {
-                    let audio = new Audio(data["sound"]);
-                    audio.play();
+                    playSound(data["sound"]);
                     eventHandler.finishedEvent();
                 });
                 break;

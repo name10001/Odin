@@ -5,6 +5,8 @@ gui.js has all the code for the main parts of the gui that you can interact with
 
 */
 
+
+
 /**
  * Gets a button style that corresponds to a size in pixels
  * @param {Number} size 
@@ -27,6 +29,12 @@ function getButtonStyle(size) {
 class CardPile extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = { cards: props.cards };
+    }
+
+    updateCards(cards) {
+        this.setState({ cards });
     }
 
     render() {
@@ -34,10 +42,10 @@ class CardPile extends React.Component {
         const width = this.props.guiScale * CARD_WIDTH;
         const height = this.props.guiScale * CARD_HEIGHT;
         const totalGap = this.props.height - height;
-        const len = this.props.cards.length;
+        const len = this.state.cards.length;
         const gap = Math.min(totalGap / (len - 1), this.props.maxGap);
 
-        const cards = this.props.cards.reduce((result, card, index) => {
+        const cards = this.state.cards.reduce((result, card, index) => {
             if (this.props.grey) {
                 // greyed out card
                 const cardStyle = { position: 'absolute', zIndex: index * 2 + '', left: '0' };
@@ -103,34 +111,58 @@ class CardPile extends React.Component {
 /**
  * Represents the "play cards" "undo" and "undo all" buttons
  */
-function ButtonPanel(props) {
-    // style of the button in terms of font size
-    const btnStyle = getButtonStyle(props.guiScale * 1.4);
+class ButtonPanel extends React.Component {
+    constructor(props) {
+        super(props);
 
-    // play button
-    const playButton = $r('button', props.playAvaliable ? { key: '1', onClick: () => game.finishTurn(), className: 'btn btn-primary btn-block', style: btnStyle } : {
-        key: '1', disabled: true, className: 'btn btn-primary btn-block', style: btnStyle
-    }, props.playMessage);
+        this.state = {
+            playMessage: props.playMessage,
+            playAvaliable: props.playAvaliable,
+            undoAvaliable: props.undoAvaliable
+        };
+    }
 
-    // size of the gap between buttons
-    const gap = props.guiScale / 2 + "px";
+    /**
+     * Update the buttons
+     * @param {*} playMessage message to display on the play button 
+     * @param {*} playAvaliable if play button avaliable 
+     * @param {*} undoAvaliable if undo buttons avaliable
+     */
+    update(playMessage, playAvaliable, undoAvaliable) {
+        this.setState({ playMessage, playAvaliable, undoAvaliable });
+    }
 
-    // undo button
+    render() {
+        // style of the button in terms of font size
+        const btnStyle = getButtonStyle(this.props.guiScale * 1.4);
 
-    const undoButton = $r('div', {
-        key: '2', className: 'col-xs-5', style: { padding: gap + " " + gap + " 0 0" }
-    }, $r('button', props.undoAvaliable ? { onClick: () => game.undo(), className: 'btn btn-primary btn-block', style: btnStyle } : {
-        className: 'btn btn-primary btn-block', disabled: true, style: btnStyle
-    }, "UNDO"));
+        // play button
+        const playButton = $r('button', this.state.playAvaliable ? { key: '1', onClick: () => game.finishTurn(), className: 'btn btn-primary btn-block', style: btnStyle } : {
+            key: '1', disabled: true, className: 'btn btn-primary btn-block', style: btnStyle
+        }, this.state.playMessage);
 
-    // undo all button
-    const undoAllButton = $r('div', {
-        key: '3', className: 'col-xs-7', style: { padding: gap + " 0 0 0" }
-    }, $r('button', props.undoAvaliable ? { onClick: () => game.undoAll(), className: 'btn btn-primary btn-block', style: btnStyle } : {
-        className: 'btn btn-primary btn-block', disabled: true, style: btnStyle
-    }, "UNDO ALL"));
+        // size of the gap between buttons
+        const gap = this.props.guiScale / 2 + "px";
 
-    return [playButton, undoButton, undoAllButton];
+        // undo button
+
+        const undoButton = $r('div', {
+            key: '2', className: 'col-xs-5', style: { padding: gap + " " + gap + " 0 0" }
+        }, $r('button', this.state.undoAvaliable ? { onClick: () => game.undo(), className: 'btn btn-primary btn-block', style: btnStyle } : {
+            className: 'btn btn-primary btn-block', disabled: true, style: btnStyle
+        }, "UNDO"));
+
+        // undo all button
+        const undoAllButton = $r('div', {
+            key: '3', className: 'col-xs-7', style: { padding: gap + " 0 0 0" }
+        }, $r('button', this.state.undoAvaliable ? { onClick: () => game.undoAll(), className: 'btn btn-primary btn-block', style: btnStyle } : {
+            className: 'btn btn-primary btn-block', disabled: true, style: btnStyle
+        }, "UNDO ALL"));
+
+        return [playButton, undoButton, undoAllButton];
+    }
+
+
 }
 
 /**
@@ -303,7 +335,7 @@ class CardScroller extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { hidden: false };
+        this.state = { hidden: false, cardStacks: props.cardStacks };
     }
 
     /**
@@ -318,18 +350,23 @@ class CardScroller extends React.Component {
     }
 
     hide() {
-        this.setState({ hidden: true });
+        this.setState({ hidden: true, cardStacks: this.state.cardStacks });
     }
 
 
     unhide() {
-        this.setState({ hidden: false });
+        this.setState({ hidden: false, cardStacks: this.state.cardStacks });
     }
+
+    updateStacks(cardStacks) {
+        this.setState({ hidden: this.state.hidden, cardStacks });
+    }
+
     /**
      * Render all card stack panels
      */
     render() {
-        const panels = this.props.cardStacks.map((stack) =>
+        const panels = this.state.cardStacks.map((stack) =>
             $r(CardPanel, { key: stack.name, guiScale: this.props.guiScale, stack: stack })
         );
 
@@ -343,18 +380,38 @@ class CardScroller extends React.Component {
  * Consisting of:
  * - Who's turn it is.
  * - Pickup chain (if any)
- * @param {*} props 
  */
-function InfoPanel(props) {
-    const turnString = $r('span', { key: '1', style: { color: "#fff", display: 'inline-block', verticalAlign: 'middle', fontSize: props.fontSize, float: 'left' } }, props.turnString);
+class InfoPanel extends React.Component {
 
-    if (props.pickupAmount > 0) {
-        const pickupString = $r('span', { key: '2', style: { color: "#fff", fontSize: props.fontSize, float: 'right' } }, '+' + props.pickupAmount);
+    constructor(props) {
+        super(props);
 
-        return [turnString, pickupString];
+        this.state = {
+            turnString: props.turnString,
+            pickupAmount: props.pickupAmount
+        };
     }
 
-    return turnString;
+    /**
+     * Update info panel
+     * @param {*} turnString message at the top of the screen 
+     * @param {*} pickupAmount pickup amount
+     */
+    update(turnString, pickupAmount) {
+        this.setState({ turnString, pickupAmount });
+    }
+
+    render() {
+        const turnString = $r('span', { key: '1', style: { color: "#fff", display: 'inline-block', verticalAlign: 'middle', fontSize: this.props.fontSize, float: 'left' } }, this.state.turnString);
+
+        if (this.state.pickupAmount > 0) {
+            const pickupString = $r('span', { key: '2', style: { color: "#fff", fontSize: this.props.fontSize, float: 'right' } }, '+' + this.state.pickupAmount);
+
+            return [turnString, pickupString];
+        }
+
+        return turnString;
+    }
 }
 
 /**
@@ -417,10 +474,32 @@ function PlayerPanel(props) {
 class PlayerListPanel extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            players: this.props.players,
+            yourId: this.props.yourId,
+            direction: this.props.direction,
+            turn: this.props.turn,
+            skip: this.props.skip
+        }
+    }
+
+    /**
+     * Update the player list panel
+     * @param {*} players list of players
+     * @param {*} yourId your id
+     * @param {*} direction direction of turn
+     * @param {*} turn current turn index
+     * @param {*} skip number of players to skip
+     */
+    update(players, yourId, direction, turn, skip) {
+        this.setState({
+            players, yourId, direction, turn, skip
+        });
     }
 
     render() {
-        const nPlayers = this.props.players.length;
+        const nPlayers = this.state.players.length;
 
         if (nPlayers == 0) {
             return "";
@@ -436,14 +515,14 @@ class PlayerListPanel extends React.Component {
 
         const panels = [];
 
-        let i = this.props.turn;
+        let i = this.state.turn;
 
         do {
             const player = this.props.players[i];
 
-            const panelWidth = i == this.props.turn ? this.props.width : this.props.width * 0.9;
+            const panelWidth = i == this.state.turn ? this.props.width : this.props.width * 0.9;
 
-            const playerPanel = $r(PlayerPanel, { player, width: panelWidth, height: maxHeight * scale, isYou: player.id == this.props.yourId });
+            const playerPanel = $r(PlayerPanel, { player, width: panelWidth, height: maxHeight * scale, isYou: player.id == this.state.yourId });
 
             panels.push($r('div', {
                 key: i, className: 'panel panel-default', style: {
@@ -451,10 +530,10 @@ class PlayerListPanel extends React.Component {
                 }
             }, playerPanel))
 
-            i += this.props.direction;
-            if (i < 0) i = game.players.length - 1;
-            else if (i >= game.players.length) i = 0;
-        } while (i != this.props.turn);
+            i += this.state.direction;
+            if (i < 0) i = nPlayers - 1;
+            else if (i >= nPlayers) i = 0;
+        } while (i != this.state.turn);
 
         return panels;
     }
@@ -560,6 +639,11 @@ class OdinGui extends React.Component {
         this.cardsRef = React.createRef();
         this.popupRef = React.createRef();
         this.animationHandler = React.createRef();
+        this.planPileRef = React.createRef();
+        this.discardRef = React.createRef();
+        this.buttonsRef = React.createRef();
+        this.infoRef = React.createRef();
+        this.playersRef = React.createRef();
         this.popup = { createPopup: null, canClose: true };
 
         this.state = {
@@ -582,11 +666,11 @@ class OdinGui extends React.Component {
 
         this.playCardAnimation('play-cards', cards, (card) => {
             if (!fromDeck) game.removeCard(card.id);
-            this.updateGame(game);
+            this.getCardScroller().updateStacks(game.yourStacks);
         }, (card) => {
             game.planningCards.push(card);
-            this.updateGame(game);
-        }, getDeckPosition(), getPlanningPileTopPosition(), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
+            this.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
+        }, getDeckPosition(), getPlanningPileTopPosition(), '/static/sounds/card_play.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
     }
 
     /**
@@ -595,12 +679,13 @@ class OdinGui extends React.Component {
     animateFinishPlayCards(cards) {
         this.playCardAnimation('finish-play-cards', cards, () => {
             game.planningCards.splice(0, 1);
-            this.updateGame(game);
+            this.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
         }, (card) => {
             game.topCards.splice(0, 1);
             game.topCards.push(card.url);
-            this.updateGame(game);
-        }, getPlanningPileBottomPosition(), getDiscardPilePosition(), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
+
+            this.getDiscardPile().updateCards(game.topCards);
+        }, getPlanningPileBottomPosition(), getDiscardPilePosition(), '/static/sounds/card_play.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
     }
 
 
@@ -617,11 +702,11 @@ class OdinGui extends React.Component {
 
         this.playCardAnimation('undo-cards', cards, () => {
             game.planningCards.pop();
-            this.updateGame(game);
+            this.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
         }, (card) => {
             game.addCard(card.id, card.name, card.url, false);
-            this.updateGame(game);
-        }, getPlanningPileBottomPosition(), null, this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 200, true);
+            this.getCardScroller().updateStacks(game.yourStacks);
+        }, getPlanningPileBottomPosition(), null, '/static/sounds/card_pickup.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 200, true);
     }
 
     /**
@@ -629,12 +714,10 @@ class OdinGui extends React.Component {
      */
     animateUndo() {
         const card = game.planningCards.pop();
+        this.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
 
-        this.playCardAnimation('undo-cards', [card], () => {
-            this.updateGame(game);
-        }, () => {
-            this.updateGame(game);
-        }, getPlanningPileTopPosition(), getHandCardPosition(card['name']), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
+        this.playCardAnimation('undo-cards', [card], () => { }, () => { }, getPlanningPileTopPosition(), getHandCardPosition(card['name']),
+            '/static/sounds/card_pickup.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
     }
 
     /**
@@ -642,10 +725,10 @@ class OdinGui extends React.Component {
      */
     animatePickupFromDeck(cards) {
 
-        this.playCardAnimation('add-cards', cards, () => {}, (card) => {
+        this.playCardAnimation('add-cards', cards, () => { }, (card) => {
             game.addCard(card.id, card.name, card.url, false);
-            this.updateGame(game);
-        }, getDeckPosition(), getHandCardPosition(null), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 500);
+            this.getCardScroller().updateStacks(game.yourStacks);
+        }, getDeckPosition(), getHandCardPosition(null), '/static/sounds/card_pickup.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 500);
     }
 
     /**
@@ -653,13 +736,13 @@ class OdinGui extends React.Component {
      */
     animateRemoveCards(cards) {
         for (const card of cards) {
-              card['startPos'] = getHandCardPosition(card['name']);
+            card['startPos'] = getHandCardPosition(card['name']);
         }
 
         this.playCardAnimation('remove-cards', cards, (card) => {
             game.removeCard(card.id);
-            this.updateGame(game);
-        }, (card) => {}, getDeckPosition(), getDeckPosition(), this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 350);
+            this.getCardScroller().updateStacks(game.yourStacks);
+        }, (card) => { }, getDeckPosition(), getDeckPosition(), '/static/sounds/card_play.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 350);
     }
 
     /**
@@ -716,9 +799,30 @@ class OdinGui extends React.Component {
      * @param {Number} gap gap between each card beginning to move
      * @param {Boolean} reverse if the z-depth of each card should be reversed
      */
-    playCardAnimation(id, cards, moveStartFunction, moveEndFunction, startPos, endPos, cardWidth, cardHeight, travelTime=200, reverse = false) {
+    playCardAnimation(id, cards, moveStartFunction, moveEndFunction, startPos, endPos, sound, cardWidth, cardHeight, travelTime = 200, reverse = false) {
         let maxWaitTime = travelTime * 6;
-        let gap = (maxWaitTime - maxWaitTime * Math.exp(-0.1*cards.length))/cards.length;
+        let gap = (maxWaitTime - maxWaitTime * Math.exp(-0.1 * cards.length)) / cards.length;
+
+        // minimum gap between sounds is 50ms
+        const minSoundGap = 50;
+        if (gap >= minSoundGap) {
+            for (const card of cards) {
+                card['sound'] = sound;
+            }
+        }
+        else {
+            // prevent too many sounds from being played at the same time
+            let i = minSoundGap;
+
+            for (const card of cards) {
+                if (i >= minSoundGap) {
+                    card['sound'] = sound;
+                    i -= 50;
+                }
+                i += gap;
+            }
+
+        }
 
         // generate unique id
         while (this.getAnimationHandler().hasAnimation(id)) {
@@ -726,7 +830,7 @@ class OdinGui extends React.Component {
         }
 
         this.getAnimationHandler().playAnimation(id, () => $r(CardAnimation, {
-            key: id, id, moveStartFunction, moveEndFunction, startPos, endPos, cardWidth, cardHeight, cards, travelTime, gap, reverse
+            key: id, id, moveStartFunction, moveEndFunction, startPos, endPos, cardWidth, cardHeight, cards, travelTime, gap, reverse, sound
         }), () => eventHandler.finishedEvent());
 
     }
@@ -777,8 +881,12 @@ class OdinGui extends React.Component {
      * @param {*} game
      */
     updateGame(game) {
-        this.state.game = game;
-        this.setState(this.state);
+        this.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
+        this.getCardScroller().updateStacks(game.yourStacks);
+        this.getDiscardPile().updateCards(game.topCards);
+        this.getPlayerList().update(game.players, game.yourId, game.direction, game.turn, game.skip);
+        this.getButtons().update(game.getPlayButtonMessage(), game.playAvaliable(), game.undoAvaliable());
+        this.getInfoPanel().update(game.turnString, game.pickupAmount);
     }
 
     /**
@@ -787,6 +895,49 @@ class OdinGui extends React.Component {
     getAnimationHandler() {
         return this.animationHandler.current;
     }
+
+    /**
+     * Get the card scroller object
+     */
+    getCardScroller() {
+        return this.cardsRef.current;
+    }
+
+    /**
+     * Get the planning pile object
+     */
+    getPlanningPile() {
+        return this.planPileRef.current;
+    }
+
+    /**
+     * Get the discard pile object
+     */
+    getDiscardPile() {
+        return this.discardRef.current;
+    }
+
+    /**
+     * Get the button objects
+     */
+    getButtons() {
+        return this.buttonsRef.current;
+    }
+
+    /**
+     * Get the info panel
+     */
+    getInfoPanel() {
+        return this.infoRef.current;
+    }
+
+    /**
+     * Get the player list panel
+     */
+    getPlayerList() {
+        return this.playersRef.current;
+    }
+
 
     /**
      * Update the chat
@@ -844,45 +995,45 @@ class OdinGui extends React.Component {
 
         // discard pile
         const discardHeight = this.state.guiScale * CARD_HEIGHT * 1.4;
-        const discardPile = $r(CardPile, { height: discardHeight, guiScale: this.state.guiScale, cards: this.state.game.topCards, maxGap: discardHeight / 3, alignment: 'top-bottom', grey: true });
+        const discardPile = $r(CardPile, { height: discardHeight, guiScale: this.state.guiScale, cards: this.state.game.topCards, maxGap: discardHeight / 3, alignment: 'top-bottom', grey: true, ref: this.discardRef });
         const discardWrapper = $r('div', { key: 'dp', id: 'discard-pile', style: { width: cardWidth + "px", height: discardHeight, position: 'absolute', bottom: buttonsHeight + gapSize + 'px' } }, discardPile);
 
         // planning pile
         const planningHeight = containerHeight - buttonsHeight - gapSize * 2;
-        const planningPile = $r(CardPile, { height: planningHeight, guiScale: this.state.guiScale, cards: this.state.game.planningCards.map((card) => card['url']), maxGap: this.state.guiScale, alignment: 'bottom-bottom', grey: false });
-        const planningWrapper = $r('div', { key: 'pp', id: 'planning-pile', style: { width: cardWidth + "px", height: planningHeight, position: 'absolute', bottom: buttonsHeight + gapSize + 'px', left: cardWidth + gapSize + 'px' } }, planningPile);
+        const planningCards = this.state.game.planningCards.map((card) => card['url']);
+        const planningPile = $r(CardPile, {
+            height: planningHeight, guiScale: this.state.guiScale, cards: planningCards,
+            maxGap: this.state.guiScale, alignment: 'bottom-bottom', grey: false, ref: this.planPileRef
+        });
+        const planningWrapper = $r('div', {
+            key: 'pp', id: 'planning-pile', style: {
+                width: cardWidth + "px", height: planningHeight, position: 'absolute', bottom: buttonsHeight + gapSize + 'px', left: cardWidth + gapSize + 'px'
+            }
+        }, planningPile);
 
         // deck
         const deckTop = (containerHeight - discardHeight - buttonsHeight - gapSize - cardHeight) / 2;
         const deckImage = $r('img', { src: '/static/cards/back.png', id: 'deck-pile', key: 'di', style: { width: cardWidth + 'px', height: cardHeight + 'px', position: 'absolute', top: deckTop + 'px' } });
 
         // button panel
-        let playMessage;
-        if (this.state.game.planningCards.length == 0) {
-            playMessage = "+" + (this.state.game.pickupAmount == 0 ? '1' : this.state.game.pickupAmount);
-        }
-        else if (this.state.game.cantPlayReason.length > 0) {
-            playMessage = this.state.game.cantPlayReason;
-        }
-        else {
-            playMessage = "PLAY CARDS";
-        }
+
 
         const buttons = $r(ButtonPanel, {
-            undoAvaliable: this.state.game.planningCards.length > 0 && this.state.game.yourTurn, playMessage: playMessage, playAvaliable: this.state.game.yourTurn && this.state.game.cantPlayReason.length == 0, guiScale: this.state.guiScale
+            undoAvaliable: this.state.game.undoAvaliable(), playMessage: this.state.game.getPlayButtonMessage(),
+            playAvaliable: this.state.game.playAvaliable(), guiScale: this.state.guiScale, ref: this.buttonsRef
         });
         const buttonsWrapper = $r('div', { key: 'bp', style: { position: 'absolute', bottom: '0', width: buttonsWidth + "px" } }, buttons);
 
         // info panel
         const infoHeight = this.state.guiScale * 4;
-        const infoPanel = $r(InfoPanel, { fontSize: this.state.guiScale * 1.2, turnString: this.state.game.turnString, pickupAmount: this.state.game.pickupAmount });
+        const infoPanel = $r(InfoPanel, { fontSize: this.state.guiScale * 1.2, turnString: this.state.game.turnString, pickupAmount: this.state.game.pickupAmount, ref: this.infoRef });
         const infoWrapper = $r('div', { style: { width: playerListWidth, height: infoHeight + 'px', lineHeight: infoHeight + 'px', position: 'absolute', right: '0', top: '0' } }, infoPanel);
 
         // player list
         const playerListHeight = containerHeight - infoHeight - chatWindowHeight - gapSize;
         const playerList = $r(PlayerListPanel, {
             width: playerListWidth, height: playerListHeight, guiScale: this.state.guiScale, players: this.state.game.players,
-            turn: this.state.game.turn, skip: this.state.game.skip, direction: this.state.game.direction, yourId: this.state.game.yourId
+            turn: this.state.game.turn, skip: this.state.game.skip, direction: this.state.game.direction, yourId: this.state.game.yourId, ref: this.playersRef
         });
         const playerListWrapper = $r('div', { key: 'plp', style: { position: 'absolute', textAlign: 'right', right: '0', top: infoHeight + 'px', width: playerListWidth, height: playerListHeight } }, playerList);
 
