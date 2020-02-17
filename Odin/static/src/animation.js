@@ -204,7 +204,7 @@ class CardAnimation extends AbsAnimation {
 
         this.cards = [];
 
-        let t = 0;
+        let t = props.delay;
         for (const cardProps of props.cards) {
             const card = { startTime: t, endTime: t + props.travelTime, id: cardProps['id'], name: cardProps['name'], url: cardProps['url'], sound: cardProps['sound'], ref: React.createRef() };
             if (cardProps['startPos'] !== undefined) card.startPos = cardProps['startPos'];

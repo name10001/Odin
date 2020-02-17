@@ -319,6 +319,14 @@ function getDeckPosition() {
 
 }
 
+function getPlayerPosition(playerId) {
+    const bounds = document.getElementById('player-' + playerId).getBoundingClientRect();
+    let x = bounds.left;
+    let y = bounds.top + (bounds.bottom - bounds.top) / 2;
+
+    return { x, y };
+}
+
 /**
  * Scrolling function with the mouse wheel
  */
@@ -525,7 +533,7 @@ class PlayerListPanel extends React.Component {
             const playerPanel = $r(PlayerPanel, { player, width: panelWidth, height: maxHeight * scale, isYou: player.id == this.state.yourId });
 
             panels.push($r('div', {
-                key: i, className: 'panel panel-default', style: {
+                key: i, id: 'player-' + player.id, className: 'panel panel-default', style: {
                     width: panelWidth + 'px', height: maxHeight * scale + 'px', margin: maxGap * scale + 'px 0 0 0', display: 'inline-block', textAlign: 'left', position: 'relative'
                 }
             }, playerPanel))
@@ -721,7 +729,7 @@ class OdinGui extends React.Component {
     }
 
     /**
-     * Animate playing cards
+     * Animate pickup cards
      */
     animatePickupFromDeck(cards) {
 
@@ -732,7 +740,7 @@ class OdinGui extends React.Component {
     }
 
     /**
-     * Animate playing cards
+     * Animate remove cards
      */
     animateRemoveCards(cards) {
         for (const card of cards) {
@@ -746,43 +754,111 @@ class OdinGui extends React.Component {
     }
 
     /**
-     * Animate playing cards
+     * Animate pickup from player
      */
-    animatePickupFromPlayer() {
-        console.log("TODO: ANIMATE");
-        eventHandler.finishedEvent();
+    animatePickupFromPlayer(cards, from) {
+        const width = this.state.guiScale * CARD_WIDTH / 2;
+        const height = this.state.guiScale * CARD_HEIGHT / 2;
+
+        const position = getPlayerPosition(from);
+        position.y -= height / 2;
+
+        const midPosition = { x: position.x - width * 2, y: position.y };
+        const midPosition2 = { x: midPosition.x - width, y: midPosition.y - height };
+
+        this.playCardAnimation('add-cardsA', cards, () => { }, () => { }, position, midPosition, undefined, width, height, 300, false, 0, false);
+        this.playCardAnimation('add-cardsB', cards, () => { }, (card) => {
+            game.addCard(card.id, card.name, card.url, false);
+            this.getCardScroller().updateStacks(game.yourStacks);
+        }, midPosition2, getHandCardPosition(null), '/static/sounds/card_pickup.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 400, false, 300);
+    }
+
+    /**
+     * Animate give cards to player
+     */
+    animateRemoveCardsToPlayer(cards, to) {
+        // deep clone the cards
+        const cards2 = [];
+
+        for (const card of cards) {
+            cards2.push({ 'startPos': getHandCardPosition(card['name']), 'name': card['name'], 'id': card['id'], 'url': card['url'] });
+        }
+
+        const width = this.state.guiScale * CARD_WIDTH / 2;
+        const height = this.state.guiScale * CARD_HEIGHT / 2;
+
+        const position = getPlayerPosition(to);
+        position.y -= height / 2;
+
+        const midPosition = { x: position.x - width * 2, y: position.y };
+        const midPosition2 = { x: midPosition.x - width, y: midPosition.y - height };
+
+        this.playCardAnimation('remove-cardsA', cards2, (card) => {
+            game.removeCard(card.id);
+            this.getCardScroller().updateStacks(game.yourStacks);
+        }, (card) => { }, getHandCardPosition(null), midPosition2, undefined, this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 400, false, 0, false);
+        this.playCardAnimation('remove-cardsB', cards, () => { }, () => { }, midPosition, position, '/static/sounds/card_play.mp3', width, height, 300, false, 400);
     }
 
     /**
      * Animate playing cards
      */
-    animatePlayerPickup() {
-        console.log("TODO: ANIMATE");
-        eventHandler.finishedEvent();
+    animatePlayerPickup(player, count) {
+        const cards = [];
+        for (let i = 0; i < count; i++) {
+            cards.push({ id: player + "_" + count, name: '', url: '/static/cards/back.png' });
+        }
+
+        const width = this.state.guiScale * CARD_WIDTH / 2;
+        const height = this.state.guiScale * CARD_HEIGHT / 2;
+
+        const position = getPlayerPosition(player);
+        position.y -= height / 2;
+
+        this.playCardAnimation('player-pickup', cards, () => { }, () => { }, getDeckPosition(), position, '/static/sounds/card_pickup.mp3', width, height);
+
+    }
+
+    /**
+     * Animate player removing cards
+     */
+    animatePlayerRemove(player, count) {
+        const cards = [];
+        for (let i = 0; i < count; i++) {
+            cards.push({ id: player + "_" + count, name: '', url: '/static/cards/back.png' });
+        }
+
+        const width = this.state.guiScale * CARD_WIDTH / 2;
+        const height = this.state.guiScale * CARD_HEIGHT / 2;
+
+        const position = getPlayerPosition(player);
+        position.y -= height / 2;
+
+        this.playCardAnimation('player-pickup', cards, () => { }, () => { }, position, getDeckPosition(), '/static/sounds/card_play.mp3', width, height);
     }
 
     /**
      * Animate playing cards
      */
-    animatePlayerCardTransfer() {
-        console.log("TODO: ANIMATE");
-        eventHandler.finishedEvent();
-    }
+    animatePlayerCardTransfer(from, to, count) {
+        const cards = [];
+        for (let i = 0; i < count; i++) {
+            cards.push({ id: player + "_" + count, name: '', url: '/static/cards/back.png' });
+        }
 
-    /**
-     * Animate playing cards
-     */
-    animateRemoveCardsToPlayer() {
-        console.log("TODO: ANIMATE");
-        eventHandler.finishedEvent();
-    }
+        const width = this.state.guiScale * CARD_WIDTH / 2;
+        const height = this.state.guiScale * CARD_HEIGHT / 2;
 
-    /**
-     * Animate playing cards
-     */
-    animatePlayerRemove() {
-        console.log("TODO: ANIMATE");
-        eventHandler.finishedEvent();
+        const fromPos = getPlayerPosition(from);
+        fromPos.y -= height / 2;
+
+        const toPos = getPlayerPosition(to);
+        toPos.y -= height / 2;
+
+        const midPos = { x: fromPos.x - width * 2, y: (fromPos.y + toPos.y) / 2 };
+
+        this.playCardAnimation('player-transferA', cards, () => { }, () => { }, fromPos, midPos, undefined, width, height, 200, false, 0, false);
+        this.playCardAnimation('player-transferB', cards, () => { }, () => { }, midPos, toPos, '/static/sounds/card_pickup.mp3', width, height, 200, false, 200);
     }
 
     /**
@@ -798,8 +874,10 @@ class OdinGui extends React.Component {
      * @param {Number} travelTime time for a card to travel from the start to the end (ms)
      * @param {Number} gap gap between each card beginning to move
      * @param {Boolean} reverse if the z-depth of each card should be reversed
+     * @param {Number} delay ms delay before the animation starts
+     * @param {Number} finishEvent if eventHandler.finishedEvent() should be called
      */
-    playCardAnimation(id, cards, moveStartFunction, moveEndFunction, startPos, endPos, sound, cardWidth, cardHeight, travelTime = 200, reverse = false) {
+    playCardAnimation(id, cards, moveStartFunction, moveEndFunction, startPos, endPos, sound, cardWidth, cardHeight, travelTime = 200, reverse = false, delay = 0, finishEvent = true) {
         let maxWaitTime = travelTime * 6;
         let gap = (maxWaitTime - maxWaitTime * Math.exp(-0.1 * cards.length)) / cards.length;
 
@@ -830,8 +908,8 @@ class OdinGui extends React.Component {
         }
 
         this.getAnimationHandler().playAnimation(id, () => $r(CardAnimation, {
-            key: id, id, moveStartFunction, moveEndFunction, startPos, endPos, cardWidth, cardHeight, cards, travelTime, gap, reverse, sound
-        }), () => eventHandler.finishedEvent());
+            key: id, id, moveStartFunction, moveEndFunction, startPos, endPos, cardWidth, cardHeight, cards, travelTime, gap, reverse, sound, delay, finishEvent
+        }), finishEvent ? () => eventHandler.finishedEvent() : () => {});
 
     }
 
