@@ -3,6 +3,7 @@
 control.js initialises the game, gui and handles game events.
 
 TODO:
+- Fix game.removeCard()
 - Finish creating all animations
 - Display a cross for skipping turns
 - Reformat the header and add a quit button

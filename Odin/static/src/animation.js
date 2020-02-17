@@ -159,6 +159,9 @@ class MovingCard extends React.Component {
         state.t = t;
         state.show = t >= this.props.startTime && t <= this.props.endTime;
 
+        // don't update if the card is not showing onscreen
+        if (!this.state.show && !state.show) return;
+
         if (state.show) {
             const interpolate = (t - this.props.startTime) / dt;
 
@@ -181,7 +184,7 @@ class MovingCard extends React.Component {
             }
             this.props.moveEndFunction({ id: this.props.id, name: this.props.name, url: this.props.url });
         }
-
+        
         this.setState(state);
     }
 
@@ -195,6 +198,8 @@ class MovingCard extends React.Component {
     }
 }
 
+const MAX_CARDS_IN_ANIMATION = 50;
+
 /**
  * Animate cards moving across the screen
  */
@@ -206,7 +211,7 @@ class CardAnimation extends AbsAnimation {
 
         let t = props.delay;
         for (const cardProps of props.cards) {
-            const card = { startTime: t, endTime: t + props.travelTime, id: cardProps['id'], name: cardProps['name'], url: cardProps['url'], sound: cardProps['sound'], ref: React.createRef() };
+            const card = { startTime: t, endTime: t + props.travelTime, id: cardProps['id'], name: cardProps['name'], url: cardProps['url'], ref: React.createRef() };
             if (cardProps['startPos'] !== undefined) card.startPos = cardProps['startPos'];
             if (cardProps['endPos'] !== undefined) card.endPos = cardProps['endPos'];
 
@@ -236,12 +241,24 @@ class CardAnimation extends AbsAnimation {
     render() {
         const cards = [];
 
+        // if too many cards, don't display (still update tho)
+
+        // I'm sorry I don't know how to describe these variables lmao
+        let i = 1;
+        const j = this.cards.length / MAX_CARDS_IN_ANIMATION;
+
+
         for (const card of this.cards) {
-            cards.push($r(MovingCard, {
-                ref: card.ref, startPos: card.startPos !== undefined ? card.startPos : this.props.startPos, endPos: card.endPos !== undefined ? card.endPos : this.props.endPos, startTime: card.startTime,
-                endTime: card.endTime, url: card.url, cardWidth: this.props.cardWidth, cardHeight: this.props.cardHeight, key: card.id, id: card.id, name: card.name, sound: card.sound,
-                moveStartFunction: this.props.moveStartFunction, moveEndFunction: this.props.moveEndFunction
-            }));
+            
+            if (i >= 1) {
+                cards.push($r(MovingCard, {
+                    ref: card.ref, startPos: card.startPos !== undefined ? card.startPos : this.props.startPos, endPos: card.endPos !== undefined ? card.endPos : this.props.endPos, startTime: card.startTime,
+                    endTime: card.endTime, url: card.url, cardWidth: this.props.cardWidth, cardHeight: this.props.cardHeight, key: card.id, id: card.id, name: card.name, sound: this.props.sound,
+                    moveStartFunction: this.props.moveStartFunction, moveEndFunction: this.props.moveEndFunction
+                }));
+                i -= j;
+            }
+            i++;
         }
 
         return cards;

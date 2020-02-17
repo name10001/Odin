@@ -882,7 +882,7 @@ class OdinGui extends React.Component {
         let gap = (maxWaitTime - maxWaitTime * Math.exp(-0.1 * cards.length)) / cards.length;
 
         // minimum gap between sounds is 50ms
-        const minSoundGap = 50;
+        /*const minSoundGap = 50;
         if (gap >= minSoundGap) {
             for (const card of cards) {
                 card['sound'] = sound;
@@ -900,7 +900,7 @@ class OdinGui extends React.Component {
                 i += gap;
             }
 
-        }
+        }*/
 
         // generate unique id
         while (this.getAnimationHandler().hasAnimation(id)) {
