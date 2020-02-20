@@ -173,6 +173,10 @@ function CardButton(props) {
     const cardWidth = props.guiScale * CARD_WIDTH + "px";
     const cardHeight = props.guiScale * CARD_HEIGHT + "px";
 
+    if (props.stack.cardIds.length == 0) {
+        return $r('div', { style: { display: 'block', width: cardWidth, height: cardHeight, margin: props.guiScale / 2 + "px", position: 'relative' } });
+    }
+
     const cardButtonChildren = [];
     const card = $r('img', { key: '1', src: props.stack.url, width: cardWidth, height: cardHeight, alt: props.stack.name, style: { position: 'absolute', left: '0', top: '0', zIndex: '1' } });
 
@@ -232,7 +236,7 @@ function CardPanel(props) {
         }, "+ALL");
 
     // return entire card stack
-    return $r('div', { id: 'hand-' + props.stack.name, style: { width: width, display: "inline-block", paddingBottom: props.guiScale / 2 + "px" } }, cardButton, help, addAll);
+    return $r('div', { id: 'hand-' + props.stack.name, style: { width: width, display: "inline-block", paddingBottom: props.guiScale / 2 + "px", lineHeight: 'normal', verticalAlign: 'bottom' } }, cardButton, help, addAll);
 }
 
 /**
@@ -243,11 +247,8 @@ function getHandCardPosition(cardName) {
     let element = document.getElementById('hand-' + cardName);
 
     if (!element) {
-        element = document.getElementById('card-scroller');
-
-        const bounds = element.getBoundingClientRect();
-        let x = window.innerWidth / 2;
-        let y = bounds.top;
+        let x = window.innerWidth / 2 - gui.state.guiScale * CARD_WIDTH;
+        let y = window.innerHeight - gui.state.guiScale * (CARD_HEIGHT + 5) - 20;
 
         return { x, y };
 
@@ -378,7 +379,12 @@ class CardScroller extends React.Component {
             $r(CardPanel, { key: stack.name, guiScale: this.props.guiScale, stack: stack })
         );
 
-        return $r('div', { id: 'card-scroller', style: { width: '100%', overflowX: 'scroll', textAlign: 'center', whiteSpace: 'nowrap', position: 'fixed', bottom: '0px', display: this.state.hidden ? 'none' : 'block' } }, panels);
+        return $r('div', {
+            id: 'card-scroller', style: {
+                width: '100%', overflowX: 'scroll', textAlign: 'center', whiteSpace: 'nowrap', lineHeight: this.props.guiScale * (CARD_HEIGHT + 5) + 'px',
+                position: 'absolute', bottom: '0px', display: this.state.hidden ? 'none' : 'block'
+            }
+        }, panels);
     }
 }
 
@@ -674,10 +680,10 @@ class OdinGui extends React.Component {
 
         this.playCardAnimation('play-cards', cards, (card) => {
             if (!fromDeck) game.removeCard(card.id);
-            this.getCardScroller().updateStacks(game.yourStacks);
+            if (card.update) this.getCardScroller().updateStacks(game.yourStacks);
         }, (card) => {
             game.planningCards.push(card);
-            this.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
+            if (card.update) this.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
         }, getDeckPosition(), getPlanningPileTopPosition(), '/static/sounds/card_play.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
     }
 
@@ -685,14 +691,14 @@ class OdinGui extends React.Component {
      * Animate cards moving from planning pile to discard pile
      */
     animateFinishPlayCards(cards) {
-        this.playCardAnimation('finish-play-cards', cards, () => {
+        this.playCardAnimation('finish-play-cards', cards, (card) => {
             game.planningCards.splice(0, 1);
-            this.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
+            if (card.update) this.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
         }, (card) => {
             game.topCards.splice(0, 1);
             game.topCards.push(card.url);
 
-            this.getDiscardPile().updateCards(game.topCards);
+            if (card.update) this.getDiscardPile().updateCards(game.topCards);
         }, getPlanningPileBottomPosition(), getDiscardPilePosition(), '/static/sounds/card_play.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT);
     }
 
@@ -708,12 +714,12 @@ class OdinGui extends React.Component {
             card['endPos'] = getHandCardPosition(card['name']);
         }
 
-        this.playCardAnimation('undo-cards', cards, () => {
+        this.playCardAnimation('undo-cards', cards, (card) => {
             game.planningCards.pop();
-            this.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
+            if (card.update) this.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
         }, (card) => {
             game.addCard(card.id, card.name, card.url, false);
-            this.getCardScroller().updateStacks(game.yourStacks);
+            if (card.update) this.getCardScroller().updateStacks(game.yourStacks);
         }, getPlanningPileBottomPosition(), null, '/static/sounds/card_pickup.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 200, true);
     }
 
@@ -735,7 +741,7 @@ class OdinGui extends React.Component {
 
         this.playCardAnimation('add-cards', cards, () => { }, (card) => {
             game.addCard(card.id, card.name, card.url, false);
-            this.getCardScroller().updateStacks(game.yourStacks);
+            if (card.update) this.getCardScroller().updateStacks(game.yourStacks);
         }, getDeckPosition(), getHandCardPosition(null), '/static/sounds/card_pickup.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 500);
     }
 
@@ -749,7 +755,7 @@ class OdinGui extends React.Component {
 
         this.playCardAnimation('remove-cards', cards, (card) => {
             game.removeCard(card.id);
-            this.getCardScroller().updateStacks(game.yourStacks);
+            if (card.update) this.getCardScroller().updateStacks(game.yourStacks);
         }, (card) => { }, getDeckPosition(), getDeckPosition(), '/static/sounds/card_play.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 350);
     }
 
@@ -769,7 +775,8 @@ class OdinGui extends React.Component {
         this.playCardAnimation('add-cardsA', cards, () => { }, () => { }, position, midPosition, undefined, width, height, 300, false, 0, false);
         this.playCardAnimation('add-cardsB', cards, () => { }, (card) => {
             game.addCard(card.id, card.name, card.url, false);
-            this.getCardScroller().updateStacks(game.yourStacks);
+
+            if (card.update) this.getCardScroller().updateStacks(game.yourStacks);
         }, midPosition2, getHandCardPosition(null), '/static/sounds/card_pickup.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 400, false, 300);
     }
 
@@ -795,7 +802,7 @@ class OdinGui extends React.Component {
 
         this.playCardAnimation('remove-cardsA', cards2, (card) => {
             game.removeCard(card.id);
-            this.getCardScroller().updateStacks(game.yourStacks);
+            if (card.update) this.getCardScroller().updateStacks(game.yourStacks);
         }, (card) => { }, getHandCardPosition(null), midPosition2, undefined, this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, 400, false, 0, false);
         this.playCardAnimation('remove-cardsB', cards, () => { }, () => { }, midPosition, position, '/static/sounds/card_play.mp3', width, height, 300, false, 400);
     }
@@ -909,7 +916,7 @@ class OdinGui extends React.Component {
 
         this.getAnimationHandler().playAnimation(id, () => $r(CardAnimation, {
             key: id, id, moveStartFunction, moveEndFunction, startPos, endPos, cardWidth, cardHeight, cards, travelTime, gap, reverse, sound, delay, finishEvent
-        }), finishEvent ? () => eventHandler.finishedEvent() : () => {});
+        }), finishEvent ? () => eventHandler.finishedEvent() : () => { });
 
     }
 

@@ -165,9 +165,19 @@ $(document).ready(() => {
                     eventHandler.addEvent(() => {
                         gui.animateRemoveCards(data["cards"]);
                     });
+                    eventHandler.addEvent(() => {
+                        game.clearEmptyStacks();
+                        gui.getCardScroller().updateStacks(game.yourStacks);
+                        eventHandler.finishedEvent();
+                    });
                 } else {
                     eventHandler.addEvent(() => {
                         gui.animateRemoveCardsToPlayer(data["cards"], data["to"]);
+                    });
+                    eventHandler.addEvent(() => {
+                        game.clearEmptyStacks();
+                        gui.getCardScroller().updateStacks(game.yourStacks);
+                        eventHandler.finishedEvent();
                     });
                 }
                 break;

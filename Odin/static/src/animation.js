@@ -175,16 +175,16 @@ class MovingCard extends React.Component {
 
         // has just started moving
         if (!this.state.show && state.show) {
-            this.props.moveStartFunction({ id: this.props.id, name: this.props.name, url: this.props.url });
+            this.props.moveStartFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: true });
         }
         // has just ended moving
         else if (this.state.show && !state.show) {
             if (this.props.sound !== undefined) {
                 playSound(this.props.sound);
             }
-            this.props.moveEndFunction({ id: this.props.id, name: this.props.name, url: this.props.url });
+            this.props.moveEndFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: true });
         }
-        
+
         this.setState(state);
     }
 
@@ -195,6 +195,41 @@ class MovingCard extends React.Component {
                 position: 'fixed', left: this.state.x, top: this.state.y, zIndex: 8000
             }
         });
+    }
+}
+
+/**
+ * This card is a simplified moving card that does not display, but will register updates
+ * This is to avoid lag when too many cards are moving at once.
+ */
+class NoDisplayCard {
+
+    constructor(props) {
+        this.current = this;
+        this.props = props;
+        this.t = 0;
+        this.show = false;
+        this.noDisplayCard = true;
+    }
+
+    update(t) {
+        const show = t >= this.props.startTime && t <= this.props.endTime;
+
+        // has just started moving
+        if (!this.show && show) {
+            this.props.moveStartFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: false });
+        }
+        // has just ended moving
+        else if (this.show && !show) {
+            this.props.moveEndFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: false });
+        }
+
+        this.show = show;
+        this.t = t;
+    }
+
+    hasStoppedMoving() {
+        return this.t > this.props.endTime;
     }
 }
 
@@ -209,11 +244,35 @@ class CardAnimation extends AbsAnimation {
 
         this.cards = [];
 
+
+        // if too many cards, don't display (still update tho)
+
+        // I'm sorry I don't know how to describe these variables lmao
+        let i = 1;
+        const j = props.cards.length / MAX_CARDS_IN_ANIMATION;
+
         let t = props.delay;
         for (const cardProps of props.cards) {
-            const card = { startTime: t, endTime: t + props.travelTime, id: cardProps['id'], name: cardProps['name'], url: cardProps['url'], ref: React.createRef() };
+
+            const card = { startTime: t, endTime: t + props.travelTime, id: cardProps['id'], name: cardProps['name'], url: cardProps['url'] };
             if (cardProps['startPos'] !== undefined) card.startPos = cardProps['startPos'];
             if (cardProps['endPos'] !== undefined) card.endPos = cardProps['endPos'];
+
+
+            // create reference. If no 
+            let ref;
+            if (i >= 1) {
+                ref = React.createRef();
+                i -= j;
+            }
+            else {
+                card.moveStartFunction = props.moveStartFunction;
+                card.moveEndFunction = props.moveEndFunction;
+                ref = new NoDisplayCard(card);
+            }
+            i++;
+
+            card.ref = ref;
 
             this.cards.push(card); // TODO adjust the times
 
@@ -241,24 +300,14 @@ class CardAnimation extends AbsAnimation {
     render() {
         const cards = [];
 
-        // if too many cards, don't display (still update tho)
-
-        // I'm sorry I don't know how to describe these variables lmao
-        let i = 1;
-        const j = this.cards.length / MAX_CARDS_IN_ANIMATION;
-
-
         for (const card of this.cards) {
-            
-            if (i >= 1) {
+            if (card.ref.current == null || !card.ref.current.noDisplayCard) {
                 cards.push($r(MovingCard, {
                     ref: card.ref, startPos: card.startPos !== undefined ? card.startPos : this.props.startPos, endPos: card.endPos !== undefined ? card.endPos : this.props.endPos, startTime: card.startTime,
                     endTime: card.endTime, url: card.url, cardWidth: this.props.cardWidth, cardHeight: this.props.cardHeight, key: card.id, id: card.id, name: card.name, sound: this.props.sound,
                     moveStartFunction: this.props.moveStartFunction, moveEndFunction: this.props.moveEndFunction
                 }));
-                i -= j;
             }
-            i++;
         }
 
         return cards;

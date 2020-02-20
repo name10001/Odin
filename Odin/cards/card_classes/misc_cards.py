@@ -644,7 +644,7 @@ class Jesus(AbstractCard):
     NAME = "Jesus"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'jesus.png'
-    CARD_FREQUENCY = CardFrequency(1.2, 1, 0.5, 0.7, max_cards=4, starting=0)
+    CARD_FREQUENCY = CardFrequency(1.2, 1, 0.5, 0.7, max_cards=4, starting=0) 
     CARD_TYPE = "Jesus"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose any person (including yourself) to reset their entire hand " \

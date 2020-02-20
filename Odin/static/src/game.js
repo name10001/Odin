@@ -258,7 +258,7 @@ class Game {
                 this.yourTurn = false;
             }
         }
-        
+
         gui.updateGame(this);
         eventHandler.finishedEvent();
     }
@@ -297,13 +297,51 @@ class Game {
      */
     removeCard(id) {
         if (!(id in this.cardIndices)) return;
+
         const index = this.cardIndices[id];
-        if (!this.cardIndices[index]) return;
 
-        this.yourStacks[index].remove(id);
+        const stack = this.yourStacks[index];
+        if (!stack) return;
 
-        if (this.yourStacks[index].cardIds.length == 0) {
+        stack.remove(id);
+        delete this.cardIndices[id];
+
+        /*if (stack.cardIds.length == 0) {
             this.yourStacks.splice(index, 1);
+            delete this.cardNameIndices[stack.name];
+            // recalculate all the fucking indices u fuck
+            for (let i = index; i < this.yourStacks.length; i++) {
+                const stack2 = this.yourStacks[i];
+                this.cardNameIndices[stack2.name] = i;
+                for (let id2 of stack2.cardIds) {
+                    this.cardIndices[id2] = i;
+                }
+            }
+        }*/
+    }
+
+    /**
+     * Loop through all stacks and remove stacks which empty
+     * Also recalculate the indices
+     */
+    clearEmptyStacks() {
+        this.cardIndices = {};
+        this.cardNameIndices = {};
+
+        let i = 0;
+        while(i < this.yourStacks.length) {
+            let cardStack = this.yourStacks[i];
+            if(cardStack.cardIds.length == 0) {
+                //delete
+                this.yourStacks.splice(i, 1);
+            }
+            else {
+                this.cardNameIndices[cardStack.name] = i;
+                for(let id of cardStack.cardIds) {
+                    this.cardIndices[id] = i;
+                }
+                i++;
+            }
         }
     }
 
