@@ -416,15 +416,21 @@ class InfoPanel extends React.Component {
     }
 
     render() {
-        const turnString = $r('span', { key: '1', style: { color: "#fff", display: 'inline-block', verticalAlign: 'middle', fontSize: this.props.fontSize, float: 'left' } }, this.state.turnString);
+        const turnString = $r('span', { key: '1', style: { color: "#fff", fontSize: this.props.fontSize, float: 'left', position: 'absolute', top: this.props.height * 0.7 + 'px' } }, this.state.turnString);
+
+        const quitButton = $r('button', {
+            key: '2', className: 'btn btn-primary', onClick: () => game.quit(), style: {
+                position: 'absolute', padding: this.props.height * 0.025 + 'px ' + this.props.height * 0.1 + 'px', right: '0', fontSize: this.props.fontSize, top: this.props.height * 0.15 + 'px'
+            }
+        }, 'Quit');
 
         if (this.state.pickupAmount > 0) {
-            const pickupString = $r('span', { key: '2', style: { color: "#fff", fontSize: this.props.fontSize, float: 'right' } }, '+' + this.state.pickupAmount);
+            const pickupString = $r('span', { key: '3', style: { color: "#fff", fontSize: this.props.fontSize, float: 'left', position: 'absolute', top: this.props.height * 0.2 + 'px' } }, '+' + this.state.pickupAmount);
 
-            return [turnString, pickupString];
+            return [turnString, pickupString, quitButton];
         }
 
-        return turnString;
+        return [turnString, quitButton];
     }
 }
 
@@ -476,10 +482,22 @@ function PlayerPanel(props) {
         effects.push($r('span', { key: effect['url'] + 'g', style: { width: props.height * 0.1 + 'px', display: 'inline-block' } }));
     }
 
+    const returnItems = [];
+
+    if(props.skip) {
+
+        // skip
+        const skipBox = $r('div', { key: '3', className: 'panel panel-default', style: { backgroundColor: '#f00', opacity: '0.2', position: 'absolute', width: '100%', height: '100%' } });
+
+        returnItems.push(skipBox);
+    }
 
     const body = $r('div', { key: '2', className: 'panel-body', style: { height: bodyHeight, lineHeight: bodyHeight, overflow: 'hidden', padding: '0 ' + fontSize + 'px' } }, effects);
 
-    return [heading, body];
+    returnItems.push(heading);
+    returnItems.push(body);
+
+    return returnItems;
 }
 
 /**
@@ -530,13 +548,14 @@ class PlayerListPanel extends React.Component {
         const panels = [];
 
         let i = this.state.turn;
+        let skip = this.state.skip;
 
         do {
             const player = this.props.players[i];
 
             const panelWidth = i == this.state.turn ? this.props.width : this.props.width * 0.9;
 
-            const playerPanel = $r(PlayerPanel, { player, width: panelWidth, height: maxHeight * scale, isYou: player.id == this.state.yourId });
+            const playerPanel = $r(PlayerPanel, { player, width: panelWidth, height: maxHeight * scale, isYou: player.id == this.state.yourId, skip: skip >= 0 && i != this.state.turn });
 
             panels.push($r('div', {
                 key: i, id: 'player-' + player.id, className: 'panel panel-default', style: {
@@ -547,6 +566,8 @@ class PlayerListPanel extends React.Component {
             i += this.state.direction;
             if (i < 0) i = nPlayers - 1;
             else if (i >= nPlayers) i = 0;
+
+            skip--;
         } while (i != this.state.turn);
 
         return panels;
@@ -888,27 +909,6 @@ class OdinGui extends React.Component {
         let maxWaitTime = travelTime * 6;
         let gap = (maxWaitTime - maxWaitTime * Math.exp(-0.1 * cards.length)) / cards.length;
 
-        // minimum gap between sounds is 50ms
-        /*const minSoundGap = 50;
-        if (gap >= minSoundGap) {
-            for (const card of cards) {
-                card['sound'] = sound;
-            }
-        }
-        else {
-            // prevent too many sounds from being played at the same time
-            let i = minSoundGap;
-
-            for (const card of cards) {
-                if (i >= minSoundGap) {
-                    card['sound'] = sound;
-                    i -= 50;
-                }
-                i += gap;
-            }
-
-        }*/
-
         // generate unique id
         while (this.getAnimationHandler().hasAnimation(id)) {
             id += "_";
@@ -1110,9 +1110,9 @@ class OdinGui extends React.Component {
         const buttonsWrapper = $r('div', { key: 'bp', style: { position: 'absolute', bottom: '0', width: buttonsWidth + "px" } }, buttons);
 
         // info panel
-        const infoHeight = this.state.guiScale * 4;
-        const infoPanel = $r(InfoPanel, { fontSize: this.state.guiScale * 1.2, turnString: this.state.game.turnString, pickupAmount: this.state.game.pickupAmount, ref: this.infoRef });
-        const infoWrapper = $r('div', { style: { width: playerListWidth, height: infoHeight + 'px', lineHeight: infoHeight + 'px', position: 'absolute', right: '0', top: '0' } }, infoPanel);
+        const infoHeight = this.state.guiScale * 8;
+        const infoPanel = $r(InfoPanel, { fontSize: this.state.guiScale * 1.5, height: infoHeight, turnString: this.state.game.turnString, pickupAmount: this.state.game.pickupAmount, ref: this.infoRef });
+        const infoWrapper = $r('div', { style: { width: playerListWidth, height: infoHeight + 'px', position: 'absolute', right: '0', top: '0' } }, infoPanel);
 
         // player list
         const playerListHeight = containerHeight - infoHeight - chatWindowHeight - gapSize;
