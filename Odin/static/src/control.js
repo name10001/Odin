@@ -3,10 +3,8 @@
 control.js initialises the game, gui and handles game events.
 
 TODO:
-- Fix game.removeCard()
-- Finish creating all animations
-- Display a cross for skipping turns
-- Reformat the header and add a quit button
+- Communist and Capitalist animations
+- WHEN ANOTHER PLAYER PLAYS CARDS IT SHOULD COME FROM THE TOP
 
 
 
@@ -64,6 +62,7 @@ function playSound(sound) {
 }
 
 
+
 /**
  * Main method - sets up game, gui and listeners
  */
@@ -94,9 +93,9 @@ $(document).ready(() => {
 
     // popup message
     socket.on('popup message', function (message) {
-        //game.addEvent(() => {
-        //    gui.currentAnimation = new MessageAnimation(message);
-        //}));
+        eventHandler.addEvent(() => {
+            gui.showPopupMessage(message, 3000);
+        });
     });
 
     // update the game
@@ -195,9 +194,38 @@ $(document).ready(() => {
                 break;
             //GENOCIDE
             case "genocide":
+                eventHandler.addEvent(() => {
+                    playSound('/static/sounds/genocide.mp3');
+
+                    const message = "All " + data["banned"] + " cards have been removed from the game";
+
+                    gui.showPopupMessage(message, 4000, 0);
+                });
+                eventHandler.addEvent(() => {
+                    gui.animateRemoveCards(data["cards"]);
+                });
                 break;
             //POSSESS
             case "possess":
+                eventHandler.addEvent(() => {
+                    playSound('/static/sounds/possess.mp3');
+
+                    const possessorIndex = game.getPlayerIndex(data['possessor']);
+                    const possessedIndex = game.getPlayerIndex(data['possessed']);
+
+
+                    let message;
+                    if (possessedIndex == game.getPlayerIndex()) {
+                        message = "You have been possessed by " + game.players[possessorIndex].name;
+                    }
+                    else {
+                        message = game.players[possessedIndex].name + " was possessed by " + game.players[possessorIndex].name;
+                    }
+
+                    gui.showPopupMessage(message, 4000, 0);
+                });
+
+
                 break;
             //SOUND EFFECT - FOR THINGS LIKE 69 NICE
             case "sound":

@@ -484,7 +484,7 @@ function PlayerPanel(props) {
 
     const returnItems = [];
 
-    if(props.skip) {
+    if (props.skip) {
 
         // skip
         const skipBox = $r('div', { key: '3', className: 'panel panel-default', style: { backgroundColor: '#f00', opacity: '0.2', position: 'absolute', width: '100%', height: '100%' } });
@@ -1047,6 +1047,17 @@ class OdinGui extends React.Component {
      */
     closePopup(doCloseFunction) {
         this.popupRef.current.closePopup(doCloseFunction);
+    }
+
+    /**
+     * Show a popup message on screen
+     * @param {String} message 
+     * @param {Number} time 
+     */
+    showPopupMessage(message, time, fadeIn = time * 0.1, fadeOut = time * 0.1) {
+        gui.getAnimationHandler().playAnimation('text',
+            () => $r(MessageAnimation, { key: 'text', id: 'text', message, time, fadeIn, fadeOut }),
+            () => eventHandler.finishedEvent());
     }
 
     /**

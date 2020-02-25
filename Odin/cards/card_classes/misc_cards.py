@@ -621,7 +621,8 @@ class Genocide(AbstractCard):
                 json_to_send["cards"] = [
                     {
                         "id": card.get_id(),
-                        "card image url": card.get_url()
+                        "url": card.get_url(),
+                        "name": card.get_name()
                     } for card in removed_cards
                 ]
                 game_player.send_animation(json_to_send)
@@ -632,7 +633,8 @@ class Genocide(AbstractCard):
                 json_to_send["cards"] = [
                     {
                         "id": card.get_id(),
-                        "card image url": card.get_url()
+                        "url": card.get_url(),
+                        "name": card.get_name()
                     } for card in removed_cards
                 ]
                 game_player.send_animation(json_to_send)
@@ -725,14 +727,8 @@ class Thanos(AbstractCard):
 
         player.refresh_card_play_animation()
 
-        json_to_send = {
-            "type": "thanos",
-            "cards": [{
-                "id": card.get_id(),
-                "card image url": card.get_url()
-            } for card in removed]
-        }
-        player.send_animation(json_to_send)
+        self.game.animate_card_transfer(removed, cards_from=player, cards_to="deck")
+        
         self.game.update_players()
 
 

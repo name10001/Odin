@@ -118,6 +118,42 @@ class AbsAnimation extends React.Component {
     }
 }
 
+class MessageAnimation extends AbsAnimation {
+    constructor(props) {
+        super(props);
+
+        this.message = props.message;
+        this.time = props.time;
+        this.fadeIn = props.fadeIn;
+        this.fadeOut = props.fadeOut;
+
+        this.state = { opacity: 0 };
+    }
+
+    update(t) {
+
+        if (t > this.time) {
+            gui.getAnimationHandler().endAnimation(this.props.id);
+
+        } else if (t < this.fadeIn) {
+            this.setState({ opacity: t / this.fadeIn });
+
+        } else if (t > this.time - this.fadeOut) {
+            this.setState({ opacity: (this.time - t) / this.fadeOut });
+
+        } else {
+            this.setState({ opacity: 1 });
+        }
+    }
+
+    render() {
+        const text = $r('h1', { key: '1', style: { position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: this.state.opacity, color: '#fff', zIndex: '9999' } }, this.message);
+
+        const background = $r('div', { key: '2', style: { left: '0', top: '0', width: '100%', height: '100%', position: 'fixed', backgroundColor: '#000', opacity: 0.5 * this.state.opacity, zIndex: '9998' } });
+        return [background, text];
+    }
+}
+
 
 /**
  * A card that moves from one position to another on the screen.
