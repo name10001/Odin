@@ -15,6 +15,10 @@ const CARD_WIDTH = 9;
 const CARD_HEIGHT = CARD_WIDTH / CARD_RATIO;
 const MIN_WIDTH = 48;//in terms of GUI_SCALE units
 const MIN_HEIGHT = 64;
+const PICKUP_TIME = 500;
+const REMOVE_TIME = 350;
+const CARD_TRANSFER_TIME = 200;
+const MAX_CARD_TRANSFER_TIME = 1500;
 
 const $r = React.createElement;
 
@@ -188,9 +192,9 @@ $(document).ready(() => {
                 break;
             //COMMUNIST CARD
             case "communist":
-                break;
-            //THANOS
-            case "thanos":
+                eventHandler.addEvent(() => {
+                    gui.animateCommunism(data['cards']);
+                });
                 break;
             //GENOCIDE
             case "genocide":

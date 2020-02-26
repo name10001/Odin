@@ -286,8 +286,10 @@ class CardAnimation extends AbsAnimation {
         // I'm sorry I don't know how to describe these variables lmao
         let i = 1;
         const j = props.cards.length / MAX_CARDS_IN_ANIMATION;
+        let k = props.cards.length;
 
         let t = props.delay;
+
         for (const cardProps of props.cards) {
 
             const card = { startTime: t, endTime: t + props.travelTime, id: cardProps['id'], name: cardProps['name'], url: cardProps['url'] };
@@ -297,7 +299,7 @@ class CardAnimation extends AbsAnimation {
 
             // create reference. If no 
             let ref;
-            if (i >= 1) {
+            if (i >= 1 || k == 1) {
                 ref = React.createRef();
                 i -= j;
             }
@@ -313,6 +315,7 @@ class CardAnimation extends AbsAnimation {
             this.cards.push(card); // TODO adjust the times
 
             t += props.gap;
+            k--;
         }
         if (props.reverse) {
             this.cards.reverse();
@@ -347,5 +350,66 @@ class CardAnimation extends AbsAnimation {
         }
 
         return cards;
+    }
+}
+
+class CommunistAnimation extends AbsAnimation {
+    constructor(props) {
+        super(props);
+
+        this.initDelay = 3200;
+        this.midDelay = 3300;
+        this.endDelay = 3900;
+
+        this.removeCards = [];
+        for (const stack of game.yourStacks) {
+            for (const id of stack.cardIds) {
+                this.removeCards.push({ 'url': stack.url, 'name': stack.name, 'id': id });
+            }
+        }
+
+        this.pickupCards = props.cards;
+
+        this.state = { stateIndex: 0 };
+    }
+
+    update(t) {
+
+        if (t > this.initDelay && this.state.stateIndex == 0) {
+            gui.animateRemoveCards(this.removeCards, getDeckPosition(), false);
+            this.setState({ stateIndex: 1 });
+        }
+
+        if (t > this.initDelay + MAX_CARD_TRANSFER_TIME + REMOVE_TIME && this.state.stateIndex == 1) {
+            game.clearEmptyStacks();
+            gui.getCardScroller().updateStacks(game.yourStacks);
+            this.setState({ stateIndex: 2 });
+        }
+
+        if (t > this.initDelay + this.midDelay && this.state.stateIndex == 2) {
+            gui.animatePickupFromDeck(this.pickupCards, getDeckPosition(), false);
+            this.setState({ stateIndex: 3 });
+        }
+
+        if (t > this.initDelay + this.midDelay + this.endDelay && this.state.stateIndex == 3) {
+            gui.getAnimationHandler().endAnimation(this.props.id);
+        }
+    }
+
+    render() {
+        // guiScale shorthand
+        const s = gui.state.guiScale;
+
+        let width = s * 40;
+        let height = s * 20;
+
+
+        const flagImg = $r('img', { key: 'flag', width, height, src: '/static/soviet.png', style: { position: 'absolute' } })
+
+
+        const stalinImg = $r('img', { key: 'stalin', width: height * 0.8, height: height * 0.8, src: '/static/stalin.png', style: { position: 'absolute', right: height * 0.1 + 'px', top: height * 0.1 + 'px' }, alt: 'ya boi stalin' });
+
+
+        return $r('div', { id: 'communist-div', style: { width, height, position: 'fixed', left: s * 10 + 'px', top: s * 10 + 'px', zIndex: '7999' } }, [flagImg, stalinImg]);
     }
 }

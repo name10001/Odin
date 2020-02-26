@@ -430,7 +430,8 @@ class Communist(AbstractCard):
     NAME = "Communist"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'communist.png'
-    CARD_FREQUENCY = CardFrequency(0, 0.8, 0.5, 0.1, starting=0, max_cards=1)
+    CARD_FREQUENCY = CardFrequency(
+        50, starting=0, max_cards=1)  # 0, 0.8, 0.5, 0.1
     CARD_TYPE = "Communist"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded."
@@ -464,7 +465,7 @@ class Communist(AbstractCard):
                 "cards": [{
                     "id": card.get_id(),
                     "name": card.get_name(),
-                    "card image url": card.get_url()
+                    "url": card.get_url()
                 } for card in player.hand]
             }
 
@@ -646,7 +647,7 @@ class Jesus(AbstractCard):
     NAME = "Jesus"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'jesus.png'
-    CARD_FREQUENCY = CardFrequency(1.2, 1, 0.5, 0.7, max_cards=4, starting=0) 
+    CARD_FREQUENCY = CardFrequency(1.2, 1, 0.5, 0.7, max_cards=4, starting=0)
     CARD_TYPE = "Jesus"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose any person (including yourself) to reset their entire hand " \
@@ -727,8 +728,9 @@ class Thanos(AbstractCard):
 
         player.refresh_card_play_animation()
 
-        self.game.animate_card_transfer(removed, cards_from=player, cards_to="deck")
-        
+        self.game.animate_card_transfer(
+            removed, cards_from=player, cards_to="deck")
+
         self.game.update_players()
 
 
@@ -965,6 +967,7 @@ class Steal(AbstractCard):
         self.game.animate_card_transfer(
             [card], cards_to=player, cards_from=other_player)
 
+
 class Fire(AbstractCard):
     NAME = "Fire"
     CARD_IMAGE_URL = 'fire.png'
@@ -994,7 +997,7 @@ class Fire(AbstractCard):
         chosen_player = self.game.get_player(player_id)
 
         effect = chosen_player.get_effect("Fire")
-        
+
         if effect is None:
             effect = FireEffect(chosen_player, 3, 3)
             chosen_player.add_effect(effect)
