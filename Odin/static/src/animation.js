@@ -429,8 +429,8 @@ class CommunistAnimation extends AbsAnimation {
         // guiScale shorthand
         const s = gui.state.guiScale;
 
-        let width = s * 40;
-        let height = s * 20;
+        let width = s * 36;
+        let height = s * 18;
 
 
         const flagImg = $r('img', { key: 'flag', width, height, src: '/static/soviet.png', style: { position: 'absolute' } })
@@ -441,6 +441,6 @@ class CommunistAnimation extends AbsAnimation {
         const ourCards = $r('span', { key: 'text', style: { position: 'absolute', left: height * 0.1, bottom: height * 0.1, fontSize: height * 0.1, color: '#fff' } }, 'Our Cards: ' + this.state.cards);
 
 
-        return $r('div', { id: 'communist-div', style: { width, height, position: 'fixed', left: s * 10 + 'px', top: s * 10 + 'px', zIndex: '7999' } }, [flagImg, stalinImg, ourCards]);
+        return $r('div', { id: 'communist-div', style: { width, height, position: 'fixed', left: s * 6 + 'px', top: s * 6 + 'px', zIndex: '7999' } }, [flagImg, stalinImg, ourCards]);
     }
 }

@@ -430,8 +430,7 @@ class Communist(AbstractCard):
     NAME = "Communist"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'communist.png'
-    CARD_FREQUENCY = CardFrequency(
-        50, starting=0, max_cards=1)  # 0, 0.8, 0.5, 0.1
+    CARD_FREQUENCY = CardFrequency(0, 0.8, 0.5, 0.1, starting=0, max_cards=1)
     CARD_TYPE = "Communist"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded."
