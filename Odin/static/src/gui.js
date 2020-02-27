@@ -634,27 +634,27 @@ class ChatWindow extends React.Component {
         // message dialog window
         const allMessages = [];
         let i = 0;
-        allMessages.push($r('p', { key: i++, style: { color: '#999' } }, "-- Beginning of chat --"));
+        allMessages.push($r('p', { key: i++ + '', style: { color: '#999' } }, "-- Beginning of chat --"));
 
         for (const chat of this.state.chat) {
-            allMessages.push($r('p', { key: i++ }, [
+            allMessages.push($r('p', { key: i++ + '' }, [
                 $r('span', { key: 'player', style: { color: '#2e6da4', fontWeight: 'bold' } }, chat['player'] + ": "),
                 chat['message']
             ]));
         }
-        allMessages.push($r('div', { ref: this.endOfChat }));
+        allMessages.push($r('div', { key: i++ + '', ref: this.endOfChat }));
 
-        const dialog = $r('div', { key: '1', id: 'chat-window', style: { overflowY: 'scroll', height: '70%', display: 'block', fontSize } }, allMessages);
+        const dialog = $r('div', { key: 'd', id: 'chat-window', style: { overflowY: 'scroll', height: '70%', display: 'block', fontSize } }, allMessages);
 
         // footer
         const inputStyle = { height: '100%', fontSize, padding: this.props.guiScale / 2 + 'px ' + this.props.guiScale + 'px' };
 
-        const chatEntry = $r('input', { key: '2', type: 'text', className: 'form-control', placeholder: 'Your message...', style: inputStyle, required: true, onChange: this.handleChange, value: this.state.message });
-        const chatSubmit = $r('span', { key: '3', className: 'input-group-btn' }, $r('button', { type: 'submit', className: 'btn btn-primary', style: inputStyle }, "Send"));
+        const chatEntry = $r('input', { key: 'i', type: 'text', className: 'form-control', placeholder: 'Your message...', style: inputStyle, required: true, onChange: this.handleChange, value: this.state.message });
+        const chatSubmit = $r('span', { key: 's', className: 'input-group-btn' }, $r('button', { type: 'submit', className: 'btn btn-primary', style: inputStyle }, "Send"));
 
-        const chatForm = $r('form', { onSubmit: this.handleSubmit, style: { height: '30%' } }, $r('div', { className: 'input-group', style: { height: '100%' } }, [chatEntry, chatSubmit]));
+        const chatForm = $r('form', { key: 'f', onSubmit: this.handleSubmit, style: { height: '30%' } }, $r('div', { className: 'input-group', style: { height: '100%' } }, [chatEntry, chatSubmit]));
 
-        return $r('div', { className: 'panel-body', style: { height: '100%', padding: this.props.guiScale * 0.75 + 'px' } }, [dialog, chatForm]);
+        return $r('div', { key: 'd', className: 'panel-body', style: { height: '100%', padding: this.props.guiScale * 0.75 + 'px' } }, [dialog, chatForm]);
     }
 }
 
@@ -831,7 +831,7 @@ class OdinGui extends React.Component {
     /**
      * Animate playing cards
      */
-    animatePlayerPickup(player, count) {
+    animatePlayerPickup(player, count, position = getDeckPosition(), finishedEvent = true) {
         const cards = [];
         for (let i = 0; i < count; i++) {
             cards.push({ id: player + "_" + count, name: '', url: '/static/cards/back.png' });
@@ -840,17 +840,17 @@ class OdinGui extends React.Component {
         const width = this.state.guiScale * CARD_WIDTH / 2;
         const height = this.state.guiScale * CARD_HEIGHT / 2;
 
-        const position = getPlayerPosition(player);
-        position.y -= height / 2;
+        const pposition = getPlayerPosition(player);
+        pposition.y -= height / 2;
 
-        this.playCardAnimation('player-pickup', cards, () => { }, () => { }, getDeckPosition(), position, '/static/sounds/card_pickup.mp3', width, height);
+        this.playCardAnimation('player-pickup', cards, () => { }, () => { }, position, pposition, '/static/sounds/card_pickup.mp3', width, height, CARD_TRANSFER_TIME, false, 0, finishedEvent);
 
     }
 
     /**
      * Animate player removing cards
      */
-    animatePlayerRemove(player, count) {
+    animatePlayerRemove(player, count, position = getDeckPosition(), finishedEvent = true) {
         const cards = [];
         for (let i = 0; i < count; i++) {
             cards.push({ id: player + "_" + count, name: '', url: '/static/cards/back.png' });
@@ -859,10 +859,10 @@ class OdinGui extends React.Component {
         const width = this.state.guiScale * CARD_WIDTH / 2;
         const height = this.state.guiScale * CARD_HEIGHT / 2;
 
-        const position = getPlayerPosition(player);
-        position.y -= height / 2;
+        const pposition = getPlayerPosition(player);
+        pposition.y -= height / 2;
 
-        this.playCardAnimation('player-pickup', cards, () => { }, () => { }, position, getDeckPosition(), '/static/sounds/card_play.mp3', width, height);
+        this.playCardAnimation('player-pickup', cards, () => { }, () => { }, pposition, position, '/static/sounds/card_play.mp3', width, height, CARD_TRANSFER_TIME, false, 0, finishedEvent);
     }
 
     /**
@@ -1134,7 +1134,7 @@ class OdinGui extends React.Component {
         // info panel
         const infoHeight = this.state.guiScale * 8;
         const infoPanel = $r(InfoPanel, { fontSize: this.state.guiScale * 1.5, height: infoHeight, turnString: this.state.game.turnString, pickupAmount: this.state.game.pickupAmount, ref: this.infoRef });
-        const infoWrapper = $r('div', { style: { width: playerListWidth, height: infoHeight + 'px', position: 'absolute', right: '0', top: '0' } }, infoPanel);
+        const infoWrapper = $r('div', { key: 'inf', style: { width: playerListWidth, height: infoHeight + 'px', position: 'absolute', right: '0', top: '0' } }, infoPanel);
 
         // player list
         const playerListHeight = containerHeight - infoHeight - chatWindowHeight - gapSize;

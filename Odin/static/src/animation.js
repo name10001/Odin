@@ -357,9 +357,11 @@ class CommunistAnimation extends AbsAnimation {
     constructor(props) {
         super(props);
 
-        this.initDelay = 3200;
-        this.midDelay = 3300;
-        this.endDelay = 3900;
+        this.initDelay = 3400;
+        this.midDelay = 3400;
+        this.endDelay = 6600;
+
+        this.totalCards = props.cards.length * game.players.length;
 
         this.removeCards = [];
         for (const stack of game.yourStacks) {
@@ -370,25 +372,52 @@ class CommunistAnimation extends AbsAnimation {
 
         this.pickupCards = props.cards;
 
-        this.state = { stateIndex: 0 };
+        this.state = { stateIndex: 0, cards: 0 };
+    }
+
+    getDeckPosition() {
+        const bounds = document.getElementById('communist-div').getBoundingClientRect();
+        let s = (bounds.bottom - bounds.top) / 10;
+        let x = bounds.right - gui.state.guiScale * CARD_WIDTH - s;
+        let y = bounds.top + s;
+
+        return { x, y };
     }
 
     update(t) {
 
+        // update number of cards
+        if (t > this.initDelay + REMOVE_TIME && this.state.stateIndex == 1) {
+            let interpolate = (t - this.initDelay - REMOVE_TIME) / MAX_CARD_TRANSFER_TIME;
+            this.setState({ stateIndex: 1, cards: Math.floor(Math.min(this.totalCards * interpolate, this.totalCards)) });
+        }
+
         if (t > this.initDelay && this.state.stateIndex == 0) {
-            gui.animateRemoveCards(this.removeCards, getDeckPosition(), false);
-            this.setState({ stateIndex: 1 });
+            gui.animateRemoveCards(this.removeCards, this.getDeckPosition(), false);
+
+            for (const player of game.players) {
+                if (player.id != game.yourId) {
+                    gui.animatePlayerRemove(player.id, player.nCards, this.getDeckPosition(), false);
+                }
+            }
+            this.setState({ stateIndex: 1, cards: this.state.cards });
         }
 
         if (t > this.initDelay + MAX_CARD_TRANSFER_TIME + REMOVE_TIME && this.state.stateIndex == 1) {
             game.clearEmptyStacks();
             gui.getCardScroller().updateStacks(game.yourStacks);
-            this.setState({ stateIndex: 2 });
+            this.setState({ stateIndex: 2, cards: this.state.cards });
         }
 
         if (t > this.initDelay + this.midDelay && this.state.stateIndex == 2) {
-            gui.animatePickupFromDeck(this.pickupCards, getDeckPosition(), false);
-            this.setState({ stateIndex: 3 });
+            gui.animatePickupFromDeck(this.pickupCards, this.getDeckPosition(), false);
+            
+            for (const player of game.players) {
+                if (player.id != game.yourId) {
+                    gui.animatePlayerPickup(player.id, this.pickupCards.length, this.getDeckPosition(), false);
+                }
+            }
+            this.setState({ stateIndex: 3, cards: this.state.cards });
         }
 
         if (t > this.initDelay + this.midDelay + this.endDelay && this.state.stateIndex == 3) {
@@ -409,7 +438,9 @@ class CommunistAnimation extends AbsAnimation {
 
         const stalinImg = $r('img', { key: 'stalin', width: height * 0.8, height: height * 0.8, src: '/static/stalin.png', style: { position: 'absolute', right: height * 0.1 + 'px', top: height * 0.1 + 'px' }, alt: 'ya boi stalin' });
 
+        const ourCards = $r('span', { key: 'text', style: { position: 'absolute', left: height * 0.1, bottom: height * 0.1, fontSize: height * 0.1, color: '#fff' } }, 'Our Cards: ' + this.state.cards);
 
-        return $r('div', { id: 'communist-div', style: { width, height, position: 'fixed', left: s * 10 + 'px', top: s * 10 + 'px', zIndex: '7999' } }, [flagImg, stalinImg]);
+
+        return $r('div', { id: 'communist-div', style: { width, height, position: 'fixed', left: s * 10 + 'px', top: s * 10 + 'px', zIndex: '7999' } }, [flagImg, stalinImg, ourCards]);
     }
 }
