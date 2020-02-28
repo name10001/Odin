@@ -209,10 +209,6 @@ class Game {
             this.cantPlayReason = update['cant play reason'];
         }
 
-        //player iteration amount
-        if (update["iteration"] != undefined)
-            this.skip = (update['iteration'] - 1) % this.players.length;
-
         // UPDATE PLAYERS
         if (update['players'] != undefined) {
             this.players.length = 0;
@@ -258,6 +254,10 @@ class Game {
                 this.yourTurn = false;
             }
         }
+
+        //player iteration amount
+        if (update["iteration"] != undefined)
+            this.skip = (update['iteration'] - 1) % this.players.length;
 
         gui.updateGame(this);
         eventHandler.finishedEvent();

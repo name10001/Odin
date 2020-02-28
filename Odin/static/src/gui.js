@@ -487,7 +487,7 @@ function PlayerPanel(props) {
     if (props.skip) {
 
         // skip
-        const skipBox = $r('div', { key: '3', className: 'panel panel-default', style: { backgroundColor: '#f00', opacity: '0.2', position: 'absolute', width: '100%', height: '100%' } });
+        const skipBox = $r('div', { key: '3', className: 'panel panel-default', style: { backgroundColor: '#f00', opacity: '0.2', position: 'absolute', width: props.width + 'px', height: props.height + 'px' } });
 
         returnItems.push(skipBox);
     }
@@ -537,13 +537,8 @@ class PlayerListPanel extends React.Component {
             return "";
         }
 
-        const maxHeight = this.props.guiScale * 4.5;
-        const maxGap = this.props.guiScale * 0.8;
-
-        const totalHeight = maxGap + nPlayers * (maxGap + maxHeight);
-
-        let scale = 1;
-        if (maxHeight > this.props.height) scale = this.props.height / totalHeight;
+        const height = this.props.guiScale * 4.5;
+        const gap = this.props.guiScale * 0.8;
 
         const panels = [];
 
@@ -553,15 +548,15 @@ class PlayerListPanel extends React.Component {
         do {
             const player = this.props.players[i];
 
-            const panelWidth = i == this.state.turn ? this.props.width : this.props.width * 0.9;
+            const panelWidth = (i == this.state.turn ? this.props.width : this.props.width * 0.9);
 
-            const playerPanel = $r(PlayerPanel, { player, width: panelWidth, height: maxHeight * scale, isYou: player.id == this.state.yourId, skip: skip >= 0 && i != this.state.turn });
+            const playerPanel = $r(PlayerPanel, { player, width: panelWidth, height, isYou: player.id == this.state.yourId, skip: skip >= 0 && i != this.state.turn });
 
             panels.push($r('div', {
                 key: i, id: 'player-' + player.id, className: 'panel panel-default', style: {
-                    width: panelWidth + 'px', height: maxHeight * scale + 'px', margin: maxGap * scale + 'px 0 0 0', display: 'inline-block', textAlign: 'left', position: 'relative'
+                    width: panelWidth + 'px', height: height + 'px', display: 'block', float: 'right', marginBottom: gap
                 }
-            }, playerPanel))
+            }, playerPanel));
 
             i += this.state.direction;
             if (i < 0) i = nPlayers - 1;
@@ -644,7 +639,8 @@ class ChatWindow extends React.Component {
         }
         allMessages.push($r('div', { key: i++ + '', ref: this.endOfChat }));
 
-        const dialog = $r('div', { key: 'd', id: 'chat-window', style: { overflowY: 'scroll', height: '70%', display: 'block', fontSize } }, allMessages);
+
+        const dialog = $r('div', { key: 'd', id: 'chat-window', style: { overflowY: 'scroll', height: this.props.height - this.props.guiScale * 4.5 + 'px', display: 'block', fontSize, marginBottom: this.props.guiScale * 0.5 + 'px' } }, allMessages);
 
         // footer
         const inputStyle = { height: '100%', fontSize, padding: this.props.guiScale / 2 + 'px ' + this.props.guiScale + 'px' };
@@ -652,7 +648,7 @@ class ChatWindow extends React.Component {
         const chatEntry = $r('input', { key: 'i', type: 'text', className: 'form-control', placeholder: 'Your message...', style: inputStyle, required: true, onChange: this.handleChange, value: this.state.message });
         const chatSubmit = $r('span', { key: 's', className: 'input-group-btn' }, $r('button', { type: 'submit', className: 'btn btn-primary', style: inputStyle }, "Send"));
 
-        const chatForm = $r('form', { key: 'f', onSubmit: this.handleSubmit, style: { height: '30%' } }, $r('div', { className: 'input-group', style: { height: '100%' } }, [chatEntry, chatSubmit]));
+        const chatForm = $r('form', { key: 'f', onSubmit: this.handleSubmit }, $r('div', { className: 'input-group', style: { height: '100%' } }, [chatEntry, chatSubmit]));
 
         return $r('div', { key: 'd', className: 'panel-body', style: { height: '100%', padding: this.props.guiScale * 0.75 + 'px' } }, [dialog, chatForm]);
     }
@@ -1089,21 +1085,53 @@ class OdinGui extends React.Component {
         const cardWidth = this.state.guiScale * CARD_WIDTH;
         const cardHeight = this.state.guiScale * CARD_HEIGHT;
         const gapSize = this.state.guiScale * 1.2;
+        const colWidth = cardWidth * 2 + gapSize;
+        let colGapSize = gapSize * 3;
 
-        const buttonsWidth = cardWidth * 2 + gapSize;
+
+        // button panel - constant size, always on the left
         const buttonsHeight = this.state.guiScale * 6.2;
 
-        const playerListWidth = cardWidth * 2.6;
+        // chat window
+        let chatWindowHeight = this.state.guiScale * 10;
 
-        const chatWindowHeight = this.state.guiScale * 10;
+
+        // info panel
+        const infoHeight = this.state.guiScale * 8;
+
+        // CONTAINER STYLE - style 1 is 2 cols, style 2 is 3 cols
 
         const containerHeight = this.state.height - (this.state.guiScale * (CARD_HEIGHT + 5) + 25);
-        const containerWidth = buttonsWidth + gapSize * 2 + playerListWidth;
+
+
+        // playerlist
+        let playerListHeight = containerHeight - infoHeight - chatWindowHeight - gapSize * 2;
+
+
+        let containerWidth = colWidth * 2 + colGapSize;
+        let containerStyle = 1;
+        if (colWidth * 3 + colGapSize * 3 <= window.innerWidth) {
+            const leftOver = window.innerWidth - (colWidth * 3 + colGapSize * 3);
+
+            colGapSize += leftOver / 6;
+
+            // STYLE2
+            containerWidth = colWidth * 3 + colGapSize * 2;
+            containerStyle++;
+
+            playerListHeight = containerHeight - infoHeight - gapSize;
+            chatWindowHeight = playerListHeight;
+        }
+
 
         // discard pile
         const discardHeight = this.state.guiScale * CARD_HEIGHT * 1.4;
         const discardPile = $r(CardPile, { height: discardHeight, guiScale: this.state.guiScale, cards: this.state.game.topCards, maxGap: discardHeight / 3, alignment: 'top-bottom', grey: true, ref: this.discardRef });
-        const discardWrapper = $r('div', { key: 'dp', id: 'discard-pile', style: { width: cardWidth + "px", height: discardHeight, position: 'absolute', bottom: buttonsHeight + gapSize + 'px' } }, discardPile);
+        const discardWrapper = $r('div', {
+            key: 'dp', id: 'discard-pile', style: {
+                width: cardWidth + "px", height: discardHeight, position: 'absolute', bottom: buttonsHeight + gapSize + 'px'
+            }
+        }, discardPile);
 
         // planning pile
         const planningHeight = containerHeight - buttonsHeight - gapSize * 2;
@@ -1129,25 +1157,28 @@ class OdinGui extends React.Component {
             undoAvaliable: this.state.game.undoAvaliable(), playMessage: this.state.game.getPlayButtonMessage(),
             playAvaliable: this.state.game.playAvaliable(), guiScale: this.state.guiScale, ref: this.buttonsRef
         });
-        const buttonsWrapper = $r('div', { key: 'bp', style: { position: 'absolute', bottom: '0', width: buttonsWidth + "px" } }, buttons);
+        const buttonsWrapper = $r('div', { key: 'bp', style: { position: 'absolute', bottom: '0', width: colWidth + "px" } }, buttons);
 
         // info panel
-        const infoHeight = this.state.guiScale * 8;
         const infoPanel = $r(InfoPanel, { fontSize: this.state.guiScale * 1.5, height: infoHeight, turnString: this.state.game.turnString, pickupAmount: this.state.game.pickupAmount, ref: this.infoRef });
-        const infoWrapper = $r('div', { key: 'inf', style: { width: playerListWidth, height: infoHeight + 'px', position: 'absolute', right: '0', top: '0' } }, infoPanel);
+        const infoWrapper = $r('div', { key: 'inf', style: { width: colWidth, height: infoHeight + 'px', position: 'absolute', right: containerStyle == 1 ? '0' : colWidth + colGapSize + 'px', top: '0' } }, infoPanel);
 
         // player list
-        const playerListHeight = containerHeight - infoHeight - chatWindowHeight - gapSize;
         const playerList = $r(PlayerListPanel, {
-            width: playerListWidth, height: playerListHeight, guiScale: this.state.guiScale, players: this.state.game.players,
+            width: colWidth, height: playerListHeight, guiScale: this.state.guiScale, players: this.state.game.players,
             turn: this.state.game.turn, skip: this.state.game.skip, direction: this.state.game.direction, yourId: this.state.game.yourId, ref: this.playersRef
         });
-        const playerListWrapper = $r('div', { key: 'plp', style: { position: 'absolute', textAlign: 'right', right: '0', top: infoHeight + 'px', width: playerListWidth, height: playerListHeight } }, playerList);
+        const playerListWrapper = $r('div', {
+            key: 'plp', style: {
+                position: 'absolute', right: containerStyle == 1 ? '0' : (colWidth + colGapSize + 'px'), 
+                    top: infoHeight + gapSize + 'px', width: colWidth + 50, height: playerListHeight, overflowY: 'auto', overflowX: 'hidden', paddingRight: '5px'
+            }
+        }, playerList);
 
         // chat window
-        const chatWindow = $r(ChatWindow, { ref: this.chatRef, width: playerListWidth, height: chatWindowHeight, guiScale: this.state.guiScale, chat: this.state.game.chat });
+        const chatWindow = $r(ChatWindow, { ref: this.chatRef, width: colWidth, height: chatWindowHeight, guiScale: this.state.guiScale, chat: this.state.game.chat });
         const chatWindowWrapper = $r('div', {
-            key: 'cw', className: 'panel panel-default', style: { position: 'absolute', width: playerListWidth, height: chatWindowHeight, right: '0', bottom: '0', margin: '0' }
+            key: 'cw', className: 'panel panel-default', style: { position: 'absolute', width: colWidth, height: chatWindowHeight, right: '0', bottom: '0', margin: '0' }
         }, chatWindow);
 
 
