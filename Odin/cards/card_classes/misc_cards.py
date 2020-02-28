@@ -497,6 +497,12 @@ class Capitalist(AbstractCard):
                 richest_player = player
                 number_of_cards = len(player.hand)
 
+        
+        json_to_send = {
+            "type": "sound",
+            "sound": "/static/sounds/capitalist_card.mp3"
+        }
+        self.game.send_animation(json_to_send)
         richest_player.pickup(number_of_cards)
 
 

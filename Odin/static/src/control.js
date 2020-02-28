@@ -2,12 +2,6 @@
 
 control.js initialises the game, gui and handles game events.
 
-TODO:
-- Communist and Capitalist animations
-- WHEN ANOTHER PLAYER PLAYS CARDS IT SHOULD COME FROM THE TOP
-
-
-
 */
 
 const CARD_RATIO = 300.0 / 469.0;
