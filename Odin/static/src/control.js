@@ -59,6 +59,44 @@ function playSound(sound) {
     audio.play();
 }
 
+function removeCardsEvent(cards) {
+    eventHandler.addEvent(() => {
+        for (const card of cards) {
+            game.removeCard(card.id);
+        }
+        gui.getCardScroller().updateStacks(game.yourStacks);
+        eventHandler.finishedEvent();
+    });
+}
+
+function addCardsEvent(cards) {
+    eventHandler.addEvent(() => {
+        for (const card of cards) {
+            game.addCard(card.id, card.name, card.url, false);
+        }
+        gui.getCardScroller().updateStacks(game.yourStacks);
+        eventHandler.finishedEvent();
+    });
+}
+
+function clearEmptyStacksEvent(cards) {
+    eventHandler.addEvent(() => {
+        game.clearEmptyStacks();
+        gui.getCardScroller().updateStacks(game.yourStacks);
+        eventHandler.finishedEvent();
+    });
+}
+
+function addPlanningCardsEvent(cards) {
+    eventHandler.addEvent(() => {
+        for (const card of cards) {
+            game.planningCards.push(card);
+        }
+        gui.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
+        eventHandler.finishedEvent();
+    });
+}
+
 
 
 /**
@@ -108,14 +146,31 @@ $(document).ready(() => {
         switch (data["type"]) {
             // ADD CARDS TO PLANNING PILE
             case "play cards":
+                if (game.yourTurn && !data["from deck"]) {
+                    removeCardsEvent(data["cards"]);
+                }
                 eventHandler.addEvent(() => {
                     gui.animatePlayCards(data["cards"], data["from deck"]);
                 });
+
+                addPlanningCardsEvent(data["cards"]);
+                if (game.yourTurn && !data["from deck"]) {
+                    clearEmptyStacksEvent();
+                }
                 break;
             // ADD PLANNING CARDS TO DISCARD PILE
             case "finish cards":
                 eventHandler.addEvent(() => {
                     gui.animateFinishPlayCards(data["cards"]);
+                });
+                eventHandler.addEvent(() => {
+                    for(const card of data["cards"]) {
+                        game.topCards.splice(0, 1);
+                        game.topCards.push(card.url);
+                    }
+                    
+                    gui.getDiscardPile().updateCards(game.topCards);
+                    eventHandler.finishedEvent();
                 });
                 break;
             // UNDO
@@ -142,6 +197,8 @@ $(document).ready(() => {
                         gui.animatePickupFromPlayer(data["cards"], data["from"]); //pickup cards from another player
                     });
                 }
+
+                addCardsEvent(data["cards"]);
                 break;
             //PLAYER PICKUP
             case "player pickup":
@@ -162,21 +219,12 @@ $(document).ready(() => {
                     eventHandler.addEvent(() => {
                         gui.animateRemoveCards(data["cards"]);
                     });
-                    eventHandler.addEvent(() => {
-                        game.clearEmptyStacks();
-                        gui.getCardScroller().updateStacks(game.yourStacks);
-                        eventHandler.finishedEvent();
-                    });
                 } else {
                     eventHandler.addEvent(() => {
                         gui.animateRemoveCardsToPlayer(data["cards"], data["to"]);
                     });
-                    eventHandler.addEvent(() => {
-                        game.clearEmptyStacks();
-                        gui.getCardScroller().updateStacks(game.yourStacks);
-                        eventHandler.finishedEvent();
-                    });
                 }
+                clearEmptyStacksEvent();
                 break;
             // PLAYER REMOVE CARD
             case "player remove cards":

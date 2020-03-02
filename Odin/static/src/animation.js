@@ -210,15 +210,15 @@ class MovingCard extends React.Component {
         }
 
         // has just started moving
-        if (!this.state.show && state.show) {
-            this.props.moveStartFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: true });
-        }
+        //if (!this.state.show && state.show) {
+        //    this.props.moveStartFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: true });
+        //}
         // has just ended moving
-        else if (this.state.show && !state.show) {
+         if (this.state.show && !state.show) {
             if (this.props.sound !== undefined) {
                 playSound(this.props.sound);
             }
-            this.props.moveEndFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: true });
+            //this.props.moveEndFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: true });
         }
 
         this.setState(state);
@@ -252,13 +252,13 @@ class NoDisplayCard {
         const show = t >= this.props.startTime && t <= this.props.endTime;
 
         // has just started moving
-        if (!this.show && show) {
-            this.props.moveStartFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: false });
-        }
+        //if (!this.show && show) {
+        //    this.props.moveStartFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: false });
+        //}
         // has just ended moving
-        else if (this.show && !show) {
-            this.props.moveEndFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: false });
-        }
+        //else if (this.show && !show) {
+        //    this.props.moveEndFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: false });
+        //}
 
         this.show = show;
         this.t = t;
@@ -323,7 +323,6 @@ class CardAnimation extends AbsAnimation {
     }
 
     update(t) {
-        let now = performance.now();
 
         let finished = true;
         for (const card of this.cards) {
