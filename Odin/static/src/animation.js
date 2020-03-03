@@ -209,16 +209,11 @@ class MovingCard extends React.Component {
             state.y = 0;
         }
 
-        // has just started moving
-        //if (!this.state.show && state.show) {
-        //    this.props.moveStartFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: true });
-        //}
-        // has just ended moving
+        // has just ended moving - play sound if it exists
          if (this.state.show && !state.show) {
             if (this.props.sound !== undefined) {
                 playSound(this.props.sound);
             }
-            //this.props.moveEndFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: true });
         }
 
         this.setState(state);
@@ -231,41 +226,6 @@ class MovingCard extends React.Component {
                 position: 'fixed', left: this.state.x, top: this.state.y, zIndex: 8000
             }
         });
-    }
-}
-
-/**
- * This card is a simplified moving card that does not display, but will register updates
- * This is to avoid lag when too many cards are moving at once.
- */
-class NoDisplayCard {
-
-    constructor(props) {
-        this.current = this;
-        this.props = props;
-        this.t = 0;
-        this.show = false;
-        this.noDisplayCard = true;
-    }
-
-    update(t) {
-        const show = t >= this.props.startTime && t <= this.props.endTime;
-
-        // has just started moving
-        //if (!this.show && show) {
-        //    this.props.moveStartFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: false });
-        //}
-        // has just ended moving
-        //else if (this.show && !show) {
-        //    this.props.moveEndFunction({ id: this.props.id, name: this.props.name, url: this.props.url, update: false });
-        //}
-
-        this.show = show;
-        this.t = t;
-    }
-
-    hasStoppedMoving() {
-        return this.t > this.props.endTime;
     }
 }
 
@@ -297,22 +257,15 @@ class CardAnimation extends AbsAnimation {
             if (cardProps['endPos'] !== undefined) card.endPos = cardProps['endPos'];
 
 
-            // create reference. If no 
-            let ref;
+            // only create a reference and add it if there isn't too many cards, always display the last card.
             if (i >= 1 || k == 1) {
-                ref = React.createRef();
                 i -= j;
-            }
-            else {
-                card.moveStartFunction = props.moveStartFunction;
-                card.moveEndFunction = props.moveEndFunction;
-                ref = new NoDisplayCard(card);
+
+                card.ref = React.createRef();
+    
+                this.cards.push(card);
             }
             i++;
-
-            card.ref = ref;
-
-            this.cards.push(card); // TODO adjust the times
 
             t += props.gap;
             k--;
@@ -326,7 +279,6 @@ class CardAnimation extends AbsAnimation {
 
         let finished = true;
         for (const card of this.cards) {
-            if (!card.ref.current) continue;
             card.ref.current.update(t);
             if (!card.ref.current.hasStoppedMoving()) finished = false;
         }
@@ -339,13 +291,11 @@ class CardAnimation extends AbsAnimation {
         const cards = [];
 
         for (const card of this.cards) {
-            if (card.ref.current == null || !card.ref.current.noDisplayCard) {
-                cards.push($r(MovingCard, {
-                    ref: card.ref, startPos: card.startPos !== undefined ? card.startPos : this.props.startPos, endPos: card.endPos !== undefined ? card.endPos : this.props.endPos, startTime: card.startTime,
-                    endTime: card.endTime, url: card.url, cardWidth: this.props.cardWidth, cardHeight: this.props.cardHeight, key: card.id, id: card.id, name: card.name, sound: this.props.sound,
-                    moveStartFunction: this.props.moveStartFunction, moveEndFunction: this.props.moveEndFunction
-                }));
-            }
+            cards.push($r(MovingCard, {
+                ref: card.ref, startPos: card.startPos !== undefined ? card.startPos : this.props.startPos, endPos: card.endPos !== undefined ? card.endPos : this.props.endPos, startTime: card.startTime,
+                endTime: card.endTime, url: card.url, cardWidth: this.props.cardWidth, cardHeight: this.props.cardHeight, key: card.id, id: card.id, name: card.name, sound: this.props.sound,
+                moveStartFunction: this.props.moveStartFunction, moveEndFunction: this.props.moveEndFunction
+            }));
         }
 
         return cards;
@@ -418,8 +368,16 @@ class CommunistAnimation extends AbsAnimation {
             }
             this.setState({ stateIndex: 3, cards: this.state.cards });
         }
+        if (t > this.initDelay + this.midDelay + MAX_CARD_TRANSFER_TIME + REMOVE_TIME && this.state.stateIndex == 3) {
+            for(const card of this.pickupCards) {
+                game.addCard(card.id, card.name, card.url, false);
+            }
+            game.getCardScroller().updateStacks(game.yourStacks);
 
-        if (t > this.initDelay + this.midDelay + this.endDelay && this.state.stateIndex == 3) {
+            this.setState({ stateIndex: 4, cards: this.state.cards });
+        }
+
+        if (t > this.initDelay + this.midDelay + this.endDelay && this.state.stateIndex == 4) {
             gui.getAnimationHandler().endAnimation(this.props.id);
         }
     }

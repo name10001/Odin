@@ -434,6 +434,35 @@ class InfoPanel extends React.Component {
     }
 }
 
+
+/**
+ * Some text indicating how much cards you can play
+ */
+class CardIndicator extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            yourTurn: props.yourTurn,
+            canPlay: props.canPlay,
+            nCards: props.nCards
+        }
+    }
+
+    update(yourTurn, canPlay, nCards) {
+        this.setState({ yourTurn, canPlay, nCards });
+    }
+
+    render() {
+        if (this.state.yourTurn) {
+            return "Avaliable Cards: " + this.state.canPlay + "/" + this.state.nCards;
+        }
+        else {
+            return "Not your turn";
+        }
+    }
+}
+
 /**
  * A singular player panel, consisting of a heading and a body.
  * The heading contains the player name and number of cards
@@ -441,10 +470,10 @@ class InfoPanel extends React.Component {
  * @param {*} props 
  */
 function PlayerPanel(props) {
-    const fontSize = props.height * 0.3;
-    const smallFontSize = props.height * 0.2;
+    const fontSize = props.height * 0.25;
+    const smallFontSize = props.height * 0.18;
     const headingHeight = props.height * 0.5 + 'px';
-    const bodyHeight = props.height * 0.5 + 'px';
+    const bodyHeight = props.height * 0.5 - 4 + 'px';
     const imageSize = props.height * 0.25 + 'px';
 
     // heading contains the player name and number of cards
@@ -487,7 +516,7 @@ function PlayerPanel(props) {
     if (props.skip) {
 
         // skip
-        const skipBox = $r('div', { key: '3', className: 'panel panel-default', style: { backgroundColor: '#f00', opacity: '0.2', position: 'absolute', width: props.width + 'px', height: props.height + 'px' } });
+        const skipBox = $r('div', { key: '3', className: 'panel panel-default', style: { backgroundColor: '#f00', opacity: '0.2', position: 'absolute', marginLeft: '-1px', marginTop: '-1px', width: props.width + 'px', height: props.height + 'px', border: '1px solid #f00' } });
 
         returnItems.push(skipBox);
     }
@@ -537,7 +566,7 @@ class PlayerListPanel extends React.Component {
             return "";
         }
 
-        const height = this.props.guiScale * 4.5;
+        const height = this.props.guiScale * 5;
         const gap = this.props.guiScale * 0.8;
 
         const panels = [];
@@ -561,7 +590,8 @@ class PlayerListPanel extends React.Component {
             }
 
             panels.push($r('div', {
-                key: i, id: 'player-' + player.id, className: 'panel panel-default', style: panelStyle}, playerPanel
+                key: i, id: 'player-' + player.id, className: 'panel panel-default', style: panelStyle
+            }, playerPanel
             ));
 
             i += this.state.direction;
@@ -681,6 +711,7 @@ class OdinGui extends React.Component {
         this.buttonsRef = React.createRef();
         this.infoRef = React.createRef();
         this.playersRef = React.createRef();
+        this.cardIndicatorRef = React.createRef();
         this.popup = { createPopup: null, canClose: true };
 
         this.state = {
@@ -723,7 +754,7 @@ class OdinGui extends React.Component {
     animateUndoAll() {
         const cards = game.planningCards.slice();
 
-        if(game.yourTurn) {
+        if (game.yourTurn) {
             for (const card of cards) {
                 card['endPos'] = getHandCardPosition(card['name']);
             }
@@ -958,6 +989,7 @@ class OdinGui extends React.Component {
         this.getPlayerList().update(game.players, game.yourId, game.direction, game.turn, game.skip);
         this.getButtons().update(game.getPlayButtonMessage(), game.playAvaliable(), game.undoAvaliable());
         this.getInfoPanel().update(game.turnString, game.pickupAmount);
+        this.getCardIndicator().update(game.yourTurn, game.canPlay, game.getPlayer().nCards);
     }
 
     /**
@@ -1007,6 +1039,13 @@ class OdinGui extends React.Component {
      */
     getPlayerList() {
         return this.playersRef.current;
+    }
+
+    /**
+     * Get the card indicator
+     */
+    getCardIndicator() {
+        return this.cardIndicatorRef.current;
     }
 
 
@@ -1178,6 +1217,17 @@ class OdinGui extends React.Component {
             key: 'ctr', style: { margin: 'auto', position: 'relative', width: containerWidth + 'px', height: containerHeight + 'px' }
         }, [deckImage, discardWrapper, planningWrapper, buttonsWrapper, infoWrapper, playerListWrapper, chatWindowWrapper]);
 
-        return [container, scroller, popup, animationHandler];
+        // card indicator
+        let nCards = 0;
+        if (this.state.game.getPlayer() !== undefined) {
+            nCards = this.state.game.getPlayer().nCards;
+        }
+        const indicator = $r('span', {
+            key: 'ind', style: {
+                position: 'fixed', fontSize: this.state.guiScale * 1.5 + 'px', top: containerHeight + 10 + 'px', right: '0', padding: '5px', backgroundColor: 'rgba(255, 255, 255, 0.8)', zIndex: 3
+            }
+        }, $r(CardIndicator, { ref: this.cardIndicatorRef, yourTurn: this.state.game.yourTurn, canPlay: this.state.game.canPlay, nCards }));
+
+        return [container, scroller, indicator, popup, animationHandler];
     }
 }
