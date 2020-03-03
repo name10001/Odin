@@ -184,7 +184,7 @@ class AbstractGame:
         """
         self.get_turn().prepare_cards(cards)
         self.update_users()
-    
+
     def finish_turn(self):
         """
         Finish the current player's turn
@@ -332,7 +332,6 @@ class Game(AbstractGame):
         elif message == "quit":
             self.remove_player(player)
         elif message == "chat":
-            print("chat")
             self.send_chat_message(player.get_name(), data)
         else:
             # override player due to possession
@@ -353,10 +352,9 @@ class Game(AbstractGame):
                 print("got unknown message from player:", message)
 
     def send_chat_message(self, player_name, message):
-        data = {"player": player_name, "message": message}
+        data = {"player": player_name, "message": message if len(message) <= 256 else message[:256]};
         self.send_to_all_players("chat", data)
         self.chat.append(data)
-        print(data)
 
     def animate_card_transfer(self, cards, cards_from="deck", cards_to="deck"):
         """

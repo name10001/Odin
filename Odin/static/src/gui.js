@@ -516,7 +516,11 @@ function PlayerPanel(props) {
     if (props.skip) {
 
         // skip
-        const skipBox = $r('div', { key: '3', className: 'panel panel-default', style: { backgroundColor: '#f00', opacity: '0.2', position: 'absolute', marginLeft: '-1px', marginTop: '-1px', width: props.width + 'px', height: props.height + 'px', border: '1px solid #f00' } });
+        const skipBox = $r('div', {
+            key: '3', className: 'panel panel-default', style: {
+                backgroundColor: '#f00', opacity: '0.2', position: 'absolute', marginLeft: '-1px', marginTop: '-1px', width: props.width + 'px', height: props.height + 'px', border: '1px solid #f00'
+            }
+        });
 
         returnItems.push(skipBox);
     }
@@ -613,7 +617,7 @@ class ChatWindow extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { chat: props.chat, message: "" };
+        this.state = { chat: props.chat, message: "", fullscreen: false };
 
         this.endOfChat = React.createRef();
 
@@ -656,11 +660,27 @@ class ChatWindow extends React.Component {
      * @param {*} chat 
      */
     updateChat(chat) {
-        this.setState({ chat, message: this.state.message });
+        this.setState({ chat, message: this.state.message, fullscreen: this.state.fullscreen });
+    }
+
+    setFullscreen(fullscreen) {
+        this.setState({ chat: this.state.chat, message: this.state.message, fullscreen });
     }
 
     render() {
-        const fontSize = this.props.guiScale + 'px';
+        let width = this.props.width;
+        let height = this.props.height;
+        let inputHeight = this.props.guiScale * 4.5;
+        let fontSize = this.props.guiScale + 'px';
+
+        if(this.state.fullscreen) {
+            width = document.getElementById('container').getBoundingClientRect().width;
+            height = window.innerHeight;
+            inputHeight = this.props.guiScale * 6;
+            fontSize = this.props.guiScale * 1.3 + 'px';
+        }
+
+
 
         // message dialog window
         const allMessages = [];
@@ -676,17 +696,21 @@ class ChatWindow extends React.Component {
         allMessages.push($r('div', { key: i++ + '', ref: this.endOfChat }));
 
 
-        const dialog = $r('div', { key: 'd', id: 'chat-window', style: { overflowY: 'scroll', height: this.props.height - this.props.guiScale * 4.5 + 'px', display: 'block', fontSize, marginBottom: this.props.guiScale * 0.5 + 'px' } }, allMessages);
+        const dialog = $r('div', { key: 'd', id: 'chat-window', style: { overflowY: 'scroll', overflowWrap: 'break-word', height: height - inputHeight + 'px', display: 'block', fontSize, marginBottom: this.props.guiScale * 0.5 + 'px' } }, allMessages);
 
         // footer
         const inputStyle = { height: '100%', fontSize, padding: this.props.guiScale / 2 + 'px ' + this.props.guiScale + 'px' };
 
-        const chatEntry = $r('input', { key: 'i', type: 'text', className: 'form-control', placeholder: 'Your message...', style: inputStyle, required: true, onChange: this.handleChange, value: this.state.message });
+        const chatEntry = $r('input', { key: 'i', type: 'text', className: 'form-control', maxLength: '256', placeholder: 'Your message...', style: inputStyle, required: true, onChange: this.handleChange, value: this.state.message });
         const chatSubmit = $r('span', { key: 's', className: 'input-group-btn' }, $r('button', { type: 'submit', className: 'btn btn-primary', style: inputStyle }, "Send"));
 
         const chatForm = $r('form', { key: 'f', onSubmit: this.handleSubmit }, $r('div', { className: 'input-group', style: { height: '100%' } }, [chatEntry, chatSubmit]));
 
-        return $r('div', { key: 'd', className: 'panel-body', style: { height: '100%', padding: this.props.guiScale * 0.75 + 'px' } }, [dialog, chatForm]);
+        const chatWindow = $r('div', { key: 'd', className: 'panel-body', style: { height: '100%', padding: this.props.guiScale * 0.75 + 'px' } }, [dialog, chatForm]);
+
+        return $r('div', {
+            key: 'cw', className: 'panel panel-default', style: { position: 'absolute', width, height, right: '0', bottom: '0', margin: '0', zIndex: 6000 }
+        }, chatWindow);
     }
 }
 
@@ -945,7 +969,9 @@ class OdinGui extends React.Component {
         if ($(document.activeElement).prop('type') == 'text' && typeof window.orientation !== 'undefined' && this.state.height > window.innerHeight) {
             this.state.width = window.innerWidth;
             this.state.height = window.innerHeight;
-            this.cardsRef.current.hide();
+            this.getCardScroller().hide();
+
+            this.getChat().setFullscreen(true);
             return;
         }
 
@@ -961,9 +987,11 @@ class OdinGui extends React.Component {
         this.state.guiScale = guiScale;
 
 
-        if (this.cardsRef.current) {
-            this.cardsRef.current.unhide();
-
+        if (this.getCardScroller()) {
+            this.getCardScroller().unhide();
+        }
+        if (this.getChat()) {
+            this.getChat().setFullscreen(false);
         }
         this.setState(this.state);
     }
@@ -1048,6 +1076,13 @@ class OdinGui extends React.Component {
         return this.cardIndicatorRef.current;
     }
 
+    /**
+     * Get the chat window
+     */
+    getChat() {
+        return this.chatRef.current;
+    }
+
 
     /**
      * Update the chat
@@ -1122,8 +1157,6 @@ class OdinGui extends React.Component {
         // button panel - constant size, always on the left
         const buttonsHeight = this.state.guiScale * 6.2;
 
-        // chat window
-        let chatWindowHeight = this.state.guiScale * 10;
 
 
         // info panel
@@ -1133,6 +1166,8 @@ class OdinGui extends React.Component {
 
         const containerHeight = this.state.height - (this.state.guiScale * (CARD_HEIGHT + 5) + 25);
 
+        // chat window
+        let chatWindowHeight = containerHeight * 0.3;
 
         // playerlist
         let playerListHeight = containerHeight - infoHeight - chatWindowHeight - gapSize * 2;
@@ -1207,15 +1242,12 @@ class OdinGui extends React.Component {
 
         // chat window
         const chatWindow = $r(ChatWindow, { ref: this.chatRef, width: colWidth, height: chatWindowHeight, guiScale: this.state.guiScale, chat: this.state.game.chat });
-        const chatWindowWrapper = $r('div', {
-            key: 'cw', className: 'panel panel-default', style: { position: 'absolute', width: colWidth, height: chatWindowHeight, right: '0', bottom: '0', margin: '0' }
-        }, chatWindow);
 
 
         // container to hold everything in the UI
         const container = $r('div', {
-            key: 'ctr', style: { margin: 'auto', position: 'relative', width: containerWidth + 'px', height: containerHeight + 'px' }
-        }, [deckImage, discardWrapper, planningWrapper, buttonsWrapper, infoWrapper, playerListWrapper, chatWindowWrapper]);
+            key: 'ctr', id: 'container', style: { margin: 'auto', position: 'relative', width: containerWidth + 'px', height: containerHeight + 'px' }
+        }, [deckImage, discardWrapper, planningWrapper, buttonsWrapper, infoWrapper, playerListWrapper, chatWindow]);
 
         // card indicator
         let nCards = 0;
