@@ -3,7 +3,6 @@ from cards.card_frequency import CardFrequency
 from cards.effect import FireEffect
 import random
 import math
-from flask import url_for
 from decimal import Decimal
 import settings
 

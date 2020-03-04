@@ -3,20 +3,18 @@
 ## Bugs/Testing
 * Test genocide card end states, and check for ties
 * Make testcases for each card. Ideally make the testcases if the implementation changes and don't bother until then.
+* Test on Safari?
 
 ## Lobby
-* Make end game screen with stats, goes back to waiting room from here.
+* Show game states in the waiting room once a game is over
 * Make more settings for each game. Allow you to customize the frequency of cards.
-* Allow players to be kicked if they are logged out for > 1 min
 * Add a time limit for how long you can spend picking cards (Add to waiting room options)
 
-## UI and Animations
-* Chat window
-* Show thanos animations for other people?
-* "Your turn" messages
-* Capatilist animation
-* Swap hand animation?
-* Jesus Animation?
+## UI
+* Better background?
+* Arrow to show direction of players turn's?
+* Improve the design of the waiting room and the game screen
+* Limit the number of chat messages, and prevent spam
 
 ## Gameplay
 * Add more cards

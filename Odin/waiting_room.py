@@ -11,9 +11,12 @@ class WaitingRoom:
     """
     This stores information about a waiting room
     """
+
     def __init__(self, game_id):
-        # "player_id": "player_name"
-        self._players = {}
+        # "player_id": name
+        self._player_names = {}
+        # "player_id": sid
+        self._sessions = {}
         self.running = False
         self.game = None
         self.game_id = game_id
@@ -33,7 +36,8 @@ class WaitingRoom:
         # check that the message is coming from a valid session
         if "player_id" not in session:
             return
-        if session["player_id"] not in self._players:
+        if session['player_id'] not in self._player_names:
+            # this usually occurs when the player was kicked
             return
 
         # parse message
@@ -55,7 +59,7 @@ class WaitingRoom:
         """
         self.modify()
         if request.method == 'GET':
-            if "player_id" in session and session["player_id"] in self._players:
+            if "player_id" in session and session["player_id"] in self._player_names:
                 if self.running:
                     return self.game.render_game()
                 else:
@@ -65,7 +69,7 @@ class WaitingRoom:
         elif request.method == 'POST':
             name = request.form['player_name'][0:10]  # limit to 20 characters
             player_id = self._make_player_id(name)
-            self._players[player_id] = name
+            self._player_names[player_id] = name
             session['player_id'] = player_id
             if self.running is False:
                 with fs.app.app_context():
@@ -92,7 +96,8 @@ class WaitingRoom:
 
         self.settings[setting] = value
 
-        fs.socket_io.emit("setting changed", [setting, value], room=self.game_id, include_self=False)
+        fs.socket_io.emit("setting changed", [
+                          setting, value], room=self.game_id, include_self=False)
 
     def _joined_waiting_room(self):
         """
@@ -100,16 +105,19 @@ class WaitingRoom:
         :return: None
         """
         self.modify()
+
+        self.set_sid()
+
         for setting in self.settings:
-            fs.socket_io.emit("setting changed", [setting, self.settings[setting]])
+            emit("setting changed", [setting, self.settings[setting]])
         join_room(self.game_id)
 
-        for player in self._players:
+        for player in self._player_names:
             if player == session['player_id']:
-                emit("user joined", self._players[player] + " (You)")
+                emit("user joined", self._player_names[player] + " (You)")
             else:
-                emit("user joined", self._players[player])
-    
+                emit("user joined", self._player_names[player])
+
     def _left_waiting_room(self):
         """
         Tells players that a player has left the game.
@@ -119,7 +127,7 @@ class WaitingRoom:
         self.modify()
 
         player_id = session['player_id']
-        name = self._players[player_id]
+        name = self._player_names[player_id]
 
         self.leave_room()
 
@@ -127,14 +135,40 @@ class WaitingRoom:
             fs.socket_io.emit("user quit", name, room=self.game_id)
 
         emit("quit")
-    
+
+    def kick_player(self, player_id):
+        """
+        Kick a player from the game after timing out
+        """
+        # let game handle removing player
+        if self.running:
+            player = self.game.get_user(player_id)
+            self.game.send_to_all_players(
+                "popup message", player.get_name() + " has quit the game!")
+                
+            del self._player_names[player_id]
+            del self._sessions[player_id]
+
+            self.game.remove_player(player)
+
+
+        # let waiting room handle removing player
+        else:
+            name = self._player_names[player_id]
+
+            fs.socket_io.emit("user quit", name, room=self.game_id)
+
+            del self._player_names[player_id]
+            del self._sessions[player_id]
+
     def leave_room(self):
         player_id = session['player_id']
 
         del session['player_id']
         leave_room(self.game_id)
 
-        del self._players[player_id]
+        del self._player_names[player_id]
+        del self._sessions[player_id]
 
     def _start(self):
         """
@@ -143,7 +177,8 @@ class WaitingRoom:
         """
         self.modify()
         self.running = True
-        self.game = Game(self.game_id, self._players, self, starting_number_of_cards=self.settings["number-of-cards"])
+        self.game = Game(self.game_id, self._player_names, self,
+                         starting_number_of_cards=self.settings["number-of-cards"])
         with fs.app.app_context():
             fs.socket_io.emit("refresh", room=self.game_id)
 
@@ -151,27 +186,27 @@ class WaitingRoom:
         """
         makes and ID that is unique to itself and is human readable
         """
-        id_safe = extended_formatter.format("{player_name!h}_player", player_name=player_name)
+        id_safe = extended_formatter.format(
+            "{player_name!h}_player", player_name=player_name)
 
         # if its ID is already in use, add a number to it
-        if id_safe in self._players:
+        if id_safe in self._player_names:
             num = 2
-            while id_safe + "_" + str(num) in self._players:
+            while id_safe + "_" + str(num) in self._player_names:
                 num += 1
             id_safe += "_" + str(num)
 
         return id_safe
 
-    def get_player(self, player_id):
+    def set_sid(self):
         """
-        checks to see if a player exists in this waiting room
-        :param player_id: id of player to look for
-        :return: returns the player if found, else None
+        When a new session is established: create a new entry in the sessions dictionary with the session id
         """
-        if player_id in self._players:
-            return self._players[player_id]
-        else:
-            return None
+        self._sessions[session['player_id']] = {
+            'sid': request.sid, 'timeout': 0}
+
+    def get_sessions(self):
+        return self._sessions
 
     def modify(self):
         self.last_modified = time()
@@ -187,4 +222,3 @@ class WaitingRoom:
 
     def get_last_modified(self):
         return self.last_modified
-

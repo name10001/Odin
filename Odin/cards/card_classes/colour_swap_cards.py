@@ -1,6 +1,5 @@
 from cards.abstract_card import AbstractCard
 from cards.card_frequency import CardFrequency
-from flask import url_for
 
 
 class ColourChooser(AbstractCard):
@@ -56,7 +55,7 @@ class ColourChooser(AbstractCard):
         return self.colour
 
     def get_url(self):
-        return url_for('static', filename="cards/" + self.url)
+        return '/static/cards/' + self.url
 
 
 class ColourSwapper(AbstractCard):
@@ -139,7 +138,7 @@ class ColourSwapper(AbstractCard):
             or self.colours_are_compatible(card.get_colour(), self.COLOUR_2)
 
     def get_url(self):
-        return url_for('static', filename="cards/" + self.url)
+        return '/static/cards/' + self.url
 
 
 class RedBlueSwapper(ColourSwapper):

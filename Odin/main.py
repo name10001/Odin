@@ -11,6 +11,7 @@ import flask_server as fs
 from waiting_room import WaitingRoom
 
 games = {}
+sessions = {}
 
 
 @fs.app.route('/')
@@ -39,6 +40,9 @@ def new_game():
     """
     game_id = make_unique_game_id()
     games[game_id] = WaitingRoom(game_id)
+
+    fs.socket_io.start_background_task(clear_inactive_players, games[game_id])
+
     return redirect('/' + game_id)
 
 
@@ -69,7 +73,37 @@ def game_message(game_id, message, data):
             games[game_id].get_game().message(message, data)
 
 
-def clear_old_games():
+@fs.socket_io.on('disconnect')
+def disconnected():
+    del sessions[request.sid]
+
+
+@fs.socket_io.on('connect')
+def connected():
+    sessions[request.sid] = 0
+
+
+def clear_inactive_players(game):
+    while game.game_id in games:
+        for player_id in game.get_sessions().copy():
+            sid = game.get_sessions()[player_id]['sid']
+
+            if sid in sessions:
+                game.get_sessions()[player_id]['timeout'] = 0
+            else:
+                game.get_sessions()[player_id]['timeout'] += 1
+
+                kick = settings.session_inactivity_kick - \
+                    game.get_sessions()[player_id]['timeout']
+
+                if kick <= 0:
+                    print("PLAYER KICKED", player_id)
+                    game.kick_player(player_id)
+
+        fs.socket_io.sleep(1)
+
+
+def clear_inactive_games():
     """
     removes all the games that have not been modified in over an hour
     :return: None
@@ -92,7 +126,7 @@ def run_schedule():
         sleep(1)
 
 
-schedule.every().hour.do(clear_old_games)
+schedule.every().hour.do(clear_inactive_games)
 
 if __name__ == '__main__':
     print("Game is now running")
@@ -102,8 +136,11 @@ if __name__ == '__main__':
         print("\thttp:/" + gethostbyname(gethostname()) + "/")
     else:
         print("\thttp:/" + gethostname() + ":" + str(settings.port) + "/")
-        print("\thttp:/" + gethostbyname(gethostname()) + ":" + str(settings.port) + "/")
+        print("\thttp:/" + gethostbyname(gethostname()) +
+              ":" + str(settings.port) + "/")
 
-    t = Thread(target=run_schedule)
-    t.start()
-    fs.socket_io.run(fs.app, debug=False, port=settings.port, host=settings.host)
+    t1 = Thread(target=run_schedule)
+    t1.start()
+
+    fs.socket_io.run(fs.app, debug=False,
+                     port=settings.port, host=settings.host)

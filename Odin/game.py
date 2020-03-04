@@ -106,8 +106,6 @@ class AbstractGame:
         # remove the player
         self.players.remove(player)
 
-        self.notify_remove_player(player)
-
         # end the game if this was the only player
         if len(self.players) == 0:
             self.end_game()
@@ -216,7 +214,7 @@ class Game(AbstractGame):
 
     """
 
-    def __init__(self, game_id, players, waiting_room, starting_number_of_cards=50):
+    def __init__(self, game_id, players, waiting_room, starting_number_of_cards):
         """
         :param game_id: The ID of the game.
         :param players: A dict of players with the key as player id and the player name as the value.
@@ -330,6 +328,7 @@ class Game(AbstractGame):
         if message == "answer":
             player.answer_question(data)
         elif message == "quit":
+            self.notify_remove_player(player)
             self.remove_player(player)
         elif message == "chat":
             self.send_chat_message(player.get_name(), data)
@@ -586,6 +585,8 @@ class Game(AbstractGame):
         :return: None
         """
         self.waiting_room.modify()
+
+        self.waiting_room.set_sid()
         user = self.get_user(session['player_id'])
         if user is not None:
             user.initial_connection()
