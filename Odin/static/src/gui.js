@@ -147,19 +147,21 @@ class ButtonPanel extends React.Component {
         // undo button
 
         const undoButton = $r('div', {
-            key: '2', className: 'col-xs-5', style: { padding: gap + " " + gap + " 0 0" }
+            key: '3', className: 'col-sm-5', style: { padding: gap + " " + gap + " 0 0" }
         }, $r('button', this.state.undoAvaliable ? { onClick: () => game.undo(), className: 'btn btn-primary btn-block', style: btnStyle } : {
             className: 'btn btn-primary btn-block', disabled: true, style: btnStyle
         }, "UNDO"));
 
         // undo all button
         const undoAllButton = $r('div', {
-            key: '3', className: 'col-xs-7', style: { padding: gap + " 0 0 0" }
+            key: '4', className: 'col-sm-7', style: { padding: gap + " 0 0 0" }
         }, $r('button', this.state.undoAvaliable ? { onClick: () => game.undoAll(), className: 'btn btn-primary btn-block', style: btnStyle } : {
             className: 'btn btn-primary btn-block', disabled: true, style: btnStyle
         }, "UNDO ALL"));
 
-        return [playButton, undoButton, undoAllButton];
+        const row = $r('div', {key: '2', className: 'row', style: {margin: '0'}}, [undoButton, undoAllButton]);
+
+        return [playButton, row];
     }
 
 
@@ -487,7 +489,7 @@ function PlayerPanel(props) {
         headingStyle.backgroundColor = '#4f94cc';
         headingStyle.color = "#fff";
     }
-    const heading = $r('div', { key: '1', className: 'panel-heading', style: headingStyle }, [name, nCards]);
+    const heading = $r('div', { key: '1', className: 'card-header', style: headingStyle }, [name, nCards]);
 
     // body contains all the effects the player has
     const effectStyle = { fontSize: smallFontSize + 'px', display: 'inline-block', verticalAlign: 'middle' };
@@ -517,7 +519,7 @@ function PlayerPanel(props) {
 
         // skip
         const skipBox = $r('div', {
-            key: '3', className: 'panel panel-default', style: {
+            key: '3', className: 'card', style: {
                 backgroundColor: '#f00', opacity: '0.2', position: 'absolute', marginLeft: '-1px', marginTop: '-1px', width: props.width + 'px', height: props.height + 'px', border: '1px solid #f00'
             }
         });
@@ -525,7 +527,7 @@ function PlayerPanel(props) {
         returnItems.push(skipBox);
     }
 
-    const body = $r('div', { key: '2', className: 'panel-body', style: { height: bodyHeight, lineHeight: bodyHeight, overflow: 'hidden', padding: '0 ' + fontSize + 'px' } }, effects);
+    const body = $r('div', { key: '2', className: 'card-body', style: { height: bodyHeight, lineHeight: bodyHeight, overflow: 'hidden', padding: '0 ' + fontSize + 'px' } }, effects);
 
     returnItems.push(heading);
     returnItems.push(body);
@@ -594,7 +596,7 @@ class PlayerListPanel extends React.Component {
             }
 
             panels.push($r('div', {
-                key: i, id: 'player-' + player.id, className: 'panel panel-default', style: panelStyle
+                key: i, id: 'player-' + player.id, className: 'card', style: panelStyle
             }, playerPanel
             ));
 
@@ -702,14 +704,14 @@ class ChatWindow extends React.Component {
         const inputStyle = { height: '100%', fontSize, padding: this.props.guiScale / 2 + 'px ' + this.props.guiScale + 'px' };
 
         const chatEntry = $r('input', { key: 'i', type: 'text', className: 'form-control', maxLength: '256', placeholder: 'Your message...', style: inputStyle, required: true, onChange: this.handleChange, value: this.state.message });
-        const chatSubmit = $r('span', { key: 's', className: 'input-group-btn' }, $r('button', { type: 'submit', className: 'btn btn-primary', style: inputStyle }, "Send"));
+        const chatSubmit = $r('span', { key: 's', className: 'input-group-append' }, $r('button', { type: 'submit', className: 'btn btn-primary', style: inputStyle }, "Send"));
 
         const chatForm = $r('form', { key: 'f', onSubmit: this.handleSubmit }, $r('div', { className: 'input-group', style: { height: '100%' } }, [chatEntry, chatSubmit]));
 
-        const chatWindow = $r('div', { key: 'd', className: 'panel-body', style: { height: '100%', padding: this.props.guiScale * 0.75 + 'px' } }, [dialog, chatForm]);
+        const chatWindow = $r('div', { key: 'd', className: 'card-body', style: { height: '100%', padding: this.props.guiScale * 0.75 + 'px' } }, [dialog, chatForm]);
 
         return $r('div', {
-            key: 'cw', className: 'panel panel-default', style: { position: 'absolute', width, height, right: '0', bottom: '0', margin: '0', zIndex: 6000 }
+            key: 'cw', className: 'card', style: { position: 'absolute', width, height, right: '0', bottom: '0', margin: '0', zIndex: 6000 }
         }, chatWindow);
     }
 }

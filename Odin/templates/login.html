@@ -1,40 +1,60 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-         <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <title>один</title>
-        <style>
-            body {
-                background-color: #555;
-            }
-            #loginPanel {
-                top: 20vh;
-            }
-        </style>
-    </head>
-    <body>
-    <div class="col-sm-6 col-sm-offset-3" id="loginPanel">
-        <div class="panel panel-default">
-            <div class="panel-heading">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <title>один</title>
+    <style>
+        body {
+            background-color: #555;
+        }
+
+        #wrapper {
+            top: 10vh;
+            text-align: center;
+        }
+
+        .logo {
+            display: inline-block;
+            max-width: 100%;
+            margin-bottom: 10vh;
+        }
+
+        .body {
+            text-align: left;
+            margin-bottom: 3vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="col-sm-6 mx-auto" id="wrapper">
+        <img class="logo" src="/static/logo.png" alt="logo">
+
+        <br />
+        <div class="card body">
+            <div class="card-header">
                 Pick a user name
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <form id="login" method="post">
                     <div class="form-group">
                         <label for="InputName">User name</label>
-                        <input type="text" class="form-control" id="InputName" name="player_name" placeholder="Enter a name" maxlength="10" required>
+                        <input type="text" class="form-control" id="InputName" name="player_name"
+                            placeholder="Enter a name" maxlength="10" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>
         </div>
     </div>
-  </body>
+</body>
+
 </html>

@@ -1,38 +1,69 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-         <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
-        
-        <script>
-            $(document).ready(function() {
-				socket = io.connect(document.domain, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
-            });
-        
-        </script>
-        <title>Game</title>
-        <style>
-            body {
-                background-color: #555;
-            }
-            html, body {
-                width: 100%;
-                height: 100%;
-                margin: 0px;
-                border: 0;
-                overflow: hidden; /*  Disable scrollbars */
-                display: block;  /* No floating content on sides */
-            }
-        </style>
-    </head>
-    <body>
-        <!--Idk isaac you'd probably be better at implementing this than me-->
-    </body>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+    <script>
+        socket = io.connect(document.domain, { 'reconnection': true, 'reconnectionDelay': 500, 'maxReconnectionAttempts': Infinity });
+
+        $(document).ready(function () {
+
+        });
+
+    </script>
+    <title>один</title>
+    <style>
+        body {
+            background-color: #555;
+        }
+
+        #wrapper {
+            top: 10vh;
+            text-align: center;
+        }
+        .logo {
+            display: inline-block;
+            max-width: 100%;
+            margin-bottom: 10vh;
+        }
+
+        .body {
+            text-align: left;
+            margin-bottom: 3vh;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            border: 0;
+            display: block;
+            /* No floating content on sides */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="col-sm-6 mx-auto" id="wrapper">
+        <img class="logo" src="/static/logo.png" alt="logo">
+    
+        <br />
+
+        <div class="card body">
+            <div class="card-body">
+                <p>Here is some instructions on how to play the game...</p>
+            </div>
+        </div>
+    </div>
+</body>
+
 </html>

@@ -33,6 +33,7 @@ def make_unique_game_id():
 
 
 @fs.app.route('/new_game')
+@fs.app.route('/new_game/')
 def new_game():
     """
     makes a new game and then redirects user to it
@@ -44,6 +45,16 @@ def new_game():
     fs.socket_io.start_background_task(clear_inactive_players, games[game_id])
 
     return redirect('/' + game_id)
+
+@fs.app.route('/help')
+@fs.app.route('/help/')
+def help_screen():
+    """
+    shows the help screen
+    :return: None
+    """
+
+    return render_template("help.html")
 
 
 @fs.app.route('/<game_id>', methods=['GET', 'POST'])

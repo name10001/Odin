@@ -5,9 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
          <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
         <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
@@ -107,10 +107,10 @@
     <body>
 	<audio src="{{ url_for('static', filename='lobby.mp3') }}" autoplay loop>Your browser does not support audio</audio>
 
-    <div class="col-sm-6 col-sm-offset-3" id="loginPanel">
-        <div class="panel panel-default">
+    <div class="col-sm-6 mx-auto" id="loginPanel">
+        <div class="card">
 
-            <div class="panel-heading">
+            <div class="card-header">
                 <button type="button" style="float:right; margin-top:5px;" class="btn btn-primary" onclick="socket.emit('waiting room message', GAME_ID, 'quit', null)">
                     Quit
                 </button>
@@ -126,7 +126,7 @@
                             value="{{ request.url }}"
                             readonly
                     >
-                    <span class="input-group-btn">
+                    <div class="input-group-append">
                         <button
                                 type="submit"
                                 class="btn btn-primary  input-lg"
@@ -134,34 +134,39 @@
                         >
                             copy
                         </button>
-                    </span>
+                    </div>
                 </div>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <h4>Waiting players</h4>
                 <ul id="list-of-players" class="list-group">
 
                 </ul>
                 <hr />
                 <h4>Game Settings</h4>
-                <div class="form-group row">
-                    <div class="col-xs-4">
-                        <label for="number-of-cards">Starting number of cards</label>
-                        <input class="form-control" id="number-of-cards" type="number" min="5" max="{{ settings.player_card_limit }}" step="1">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <label for="number-of-cards">Starting number of cards</label>
+                            <span>
+                                
+                            </span>
+                            <input class="form-control" id="number-of-cards" type="number" min="5" max="{{ settings.player_card_limit }}" step="1">
+                        </div>
+                        <!--
+                        <div class="col-xs-4">
+                            <label for="show-planning-pile">Show other players planning pile</label>
+                            <input type="checkbox" checked data-toggle="toggle" id="show-planning-pile" >
+                        </div>
+                        
+                        <div class="col-xs-4">
+                            <label for="lock-settings">Lock settings</label>
+                            <input type="checkbox" checked data-toggle="toggle" id="lock-settings" >
+                        </div>-->
                     </div>
-                    <!--
-                    <div class="col-xs-4">
-                        <label for="show-planning-pile">Show other players planning pile</label>
-                        <input type="checkbox" checked data-toggle="toggle" id="show-planning-pile" >
-                    </div>
-                    
-                    <div class="col-xs-4">
-                        <label for="lock-settings">Lock settings</label>
-                        <input type="checkbox" checked data-toggle="toggle" id="lock-settings" >
-                    </div>-->
                 </div>
             </div>
-            <div class="panel-footer">
+            <div class="card-footer">
                 <button type="button" class="btn btn-primary" onclick="socket.emit('waiting room message', GAME_ID, 'start', null)">
                     Start Game
                 </button>

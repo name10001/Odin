@@ -1,56 +1,80 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <script>
-        socket = io.connect(document.domain, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
-        $(document).ready(function(){
-            document.getElementById('join-game').onsubmit = function() {
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+    <script>
+        socket = io.connect(document.domain, { 'reconnection': true, 'reconnectionDelay': 500, 'maxReconnectionAttempts': Infinity });
+        $(document).ready(function () {
+            document.getElementById('join-game').onsubmit = function () {
                 window.location.href = '/' + document.getElementById('game-id').value;
                 return false; // to make sure it does not submit form
             };
         });
-        </script>
+    </script>
 
-        <title>один</title>
-        <style>
-            body {
-                background-color: #555;
-            }
-            #loginPanel {
-                top: 20vh;
-            }
-            #error-message {
-                color: red;
-            }
-            .input-group button,input {
-                display: inline-block;
-            }
+    <title>один</title>
+    <style>
+        body {
+            background-color: #555;
+        }
 
-        </style>
-    </head>
-    <body>
-    <div class="col-sm-6 mx-auto" id="loginPanel">
-        <div class="card">
-            <div class="card-header">
-                Oдин
-            </div>
+        #wrapper {
+            top: 10vh;
+            text-align: center;
+        }
+
+        .logo {
+            display: inline-block;
+            max-width: 100%;
+            margin-bottom: 10vh;
+        }
+
+        .body {
+            text-align: left;
+            margin-bottom: 3vh;
+        }
+
+
+        #error-message {
+            color: red;
+        }
+
+
+        .float-right {
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="col-sm-6 mx-auto" id="wrapper">
+        <img class="logo" src="/static/logo.png" alt="logo">
+
+        <br />
+
+        <div class="body">
+            <a href="\new_game" class="btn btn-primary">Create New Game</a>
+            <a href="\help" class="btn btn-primary float-right">Learn To Play</a>
+        </div>
+        <div class="card body">
             <div class="card-body">
-                <p>Join a game by entering the game ID below, or by creating a new game.</p>
+                <p>Join an existing game by entering the ID below:</p>
                 <br />
                 <form id="join-game">
                     <div class="input-group">
-                        <input id="game-id" type="text" class="form-control {% if message %}is-invalid{% endif %}" placeholder="Game id e.g. '12345'" required>
-                        <span class="input-group-append">
+                        <input id="game-id" type="text" class="form-control {% if message %}is-invalid{% endif %}"
+                            placeholder="Game id e.g. '12345'" required>
+                        <div class="input-group-append">
                             <button type="submit" class="btn btn-primary">Join</button>
-                        </span>
+                        </div>
                         {% if message %}
                         <div class="invalid-feedback">
                             {{ message }}
@@ -59,10 +83,8 @@
                     </div>
                 </form>
             </div>
-            <div class="card-footer">
-                <a href="\new_game" class="btn btn-primary">Make New Game</a>
-            </div>
         </div>
     </div>
-  </body>
+</body>
+
 </html>
