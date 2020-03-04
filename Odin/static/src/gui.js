@@ -483,13 +483,7 @@ function PlayerPanel(props) {
     const nCards = $r('span', { key: 'r', style: { fontSize: fontSize + 'px', float: 'right', display: 'inline-block', verticalAlign: 'middle' } }, props.player.nCards);
 
     // make the heading blue if the person is you
-    const headingStyle = { height: headingHeight, lineHeight: headingHeight, padding: '0 ' + fontSize + 'px' };
-
-    if (props.isYou) {
-        headingStyle.backgroundColor = '#4f94cc';
-        headingStyle.color = "#fff";
-    }
-    const heading = $r('div', { key: '1', className: 'card-header', style: headingStyle }, [name, nCards]);
+    const heading = $r('div', { key: '1', className: 'card-header' + props.isYou ? ' btn-primary' : '', style: { height: headingHeight, lineHeight: headingHeight, padding: '0 ' + fontSize + 'px' } }, [name, nCards]);
 
     // body contains all the effects the player has
     const effectStyle = { fontSize: smallFontSize + 'px', display: 'inline-block', verticalAlign: 'middle' };
