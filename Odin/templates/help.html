@@ -30,6 +30,7 @@
             top: 10vh;
             text-align: center;
         }
+
         .logo {
             display: inline-block;
             max-width: 100%;
@@ -39,6 +40,13 @@
         .body {
             text-align: left;
             margin-bottom: 3vh;
+        }
+
+        .compat-cell {
+            background-color:#0f0;
+        }
+        .incompat-cell {
+            background-color:#f00;
         }
 
         html,
@@ -56,12 +64,166 @@
 <body>
     <div class="col-sm-6 mx-auto" id="wrapper">
         <img class="logo" src="/static/logo.png" alt="logo">
-    
+
         <br />
 
         <div class="card body">
             <div class="card-body">
-                <p>Here is some instructions on how to play the game...</p>
+                <h4>Your Goal:</h2>
+                    <p>Be the first to remove all your cards.</p>
+                    <h4>Setup:</h2>
+                        <p>All players are dealt the same number of cards randomly from the deck.</p>
+                        <p>The first top card in the <strong>discard pile</strong> is chosen randomly.</p>
+                        <h2>Playing Cards:</h2>
+                        <p>A card may only be played if it is <em>compatible</em> with the top card on the
+                            <strong>discard pile</strong>. </p>
+                        <h4>Compatibility:</h4>
+                        <p><em>In general</em>, cards which share the same <strong>type</strong> <em>OR</em>
+                            <strong>colour</strong> are compatible.</p>
+                        <br>
+                        <h5>Colour compatibility:</h5>
+                        <p><strong>Red</strong>, <strong>blue</strong>, <strong>green</strong> or
+                            <strong>yellow</strong> cards are the default colours with no special rules. </p>
+                        <p><strong>Black</strong> cards are wild cards and can be used with any of the four default
+                            colours, but <em>NOT</em> <strong>purple </strong> cards.</p>
+                        <p><strong>White</strong> cards are also wild cards and can be used with the four default
+                            colours <em>AND</em> <strong>purple</strong> cards.</p>
+                        <p>However, <strong>black</strong> and <strong>white</strong> cards are <em>NOT</em> compatibile
+                            with eachother.</p>
+                        <p><strong>Orange</strong> cards are <em>NOT</em> compatible with both <strong>black</strong>
+                            and <strong>white</strong> cards.</p>
+                        <p><strong>Rainbow</strong> cards are compatible with <em>ALL</em> cards.</p>
+                        <br>
+                        <!--
+                        <p>See the following table for a visual representation of the colour compatibility rules:</p>
+                        <table class='table table-sm table-bordered'>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">Red</th>
+                                <th scope="col">Green</th>
+                                <th scope="col">Blue</th>
+                                <th scope="col">Yellow</th>
+                                <th scope="col">Purple</th>
+                                <th scope="col">Orange</th>
+                                <th scope="col">Black</th>
+                                <th scope="col">White</th>
+                                <th scope="col">Rainbow</th>
+                            </tr>
+                            <tr>
+                                <th scope="row">Red</th>
+                                <td class="compat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Green</th>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Blue</th>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Yellow</th>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Purple</th>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Orange</th>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Black</th>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">White</th>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="incompat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Rainbow</th>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                                <td class="compat-cell"></td>
+                            </tr>
+                        </table>
+                    -->
+                    
+                    <h5>Playing multiple cards:</h5>
+                    <p>You are allowed to play multiple cards on your turn.</p>
+                    <p><em>In general</em>, all cards played on your turn must be of the same <strong>type</strong>.</p>
+                    <p>The <em>last</em> card you played at the end of your turn will become the new top card in the <strong>discard pile</strong></p>
             </div>
         </div>
     </div>
