@@ -1,7 +1,7 @@
 .btn-primary {
     color: #fff;
-    background-color: #1f6cab;
-    border-color: #1f6cab;
+    background-color: #3485c7;
+    border-color: #3485c7;
 }
 
 .btn-primary:hover {
@@ -31,4 +31,8 @@
 
 .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show>.btn-primary.dropdown-toggle:focus {
     box-shadow: 0 0 0 .2rem rgba(38, 143, 255, .5)
+}
+
+body {
+    background-color: #5d5d5d;
 }

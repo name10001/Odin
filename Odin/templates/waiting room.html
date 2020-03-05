@@ -97,54 +97,83 @@
 
         <title>один</title>
         <style>
-            body {
-                background-color: #555;
+            #wrapper {
+                top: 8vh;
             }
-            #loginPanel {
-                top: 20vh;
+            h1, h4 {
+                color: #fff;
+                text-align: center;
             }
+            h1 {
+                font-size: 5rem;
+                margin-bottom: 4vh;
+            }
+            .body {
+                margin-bottom: 3vh;
+            }
+            .input-group {
+                margin-bottom: 8vh;
+            }
+
         </style>
     </head>
     <body>
 	<audio src="{{ url_for('static', filename='lobby.mp3') }}" autoplay loop>Your browser does not support audio</audio>
 
-    <div class="col-sm-6 mx-auto" id="loginPanel">
-        <div class="card">
+    <div class="col-sm-6 mx-auto" id="wrapper">
+        <h4>
+            GAME ID
+        </h4>
+        <h1>
+            {{ waiting_room.get_id() }}
+        </h1>
 
-            <div class="card-header">
-                <button type="button" style="float:right; margin-top:5px;" class="btn btn-primary" onclick="socket.emit('waiting room message', GAME_ID, 'quit', null)">
-                    Quit
+        <div class="input-group body col-sm-6 mx-auto">
+            <input
+                    type="text"
+                    class="form-control input-lg"
+                    name="game-link"
+                    id="game-url"
+                    value="{{ request.url }}"
+                    readonly
+            >
+            <div class="input-group-append">
+                <button
+                        type="submit"
+                        class="btn btn-primary  input-lg"
+                        onclick="document.getElementById('game-url').select(); document.execCommand('copy');"
+                >
+                    copy
                 </button>
-                <h2 style="text-align:center; margin-top:5px;">
-                    ID: <strong>{{ waiting_room.get_id() }}</strong>
-                </h2>
-                <div class="input-group">
-                    <input
-                            type="text"
-                            class="form-control input-lg"
-                            name="game-link"
-                            id="game-url"
-                            value="{{ request.url }}"
-                            readonly
-                    >
-                    <div class="input-group-append">
-                        <button
-                                type="submit"
-                                class="btn btn-primary  input-lg"
-                                onclick="document.getElementById('game-url').select(); document.execCommand('copy');"
-                        >
-                            copy
-                        </button>
-                    </div>
-                </div>
             </div>
+        </div>
+        
+        <div class="body">
+            <button type="button" class="btn btn-primary" onclick="socket.emit('waiting room message', GAME_ID, 'start', null)">
+                Start Game
+            </button>
+            <button type="button" class="btn btn-primary float-right" onclick="socket.emit('waiting room message', GAME_ID, 'quit', null)">
+                Quit
+            </button>
+        </div>
+
+        <div class="card body">
+            <div class="card-header">
+                <h5>Waiting players</h5>
+            </div>
+
             <div class="card-body">
-                <h4>Waiting players</h4>
                 <ul id="list-of-players" class="list-group">
 
                 </ul>
-                <hr />
-                <h4>Game Settings</h4>
+            </div>
+        </div>
+        
+        <div class="card body">
+            <div class="card-header">
+                <h5>Game Settings</h5>
+            </div>
+            <div class="card-body">
                 <div class="form-group">
                     <div class="row">
                         <div class="col-sm-4">
@@ -166,11 +195,6 @@
                         </div>-->
                     </div>
                 </div>
-            </div>
-            <div class="card-footer">
-                <button type="button" class="btn btn-primary" onclick="socket.emit('waiting room message', GAME_ID, 'start', null)">
-                    Start Game
-                </button>
             </div>
         </div>
     </div>
