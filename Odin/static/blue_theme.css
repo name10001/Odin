@@ -3,6 +3,11 @@
     background-color: #3485c7;
     border-color: #3485c7;
 }
+.btn-primary-color {
+    color: #fff;
+    background-color: #3485c7;
+    border-color: #3485c7;
+}
 
 .btn-primary:hover {
     color: #fff;

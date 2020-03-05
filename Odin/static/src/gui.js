@@ -138,7 +138,7 @@ class ButtonPanel extends React.Component {
 
         // play button
         const playButton = $r('button', this.state.playAvaliable ? { key: '1', onClick: () => game.finishTurn(), className: 'btn btn-primary btn-block', style: btnStyle } : {
-            key: '1', disabled: true, className: 'btn btn-primary btn-block', style: btnStyle
+            key: '5', disabled: true, className: 'btn btn-primary btn-block', style: btnStyle
         }, this.state.playMessage);
 
         // size of the gap between buttons
@@ -147,21 +147,22 @@ class ButtonPanel extends React.Component {
         // undo button
 
         const undoButton = $r('div', {
-            key: '3', className: 'col-sm-5', style: { padding: gap + " " + gap + " 0 0" }
+            key: '3', className: 'col-5', style: { padding: gap + " " + gap + " 0 0" }
         }, $r('button', this.state.undoAvaliable ? { onClick: () => game.undo(), className: 'btn btn-primary btn-block', style: btnStyle } : {
             className: 'btn btn-primary btn-block', disabled: true, style: btnStyle
         }, "UNDO"));
 
         // undo all button
         const undoAllButton = $r('div', {
-            key: '4', className: 'col-sm-7', style: { padding: gap + " 0 0 0" }
+            key: '4', className: 'col-7', style: { padding: gap + " 0 0 0" }
         }, $r('button', this.state.undoAvaliable ? { onClick: () => game.undoAll(), className: 'btn btn-primary btn-block', style: btnStyle } : {
             className: 'btn btn-primary btn-block', disabled: true, style: btnStyle
         }, "UNDO ALL"));
 
-        const row = $r('div', {key: '2', className: 'row', style: {margin: '0'}}, [undoButton, undoAllButton]);
+        const row1 = $r('div', {key: '1', className: 'row'}, playButton);
+        const row2 = $r('div', {key: '2', className: 'row'}, [undoButton, undoAllButton]);
 
-        return [playButton, row];
+        return [row1, row2];
     }
 
 
@@ -483,7 +484,7 @@ function PlayerPanel(props) {
     const nCards = $r('span', { key: 'r', style: { fontSize: fontSize + 'px', float: 'right', display: 'inline-block', verticalAlign: 'middle' } }, props.player.nCards);
 
     // make the heading blue if the person is you
-    const heading = $r('div', { key: '1', className: 'card-header' + props.isYou ? ' btn-primary' : '', style: { height: headingHeight, lineHeight: headingHeight, padding: '0 ' + fontSize + 'px' } }, [name, nCards]);
+    const heading = $r('div', { key: '1', className: 'card-header' + (props.isYou ? ' btn-primary-color' : ''), style: { height: headingHeight, lineHeight: headingHeight, padding: '0 ' + fontSize + 'px' } }, [name, nCards]);
 
     // body contains all the effects the player has
     const effectStyle = { fontSize: smallFontSize + 'px', display: 'inline-block', verticalAlign: 'middle' };
@@ -1218,7 +1219,7 @@ class OdinGui extends React.Component {
             undoAvaliable: this.state.game.undoAvaliable(), playMessage: this.state.game.getPlayButtonMessage(),
             playAvaliable: this.state.game.playAvaliable(), guiScale: this.state.guiScale, ref: this.buttonsRef
         });
-        const buttonsWrapper = $r('div', { key: 'bp', style: { position: 'absolute', bottom: '0', width: colWidth + "px" } }, buttons);
+        const buttonsWrapper = $r('div', { key: 'bp', className: 'container',style: { position: 'absolute', bottom: '0', width: colWidth + "px" } }, buttons);
 
         // info panel
         const infoPanel = $r(InfoPanel, { fontSize: this.state.guiScale * 1.5, height: infoHeight, turnString: this.state.game.turnString, pickupAmount: this.state.game.pickupAmount, ref: this.infoRef });
