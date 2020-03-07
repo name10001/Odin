@@ -1,124 +1,205 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-         <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/static/blue_theme.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-        <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/blue_theme.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
-        <script>
-            var GAME_ID = '{{ waiting_room.get_id() }}';
-			$(document).ready(function() {
-				// SocketIO
-				socket = io.connect(location.host, {'reconnection': true, 'reconnectionDelay': 500,'maxReconnectionAttempts':Infinity});
-				socket.on('connect', function() {
-				    $("list-of-players").html("");
-					socket.emit("waiting room message", GAME_ID, "join", null);
-                });
-                // debug message
-				socket.on('message', function(data) {
-					console.log(data);
-                });
-                // refresh
-				socket.on('refresh', function(data) {
-					location.reload(true);
-                });
-                // another player joined
-				socket.on('user joined', function(name) {
-				    let name_node = document.createElement("LI");
-				    name_node.classList.add("list-group-item");
-				    let text_node = document.createTextNode(name);
-				    name_node.appendChild(text_node);
-					document.getElementById("list-of-players").appendChild(name_node);
-                });
-                // a player left
-                socket.on('user quit', function(name) {
-                    let playerList = document.getElementById("list-of-players");
-                    for(let node of playerList.getElementsByTagName("LI")) {
-                        if(node.innerHTML == name) {
-                            playerList.removeChild(node);
-                            break;
-                        }
+    <!-- Load React. -->
+    <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+    <script>
+        const $r = React.createElement;
+        var GAME_ID = '{{ waiting_room.get_id() }}';
+        var settings;
+
+        class Settings extends React.Component {
+            constructor(props) {
+                super(props);
+
+                this.state = {
+                    values: props.settings.map((setting) => setting['default'])
+                };
+            }
+
+            componentDidMount() {
+                for(let i = 0; i < this.props.settings.length; i++) {
+                    $('#' + i + '_setting').change(() => this.handleConfirmChange(i));
+                }
+            }
+
+            /**
+             * When you change the value of a setting - not confirmed (haven't pressed enter)
+             * 
+             * */
+            handleChange(event, index) {
+                const values = this.state.values;
+                values[index] = parseInt(event.target.value);
+
+                this.setState({ values });
+            }
+
+            /**
+             * Unfocussing an element will change it
+             * 
+             * */
+            handleConfirmChange(index) {
+                const values = this.state.values;
+
+                const min = this.props.settings[index]['min'];
+                const max = this.props.settings[index]['max'];
+
+                if(values[index] < min) {
+                    values[index] = min;
+                    this.setState({ values });
+                }
+                else if(values[index] > max) {
+                    values[index] = max;
+                    this.setState({ values });
+                }
+                socket.emit('waiting room message', GAME_ID, 'setting change', {'index': index, 'value': values[index]});
+            }
+
+            /**
+             * When a change is sent by another user
+             * */
+            changeSetting(index, value) {
+                const values = this.state.values;
+                values[index] = value;
+
+                this.setState({ values });
+
+            }
+
+            render() {
+                const allRows = [];
+                let currentRow = [];
+
+                for (const setting of this.props.settings) {
+                    const label = $r('label', { key: '1', for: setting['index'] + '_setting' }, setting['name']);
+                    let control;
+                    // integer setting
+                    if (setting['type'] == 'int') {
+                        control = $r('input', {
+                            key: '2', className: 'form-control', id: setting['index'] + '_setting', type: 'number',
+                            min: setting['min'], max: setting['max'], step: '1', value: this.state.values[setting['index']], onChange: (event) => this.handleChange(event, setting['index'])
+                        });
                     }
-                });
-                // you left
-                socket.on('quit', function() {
-                    location.href = "/";
-                });
-                // change the number of cards
-				$("#number-of-cards").change(function() {
-				    theInput = document.getElementById("number-of-cards");
-				    let num = parseInt(theInput.value);
-				    if (num < 5) {
-				        num = 5;
-				    } else if (num > {{ settings.player_card_limit }}) {
-				        num = {{ settings.player_card_limit }};
-				    }
-				    theInput.value = num;
-				    socket.emit("waiting room message", GAME_ID, "setting change", ["number-of-cards", num]);
-				});
-				/*var justChangedCheckBox = false;
-				$("#show-planning-pile").change(function() {
-				    if (justChangedCheckBox) {
-				        justChangedCheckBox = false;
-				        return;
-				    }
-				    theInput = $("#show-planning-pile");
-				    socket.emit("waiting room message", GAME_ID, "setting change", ["show-planning-pile", theInput.prop('checked')]);
-				});*/
-				socket.on('setting changed', function(data) {
-				    if (data[0] == "number-of-cards") {
-				        document.getElementById("number-of-cards").value = data[1];
-				    } /*else if (data[0] == "show-planning-pile") {
-				        checkBox = $("#show-planning-pile");
-				        if (data[1] == true) {
-				            justChangedCheckBox = true;
-				            checkBox.bootstrapToggle("on");
-				        } else if (data[1] == false) {
-				            justChangedCheckBox = true;
-				            checkBox.bootstrapToggle("off");
-				        } else {
-				            throw data[1] + " is not a valid state for show-planning-pile";
-				        }
-				    } */ else {
-				        throw "No item called '" + data[0] + "' found";
-				    }
-				})
-			});
-        </script>
+                    // TODO other types of settings
 
-        <title>один</title>
-        <style>
-            #wrapper {
-                top: 8vh;
-            }
-            h1, h4 {
-                color: #fff;
-                text-align: center;
-            }
-            h1 {
-                font-size: 5rem;
-                margin-bottom: 4vh;
-            }
-            .body {
-                margin-bottom: 3vh;
-            }
-            .input-group {
-                margin-bottom: 8vh;
-            }
+                    currentRow.push($r('div', { key: currentRow.length + '', className: 'col-sm-4' }, [label, control]));
 
-        </style>
-    </head>
-    <body>
-	<audio src="{{ url_for('static', filename='lobby.mp3') }}" autoplay loop>Your browser does not support audio</audio>
+                    if (currentRow.length == 3) {
+                        allRows.push($r('div', { key: allRows.length + '', className: 'row' }, currentRow));
+                        currentRow = [];
+                    }
+
+                }
+                if (currentRow.length > 0) {
+                    allRows.push($r('div', { key: allRows.length + '', className: 'row' }, currentRow));
+                }
+                return allRows;
+            }
+        }
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+
+        $(document).ready(function () {
+
+            // SocketIO
+            socket = io.connect(location.host, { 'reconnection': true, 'reconnectionDelay': 500, 'maxReconnectionAttempts': Infinity });
+            socket.on('connect', function () {
+                $("list-of-players").html("");
+                socket.emit("waiting room message", GAME_ID, "join", null);
+            });
+            // create all settings
+            socket.on('add settings', function (data) {
+                settings = ReactDOM.render($r(Settings, { settings: data }, null), document.getElementById("settings-panel"));
+            });
+            // debug message
+            socket.on('message', function (data) {
+                console.log(data);
+            });
+            // refresh
+            socket.on('refresh', function (data) {
+                location.reload(true);
+            });
+            // another player joined
+            socket.on('user joined', function (name) {
+                let name_node = document.createElement("LI");
+                name_node.classList.add("list-group-item");
+                let text_node = document.createTextNode(name);
+                name_node.appendChild(text_node);
+                document.getElementById("list-of-players").appendChild(name_node);
+            });
+            // a player left
+            socket.on('user quit', function (name) {
+                let playerList = document.getElementById("list-of-players");
+                for (let node of playerList.getElementsByTagName("LI")) {
+                    if (node.innerHTML == name) {
+                        playerList.removeChild(node);
+                        break;
+                    }
+                }
+            });
+            // a setting changed
+            socket.on('setting changed', function (data) {
+                settings.changeSetting(data['index'], data['value']);
+            });
+            // you left
+            socket.on('quit', function () {
+                location.href = "/";
+            });
+        });
+    </script>
+
+    <title>один</title>
+    <style>
+        #wrapper {
+            top: 8vh;
+        }
+
+        h1,
+        h4 {
+            color: #fff;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 5rem;
+            margin-bottom: 4vh;
+        }
+
+        .body {
+            margin-bottom: 3vh;
+        }
+
+        .input-group {
+            margin-bottom: 8vh;
+        }
+
+        #settings-panel .row {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <audio src="{{ url_for('static', filename='lobby.mp3') }}" autoplay loop>Your browser does not support audio</audio>
 
     <div class="col-sm-6 mx-auto" id="wrapper">
         <h4>
@@ -129,30 +210,23 @@
         </h1>
 
         <div class="input-group body col-sm-6 mx-auto">
-            <input
-                    type="text"
-                    class="form-control input-lg"
-                    name="game-link"
-                    id="game-url"
-                    value="{{ request.url }}"
-                    readonly
-            >
+            <input type="text" class="form-control input-lg" name="game-link" id="game-url" value="{{ request.url }}"
+                readonly>
             <div class="input-group-append">
-                <button
-                        type="submit"
-                        class="btn btn-primary  input-lg"
-                        onclick="document.getElementById('game-url').select(); document.execCommand('copy');"
-                >
+                <button type="submit" class="btn btn-primary  input-lg"
+                    onclick="document.getElementById('game-url').select(); document.execCommand('copy');">
                     copy
                 </button>
             </div>
         </div>
-        
+
         <div class="body">
-            <button type="button" class="btn btn-primary" onclick="socket.emit('waiting room message', GAME_ID, 'start', null)">
+            <button type="button" class="btn btn-primary"
+                onclick="socket.emit('waiting room message', GAME_ID, 'start', null)">
                 Start Game
             </button>
-            <button type="button" class="btn btn-primary float-right" onclick="socket.emit('waiting room message', GAME_ID, 'quit', null)">
+            <button type="button" class="btn btn-primary float-right"
+                onclick="socket.emit('waiting room message', GAME_ID, 'quit', null)">
                 Quit
             </button>
         </div>
@@ -168,35 +242,17 @@
                 </ul>
             </div>
         </div>
-        
+
         <div class="card body">
             <div class="card-header">
                 <h5>Game Settings</h5>
             </div>
             <div class="card-body">
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <label for="number-of-cards">Starting number of cards</label>
-                            <span>
-                                
-                            </span>
-                            <input class="form-control" id="number-of-cards" type="number" min="5" max="{{ settings.player_card_limit }}" step="1">
-                        </div>
-                        <!--
-                        <div class="col-xs-4">
-                            <label for="show-planning-pile">Show other players planning pile</label>
-                            <input type="checkbox" checked data-toggle="toggle" id="show-planning-pile" >
-                        </div>
-                        
-                        <div class="col-xs-4">
-                            <label for="lock-settings">Lock settings</label>
-                            <input type="checkbox" checked data-toggle="toggle" id="lock-settings" >
-                        </div>-->
-                    </div>
+                <div id="settings-panel" class="form-group">
                 </div>
             </div>
         </div>
     </div>
-  </body>
+</body>
+
 </html>

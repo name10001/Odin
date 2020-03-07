@@ -6,6 +6,7 @@ import random
 from time import time
 from cards.deck import AbstractDeck, WeightedDeck
 from cards.card_collection import CardCollection
+import settings
 
 
 class AbstractGame:
@@ -13,7 +14,7 @@ class AbstractGame:
     Defines how a game should behave and implements some methods that do not depend on any front-end implementation.
     """
 
-    def __init__(self):
+    def __init__(self, max_cards=settings.max_player_card_limit):
         """
         Initializes the game.
 
@@ -24,6 +25,8 @@ class AbstractGame:
         self.deck = AbstractDeck()
         self.played_cards = CardCollection()
         self.planning_pile = CardCollection()
+
+        self.max_cards = max_cards
 
         self.pickup = 0
         self.direction = 1  # 1 or -1
@@ -214,14 +217,14 @@ class Game(AbstractGame):
 
     """
 
-    def __init__(self, game_id, players, waiting_room, starting_number_of_cards):
+    def __init__(self, game_id, players, waiting_room, starting_number_of_cards=settings.default_starting_cards, max_cards=settings.max_player_card_limit):
         """
         :param game_id: The ID of the game.
         :param players: A dict of players with the key as player id and the player name as the value.
         :param waiting_room: The waiting room that the game was made in.
         :param starting_number_of_cards: The number of cards each player starts with.
         """
-        super().__init__()
+        super().__init__(max_cards=max_cards)
 
         self.game_id = game_id
         self.waiting_room = waiting_room
@@ -351,7 +354,8 @@ class Game(AbstractGame):
                 print("got unknown message from player:", message)
 
     def send_chat_message(self, player_name, message):
-        data = {"player": player_name, "message": message if len(message) <= 256 else message[:256]};
+        data = {"player": player_name, "message": message if len(
+            message) <= 256 else message[:256]}
         self.send_to_all_players("chat", data)
         self.chat.append(data)
 

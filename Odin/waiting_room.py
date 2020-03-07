@@ -4,6 +4,7 @@ from flask_socketio import *
 import flask_server as fs
 from time import time
 import settings
+from settings import IntSetting
 from util.extended_formatter import extended_formatter
 
 
@@ -21,9 +22,16 @@ class WaitingRoom:
         self.game = None
         self.game_id = game_id
         self.last_modified = time()
-        self.settings = {
-            "number-of-cards": 25
-        }
+        self.settings = [
+            IntSetting('Starting number of cards', 25,
+                       settings.min_player_card_limit, settings.max_player_card_limit),
+            IntSetting('Maximum number of cards', 500,
+                       settings.min_max_player_card_limit, settings.max_player_card_limit)
+        ]
+        self.chosen_settings = {setting.name: setting.default_value for setting in self.settings}
+
+    def _settings_json(self):
+        return [setting.to_json(index) for index, setting in enumerate(self.settings)]
 
     def message(self, message_type, data):
         """
@@ -63,7 +71,7 @@ class WaitingRoom:
                 if self.running:
                     return self.game.render_game()
                 else:
-                    return render_template("waiting room.html", waiting_room=self, settings=settings)
+                    return render_template("waiting room.html", waiting_room=self)
             else:
                 return render_template("login.html")
         elif request.method == 'POST':
@@ -86,18 +94,29 @@ class WaitingRoom:
         :param data: the message data sent from the client
         :return:
         """
-        if not isinstance(data, list) or len(data) != 2:
+        if data['index'] is None or data['value'] is None:
             return
 
-        setting, value = data
+        index = data['index']
+        value = data['value']
 
-        if setting not in self.settings or type(self.settings[setting]) != type(value):
+        # check if valid
+        if not isinstance(value, int):
+            return
+        if index < 0 or index >= len(self.settings):
             return
 
-        self.settings[setting] = value
+        setting = self.settings[index]
 
-        fs.socket_io.emit("setting changed", [
-                          setting, value], room=self.game_id, include_self=False)
+        # check if within bounds
+        if value < setting.min_value or value > setting.max_value:
+            return
+        
+        # change setting
+        self.chosen_settings[setting.name] = value
+
+        # emit
+        fs.socket_io.emit("setting changed", {'index': index, 'value': value}, room=self.game_id, include_self=False)
 
     def _joined_waiting_room(self):
         """
@@ -108,8 +127,11 @@ class WaitingRoom:
 
         self.set_sid()
 
-        for setting in self.settings:
-            emit("setting changed", [setting, self.settings[setting]])
+        emit("add settings", self._settings_json())
+
+        for index in range(len(self.settings)):
+            emit("setting changed", {'index': index, 'value': self.chosen_settings[self.settings[index].name]})
+
         join_room(self.game_id)
 
         for player in self._player_names:
@@ -145,12 +167,11 @@ class WaitingRoom:
             player = self.game.get_user(player_id)
             self.game.send_to_all_players(
                 "popup message", player.get_name() + " has quit the game!")
-                
+
             del self._player_names[player_id]
             del self._sessions[player_id]
 
             self.game.remove_player(player)
-
 
         # let waiting room handle removing player
         else:
@@ -178,7 +199,7 @@ class WaitingRoom:
         self.modify()
         self.running = True
         self.game = Game(self.game_id, self._player_names, self,
-                         starting_number_of_cards=self.settings["number-of-cards"])
+                         starting_number_of_cards=self.chosen_settings['Starting number of cards'], max_cards=self.chosen_settings['Maximum number of cards'])
         with fs.app.app_context():
             fs.socket_io.emit("refresh", room=self.game_id)
 
