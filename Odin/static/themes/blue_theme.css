@@ -15,6 +15,11 @@
     border-color: #1b5f96;
 }
 
+.player-color {
+    color: #3485c7;
+    font-weight: 'bold';
+}
+
 .btn-primary.focus, .btn-primary:focus {
     color: #fff;
     background-color: #165488;
@@ -28,6 +33,7 @@
     border-color: #719cca
 }
 
+
 .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
     color: #fff;
     background-color: #1d65a0;
@@ -37,6 +43,7 @@
 .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show>.btn-primary.dropdown-toggle:focus {
     box-shadow: 0 0 0 .2rem rgba(38, 143, 255, .5)
 }
+
 
 body {
     background-color: #5d5d5d;

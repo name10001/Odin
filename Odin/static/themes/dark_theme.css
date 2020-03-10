@@ -1,0 +1,118 @@
+.btn-primary {
+    color: #fff;
+    background-color: #00c795;
+    border-color: #00c795;
+}
+.card-header.btn-primary-color {
+    color: #fff;
+    background-color: #00c795;
+    border-color: #00c795;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #00af83;
+    border-color: #00af83;
+}
+
+.btn-primary.focus, .btn-primary:focus {
+    color: #fff;
+    background-color: #00af83;
+    border-color: #00af83;
+    box-shadow: 0 0 0 .2rem rgba(0, 255, 191, .25)
+}
+
+.btn-primary.disabled, .btn-primary:disabled {
+    color: #fff;
+    background-color: #74cfb8;
+    border-color: #74cfb8
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #00906c;
+    border-color: #00906c;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show>.btn-primary.dropdown-toggle:focus {
+    box-shadow: 0 0 0 .2rem rgba(0, 255, 191, .25)
+}
+
+.card {
+    background-color: #5a5a5a;
+}
+
+.player-color {
+    color: #00ffbf;
+    font-weight: 'bold';
+}
+
+.card-header {
+    background-color: #656565;
+}
+
+ul .list-group-item {
+    background-color: #656565;
+}
+
+.form-control {
+    color: #fff;
+    background-color: #444;
+    border-color: #c7c7c7;
+}
+
+.form-control:focus {
+    color: #fff;
+    background-color: #444;
+    border-color: #00ffbf;
+    outline: 0;
+    box-shadow: 0 0 0 .2rem rgba(0, 255, 191, .25)
+}
+
+input.form-control:-webkit-autofill,
+input.form-control:-webkit-autofill:hover,
+input.form-control:-webkit-autofill:focus,
+input.form-control:-webkit-autofill:active {
+    -webkit-text-fill-color: #fff;
+    -webkit-box-shadow: 0 0 0 100px #444 inset;
+}
+
+.form-control::-webkit-input-placeholder {
+    color: #6c757d;
+    opacity: 1
+}
+
+.form-control::-moz-placeholder {
+    color: #6c757d;
+    opacity: 1
+}
+
+.form-control:-ms-input-placeholder {
+    color: #6c757d;
+    opacity: 1
+}
+
+.form-control::-ms-input-placeholder {
+    color: #6c757d;
+    opacity: 1
+}
+
+.form-control::placeholder {
+    color: #6c757d;
+    opacity: 1
+}
+
+.form-control:disabled, .form-control[readonly] {
+    background-color: #444;
+    opacity: 1
+}
+
+select.form-control:focus::-ms-value {
+    color: #6c757d;
+    background-color: #444;
+}
+
+body {
+    background-color: #2b2b2b;
+    color: #fff;
+}

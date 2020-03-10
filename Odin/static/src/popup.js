@@ -91,7 +91,7 @@ class HelpPopup extends React.Component {
             }
         }, "X");
 
-        const header = $r('div', { key: '1', className: 'card-header', style: { backgroundColor: '#dedede', height: dim.height * 0.1 + 'px', padding: '2%' } }, [title, close]);
+        const header = $r('div', { key: '1', className: 'card-header', style: { height: dim.height * 0.1 + 'px', padding: '2%' } }, [title, close]);
 
         // body
         const image = $r('img', { key: '1', alt: this.props.card.name, width: cardWidth, height: cardWidth / CARD_RATIO, src: this.props.card.url });
@@ -102,7 +102,7 @@ class HelpPopup extends React.Component {
         const compat = $r('p', { key: '4', style: { fontSize: dim.height * 0.025 + 'px' } }, this.props.card.compatibilityDescription);
         const pickupChain = $r('p', { key: '5', style: { fontSize: dim.height * 0.025 + 'px' } }, "Pickup chains: " + (this.props.card.compatiblePickup ? "Compatible" : "Incompatible"));
 
-        const body = $r('div', { key: '2', className: 'card-body', style: { backgroundColor: '#eee' } }, [image, effectTitle, effect, compatTitle, compat, pickupChain]);
+        const body = $r('div', { key: '2', className: 'card-body' }, [image, effectTitle, effect, compatTitle, compat, pickupChain]);
 
 
 
@@ -198,7 +198,7 @@ class QuestionPopup extends React.Component {
             innerHeader = [close, title];
         }
 
-        const header = $r('div', { key: '1', className: 'card-header', style: { padding: '2%', backgroundColor: '#dedede', borderColor: '#ccc' } }, innerHeader);
+        const header = $r('div', { key: '1', className: 'card-header', style: { padding: '2%', borderColor: '#ccc' } }, innerHeader);
 
         // body
         let body;
@@ -223,7 +223,7 @@ class QuestionPopup extends React.Component {
 
             const buttonScroller = $r('div', { key: '2', style: { width: '70%', height: cardHeight * 2 + 'px', overflowY: 'auto' } }, buttons);
 
-            body = $r('div', { key: '2', className: 'card-body', style: { padding: '2%', backgroundColor: '#eee' } }, [image, buttonScroller]);
+            body = $r('div', { key: '2', className: 'card-body', style: { padding: '2%'} }, [image, buttonScroller]);
         }
         // card selector
         else if (this.props.question["type"] == 'cards') {
@@ -317,11 +317,11 @@ class QuestionPopup extends React.Component {
             const cardDiv = $r('div', { key: '2', id: 'option-card-scroller', style: { width: dim.width * 0.96 + 'px', overflowX: 'scroll', position: 'absolute', bottom: '0', whiteSpace: 'nowrap' } }, cardButtons);
             elements.push(cardDiv);
 
-            body = $r('div', { key: '2', className: 'card-body', style: { padding: '2%', height: (this.props.question["number to pick"] == 1 ? cardHeight * 1.3 : dim.height * 0.8) + 'px', position: 'relative', backgroundColor: '#eee' } }, elements);
+            body = $r('div', { key: '2', className: 'card-body', style: { padding: '2%', height: (this.props.question["number to pick"] == 1 ? cardHeight * 1.3 : dim.height * 0.8) + 'px', position: 'relative' } }, elements);
         }
         // unsupported question type (only if backend question asking is bad)
         else {
-            body = $r('div', { key: '2', className: 'card-body', style: { padding: '2%', backgroundColor: '#eee' } }, "Unsupported question type: " + this.props.question["type"]);
+            body = $r('div', { key: '2', className: 'card-body', style: { padding: '2%' } }, "Unsupported question type: " + this.props.question["type"]);
         }
 
         // final creation

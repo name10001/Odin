@@ -159,8 +159,8 @@ class ButtonPanel extends React.Component {
             className: 'btn btn-primary btn-block', disabled: true, style: btnStyle
         }, "UNDO ALL"));
 
-        const row1 = $r('div', {key: '1', className: 'row'}, playButton);
-        const row2 = $r('div', {key: '2', className: 'row'}, [undoButton, undoAllButton]);
+        const row1 = $r('div', { key: '1', className: 'row' }, playButton);
+        const row2 = $r('div', { key: '2', className: 'row' }, [undoButton, undoAllButton]);
 
         return [row1, row2];
     }
@@ -670,7 +670,7 @@ class ChatWindow extends React.Component {
         let inputHeight = this.props.guiScale * 4.5;
         let fontSize = this.props.guiScale + 'px';
 
-        if(this.state.fullscreen) {
+        if (this.state.fullscreen) {
             width = document.getElementById('container').getBoundingClientRect().width;
             height = window.innerHeight;
             inputHeight = this.props.guiScale * 6;
@@ -686,7 +686,7 @@ class ChatWindow extends React.Component {
 
         for (const chat of this.state.chat) {
             allMessages.push($r('p', { key: i++ + '' }, [
-                $r('span', { key: 'player', style: { color: '#2e6da4', fontWeight: 'bold' } }, chat['player'] + ": "),
+                $r('span', { key: 'player', className: 'player-color' }, chat['player'] + ": "),
                 chat['message']
             ]));
         }
@@ -1219,7 +1219,7 @@ class OdinGui extends React.Component {
             undoAvaliable: this.state.game.undoAvaliable(), playMessage: this.state.game.getPlayButtonMessage(),
             playAvaliable: this.state.game.playAvaliable(), guiScale: this.state.guiScale, ref: this.buttonsRef
         });
-        const buttonsWrapper = $r('div', { key: 'bp', className: 'container',style: { position: 'absolute', bottom: '0', width: colWidth + "px" } }, buttons);
+        const buttonsWrapper = $r('div', { key: 'bp', className: 'container', style: { position: 'absolute', bottom: '0', width: colWidth + "px" } }, buttons);
 
         // info panel
         const infoPanel = $r(InfoPanel, { fontSize: this.state.guiScale * 1.5, height: infoHeight, turnString: this.state.game.turnString, pickupAmount: this.state.game.pickupAmount, ref: this.infoRef });
@@ -1253,7 +1253,7 @@ class OdinGui extends React.Component {
         }
         const indicator = $r('span', {
             key: 'ind', style: {
-                position: 'fixed', fontSize: this.state.guiScale * 1.5 + 'px', top: containerHeight + 10 + 'px', right: '0', padding: '5px', backgroundColor: 'rgba(255, 255, 255, 0.8)', zIndex: 3
+                position: 'fixed', fontSize: this.state.guiScale * 1.5 + 'px', top: containerHeight + 10 + 'px', right: '0', padding: '5px', color: '#000', backgroundColor: 'rgba(255, 255, 255, 0.8)', zIndex: 3
             }
         }, $r(CardIndicator, { ref: this.cardIndicatorRef, yourTurn: this.state.game.yourTurn, canPlay: this.state.game.canPlay, nCards }));
 

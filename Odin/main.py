@@ -13,10 +13,9 @@ from waiting_room import WaitingRoom
 games = {}
 sessions = {}
 
-
 @fs.app.route('/')
 def index():
-    return render_template("index.html", message=None)
+    return render_template("index.html", message=None, theme=settings.get_theme())
 
 
 def make_unique_game_id():
@@ -54,7 +53,7 @@ def help_screen():
     :return: None
     """
 
-    return render_template("help.html")
+    return render_template("help.html", theme=settings.get_theme())
 
 
 @fs.app.route('/<game_id>', methods=['GET', 'POST'])
@@ -68,7 +67,7 @@ def render_game(game_id):
     if game_id in games:
         return games[game_id].render()
     else:
-        return render_template("index.html", message="Game not found")
+        return render_template("index.html", message="Game not found", theme=settings.get_theme())
 
 
 @fs.socket_io.on('waiting room message')

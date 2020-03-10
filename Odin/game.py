@@ -287,7 +287,7 @@ class Game(AbstractGame):
         :return:
         """
         self.waiting_room.modify()
-        return render_template("game.html", game=self, cards=cards)
+        return render_template("game.html", game=self, cards=cards, theme=settings.get_theme())
 
     def update_users(self, exclude=None):
         """

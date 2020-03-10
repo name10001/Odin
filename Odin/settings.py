@@ -1,3 +1,4 @@
+from flask import session
 
 # server info
 port = 80
@@ -14,6 +15,10 @@ class IntSetting:
 
     def to_json(self, index):
         return {'index': index, 'name': self.name, 'type': 'int', 'default': self.default_value, 'min': self.min_value, 'max': self.max_value}
+
+
+def get_theme():
+    return '/static/themes/blue_theme.css'  # default theme
 
 
 # game settings
