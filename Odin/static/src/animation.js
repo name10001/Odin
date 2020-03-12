@@ -372,7 +372,7 @@ class CommunistAnimation extends AbsAnimation {
             for(const card of this.pickupCards) {
                 game.addCard(card.id, card.name, card.url, false);
             }
-            game.getCardScroller().updateStacks(game.yourStacks);
+            gui.getCardScroller().updateStacks(game.yourStacks);
 
             this.setState({ stateIndex: 4, cards: this.state.cards });
         }

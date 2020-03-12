@@ -245,7 +245,7 @@ $(document).ready(() => {
 
                     const message = "All " + data["banned"] + " cards have been removed from the game";
 
-                    gui.showPopupMessage(message, 4000, 0);
+                    gui.showPopupMessage(message, 3000, 0);
                 });
                 eventHandler.addEvent(() => {
                     gui.animateRemoveCards(data["cards"]);
@@ -268,7 +268,7 @@ $(document).ready(() => {
                         message = game.players[possessedIndex].name + " was possessed by " + game.players[possessorIndex].name;
                     }
 
-                    gui.showPopupMessage(message, 4000, 0);
+                    gui.showPopupMessage(message, 3000, 0);
                 });
 
 

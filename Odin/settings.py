@@ -18,7 +18,12 @@ class IntSetting:
 
 
 def get_theme():
-    return '/static/themes/blue_theme.css'  # default theme
+    if 'theme' in session:
+        return session['theme']
+    
+    session['theme'] = '/static/themes/blue_theme.css'
+    
+    return session['theme']  # default theme
 
 
 # game settings

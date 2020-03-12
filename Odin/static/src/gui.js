@@ -854,7 +854,7 @@ class OdinGui extends React.Component {
             game.removeCard(card.id);
         }
 
-        this.getCardScroller().updateCards(game.yourStacks);
+        this.getCardScroller().updateStacks(game.yourStacks);
 
         const width = this.state.guiScale * CARD_WIDTH / 2;
         const height = this.state.guiScale * CARD_HEIGHT / 2;

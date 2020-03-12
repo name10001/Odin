@@ -30,6 +30,27 @@ def make_unique_game_id():
 
     return game_id
 
+@fs.app.route('/dark_theme')
+@fs.app.route('/dark_theme/')
+def set_dark_theme():
+    """
+    swap to dark theme
+    """
+
+    session['theme'] = '/static/themes/dark_theme.css'
+
+    return redirect('/')
+
+@fs.app.route('/blue_theme')
+@fs.app.route('/blue_theme/')
+def set_blue_theme():
+    """
+    swap to blue theme
+    """
+
+    session['theme'] = '/static/themes/blue_theme.css'
+
+    return redirect('/')
 
 @fs.app.route('/new_game')
 @fs.app.route('/new_game/')

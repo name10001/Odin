@@ -57,11 +57,6 @@
         <a href="/"><img class="logo" src="/static/logo.png" alt="logo"></a>
 
         <br />
-
-        <div class="body">
-            <a href="\new_game" class="btn btn-primary">Create New Game</a>
-            <a href="\help" class="btn btn-primary float-right">Learn To Play</a>
-        </div>
         <div class="card body">
             <div class="card-body">
                 <p>Join an existing game by entering the ID below:</p>
@@ -80,8 +75,17 @@
                         {% endif %}
                     </div>
                 </form>
+
+
+            </div>
+            <div class="card-footer">
+                <a href="\new_game" class="btn btn-primary">Create New Game</a>
+                <a href="\help" class="btn btn-primary float-right">Learn To Play</a>
             </div>
         </div>
+        <a class="player-color" href="/dark_theme">Dark Theme</a>
+        <span style="color: #fff;">|</span>
+        <a class="player-color" href="/blue_theme">Blue Theme</a>
     </div>
 </body>
 

@@ -220,17 +220,6 @@
             </div>
         </div>
 
-        <div class="body">
-            <button type="button" class="btn btn-primary"
-                onclick="socket.emit('waiting room message', GAME_ID, 'start', null)">
-                Start Game
-            </button>
-            <button type="button" class="btn btn-primary float-right"
-                onclick="socket.emit('waiting room message', GAME_ID, 'quit', null)">
-                Quit
-            </button>
-        </div>
-
         <div class="card body">
             <div class="card-header">
                 <h5>Waiting players</h5>
@@ -240,6 +229,17 @@
                 <ul id="list-of-players" class="list-group">
 
                 </ul>
+            </div>
+
+            <div class="card-footer">
+                <button type="button" class="btn btn-primary"
+                    onclick="socket.emit('waiting room message', GAME_ID, 'start', null)">
+                    Start Game
+                </button>
+                <button type="button" class="btn btn-primary float-right"
+                    onclick="socket.emit('waiting room message', GAME_ID, 'quit', null)">
+                    Quit
+                </button>
             </div>
         </div>
 
