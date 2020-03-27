@@ -667,6 +667,7 @@ class Player(AbstractPlayer):
         self.card_update()
 
         # Get all chat messages
+        # TODO: send everything in one message
         for chat in self.game.chat:
             self.send_message("chat", chat)
 

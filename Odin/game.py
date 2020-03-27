@@ -358,6 +358,8 @@ class Game(AbstractGame):
             message) <= 256 else message[:256]}
         self.send_to_all_players("chat", data)
         self.chat.append(data)
+        if len(self.chat) > 100:
+            self.chat.pop(0)
 
     def animate_card_transfer(self, cards, cards_from="deck", cards_to="deck"):
         """
