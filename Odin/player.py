@@ -247,11 +247,6 @@ class AbstractPlayer:
         After the turn is over, apply all effects and remove possessions.
         Then move onto the next turn
         """
-        # remove possession
-        if len(self.possessions) > 0:
-            possession = self.possessions[0]
-            possession.playing_as = None
-            self.possessions.pop(0)
 
         # Begin to remove effects from the player
         effect_index = 0
@@ -271,6 +266,12 @@ class AbstractPlayer:
 
         if next_turn:
             self.state = "not turn"
+            
+            # remove possession
+            if len(self.possessions) > 0:
+                possession = self.possessions[0]
+                possession.playing_as = None
+                self.possessions.pop(0)
 
             self.game.next_turn()
 
@@ -406,6 +407,17 @@ class AbstractPlayer:
 
     def refresh_card_play_animation(self):
         pass
+    
+
+    def __str__(self):
+        player_str = '-- ' + self.name + ' --\n'
+        player_str += "nCards: " + str(len(self.hand)) + '\n'
+        player_str += "Playing As: " + (self.playing_as.get_name() if self.playing_as is not None else "None") + '\n'
+        player_str += "Possessed By: " + (self.possessions[0].name if len(self.possessions) > 0 else "None") + '\n'
+        for effect in self.effects:
+            player_str += "- " + effect.get_type() + "(" + str(effect.n_turns) + ")\n"\
+        
+        return player_str
 
 
 class Player(AbstractPlayer):

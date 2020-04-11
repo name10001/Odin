@@ -208,6 +208,18 @@ class AbstractGame:
     def send_animation(self, json_to_send):
         pass
 
+    def __str__(self):
+        game_str = "GAME (" + str(len(self.players)) + "players)\n"
+
+        for player in self.players:
+            game_str += str(player) + '\n'
+
+        game_str += "Turn: " + self.get_turn().get_name() + " Iteration: " + str(self.iterate_turn_by) + '\n'
+        game_str += "Pickup: " + str(self.pickup) + \
+            " Direction: " + str(self.direction)
+
+        return game_str
+
 
 class Game(AbstractGame):
     """
@@ -301,7 +313,9 @@ class Game(AbstractGame):
         for observer in self.observers:
             if observer != exclude:
                 observer.card_update()
-        print("Card update, took: " + str(time() - start_time) + "s")
+        if settings.debug_enabled:
+            print("Card update, took: " + str(time() - start_time) + "s")
+            print(str(self))
 
     def message(self, message, data):
         """
@@ -323,10 +337,12 @@ class Game(AbstractGame):
 
         # stop a player from having their turn if they're possessed
         if len(player.possessions) > 0 and player.is_turn() and message != "quit":
-            print(player.get_id(), "tried to play but is possessed.")
+            if settings.debug_enabled:
+                print(player.get_id(), "tried to play but is possessed.")
             return
 
-        print(player.get_name(), message, data)  # for debugging
+        if settings.debug_enabled:
+            print(player.get_name(), message, data)  # for debugging
 
         if message == "answer":
             player.answer_question(data)
@@ -539,8 +555,10 @@ class Game(AbstractGame):
 
     def notify_remove_player(self, player):
         player.send_message("quit", None)
-        self.send_to_all_players(
-            "popup message", player.get_name() + " has quit the game!")
+
+        if not isinstance(player, Observer):
+            self.send_to_all_players(
+                "popup message", player.get_name() + " has quit the game!")
 
         self.waiting_room.leave_room()
 

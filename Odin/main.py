@@ -128,7 +128,8 @@ def clear_inactive_players(game):
                     game.get_sessions()[player_id]['timeout']
 
                 if kick <= 0:
-                    print("PLAYER KICKED", player_id)
+                    if settings.debug_enabled:
+                        print("PLAYER KICKED", player_id)
                     game.kick_player(player_id)
 
         fs.socket_io.sleep(1)
@@ -145,7 +146,8 @@ def clear_inactive_games():
         game = games[game_id]
         # if game has not be interacted with in 1 hour, delete it
         if current_time - game.get_last_modified() > 3600:
-            print("REMOVING GAME", game.get_id())
+            if settings.debug_enabled:
+                print("REMOVING GAME", game.get_id())
             to_remove.append(game_id)
     for game_id in to_remove:
         games.pop(game_id)
