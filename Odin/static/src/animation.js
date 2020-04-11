@@ -354,7 +354,7 @@ class CommunistAnimation extends AbsAnimation {
 
         if (t > this.initDelay + MAX_CARD_TRANSFER_TIME + REMOVE_TIME && this.state.stateIndex == 1) {
             game.clearEmptyStacks();
-            gui.getCardScroller().updateStacks(game.yourStacks);
+            gui.getCardScroller().updateStacks(game.yourStacks, game.yourTurn);
             this.setState({ stateIndex: 2, cards: this.state.cards });
         }
 
@@ -372,7 +372,7 @@ class CommunistAnimation extends AbsAnimation {
             for(const card of this.pickupCards) {
                 game.addCard(card.id, card.name, card.url, false);
             }
-            gui.getCardScroller().updateStacks(game.yourStacks);
+            gui.getCardScroller().updateStacks(game.yourStacks, game.yourTurn);
 
             this.setState({ stateIndex: 4, cards: this.state.cards });
         }

@@ -48,3 +48,11 @@
 body {
     background-color: #5d5d5d;
 }
+
+.cards-turn {
+    background-color: rgba(100,200,100,.2);
+}
+.cards-not-turn {
+    background-color: rgba(200,100,100,.2);
+    opacity: 0.8;
+}

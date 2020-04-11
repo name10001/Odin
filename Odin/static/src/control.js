@@ -64,7 +64,7 @@ function removeCardsEvent(cards) {
         for (const card of cards) {
             game.removeCard(card.id);
         }
-        gui.getCardScroller().updateStacks(game.yourStacks);
+        gui.getCardScroller().updateStacks(game.yourStacks, game.yourTurn);
         eventHandler.finishedEvent();
     });
 }
@@ -74,7 +74,7 @@ function addCardsEvent(cards) {
         for (const card of cards) {
             game.addCard(card.id, card.name, card.url, false);
         }
-        gui.getCardScroller().updateStacks(game.yourStacks);
+        gui.getCardScroller().updateStacks(game.yourStacks, game.yourTurn);
         eventHandler.finishedEvent();
     });
 }
@@ -82,7 +82,7 @@ function addCardsEvent(cards) {
 function clearEmptyStacksEvent(cards) {
     eventHandler.addEvent(() => {
         game.clearEmptyStacks();
-        gui.getCardScroller().updateStacks(game.yourStacks);
+        gui.getCardScroller().updateStacks(game.yourStacks, game.yourTurn);
         eventHandler.finishedEvent();
     });
 }

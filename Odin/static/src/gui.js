@@ -347,7 +347,7 @@ class CardScroller extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { hidden: false, cardStacks: props.cardStacks };
+        this.state = { hidden: false, cardStacks: props.cardStacks, yourTurn: props.yourTurn };
     }
 
     /**
@@ -370,8 +370,8 @@ class CardScroller extends React.Component {
         this.setState({ hidden: false, cardStacks: this.state.cardStacks });
     }
 
-    updateStacks(cardStacks) {
-        this.setState({ hidden: this.state.hidden, cardStacks });
+    updateStacks(cardStacks, yourTurn) {
+        this.setState({ hidden: this.state.hidden, cardStacks, yourTurn });
     }
 
     /**
@@ -383,7 +383,7 @@ class CardScroller extends React.Component {
         );
 
         return $r('div', {
-            id: 'card-scroller', style: {
+            id: 'card-scroller', className: this.state.yourTurn ? 'cards-turn' : 'cards-not-turn', style: {
                 width: '100%', overflowX: 'scroll', textAlign: 'center', whiteSpace: 'nowrap', lineHeight: this.props.guiScale * (CARD_HEIGHT + 5) + 'px',
                 position: 'absolute', bottom: '0px', display: this.state.hidden ? 'none' : 'block'
             }
@@ -817,7 +817,7 @@ class OdinGui extends React.Component {
             game.removeCard(card.id);
         }
 
-        this.getCardScroller().updateStacks(game.yourStacks);
+        this.getCardScroller().updateStacks(game.yourStacks, game.yourTurn);
 
         this.playCardAnimation('remove-cards', cards, getDeckPosition(), position, '/static/sounds/card_play.mp3', this.state.guiScale * CARD_WIDTH, this.state.guiScale * CARD_HEIGHT, REMOVE_TIME, false, 0, finishedEvent);
     }
@@ -854,7 +854,7 @@ class OdinGui extends React.Component {
             game.removeCard(card.id);
         }
 
-        this.getCardScroller().updateStacks(game.yourStacks);
+        this.getCardScroller().updateStacks(game.yourStacks, game.yourTurn);
 
         const width = this.state.guiScale * CARD_WIDTH / 2;
         const height = this.state.guiScale * CARD_HEIGHT / 2;
@@ -1009,7 +1009,7 @@ class OdinGui extends React.Component {
      */
     updateGame(game) {
         this.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
-        this.getCardScroller().updateStacks(game.yourStacks);
+        this.getCardScroller().updateStacks(game.yourStacks, game.yourTurn);
         this.getDiscardPile().updateCards(game.topCards);
         this.getPlayerList().update(game.players, game.yourId, game.direction, game.turn, game.skip);
         this.getButtons().update(game.getPlayButtonMessage(), game.playAvaliable(), game.undoAvaliable());
@@ -1135,7 +1135,7 @@ class OdinGui extends React.Component {
     render() {
 
         // card scroller
-        const scroller = $r(CardScroller, { key: 'cs', cardStacks: this.state.game.yourStacks, guiScale: this.state.guiScale, ref: this.cardsRef });
+        const scroller = $r(CardScroller, { key: 'cs', cardStacks: this.state.game.yourStacks, yourTurn: this.state.game.yourTurn, guiScale: this.state.guiScale, ref: this.cardsRef });
 
         // popup
         const popup = $r(Popup, { key: 'pop', ref: this.popupRef, popup: this.popup });
