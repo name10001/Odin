@@ -9,7 +9,7 @@ from cards.effect import FreeTurnEffect, FreezeEffect
 
 
 class Reverse(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(2.2, 2, starting=0)
+    CARD_FREQUENCY = CardFrequency(2.2, 2, elevator=1, starting=0)
     CARD_COLOUR = "blue"
     CARD_TYPE = "Reverse"
     CAN_BE_ON_PICKUP = True
@@ -74,7 +74,7 @@ class YellowReverse(Reverse):
 
 
 class Skip(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(2.2, 2, starting=0)
+    CARD_FREQUENCY = CardFrequency(2.2, 2, elevator=1, starting=0)
     CARD_TYPE = "Skip"
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Skips the next person's turn."
@@ -131,7 +131,7 @@ class YellowSkip(Skip):
 
 
 class FreeTurn(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(4, 3, 2, 1, max_cards=5, starting=0)
+    CARD_FREQUENCY = CardFrequency(5, 3, 1, 0.8, max_cards=5, starting=0)
     CARD_TYPE = "Free Turn"
     NAME = "Free Turn"
     CARD_COLOUR = "black"

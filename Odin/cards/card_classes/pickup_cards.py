@@ -12,7 +12,7 @@ import math
 
 
 class Pickup2(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(2.75, 2.25, 1.2, 0.6, starting=0)
+    CARD_FREQUENCY = CardFrequency(2.75, 2.25, 1.2, 0.6, elevator=1, starting=0)
     CARD_TYPE = "+2"
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 2 to the pickup chain value."

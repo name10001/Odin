@@ -116,3 +116,11 @@ body {
     background-color: #2b2b2b;
     color: #fff;
 }
+
+.cards-turn {
+    background-color: rgba(100,200,100,.2);
+}
+.cards-not-turn {
+    background-color: rgba(200,100,100,.2);
+    opacity: 0.8;
+}

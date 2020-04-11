@@ -6,7 +6,7 @@ class ColourChooser(AbstractCard):
     NAME = "Colour Chooser"
     CARD_IMAGE_URL = 'color_swapper.png'
     CARD_COLOUR = "black"
-    CARD_FREQUENCY = CardFrequency(2, max_cards=4, starting=0, elevator=2)
+    CARD_FREQUENCY = CardFrequency(2, max_cards=4, starting=0)
     CARD_TYPE = "Colour Chooser"
     EFFECT_DESCRIPTION = "Allows you to change the colour to any of the 4 given colours: red, green, yellow or blue."
     COMPATIBILITY_DESCRIPTION = "Before play: Regular black card, compatible with any black, red, green, blue or " \

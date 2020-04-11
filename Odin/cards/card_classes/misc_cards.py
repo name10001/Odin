@@ -429,7 +429,7 @@ class Communist(AbstractCard):
     NAME = "Communist"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'communist.png'
-    CARD_FREQUENCY = CardFrequency(0, 0.8, 0.5, 0.1, starting=0, max_cards=1)
+    CARD_FREQUENCY = CardFrequency(0, 0.8, 0.5, 0.1, starting=0, max_cards=1, elevator=1)
     CARD_TYPE = "Communist"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded."
@@ -478,7 +478,7 @@ class Capitalist(AbstractCard):
     NAME = "Capitalist"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'capitalist.png'
-    CARD_FREQUENCY = CardFrequency(1, 0.8, 0.4, 0, starting=0, max_cards=10)
+    CARD_FREQUENCY = CardFrequency(0.8, 0.6, 0.3, 0, starting=0, max_cards=10, elevator=1)
     CARD_TYPE = "Capitalist"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "The player with the most cards has the amount of cards in their hand doubled."
@@ -572,7 +572,7 @@ class Genocide(AbstractCard):
     NAME = "Genocide"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'genocide.png'
-    CARD_FREQUENCY = CardFrequency(0.5, max_cards=8, starting=0)
+    CARD_FREQUENCY = CardFrequency(0.7, max_cards=8, starting=0)
     MULTI_COLOURED = False
     CARD_TYPE = "Genocide"
     EFFECT_DESCRIPTION = "Pick any colour or type of card to entirely removed from the game. " \
@@ -742,7 +742,7 @@ class CopyCat(AbstractCard):
     NAME = "Copy Cat"
     CARD_IMAGE_URL = 'copy_cat.png'
     CARD_FREQUENCY = CardFrequency(
-        3, 2, 1, 1, max_cards=4, starting=0, elevator=0)
+        3.4, 1, 0.6, 0.5, max_cards=4, starting=0, elevator=0)
     MULTI_COLOURED = False
     CARD_COLOUR = "rainbow"
     CARD_TYPE = "Copy Cat"
@@ -888,7 +888,7 @@ class Possess(AbstractCard):
     NAME = "Possess"
     CARD_IMAGE_URL = 'possess.png'
     CARD_COLOUR = "black"
-    CARD_FREQUENCY = CardFrequency(1, max_cards=4, starting=0)
+    CARD_FREQUENCY = CardFrequency(1.5, 1, 0.5, 0.3, max_cards=4, starting=0)
     CARD_TYPE = "Possess"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a player. On their next turn you get to decide what card(s) they must play from their hand, or force them to pick up."
@@ -929,7 +929,7 @@ class Steal(AbstractCard):
     NAME = "Steal"
     CARD_IMAGE_URL = 'steal.png'
     CARD_COLOUR = "black"
-    CARD_FREQUENCY = CardFrequency(1.7, starting=0)
+    CARD_FREQUENCY = CardFrequency(1.7, 1.5, 1, 0.8, starting=0)
     CARD_TYPE = "Steal"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a card to steal from a player of your choice's hand."
