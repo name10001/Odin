@@ -579,6 +579,21 @@ class Game(AbstractGame):
         self.waiting_room.game = None
 
         self.send_to_all_players("refresh", None)
+    
+    def add_new_player(self, name, player_id):
+        """
+        Adds a player into the game
+        :param name: The name of the player to add
+        :param player_id: The ID of the player to add
+        :return: None
+        """
+
+        player = Player(self, name, player_id)
+
+        player.pickup(self.starting_number_of_cards, False)
+        self.add_player(player)
+
+        self.update_players()
 
     def add_observer(self, name, player_id):
         """

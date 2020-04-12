@@ -83,7 +83,8 @@ class WaitingRoom:
                 with fs.app.app_context():
                     fs.socket_io.emit("user joined", name, room=self.game_id)
             else:
-                self.game.add_observer(name, player_id)
+                # TODO have an option that forces you into observer mode
+                self.game.add_new_player(name, player_id)
             return redirect("/" + self.game_id)
         else:
             return "What the Fuck Did You Just Bring Upon This Cursed Land!"

@@ -32,7 +32,7 @@ default_starting_cards = 25
 min_max_player_card_limit = 25
 max_player_card_limit = 999
 
-jesus_card_number = 15
+jesus_card_number = 25
 played_cards_to_show = 5
 session_inactivity_kick = 20
 

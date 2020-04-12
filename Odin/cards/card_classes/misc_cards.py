@@ -551,7 +551,7 @@ class Jesus(AbstractCard):
     CARD_TYPE = "Jesus"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose any person (including yourself) to reset their entire hand " \
-                         "back to a value of 15 cards."
+                         "back to a value of 25 cards."
 
     def play_card(self, player):
         options = {}
