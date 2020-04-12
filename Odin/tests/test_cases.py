@@ -365,12 +365,11 @@ class CardTester(unittest.TestCase):
         player_1 = TestPlayer(game, "player_1", player_1_cards)
         player_2 = TestPlayer(game, "player_2", player_2_cards)
 
-        deck = TestDeck([BlankBro, BlankBro, BlankBro, BlankBro, BlankBro, FreeTurn, BlankBro])
+        deck = TestDeck([BlankBro, BlankBro, BlankBro,
+                         BlankBro, BlankBro, FreeTurn, BlankBro])
 
         game.create([player_1, player_2], deck, top_card)
 
-        
-        
         self.assertEqual(game.get_turn().get_id(), "player_1")
         game.finish_turn()
         self.assertEqual(game.get_turn().get_id(), "player_2")
@@ -385,7 +384,7 @@ class CardTester(unittest.TestCase):
 
         game.finish_turn()
         self.assertEqual(game.get_turn().get_id(), "player_1")
-        
+
         # Test one on its own
         game.play_cards([ids1[0]])
         game.finish_turn()
@@ -419,7 +418,7 @@ class CardTester(unittest.TestCase):
 
         - Test 1
         - Test multiple
-        
+
         """
 
         # Setup
@@ -433,7 +432,8 @@ class CardTester(unittest.TestCase):
         ids2 = [card.get_id() for card in player_2_cards]
 
         player_1 = TestPlayer(game, "player_1", player_1_cards, ["player_2"])
-        player_2 = TestPlayer(game, "player_2", player_2_cards, ["player_1", "player_1"])
+        player_2 = TestPlayer(game, "player_2", player_2_cards, [
+                              "player_1", "player_1"])
 
         deck = JustABlankDeck()
 
@@ -462,13 +462,81 @@ class CardTester(unittest.TestCase):
             self.assertEqual(player_1.effects[0].n_turns, 5-i)
             self.assertEqual(game.get_turn().get_id(), "player_2")
             game.finish_turn()
-        
+
         self.assertEqual(len(player_1.effects), 0)
         self.assertEqual(game.get_turn().get_id(), "player_2")
         game.finish_turn()
 
         self.assertEqual(game.get_turn().get_id(), "player_1")
 
+    def test_play_cards(self):
+        """
+        Tests the play 1 and play 3 cards.
 
+        - One play 1
+        - 2 play ones alternating
+        - 2 play ones in order
+        - one play 3
+        - a play 3, 2 cards, a play one, then 2 cards
 
+        """
+
+        # Setup
+        game = TestGame()
+
+        top_card = BlankBro(game)
+
+        player_1_cards = [PlayOne(game), PlayOne(game), PlayThree(game), BlankBro(
+            game), BlankBro(game), BlankBro(game), BlankBro(game), BlankBro(game)]
+        ids = [card.get_id() for card in player_1_cards]
+
+        player_1 = TestPlayer(game, "player_1", player_1_cards)
+
+        deck = JustABlankDeck()
+
+        game.create([player_1], deck, top_card)
+
+        # Test 1, A singular play 1 card
+        game.play_cards([ids[4], ids[3], ids[0]])
+        self.assertEqual(len(game.planning_pile), 2)
+        self.assertEqual(game.planning_pile[0].get_id(), ids[0])
+        self.assertEqual(game.planning_pile[1].get_id(), ids[3])
+
+        # Test alternating play ones
+        game.play_cards([ids[5], ids[4], ids[1]])
+        self.assertEqual(len(game.planning_pile), 4)
+        self.assertEqual(game.planning_pile[2].get_id(), ids[1])
+        self.assertEqual(game.planning_pile[3].get_id(), ids[4])
+
+        # test 2 play ones in a row
+        game.undo_all()
+
+        game.play_cards([ids[5], ids[4], ids[3], ids[1], ids[0]])
+        self.assertEqual(len(game.planning_pile), 4)
+        self.assertEqual(game.planning_pile[0].get_id(), ids[0])
+        self.assertEqual(game.planning_pile[1].get_id(), ids[1])
+        self.assertEqual(game.planning_pile[2].get_id(), ids[3])
+        self.assertEqual(game.planning_pile[3].get_id(), ids[4])
+
+        # test play 3
+        game.undo_all()
+
+        game.play_cards([ids[6], ids[5], ids[4], ids[3], ids[2]])
+        self.assertEqual(len(game.planning_pile), 4)
+        self.assertEqual(game.planning_pile[0].get_id(), ids[2])
+        self.assertEqual(game.planning_pile[1].get_id(), ids[3])
+        self.assertEqual(game.planning_pile[2].get_id(), ids[4])
+        self.assertEqual(game.planning_pile[3].get_id(), ids[5])
+
+        # combining play 3 and play 1
+
+        game.undo()
+        self.assertEqual(len(game.planning_pile), 3)
+
+        game.play_cards([ids[7], ids[6], ids[5], ids[0]])
+        
+        self.assertEqual(game.planning_pile[3].get_id(), ids[0])
+        self.assertEqual(game.planning_pile[4].get_id(), ids[5])
+        self.assertEqual(game.planning_pile[5].get_id(), ids[6])
+        self.assertEqual(len(game.planning_pile), 6)
 

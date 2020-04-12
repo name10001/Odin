@@ -556,10 +556,6 @@ class Game(AbstractGame):
     def notify_remove_player(self, player):
         player.send_message("quit", None)
 
-        if not isinstance(player, Observer):
-            self.send_to_all_players(
-                "popup message", player.get_name() + " has quit the game!")
-
         self.waiting_room.leave_room()
 
     def end_game(self, winner=None, winners=None):

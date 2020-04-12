@@ -167,89 +167,6 @@ class EA100(EA):
 
 
 # ~~~~~~~~~~~~~~
-# all of same colour
-# ~~~~~~~~~~~~~~
-
-
-class AllOfSameColour(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(1, max_cards=1, starting=0, elevator=0)
-    MULTI_COLOURED = False
-    PICK_NUMBERS = True  # False for filthy sharon cause no numbers
-
-    def can_play_with(self, player, card, is_first_card):
-        return card.get_colour() == self.get_colour()
-
-    def prepare_card(self, player, allow_cancel):
-        """
-        Play all the cards in the players hand that are of the same colour as this one
-        """
-
-        options = {
-            "player pick": "No, let me pick (recommended)",
-            "server pick all": "Yes: Select all"
-        }
-        if self.PICK_NUMBERS is True:
-            options["server pick numbers"] = "Yes: Only Numbers"
-        option = player.ask("Would you like the game to automatically pick cards?",
-                            options, allow_cancel=allow_cancel, image=self.get_url())
-
-        if option is None:
-            return False
-
-        if option == "server pick all":
-            for card in reversed(player.hand):
-                if card.get_colour() == self.get_colour():
-                    player.prepare_cards([card.get_id()])
-        elif option == "server pick numbers":
-            for card in reversed(player.hand):
-                if card.get_colour() == self.get_colour() and card.get_type().isnumeric():
-                    player.prepare_cards([card.get_id()])
-
-        return True
-
-
-class ManOfTheDay(AllOfSameColour):
-    NAME = "Man Of The Day"
-    CARD_COLOUR = "yellow"
-    CARD_IMAGE_URL = 'man_of_the_day.png'
-    CARD_TYPE = "Man Of The Day"
-    EFFECT_DESCRIPTION = "Allows you to place as many yellow cards as you like with this card on your turn."
-
-
-class LadyOfTheNight(AllOfSameColour):
-    NAME = "Lady Of The Night"
-    CARD_COLOUR = "red"
-    CARD_IMAGE_URL = 'lady_of_the_night.png'
-    CARD_TYPE = "Lady Of The Night"
-    EFFECT_DESCRIPTION = "Allows you to place as many red cards as you like with this card on your turn."
-
-
-class Smurf(AllOfSameColour):
-    NAME = "Smurf"
-    CARD_COLOUR = "blue"
-    CARD_IMAGE_URL = 'smurf.png'
-    CARD_TYPE = "Smurf"
-    EFFECT_DESCRIPTION = "Allows you to place as many blue cards as you like with this card on your turn."
-
-
-class Creeper(AllOfSameColour):
-    NAME = "Creeper"
-    CARD_COLOUR = "green"
-    CARD_IMAGE_URL = 'creeper.png'
-    CARD_TYPE = "Creeper"
-    EFFECT_DESCRIPTION = "Allows you to place as many green cards as you like with this card on your turn."
-
-
-class FilthySharon(AllOfSameColour):
-    NAME = "Filthy Sharon"
-    CARD_COLOUR = "white"
-    CARD_IMAGE_URL = 'filthy_sharon.png'
-    CARD_TYPE = "Filthy Sharon"
-    PICK_NUMBERS = False
-    EFFECT_DESCRIPTION = "Allows you to place as many white cards as you like with this card on your turn."
-
-
-# ~~~~~~~~~~~~~~
 # Card removal
 # ~~~~~~~~~~~~~~
 
@@ -392,6 +309,7 @@ class DoJustly1(DoJustly):
 
 class DoJustly3(DoJustly):
     NAME = "Do Justly -3"
+    CARD_FREQUENCY = CardFrequency(0.7, starting=0, max_cards=10)
     NUMBER_TO_GIVE = 3
     EFFECT_DESCRIPTION = "Choose 3 cards from your hand to give to another player of your choice."
     CARD_IMAGE_URL = "do_justly_3.png"
@@ -402,34 +320,12 @@ class DoJustly3(DoJustly):
 # ~~~~~~~~~~~~~~
 
 
-class BlackHole(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(0.5, starting=0, elevator=0, max_cards=1)
-    NAME = "Black Hole"
-    CARD_TYPE = "Black Hole"
-    CARD_COLOUR = "black"
-    CARD_IMAGE_URL = 'black_hole.png'
-    MULTI_COLOURED = False
-    EFFECT_DESCRIPTION = "Allows you to place as many black cards as you like with this card on your turn."
-    COMPATIBILITY_DESCRIPTION = "Before play: This card is only compatible with black cards. " \
-                                "After play: Regular black card rules apply, such that it is compatible with " \
-                                "any red, green, yellow, blue or black cards."
-
-    def can_be_played_on(self, player, card):
-        if player.is_turn() is False:
-            return False
-        if self.game.pickup != 0 and self.can_be_on_pickup() is False:
-            return False
-        return card.get_colour() == "black"
-
-    def can_play_with(self, player, card, is_first_card):
-        return card.get_type() == self.get_type() or card.get_colour() == "black"
-
-
 class Communist(AbstractCard):
     NAME = "Communist"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'communist.png'
-    CARD_FREQUENCY = CardFrequency(0, 0.8, 0.5, 0.1, starting=0, max_cards=1, elevator=1)
+    CARD_FREQUENCY = CardFrequency(
+        0, 0.8, 0.5, 0.1, starting=0, max_cards=1, elevator=1)
     CARD_TYPE = "Communist"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded."
@@ -478,7 +374,8 @@ class Capitalist(AbstractCard):
     NAME = "Capitalist"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'capitalist.png'
-    CARD_FREQUENCY = CardFrequency(0.8, 0.6, 0.3, 0, starting=0, max_cards=10, elevator=1)
+    CARD_FREQUENCY = CardFrequency(
+        0.8, 0.6, 0.3, 0, starting=0, max_cards=10, elevator=1)
     CARD_TYPE = "Capitalist"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "The player with the most cards has the amount of cards in their hand doubled."
@@ -496,7 +393,6 @@ class Capitalist(AbstractCard):
                 richest_player = player
                 number_of_cards = len(player.hand)
 
-        
         json_to_send = {
             "type": "sound",
             "sound": "/static/sounds/capitalist_card.mp3"

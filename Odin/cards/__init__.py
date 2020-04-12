@@ -6,6 +6,7 @@ from cards.card_classes.number_cards import *
 from cards.card_classes.pickup_cards import *
 from cards.card_classes.simple_cards import *
 from cards.card_classes.turn_cards import *
+from cards.card_classes.play_with_cards import *
 from cards.effect import *
 
 from cards.card_frequency import *
@@ -49,7 +50,9 @@ all_cards = [
     EA15, EA20, EA30, EA100,
      Elevator, SwapCard, Steal, FeelingBlue,
     SwapHand, Communist, Capitalist, Genocide, Jesus,  Thanos, Odin, CopyCat, Possess, Fire,
-    ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, BlackHole
+
+    # Play with cards
+    ManOfTheDay, LadyOfTheNight, Creeper, Smurf, FilthySharon, BlackHole, PlayOne, PlayThree
     
 ]
 
