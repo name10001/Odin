@@ -56,3 +56,11 @@ body {
     background-color: rgba(200,100,100,.2);
     opacity: 0.8;
 }
+
+.toggle-group .toggle-handle {
+    background-color: #fff;
+}
+
+.toggle-group .btn.toggle-off {
+    background-color: #ddd;
+}

@@ -35,8 +35,13 @@
             }
 
             componentDidMount() {
-                for(let i = 0; i < this.props.settings.length; i++) {
-                    $('#' + i + '_setting').change(() => this.handleConfirmChange(i));
+                for (let i = 0; i < this.props.settings.length; i++) {
+                    if(this.props.settings[i]['type'] == 'int') {
+                        $('#' + i + '_setting').change(() => this.confirmIntChange(i));
+                    }
+                    else if(this.props.settings[i]['type'] == 'bool') {
+                        $('#' + i + '_setting').bootstrapToggle();
+                    }
                 }
             }
 
@@ -44,7 +49,7 @@
              * When you change the value of a setting - not confirmed (haven't pressed enter)
              * 
              * */
-            handleChange(event, index) {
+            handleChangeInt(event, index) {
                 const values = this.state.values;
                 values[index] = parseInt(event.target.value);
 
@@ -52,24 +57,41 @@
             }
 
             /**
+             * When you change the value of a toggle
+             * 
+             * */
+             toggleBool(index) {
+                const values = this.state.values;
+                values[index] = !values[index];
+
+                this.setState({ values });
+                this.emitChange(index);
+            }
+
+            /**
              * Unfocussing an element will change it
              * 
              * */
-            handleConfirmChange(index) {
+            confirmIntChange(index) {
                 const values = this.state.values;
 
                 const min = this.props.settings[index]['min'];
                 const max = this.props.settings[index]['max'];
 
-                if(values[index] < min) {
+                if (values[index] < min) {
                     values[index] = min;
                     this.setState({ values });
                 }
-                else if(values[index] > max) {
+                else if (values[index] > max) {
                     values[index] = max;
                     this.setState({ values });
                 }
-                socket.emit('waiting room message', GAME_ID, 'setting change', {'index': index, 'value': values[index]});
+                this.emitChange(index);
+            }
+
+            emitChange(index) {                
+                console.log({ 'index': index, 'value': this.state.values[index] });
+                socket.emit('waiting room message', GAME_ID, 'setting change', { 'index': index, 'value': this.state.values[index] });
             }
 
             /**
@@ -94,10 +116,15 @@
                     if (setting['type'] == 'int') {
                         control = $r('input', {
                             key: '2', className: 'form-control', id: setting['index'] + '_setting', type: 'number',
-                            min: setting['min'], max: setting['max'], step: '1', value: this.state.values[setting['index']], onChange: (event) => this.handleChange(event, setting['index'])
+                            min: setting['min'], max: setting['max'], step: '1', value: this.state.values[setting['index']], onChange: (event) => this.handleChangeInt(event, setting['index'])
                         });
                     }
-                    // TODO other types of settings
+                    else if (setting['type'] == 'bool') {
+                        control = $r('input', {
+                            key: '2', type: 'checkbox', checked: this.state.values[setting['index']],
+                            'data-toggle': 'toggle', 'data-onstyle': 'primary', id: setting['index'] + "_setting", onChange: (event) => this.toggleBool(setting['index'])
+                        });
+                    }
 
                     currentRow.push($r('div', { key: currentRow.length + '', className: 'col-sm-4' }, [label, control]));
 

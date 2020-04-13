@@ -14,7 +14,7 @@ class AbstractGame:
     Defines how a game should behave and implements some methods that do not depend on any front-end implementation.
     """
 
-    def __init__(self, max_cards=settings.max_player_card_limit):
+    def __init__(self, max_cards=settings.default_card_limit):
         """
         Initializes the game.
 
@@ -229,18 +229,18 @@ class Game(AbstractGame):
 
     """
 
-    def __init__(self, game_id, players, waiting_room, starting_number_of_cards=settings.default_starting_cards, max_cards=settings.max_player_card_limit):
+    def __init__(self, game_id, players, waiting_room, settings):
         """
         :param game_id: The ID of the game.
         :param players: A dict of players with the key as player id and the player name as the value.
         :param waiting_room: The waiting room that the game was made in.
         :param starting_number_of_cards: The number of cards each player starts with.
         """
-        super().__init__(max_cards=max_cards)
+        super().__init__(max_cards=settings['Maximum number of cards'])
 
         self.game_id = game_id
         self.waiting_room = waiting_room
-        self.starting_number_of_cards = starting_number_of_cards
+        self.starting_number_of_cards = settings['Starting number of cards']
         self.chat = []
 
         self.observers = []

@@ -4,7 +4,7 @@ from flask_socketio import *
 import flask_server as fs
 from time import time
 import settings
-from settings import IntSetting
+from settings import IntSetting, BoolSetting
 from util.extended_formatter import extended_formatter
 
 
@@ -23,12 +23,14 @@ class WaitingRoom:
         self.game_id = game_id
         self.last_modified = time()
         self.settings = [
-            IntSetting('Starting number of cards', 25,
-                       settings.min_player_card_limit, settings.max_player_card_limit),
-            IntSetting('Maximum number of cards', 500,
-                       settings.min_max_player_card_limit, settings.max_player_card_limit)
+            IntSetting('Starting number of cards', settings.default_starting_cards,
+                       settings.min_starting_cards, settings.max_card_limit),
+            IntSetting('Maximum number of cards', settings.default_card_limit,
+                       settings.min_card_limit, settings.max_card_limit),
+            BoolSetting('Give all players permission to edit settings', False)
         ]
-        self.chosen_settings = {setting.name: setting.default_value for setting in self.settings}
+        self.chosen_settings = {
+            setting.name: setting.default_value for setting in self.settings}
 
     def _settings_json(self):
         return [setting.to_json(index) for index, setting in enumerate(self.settings)]
@@ -101,23 +103,24 @@ class WaitingRoom:
         index = data['index']
         value = data['value']
 
-        # check if valid
-        if not isinstance(value, int):
-            return
-        if index < 0 or index >= len(self.settings):
-            return
-
         setting = self.settings[index]
 
-        # check if within bounds
-        if value < setting.min_value or value > setting.max_value:
-            return
+        # check if valid
+        if not isinstance(value, bool) and isinstance(value, int):
+            if index < 0 or index >= len(self.settings):
+                return
+            
+            # check if within bounds
+            if value < setting.min_value or value > setting.max_value:
+                return
         
+
         # change setting
         self.chosen_settings[setting.name] = value
 
         # emit
-        fs.socket_io.emit("setting changed", {'index': index, 'value': value}, room=self.game_id, include_self=False)
+        fs.socket_io.emit("setting changed", {
+                          'index': index, 'value': value}, room=self.game_id, include_self=False)
 
     def _joined_waiting_room(self):
         """
@@ -131,7 +134,8 @@ class WaitingRoom:
         emit("add settings", self._settings_json())
 
         for index in range(len(self.settings)):
-            emit("setting changed", {'index': index, 'value': self.chosen_settings[self.settings[index].name]})
+            emit("setting changed", {
+                 'index': index, 'value': self.chosen_settings[self.settings[index].name]})
 
         join_room(self.game_id)
 
@@ -199,8 +203,7 @@ class WaitingRoom:
         """
         self.modify()
         self.running = True
-        self.game = Game(self.game_id, self._player_names, self,
-                         starting_number_of_cards=self.chosen_settings['Starting number of cards'], max_cards=self.chosen_settings['Maximum number of cards'])
+        self.game = Game(self.game_id, self._player_names, self, self.chosen_settings);
         with fs.app.app_context():
             fs.socket_io.emit("refresh", room=self.game_id)
 
