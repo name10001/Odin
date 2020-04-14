@@ -15,11 +15,8 @@
 
 #### Game options
 * Allow you to customize the frequency of cards.
-* Option to lock the settings to host
 * Card picking time limit?
 * Chat restriction options (eg: spam prevention)
-* Allow spectators
-* Allow midgame joining
 
 ## UI Design
 * Better background?

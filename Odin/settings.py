@@ -52,9 +52,9 @@ jesus_card_number = 25
 played_cards_to_show = 5
 
 # kick players if they close the tab
-session_inactivity_kick = 20
+session_inactivity_kick = 10
 
 # kick players if they take too long
 turn_time_limit = 60
 
-debug_enabled = True
+debug_enabled = False

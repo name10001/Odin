@@ -193,9 +193,6 @@ class AbstractGame:
         self.get_turn().finish_turn()
         self.update_users()
 
-    def notify_remove_player(self, player):
-        pass
-
     def end_game(self, winner=None, winners=None):
         pass
 
@@ -214,7 +211,8 @@ class AbstractGame:
         for player in self.players:
             game_str += str(player) + '\n'
 
-        game_str += "Turn: " + self.get_turn().get_name() + " Iteration: " + str(self.iterate_turn_by) + '\n'
+        game_str += "Turn: " + self.get_turn().get_name() + " Iteration: " + \
+            str(self.iterate_turn_by) + '\n'
         game_str += "Pickup: " + str(self.pickup) + \
             " Direction: " + str(self.direction)
 
@@ -347,8 +345,11 @@ class Game(AbstractGame):
         if message == "answer":
             player.answer_question(data)
         elif message == "quit":
-            self.notify_remove_player(player)
-            self.remove_player(player)
+            player.send_message("quit", None)
+
+            self.waiting_room.leave_room()
+
+            self.remove_user(player)
         elif message == "chat":
             self.send_chat_message(player.get_name(), data)
         else:
@@ -372,7 +373,7 @@ class Game(AbstractGame):
     def send_chat_message(self, player_name, message):
         data = {"player": player_name, "message": message if len(
             message) <= 256 else message[:256]}
-        self.send_to_all_players("chat", data)
+        self.send_to_all_users("chat", data)
         self.chat.append(data)
         if len(self.chat) > 100:
             self.chat.pop(0)
@@ -422,7 +423,7 @@ class Game(AbstractGame):
                     "count": len(cards)
                 }
 
-                for player in self.players:
+                for player in self.get_users():
                     if player is cards_from:
                         player.send_animation(remove_message)
                     elif player is cards_to:
@@ -450,7 +451,7 @@ class Game(AbstractGame):
                     "count": len(cards)
                 }
 
-                for player in self.players:
+                for player in self.get_users():
                     if player is cards_from:
                         player.send_animation(remove_message)
                     else:
@@ -470,7 +471,7 @@ class Game(AbstractGame):
                     ]
                 }
 
-                self.send_to_all_players("animate", json_to_send)
+                self.send_to_all_users("animate", json_to_send)
         elif cards_from == "deck":
             if isinstance(cards_to, Player):
                 # PICKUP
@@ -491,7 +492,7 @@ class Game(AbstractGame):
                     "count": len(cards)
                 }
 
-                for player in self.players:
+                for player in self.get_users():
                     if player is cards_to:
                         player.send_animation(pickup_message)
                     else:
@@ -511,7 +512,7 @@ class Game(AbstractGame):
                     ]
                 }
 
-                self.send_to_all_players("animate", json_to_send)
+                self.send_to_all_users("animate", json_to_send)
         elif cards_from == "planning":
             if cards_to == "discard":
                 # card play animation - from prepare to discard pile
@@ -526,7 +527,7 @@ class Game(AbstractGame):
                     ]
                 }
 
-                self.send_to_all_players("animate", json_to_send)
+                self.send_to_all_users("animate", json_to_send)
 
         self.update_players()
 
@@ -548,15 +549,30 @@ class Game(AbstractGame):
         for player in self.players:
             json_to_send["players"].append(player.get_player_json())
 
-        self.send_to_all_players("card update", json_to_send)
+        self.send_to_all_users("card update", json_to_send)
 
     def send_animation(self, json_to_send):
-        self.send_to_all_players("animate", json_to_send)
+        self.send_to_all_users("animate", json_to_send)
 
-    def notify_remove_player(self, player):
-        player.send_message("quit", None)
+    def remove_user(self, player):
+        if not isinstance(player, Observer):
+            self.send_to_all_users(
+                "popup message", player.get_name() + " has quit the game!")
+            self.remove_player(player)
+        else:
+            self.observers.remove(player)
+    
+    def get_users(self):
+        """
+        Get a list of all users including observers
+        """
+        users = []
+        for player in self.players:
+            users.append(player)
+        for observer in self.observers:
+            users.append(observer)
 
-        self.waiting_room.leave_room()
+        return users
 
     def end_game(self, winner=None, winners=None):
         """
@@ -568,18 +584,18 @@ class Game(AbstractGame):
         """
 
         if winner is not None:
-            self.send_to_all_players(
+            self.send_to_all_users(
                 "popup message", winner.name + " has won!")
         elif winners is not None:
             for winner in winners:
-                self.send_to_all_players(
+                self.send_to_all_users(
                     "popup message", winner.name + " has won!")
 
         self.waiting_room.running = False
         self.waiting_room.game = None
 
-        self.send_to_all_players("refresh", None)
-    
+        self.send_to_all_users("refresh", None)
+
     def add_new_player(self, name, player_id):
         """
         Adds a player into the game
@@ -609,10 +625,15 @@ class Game(AbstractGame):
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # NETWORKING STUFF
-
-    def send_to_all_players(self, message_type, data):
+    
+    def send_to_all_users(self, message_type, data):
+        """
+        Send to all players, including observers
+        """
         for player in self.players:
             player.send_message(message_type, data)
+        for observer in self.observers:
+            observer.send_message(message_type, data)
 
     def initial_connection(self):
         """

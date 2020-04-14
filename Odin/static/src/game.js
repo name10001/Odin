@@ -123,6 +123,7 @@ class Game {
         this.turnString = "";
         this.cantPlayReason = "";  // is empty if you are allowed to have your turn with the cards you have played
         this.playingAs = "";
+        this.playerType = "Player";
 
         // chat messages
         this.chat = [];
@@ -146,7 +147,10 @@ class Game {
      * Get player object by id
      */
     getPlayer(id = this.yourId) {
-        return this.players[this.getPlayerIndex(id)];
+        let index = this.getPlayerIndex(id);
+
+        if (index == -1) return null;
+        return this.players[index];
     }
 
     /**
@@ -188,6 +192,11 @@ class Game {
             }
         }
 
+        // player type
+        if (update["player type"] != undefined) {
+            this.playerType = update["player type"];
+        }
+
         //your player id
         if (update["your id"] != undefined)
             this.yourId = update["your id"];
@@ -221,6 +230,9 @@ class Game {
 
                 this.playerIndices[player['id']] = this.players.length;
                 this.players.push(new Player(player['id'], player['name'], player['number of cards'], player['pickup amount'], player["possessed by"], player["effects"]));
+            }
+            if (this.playerType != 'Player') {
+                this.playerIndices[this.yourId] = -1;
             }
 
             //check if it's your turn
@@ -329,15 +341,15 @@ class Game {
         this.cardNameIndices = {};
 
         let i = 0;
-        while(i < this.yourStacks.length) {
+        while (i < this.yourStacks.length) {
             let cardStack = this.yourStacks[i];
-            if(cardStack.cardIds.length == 0) {
+            if (cardStack.cardIds.length == 0) {
                 //delete
                 this.yourStacks.splice(i, 1);
             }
             else {
                 this.cardNameIndices[cardStack.name] = i;
-                for(let id of cardStack.cardIds) {
+                for (let id of cardStack.cardIds) {
                     this.cardIndices[id] = i;
                 }
                 i++;

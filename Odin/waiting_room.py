@@ -4,6 +4,7 @@ from flask_socketio import *
 import flask_server as fs
 from time import time
 import settings
+from player import *
 from settings import IntSetting, BoolSetting
 from util.extended_formatter import extended_formatter
 
@@ -212,13 +213,12 @@ class WaitingRoom:
         # let game handle removing player
         if self.running:
             player = self.game.get_user(player_id)
-            self.game.send_to_all_players(
-                "popup message", player.get_name() + " has quit the game!")
+
+            self.game.remove_user(player)
 
             del self._player_names[player_id]
             del self._sessions[player_id]
 
-            self.game.remove_player(player)
 
         # let waiting room handle removing player
         else:
@@ -244,9 +244,6 @@ class WaitingRoom:
                 self.host_id = None
             else:
                 self.host_id = list(self._player_names.keys())[0]
-
-        if settings.debug_enabled:
-            print(self.host_id + " is the host.")
 
     def _start(self):
         """

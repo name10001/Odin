@@ -1014,7 +1014,14 @@ class OdinGui extends React.Component {
         this.getPlayerList().update(game.players, game.yourId, game.direction, game.turn, game.skip);
         this.getButtons().update(game.getPlayButtonMessage(), game.playAvaliable(), game.undoAvaliable());
         this.getInfoPanel().update(game.turnString, game.pickupAmount);
-        this.getCardIndicator().update(game.yourTurn, game.canPlay, game.getPlayer().nCards);
+
+        if (game.playerType == 'Player') {
+            this.getCardIndicator().update(game.yourTurn, game.canPlay, game.getPlayer().nCards);
+        }
+        else {
+            this.getCardIndicator().update(false, 0, 0);
+        }
+
     }
 
     /**
@@ -1248,7 +1255,7 @@ class OdinGui extends React.Component {
 
         // card indicator
         let nCards = 0;
-        if (this.state.game.getPlayer() !== undefined) {
+        if (this.state.game.getPlayer() != null) {
             nCards = this.state.game.getPlayer().nCards;
         }
         const indicator = $r('span', {

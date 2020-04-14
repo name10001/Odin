@@ -655,7 +655,7 @@ class Player(AbstractPlayer):
             "type": "undo"
         }
 
-        self.game.send_to_all_players("animate", json_to_send)
+        self.game.send_to_all_users("animate", json_to_send)
 
     def show_undo_all(self):
         # send a message to all players
@@ -663,7 +663,7 @@ class Player(AbstractPlayer):
             "type": "undo all"
         }
 
-        self.game.send_to_all_players("animate", json_to_send)
+        self.game.send_to_all_users("animate", json_to_send)
 
     def show_pickup(self, cards):
         """
