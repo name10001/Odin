@@ -73,30 +73,49 @@ class WaitingRoom:
         :return:
         """
         self.modify()
+
+        # Get request - when you GET the game
         if request.method == 'GET':
+
+            # Already logged in
             if "player_id" in session and session["player_id"] in self._player_names:
                 if self.running:
                     return self.game.render_game()
                 else:
                     return render_template("waiting room.html", waiting_room=self, theme=settings.get_theme())
+            # not logged in - send login template if allowed
             else:
+                # when you're not allowed to join a game
+                if self.running and not self.chosen_settings['Allow joining mid-game'] and not self.chosen_settings['Allow spectating']:
+                    return render_template("index.html", message="This game has mid-game joining and spectating disabled.", theme=settings.get_theme())
+                # login
                 return render_template("login.html", theme=settings.get_theme())
         elif request.method == 'POST':
+            # don't allow login when a game is already running and these options are disabled
+            if self.running and not self.chosen_settings['Allow joining mid-game'] and not self.chosen_settings['Allow spectating']:
+                return render_template("index.html", message="This game has mid-game joining and spectating disabled.", theme=settings.get_theme())
+            
+            # successful login
             name = request.form['player_name'][0:10]  # limit to 20 characters
             player_id = self._make_player_id(name)
             self._player_names[player_id] = name
+
+            # establish host if this is the first person
             if len(self._player_names) == 1:
                 self.host_id = player_id
-            if settings.debug_enabled:
-                print(self.host_id + " is the host.")
 
             session['player_id'] = player_id
+            # join waiting room
             if self.running is False:
                 with fs.app.app_context():
                     fs.socket_io.emit("user joined", name, room=self.game_id)
             else:
-                # TODO have an option that forces you into observer mode
-                self.game.add_new_player(name, player_id)
+                # mid-game join
+                if self.chosen_settings['Allow joining mid-game']:
+                    self.game.add_new_player(name, player_id)
+                # spectate
+                else:
+                    self.game.add_observer(name, player_id)
             return redirect("/" + self.game_id)
         else:
             return "What the Fuck Did You Just Bring Upon This Cursed Land!"
@@ -142,7 +161,6 @@ class WaitingRoom:
             for player_id, sesh in self._sessions.items():
                 fs.socket_io.emit(
                     "setting lock", {'lock': value and player_id != self.host_id}, room=sesh['sid'])
-
 
     def _joined_waiting_room(self):
         """

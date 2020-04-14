@@ -33,6 +33,7 @@
                     values: props.settings.map((setting) => setting['default'])
                 };
 
+                this.locked = false;
                 this.auto_change = false;
             }
 
@@ -83,6 +84,7 @@
                 If true, lock all settings so you can't edit them. Otherwise allow you to edit them
             */
             lockSettings(lock) {
+                this.locked = lock;
                 for (let i = 0; i < this.props.settings.length; i++) {
                     if (this.props.settings[i]['type'] == 'int') {
                         $('#' + i + '_setting').prop('disabled', lock);
@@ -130,7 +132,9 @@
                 if (this.props.settings[index]['type'] == 'bool') {
                     let toggle = $('#' + index + '_setting');
                     this.auto_change = true;
+                    if (this.locked) toggle.bootstrapToggle('enable');
                     toggle.bootstrapToggle(value ? "on" : "off");
+                    if (this.locked) toggle.bootstrapToggle('disable');
                 }
 
             }
