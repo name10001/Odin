@@ -57,10 +57,15 @@ body {
     opacity: 0.8;
 }
 
-.toggle-group .toggle-handle {
-    background-color: #fff;
+.toggle {
+    display: block;
+    border: 1px solid #ced4da;
 }
 
-.toggle-group .btn.toggle-off {
-    background-color: #ddd;
+.toggle .toggle-handle {
+    background-color: #fff;
+    border: 1px solid #ced4da;
+}
+.toggle .toggle-off {
+    background-color: #eee;
 }

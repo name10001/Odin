@@ -57,4 +57,4 @@ session_inactivity_kick = 20
 # kick players if they take too long
 turn_time_limit = 60
 
-debug_enabled = False
+debug_enabled = True

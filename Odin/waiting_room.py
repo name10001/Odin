@@ -16,19 +16,24 @@ class WaitingRoom:
     def __init__(self, game_id):
         # "player_id": name
         self._player_names = {}
-        # "player_id": sid
+        # "player_id": {'sid', 'timeout'}
         self._sessions = {}
         self.running = False
         self.game = None
         self.game_id = game_id
         self.last_modified = time()
         self.settings = [
+            BoolSetting('Lock settings to host', True),
+            BoolSetting('Allow joining mid-game', False),
+            BoolSetting('Allow spectating', True),
             IntSetting('Starting number of cards', settings.default_starting_cards,
                        settings.min_starting_cards, settings.max_card_limit),
             IntSetting('Maximum number of cards', settings.default_card_limit,
-                       settings.min_card_limit, settings.max_card_limit),
-            BoolSetting('Give all players permission to edit settings', False)
+                       settings.min_card_limit, settings.max_card_limit)
         ]
+        # 1 player is selected host, they are the first person to join. (usually the person to make the game).
+        # By default, only the host can change the settings
+        self.host_id = None
         self.chosen_settings = {
             setting.name: setting.default_value for setting in self.settings}
 
@@ -80,6 +85,11 @@ class WaitingRoom:
             name = request.form['player_name'][0:10]  # limit to 20 characters
             player_id = self._make_player_id(name)
             self._player_names[player_id] = name
+            if len(self._player_names) == 1:
+                self.host_id = player_id
+            if settings.debug_enabled:
+                print(self.host_id + " is the host.")
+
             session['player_id'] = player_id
             if self.running is False:
                 with fs.app.app_context():
@@ -100,20 +110,26 @@ class WaitingRoom:
         if data['index'] is None or data['value'] is None:
             return
 
+        # check if host setting lock is enabled and the user is not the host
+        if self.chosen_settings['Lock settings to host'] and session['player_id'] != self.host_id:
+            return
+
         index = data['index']
         value = data['value']
 
         setting = self.settings[index]
 
+        if settings.debug_enabled:
+            print("Setting " + str(index) + " changed to " + str(value))
+
         # check if valid
         if not isinstance(value, bool) and isinstance(value, int):
             if index < 0 or index >= len(self.settings):
                 return
-            
+
             # check if within bounds
             if value < setting.min_value or value > setting.max_value:
                 return
-        
 
         # change setting
         self.chosen_settings[setting.name] = value
@@ -121,6 +137,12 @@ class WaitingRoom:
         # emit
         fs.socket_io.emit("setting changed", {
                           'index': index, 'value': value}, room=self.game_id, include_self=False)
+
+        if setting.name == 'Lock settings to host':
+            for player_id, sesh in self._sessions.items():
+                fs.socket_io.emit(
+                    "setting lock", {'lock': value and player_id != self.host_id}, room=sesh['sid'])
+
 
     def _joined_waiting_room(self):
         """
@@ -136,6 +158,8 @@ class WaitingRoom:
         for index in range(len(self.settings)):
             emit("setting changed", {
                  'index': index, 'value': self.chosen_settings[self.settings[index].name]})
+            emit('setting lock', {
+                 'lock': self.chosen_settings['Lock settings to host'] and session['player_id'] != self.host_id})
 
         join_room(self.game_id)
 
@@ -196,6 +220,16 @@ class WaitingRoom:
         del self._player_names[player_id]
         del self._sessions[player_id]
 
+        # if this is the host - determine the new host
+        if player_id == self.host_id:
+            if len(self._player_names) == 0:
+                self.host_id = None
+            else:
+                self.host_id = list(self._player_names.keys())[0]
+
+        if settings.debug_enabled:
+            print(self.host_id + " is the host.")
+
     def _start(self):
         """
         starts the a new game and tells everyone to refresh
@@ -203,7 +237,8 @@ class WaitingRoom:
         """
         self.modify()
         self.running = True
-        self.game = Game(self.game_id, self._player_names, self, self.chosen_settings);
+        self.game = Game(self.game_id, self._player_names,
+                         self, self.chosen_settings)
         with fs.app.app_context():
             fs.socket_io.emit("refresh", room=self.game_id)
 
