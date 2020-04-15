@@ -13,6 +13,7 @@ from waiting_room import WaitingRoom
 games = {}
 sessions = {}
 
+
 @fs.app.route('/')
 def index():
     return render_template("index.html", message=None, theme=settings.get_theme())
@@ -30,6 +31,7 @@ def make_unique_game_id():
 
     return game_id
 
+
 @fs.app.route('/dark_theme')
 @fs.app.route('/dark_theme/')
 def set_dark_theme():
@@ -41,6 +43,7 @@ def set_dark_theme():
 
     return redirect('/')
 
+
 @fs.app.route('/blue_theme')
 @fs.app.route('/blue_theme/')
 def set_blue_theme():
@@ -51,6 +54,7 @@ def set_blue_theme():
     session['theme'] = '/static/themes/blue_theme.css'
 
     return redirect('/')
+
 
 @fs.app.route('/new_game')
 @fs.app.route('/new_game/')
@@ -65,6 +69,7 @@ def new_game():
     fs.socket_io.start_background_task(clear_inactive_players, games[game_id])
 
     return redirect('/' + game_id)
+
 
 @fs.app.route('/help')
 @fs.app.route('/help/')
@@ -116,22 +121,9 @@ def connected():
 
 def clear_inactive_players(game):
     while game.game_id in games:
-        for player_id in game.get_sessions().copy():
-            sid = game.get_sessions()[player_id]['sid']
-
-            if sid in sessions:
-                game.get_sessions()[player_id]['timeout'] = 0
-            else:
-                game.get_sessions()[player_id]['timeout'] += 1
-
-                kick = settings.session_inactivity_kick - \
-                    game.get_sessions()[player_id]['timeout']
-
-                if kick <= 0:
-                    if settings.debug_enabled:
-                        print("PLAYER KICKED", player_id)
-                    game.kick_player(player_id)
-
+        game.kick_inactive_sessions(sessions)
+        if game.is_running():
+            game.get_game().turn_countdown()
         fs.socket_io.sleep(1)
 
 

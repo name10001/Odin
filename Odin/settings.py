@@ -66,8 +66,8 @@ played_cards_to_show = 5
 session_inactivity_kick = 10
 
 # kick players if they take too long
-default_turn_timer = 60
+default_turn_timer = 90
 max_turn_timer = 3600
-min_turn_timer = 0
+min_turn_timer = 30
 
-debug_enabled = True
+debug_enabled = False

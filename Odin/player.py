@@ -331,6 +331,19 @@ class AbstractPlayer:
 
     def is_turn(self):
         return self.state == "playing turn"
+    
+    def auto_play_and_finish(self, ai=None):
+        """
+        Automatically have and finish a turn.
+
+        Typically called when you fail to have your turn quick enough
+
+        :param ai: This does nothing at the moment, could be useful in the future to make auto-play have some intelligence to it
+        """
+
+        # TODO
+
+        pass
 
     def had_won(self):
         """

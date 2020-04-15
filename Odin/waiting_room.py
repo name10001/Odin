@@ -27,9 +27,12 @@ class WaitingRoom:
             BoolSetting('Lock settings to host', True),
             BoolSetting('Allow joining mid-game', False),
             BoolSetting('Allow spectating', True),
-            OptionSetting('Player kicking', 'Host only', ['Disabled', 'Host only', 'Unanimous vote', 'Singular vote', 'Double vote', '>50% vote']),
-            IntSetting('Turn timer', settings.default_turn_timer, settings.min_turn_timer, settings.max_turn_timer),
-            OptionSetting('Turn timer consequence', 'Auto play', ['Nothing', 'Sound + Notification', 'Auto play', 'Kick']),
+            OptionSetting('Player kicking', 'Host only', [
+                          'Disabled', 'Host only', 'Unanimous vote', 'Singular vote', 'Double vote', '>50% vote']),
+            IntSetting('Turn timer', settings.default_turn_timer,
+                       settings.min_turn_timer, settings.max_turn_timer),
+            OptionSetting('Turn timer consequence', 'Auto play', [
+                          'Nothing', 'Sound + Notification', 'Auto play', 'Kick']),
             IntSetting('Starting number of cards', settings.default_starting_cards,
                        settings.min_starting_cards, settings.max_card_limit),
             IntSetting('Maximum number of cards', settings.default_card_limit,
@@ -98,7 +101,7 @@ class WaitingRoom:
             # don't allow login when a game is already running and these options are disabled
             if self.running and not self.chosen_settings['Allow joining mid-game'] and not self.chosen_settings['Allow spectating']:
                 return render_template("index.html", message="This game has mid-game joining and spectating disabled.", theme=settings.get_theme())
-            
+
             # successful login
             name = request.form['player_name'][0:10]  # limit to 20 characters
             player_id = self._make_player_id(name)
@@ -214,7 +217,7 @@ class WaitingRoom:
 
         emit("quit")
 
-    def kick_player(self, player_id):
+    def kick_player(self, player_id, message=" has quit the game!"):
         """
         Kick a player from the game after timing out
         """
@@ -222,11 +225,12 @@ class WaitingRoom:
         if self.running:
             player = self.game.get_user(player_id)
 
-            self.game.remove_user(player)
+            print(player)
+
+            self.game.remove_user(player, message)
 
             del self._player_names[player_id]
             del self._sessions[player_id]
-
 
         # let waiting room handle removing player
         else:
@@ -284,6 +288,28 @@ class WaitingRoom:
             id_safe += "_" + str(num)
 
         return id_safe
+
+    def kick_inactive_sessions(self, sessions):
+        """
+        kick players who have exited their tab
+        :param sessions: All active sessions
+        """
+
+        for player_id in self.get_sessions().copy():
+            sid = self.get_sessions()[player_id]['sid']
+
+            if sid in sessions:
+                self.get_sessions()[player_id]['timeout'] = 0
+            else:
+                self.get_sessions()[player_id]['timeout'] += 1
+
+                kick = settings.session_inactivity_kick - \
+                    self.get_sessions()[player_id]['timeout']
+
+                if kick <= 0:
+                    if settings.debug_enabled:
+                        print("PLAYER KICKED", player_id)
+                    self.kick_player(player_id)
 
     def set_sid(self):
         """

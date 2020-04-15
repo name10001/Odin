@@ -34,6 +34,8 @@ class AbstractGame:
 
         self.player_turn_index = 0
 
+        self.inactivity = 0
+
     def get_turn(self):
         """
         Get the player who is taking their turn right now
@@ -238,7 +240,9 @@ class Game(AbstractGame):
 
         self.game_id = game_id
         self.waiting_room = waiting_room
+        self.settings = settings
         self.starting_number_of_cards = settings['Starting number of cards']
+        self.turn_timer = settings['Turn timer']
         self.chat = []
 
         self.observers = []
@@ -341,6 +345,11 @@ class Game(AbstractGame):
 
         if settings.debug_enabled:
             print(player.get_name(), message, data)  # for debugging
+
+        if player.is_turn() and message != "chat":
+            # reset inactivity - chat counts as inactivity.
+            self.inactivity = 0
+
 
         if message == "answer":
             player.answer_question(data)
@@ -554,14 +563,14 @@ class Game(AbstractGame):
     def send_animation(self, json_to_send):
         self.send_to_all_users("animate", json_to_send)
 
-    def remove_user(self, player):
+    def remove_user(self, player, message=" has quit the game!"):
         if not isinstance(player, Observer):
             self.send_to_all_users(
-                "popup message", player.get_name() + " has quit the game!")
+                "popup message", player.get_name() + message)
             self.remove_player(player)
         else:
             self.observers.remove(player)
-    
+
     def get_users(self):
         """
         Get a list of all users including observers
@@ -620,12 +629,37 @@ class Game(AbstractGame):
         """
         self.observers.append(Observer(self, name, player_id))
 
+    def turn_countdown(self):
+        """
+        Countdown the inactivity, activative the consequence once the timer reaches the timer amount
+        """
+        self.inactivity += 1
+        print("Inactivity time: " + str(self.inactivity))
+
+        if self.inactivity == self.turn_timer:
+            consequence = self.settings['Turn timer consequence']
+            if consequence == "Sound + Notification":
+                print("Took too long, playing notif")
+                pass  # TODO
+            elif consequence == "Kick":
+                self.inactivity = 0
+                player = self.get_turn()
+                if len(player.possessions) > 0:
+                    player = player.possessions[0]
+                
+                player.send_message("quit", None)
+                self.waiting_room.kick_player(player.get_id(), message=" was kicked for taking too long!")
+
+            elif consequence == "Auto play":
+                self.inactivity = 0
+                self.get_turn().auto_play_and_finish()
+
     def get_id(self):
         return self.game_id
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # NETWORKING STUFF
-    
+
     def send_to_all_users(self, message_type, data):
         """
         Send to all players, including observers

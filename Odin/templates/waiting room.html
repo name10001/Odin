@@ -210,7 +210,6 @@
             // create all settings
             socket.on('add settings', function (data) {
                 settings = ReactDOM.render($r(Settings, { settings: data }, null), document.getElementById("settings-panel"));
-                console.log(settings);
             });
             // debug message
             socket.on('message', function (data) {
