@@ -639,8 +639,13 @@ class Game(AbstractGame):
         if self.inactivity == self.turn_timer:
             consequence = self.settings['Turn timer consequence']
             if consequence == "Sound + Notification":
-                print("Took too long, playing notif")
-                pass  # TODO
+                player = self.get_turn()
+                if len(player.possessions) > 0:
+                    player = player.possessions[0]
+                
+                player.send_animation({"type": "sound", "sound": "/static/sounds/hurry_up.mp3"});
+                player.send_message("popup message", "Hurry up! You are taking too long!");
+
             elif consequence == "Kick":
                 self.inactivity = 0
                 player = self.get_turn()
