@@ -638,6 +638,7 @@ class Game(AbstractGame):
 
         if self.inactivity == self.turn_timer:
             consequence = self.settings['Turn timer consequence']
+            # play a sound and show a message
             if consequence == "Sound + Notification":
                 player = self.get_turn()
                 if len(player.possessions) > 0:
@@ -646,6 +647,7 @@ class Game(AbstractGame):
                 player.send_animation({"type": "sound", "sound": "/static/sounds/hurry_up.mp3"});
                 player.send_message("popup message", "Hurry up! You are taking too long!");
 
+            # kick the player
             elif consequence == "Kick":
                 self.inactivity = 0
                 player = self.get_turn()
@@ -654,10 +656,20 @@ class Game(AbstractGame):
                 
                 player.send_message("quit", None)
                 self.waiting_room.kick_player(player.get_id(), message=" was kicked for taking too long!")
-
+            # auto-play
             elif consequence == "Auto play":
                 self.inactivity = 0
-                self.get_turn().auto_play_and_finish()
+
+                player = self.get_turn()
+                if len(player.possessions) > 0:
+                    player = player.possessions[0]
+                
+                if player.is_question_active():
+                    # answer question
+                    player.auto_answer_question()
+                else:
+                    # play cards
+                    self.get_turn().auto_play_and_finish()
 
     def get_id(self):
         return self.game_id

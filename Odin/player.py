@@ -4,6 +4,7 @@ import cards
 import settings
 from eventlet import event
 from flask import request
+import random
 import textwrap
 
 
@@ -266,7 +267,7 @@ class AbstractPlayer:
 
         if next_turn:
             self.state = "not turn"
-            
+
             # remove possession
             if len(self.possessions) > 0:
                 possession = self.possessions[0]
@@ -331,19 +332,32 @@ class AbstractPlayer:
 
     def is_turn(self):
         return self.state == "playing turn"
-    
+
     def auto_play_and_finish(self, ai=None):
         """
         Automatically have and finish a turn.
 
-        Typically called when you fail to have your turn quick enough
+        Typically called when you fail to have your turn quick enough.
+
+        This does not take into account answering of questions
 
         :param ai: This does nothing at the moment, could be useful in the future to make auto-play have some intelligence to it
         """
 
-        # TODO
+        should_undo = False
 
-        pass
+        # check if you can play the cards in your hand
+        for card in self.game.planning_pile:
+            can_play, reason = card.ready_to_play()
+            if can_play is False:
+                should_undo = True
+
+        # undo if you can't play your cards (eg: EA)
+        if should_undo:
+            self.game.undo_all()
+
+        # play all the cards you have or simply finish your turn
+        self.finish_turn()
 
     def had_won(self):
         """
@@ -420,16 +434,19 @@ class AbstractPlayer:
 
     def refresh_card_play_animation(self):
         pass
-    
 
     def __str__(self):
         player_str = '-- ' + self.name + ' --\n'
         player_str += "nCards: " + str(len(self.hand)) + '\n'
-        player_str += "Playing As: " + (self.playing_as.get_name() if self.playing_as is not None else "None") + '\n'
-        player_str += "Possessed By: " + (self.possessions[0].name if len(self.possessions) > 0 else "None") + '\n'
+        player_str += "Playing As: " + \
+            (self.playing_as.get_name()
+             if self.playing_as is not None else "None") + '\n'
+        player_str += "Possessed By: " + \
+            (self.possessions[0].name if len(
+                self.possessions) > 0 else "None") + '\n'
         for effect in self.effects:
             player_str += "- " + effect.get_type() + "(" + str(effect.n_turns) + ")\n"\
-        
+
         return player_str
 
 
@@ -533,6 +550,29 @@ class Player(AbstractPlayer):
         # clear the question
         self._question = None
         return question_answer
+
+    def is_question_active(self):
+        """
+        Returns if a question is active
+        """
+        return self._question is not None
+
+    def auto_answer_question(self):
+        """
+        Answers the question asked randomly.
+        """
+
+        question = self._question
+
+        print(question)
+
+        n_to_pick = question["number to pick"]
+        options = question["options"].keys()
+
+        self.send_message("ask cancel", {})
+
+        self.answer_question(random.sample(options, n_to_pick))
+
 
     def answer_question(self, question_answer):
         """

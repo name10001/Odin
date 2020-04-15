@@ -136,6 +136,10 @@ $(document).ready(() => {
 
     // update the game
     socket.on('card update', function (update) {
+
+        if (DEBUG) {
+            console.log("RECIEVED CARD UPDATE");
+        }
         eventHandler.addEvent(() => {
             game.update(update);
         });
@@ -143,6 +147,11 @@ $(document).ready(() => {
 
     // play an animation
     socket.on('animate', function (data) {
+
+        if (DEBUG) {
+            console.log("ANIMATING: " + data["type"]);
+
+        }
         switch (data["type"]) {
             // ADD CARDS TO PLANNING PILE
             case "play cards":
@@ -164,11 +173,11 @@ $(document).ready(() => {
                     gui.animateFinishPlayCards(data["cards"]);
                 });
                 eventHandler.addEvent(() => {
-                    for(const card of data["cards"]) {
+                    for (const card of data["cards"]) {
                         game.topCards.splice(0, 1);
                         game.topCards.push(card.url);
                     }
-                    
+
                     gui.getDiscardPile().updateCards(game.topCards);
                     eventHandler.finishedEvent();
                 });
@@ -289,6 +298,12 @@ $(document).ready(() => {
         eventHandler.addEvent(() => {
             game.ask(question);
         });
+    });
+
+    // cancel asking a question
+    socket.on('ask cancel', function () {
+        gui.closePopup(false);
+        eventHandler.finishedEvent();
     });
 
     // recieve a chat message
