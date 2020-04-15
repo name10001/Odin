@@ -27,6 +27,17 @@ class BoolSetting:
         return {'index': index, 'name': self.name, 'type': 'bool', 'default': self.default_value}
 
 
+class OptionSetting:
+
+    def __init__(self, name, default_value, values):
+        self.name = name
+        self.default_value = default_value
+        self.values = values
+
+    def to_json(self, index):
+        return {'index': index, 'name': self.name, 'type': 'option', 'default': self.default_value, 'values': self.values}
+
+
 def get_theme():
     if 'theme' in session:
         return session['theme']
@@ -55,6 +66,8 @@ played_cards_to_show = 5
 session_inactivity_kick = 10
 
 # kick players if they take too long
-turn_time_limit = 60
+default_turn_timer = 60
+max_turn_timer = 3600
+min_turn_timer = 0
 
-debug_enabled = False
+debug_enabled = True

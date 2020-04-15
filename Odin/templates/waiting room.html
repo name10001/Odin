@@ -61,6 +61,17 @@
 
                 this.setState({ values });
             }
+            /**
+             * When you change the value of a setting - not confirmed (haven't pressed enter)
+             * 
+             * */
+            handleChangeOption(event, index) {
+                const values = this.state.values;
+                values[index] = event.target.value;
+
+                this.setState({ values });
+                this.emitChange(index);
+            }
 
             /**
              * When you change the value of a boolean
@@ -86,13 +97,15 @@
             lockSettings(lock) {
                 this.locked = lock;
                 for (let i = 0; i < this.props.settings.length; i++) {
-                    if (this.props.settings[i]['type'] == 'int') {
-                        $('#' + i + '_setting').prop('disabled', lock);
-                    }
-                    else if (this.props.settings[i]['type'] == 'bool') {
+                    if (this.props.settings[i]['type'] == 'bool') {
                         $('#' + i + '_setting').bootstrapToggle(lock ? 'disable' : 'enable');
                     }
+                    else {
+                        $('#' + i + '_setting').prop('disabled', lock);
+                    }
                 }
+
+                $('#start-button').prop('disabled', lock);
             }
 
             /**
@@ -145,21 +158,29 @@
 
                 for (const setting of this.props.settings) {
                     const label = $r('label', { key: '1', for: setting['index'] + '_setting' }, setting['name']);
-                    let control;
+
+                    const divElements = [label];
                     // integer setting
                     if (setting['type'] == 'int') {
-                        control = $r('input', {
+                        divElements.push($r('input', {
                             key: '2', className: 'form-control', id: setting['index'] + '_setting', type: 'number',
                             min: setting['min'], max: setting['max'], step: '1', value: this.state.values[setting['index']], onChange: (event) => this.handleChangeInt(event, setting['index'])
-                        });
+                        }));
                     }
                     else if (setting['type'] == 'bool') {
-                        control = $r('input', {
+                        divElements.push($r('input', {
                             key: '2', type: 'checkbox', 'data-toggle': 'toggle', id: setting['index'] + "_setting"
-                        });
+                        }));
+                    }
+                    else if (setting['type'] == 'option') {
+                        const options = [];
+                        for (const option of setting['values']) {
+                            options.push($r('option', { key: option }, option));
+                        }
+                        divElements.push($r('select', { key: '2', className: 'form-control', value: this.state.values[setting['index']], id: setting['index'] + "_setting", onChange: (event) => this.handleChangeOption(event, setting['index']) }, options));
                     }
 
-                    currentRow.push($r('div', { key: currentRow.length + '', className: 'col-sm-4' }, [label, control]));
+                    currentRow.push($r('div', { key: currentRow.length + '', className: 'col-sm-4' }, divElements));
 
                     if (currentRow.length == 3) {
                         allRows.push($r('div', { key: allRows.length + '', className: 'row' }, currentRow));
@@ -189,6 +210,7 @@
             // create all settings
             socket.on('add settings', function (data) {
                 settings = ReactDOM.render($r(Settings, { settings: data }, null), document.getElementById("settings-panel"));
+                console.log(settings);
             });
             // debug message
             socket.on('message', function (data) {
@@ -296,7 +318,7 @@
             </div>
 
             <div class="card-footer">
-                <button type="button" class="btn btn-primary"
+                <button type="button" class="btn btn-primary", id="start-button"
                     onclick="socket.emit('waiting room message', GAME_ID, 'start', null)">
                     Start Game
                 </button>

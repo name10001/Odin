@@ -5,7 +5,7 @@ import flask_server as fs
 from time import time
 import settings
 from player import *
-from settings import IntSetting, BoolSetting
+from settings import IntSetting, BoolSetting, OptionSetting
 from util.extended_formatter import extended_formatter
 
 
@@ -27,6 +27,9 @@ class WaitingRoom:
             BoolSetting('Lock settings to host', True),
             BoolSetting('Allow joining mid-game', False),
             BoolSetting('Allow spectating', True),
+            OptionSetting('Player kicking', 'Host only', ['Disabled', 'Host only', 'Unanimous vote', 'Singular vote', 'Double vote', '>50% vote']),
+            IntSetting('Turn timer', settings.default_turn_timer, settings.min_turn_timer, settings.max_turn_timer),
+            OptionSetting('Turn timer consequence', 'Auto play', ['Nothing', 'Sound + Notification', 'Auto play', 'Kick']),
             IntSetting('Starting number of cards', settings.default_starting_cards,
                        settings.min_starting_cards, settings.max_card_limit),
             IntSetting('Maximum number of cards', settings.default_card_limit,
@@ -151,6 +154,11 @@ class WaitingRoom:
             if value < setting.min_value or value > setting.max_value:
                 return
 
+        # option valid check
+        if isinstance(value, str):
+            if value not in setting.values:
+                return
+
         # change setting
         self.chosen_settings[setting.name] = value
 
@@ -250,6 +258,10 @@ class WaitingRoom:
         starts the a new game and tells everyone to refresh
         :return: None
         """
+        # only the host can start the game in this instance
+        if self.host_id != session["player_id"] and self.chosen_settings['Lock settings to host']:
+            return
+
         self.modify()
         self.running = True
         self.game = Game(self.game_id, self._player_names,
