@@ -15,7 +15,7 @@
 
 #### Game options
 * Allow you to customize the frequency of cards.
-* Card picking time limit?
+* Player kicking
 * Chat restriction options (eg: spam prevention)
 
 ## UI Design

@@ -27,8 +27,8 @@ class WaitingRoom:
             BoolSetting('Lock settings to host', True),
             BoolSetting('Allow joining mid-game', False),
             BoolSetting('Allow spectating', True),
-            OptionSetting('Player kicking', 'Host only', [
-                          'Disabled', 'Host only', 'Unanimous vote', 'Singular vote', 'Double vote', '>50% vote']),
+            #OptionSetting('Player kicking', 'Host only', [
+            #              'Disabled', 'Host only', 'Unanimous vote', 'Singular vote', 'Double vote', '>50% vote']),
             IntSetting('Turn timer', settings.default_turn_timer,
                        settings.min_turn_timer, settings.max_turn_timer),
             OptionSetting('Turn timer consequence', 'Auto play', [
