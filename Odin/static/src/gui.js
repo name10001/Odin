@@ -419,21 +419,31 @@ class InfoPanel extends React.Component {
     }
 
     render() {
-        const turnString = $r('span', { key: '1', style: { color: "#fff", fontSize: this.props.fontSize, float: 'left', position: 'absolute', top: this.props.height * 0.7 + 'px' } }, this.state.turnString);
+        const turnString = $r('span', { key: '1', style: { color: "#fff", fontSize: this.props.fontSize, float: 'left', position: 'absolute', top: this.props.height * 0.6 + 'px' } }, this.state.turnString);
 
-        const quitButton = $r('button', {
-            key: '2', className: 'btn btn-primary', onClick: () => game.quit(), style: {
-                position: 'absolute', padding: this.props.height * 0.025 + 'px ' + this.props.height * 0.1 + 'px', right: '0', fontSize: this.props.fontSize, top: this.props.height * 0.15 + 'px'
+        const buttons = [];
+
+        buttons.push($r('button', {
+            key: '1', className: 'btn btn-primary', onClick: () => gui.openPopup(() => $r(KickPopupMenu, {}), true), style: {
+                padding: this.props.height * 0.02 + 'px ' + this.props.height * 0.1 + 'px', fontSize: this.props.fontSize, marginRight: this.props.height * 0.03 + 'px'
             }
-        }, 'Quit');
+        }, 'Kick'));
+
+        buttons.push($r('button', {
+            key: '2', className: 'btn btn-primary', onClick: () => game.quit(), style: {
+                padding: this.props.height * 0.02 + 'px ' + this.props.height * 0.1 + 'px', fontSize: this.props.fontSize
+            }
+        }, 'Quit'));
+
+        const buttonsDiv = $r('div', { key: '2', style: { position: 'absolute', right: '0', top: this.props.height * 0.08 } }, buttons);
 
         if (this.state.pickupAmount > 0) {
-            const pickupString = $r('span', { key: '3', style: { color: "#fff", fontSize: this.props.fontSize, float: 'left', position: 'absolute', top: this.props.height * 0.2 + 'px' } }, '+' + this.state.pickupAmount);
+            const pickupString = $r('span', { key: '3', style: { color: "#fff", fontSize: this.props.fontSize * 1.4, float: 'left', position: 'absolute', top: this.props.height * 0.32 + 'px' } }, '+' + this.state.pickupAmount);
 
-            return [turnString, pickupString, quitButton];
+            return [turnString, pickupString, buttonsDiv];
         }
 
-        return [turnString, quitButton];
+        return [turnString, buttonsDiv];
     }
 }
 
@@ -1164,7 +1174,7 @@ class OdinGui extends React.Component {
 
 
         // info panel
-        const infoHeight = this.state.guiScale * 8;
+        const infoHeight = this.state.guiScale * 11;
 
         // CONTAINER STYLE - style 1 is 2 cols, style 2 is 3 cols
 
@@ -1229,7 +1239,7 @@ class OdinGui extends React.Component {
         const buttonsWrapper = $r('div', { key: 'bp', className: 'container', style: { position: 'absolute', bottom: '0', width: colWidth + "px" } }, buttons);
 
         // info panel
-        const infoPanel = $r(InfoPanel, { fontSize: this.state.guiScale * 1.5, height: infoHeight, turnString: this.state.game.turnString, pickupAmount: this.state.game.pickupAmount, ref: this.infoRef });
+        const infoPanel = $r(InfoPanel, { fontSize: this.state.guiScale * 1.2, height: infoHeight, turnString: this.state.game.turnString, pickupAmount: this.state.game.pickupAmount, ref: this.infoRef });
         const infoWrapper = $r('div', { key: 'inf', style: { width: colWidth, height: infoHeight + 'px', position: 'absolute', right: containerStyle == 1 ? '0' : colWidth + colGapSize + 'px', top: '0' } }, infoPanel);
 
         // player list

@@ -71,6 +71,32 @@ function getPopupDimensions(windowRatio) {
     return { width, height, left, top };
 }
 
+class KickPopupMenu extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        // size calculations
+        const dim = getPopupDimensions(1);
+
+        // header
+        const title = $r('span', { key: '1', style: { fontSize: dim.height * 0.05 + 'px', float: 'left' } }, "Kick a Player");
+        const close = $r('button', {
+            key: '2', onClick: () => { gui.closePopup(false); }, className: 'btn btn-primary', style: {
+                display: 'inline-block', float: 'right', fontSize: dim.height * 0.03 + 'px', height: '100%', lineHeight: '100%'
+            }
+        }, "X");
+
+        const header = $r('div', { key: '1', className: 'card-header', style: { height: dim.height * 0.1 + 'px', padding: '2%' } }, [title, close]);
+        const body = $r('div', { key: '2', className: 'card-body', style: { height: dim.height * 0.1 + 'px', padding: '2%' } }, "TODO");
+
+
+        // final creation
+        return $r('div', { className: 'card', style: { left: dim.left + 'px', top: dim.top + 'px', width: dim.width + 'px', height: dim.height + 'px', position: 'fixed', zIndex: '9999' } }, [header, body]);
+    }
+}
+
 class HelpPopup extends React.Component {
     constructor(props) {
         super(props);

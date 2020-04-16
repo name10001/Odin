@@ -634,7 +634,6 @@ class Game(AbstractGame):
         Countdown the inactivity, activative the consequence once the timer reaches the timer amount
         """
         self.inactivity += 1
-        print("Inactivity time: " + str(self.inactivity))
 
         if self.inactivity == self.turn_timer:
             consequence = self.settings['Turn timer consequence']

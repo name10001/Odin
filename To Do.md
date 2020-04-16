@@ -6,17 +6,12 @@
 
 ## Lobby functionality
 * Show game states in the waiting room once a game is over
-* Add a time limit for how long you can spend picking cards (Add to waiting room options)
-* Player kicking
+* Player kicking. kick: {'avaliable': true, 'instant': false/true, 'message': '3/10 players must agree'}
 
 #### Chat
 * Spam prevention
 * Limit number of chat messages in the front end
-
-#### Game options
-* Allow you to customize the frequency of cards.
-* Player kicking
-* Chat restriction options (eg: spam prevention)
+* Option to turn off
 
 ## UI Design
 * Better background?
