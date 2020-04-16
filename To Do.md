@@ -6,7 +6,6 @@
 
 ## Lobby functionality
 * Show game states in the waiting room once a game is over
-* Player kicking. kick: {'avaliable': true, 'instant': false/true, 'message': '3/10 players must agree'}
 
 #### Chat
 * Spam prevention

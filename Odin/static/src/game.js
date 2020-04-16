@@ -124,6 +124,9 @@ class Game {
         this.cantPlayReason = "";  // is empty if you are allowed to have your turn with the cards you have played
         this.playingAs = "";
         this.playerType = "Player";
+        this.kickAvaliable = false;
+        this.kickVoteAmount = 1;
+        this.kickMessage = "Kicking disabled.";
 
         // chat messages
         this.chat = [];
@@ -216,6 +219,13 @@ class Game {
         //can't play reason
         if (update["cant play reason"] != undefined) {
             this.cantPlayReason = update['cant play reason'];
+        }
+
+        //kick privelege
+        if (update['kick']) {
+            this.kickAvaliable = update['kick']['avaliable'];
+            this.kickVoteAmount = update['kick']['votes'];
+            this.kickMessage = update['kick']['message'];
         }
 
         // UPDATE PLAYERS
@@ -421,6 +431,10 @@ class Game {
 
     finishTurn() {
         socket.emit("game message", GAME_ID, "finished turn", null);
+    }
+
+    kickPlayer(playerId) {
+        socket.emit("game message", GAME_ID, "kick", { "id": playerId });
     }
 
     quit() {

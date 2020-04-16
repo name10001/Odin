@@ -423,11 +423,17 @@ class InfoPanel extends React.Component {
 
         const buttons = [];
 
-        buttons.push($r('button', {
-            key: '1', className: 'btn btn-primary', onClick: () => gui.openPopup(() => $r(KickPopupMenu, {}), true), style: {
-                padding: this.props.height * 0.02 + 'px ' + this.props.height * 0.1 + 'px', fontSize: this.props.fontSize, marginRight: this.props.height * 0.03 + 'px'
-            }
-        }, 'Kick'));
+        if (game.kickAvaliable) {
+
+            const players = game.players.filter((value, index, arr) => { return value.id != game.yourId });
+
+            buttons.push($r('button', {
+                key: '1', className: 'btn btn-primary', onClick: () => gui.openPopup(() => $r(KickPopupMenu, { message: game.kickMessage, nVotes: game.kickVoteAmount, players }), true), style: {
+                    padding: this.props.height * 0.02 + 'px ' + this.props.height * 0.1 + 'px', fontSize: this.props.fontSize, marginRight: this.props.height * 0.03 + 'px'
+                }
+            }, 'Kick'));
+
+        }
 
         buttons.push($r('button', {
             key: '2', className: 'btn btn-primary', onClick: () => game.quit(), style: {

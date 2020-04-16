@@ -600,6 +600,7 @@ class Player(AbstractPlayer):
             "pickup size": self.game.pickup,
             "iteration": self.game.iterate_turn_by,
             "players": [],
+            "kick": self.game.get_kick_privileges(self),
             "cant play reason": "",
             "player type": type(self).__name__
         }

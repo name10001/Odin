@@ -65,9 +65,13 @@ played_cards_to_show = 5
 # kick players if they close the tab
 session_inactivity_kick = 10
 
+# how long until a vote kick expires
+kick_request_expire = 20
+
 # kick players if they take too long
 default_turn_timer = 90
 max_turn_timer = 3600
 min_turn_timer = 30
+
 
 debug_enabled = False

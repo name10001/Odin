@@ -7,6 +7,7 @@ from time import time
 from cards.deck import AbstractDeck, WeightedDeck
 from cards.card_collection import CardCollection
 import settings
+import math
 
 
 class AbstractGame:
@@ -33,8 +34,6 @@ class AbstractGame:
         self.iterate_turn_by = 1
 
         self.player_turn_index = 0
-
-        self.inactivity = 0
 
     def get_turn(self):
         """
@@ -247,6 +246,11 @@ class Game(AbstractGame):
 
         self.observers = []
 
+        self.inactivity = 0
+
+        # kick request format: {'playerid': {votes': [playerid1, playerid2], 'timeout': 60}}
+        self._kick_requests = {}
+
         # setting up cards
         self.deck = WeightedDeck(self)
         top_card = self.deck.get_next_card(
@@ -350,7 +354,6 @@ class Game(AbstractGame):
             # reset inactivity - chat counts as inactivity.
             self.inactivity = 0
 
-
         if message == "answer":
             player.answer_question(data)
         elif message == "quit":
@@ -361,6 +364,8 @@ class Game(AbstractGame):
             self.remove_user(player)
         elif message == "chat":
             self.send_chat_message(player.get_name(), data)
+        elif message == "kick":
+            self.request_kick(player, data['id'])
         else:
             # override player due to possession
             if player.playing_as is not None:
@@ -642,9 +647,11 @@ class Game(AbstractGame):
                 player = self.get_turn()
                 if len(player.possessions) > 0:
                     player = player.possessions[0]
-                
-                player.send_animation({"type": "sound", "sound": "/static/sounds/hurry_up.mp3"});
-                player.send_message("popup message", "Hurry up! You are taking too long!");
+
+                player.send_animation(
+                    {"type": "sound", "sound": "/static/sounds/hurry_up.mp3"})
+                player.send_message(
+                    "popup message", "Hurry up! You are taking too long!")
 
             # kick the player
             elif consequence == "Kick":
@@ -652,9 +659,10 @@ class Game(AbstractGame):
                 player = self.get_turn()
                 if len(player.possessions) > 0:
                     player = player.possessions[0]
-                
+
                 player.send_message("quit", None)
-                self.waiting_room.kick_player(player.get_id(), message=" was kicked for taking too long!")
+                self.waiting_room.kick_player(
+                    player.get_id(), message=" was kicked for taking too long!")
             # auto-play
             elif consequence == "Auto play":
                 self.inactivity = 0
@@ -662,13 +670,98 @@ class Game(AbstractGame):
                 player = self.get_turn()
                 if len(player.possessions) > 0:
                     player = player.possessions[0]
-                
+
                 if player.is_question_active():
                     # answer question
                     player.auto_answer_question()
                 else:
                     # play cards
                     self.get_turn().auto_play_and_finish()
+
+        # kick request timeout
+        for player_id in self._kick_requests.copy().keys():
+            self._kick_requests[player_id]['timeout'] -= 1
+            print(self._kick_requests[player_id]['timeout'])
+            if self._kick_requests[player_id]['timeout'] == 0:
+                del self._kick_requests[player_id]
+
+    def request_kick(self, player, player_id):
+        """
+        When a player requests to kick a player by an id
+
+        :param player: player requesting
+        :param player_id: id of the player to kick
+        :return: None
+        """
+
+        priveleges = self.get_kick_privileges(player)
+
+        # cancel if they aren't allowed to kick
+        if not priveleges['avaliable']:
+            return
+
+        votes_required = priveleges['votes']
+
+        # kick request format: {'playerid': {votes': [playerid1, playerid2], 'timeout': 60}}
+        if player_id not in self._kick_requests:
+            self._kick_requests[player_id] = {
+                'votes': [player.get_id()], 'timeout': settings.kick_request_expire}
+        elif player.get_id() not in self._kick_requests[player_id]['votes']:
+            self._kick_requests[player_id]['votes'].append(player.get_id())
+        
+        votes = len(self._kick_requests[player_id]['votes'])
+        
+        if votes >= votes_required:
+            # the number of votes is reached, kick them
+
+            kicked_player = self.get_player(player_id)
+
+            if kicked_player is not None:
+                kicked_player.send_message("quit", None)
+                self.waiting_room.kick_player(
+                    player_id, message=" was kicked from the game!")
+
+            del self._kick_requests[player_id]
+
+    def get_kick_privileges(self, player):
+        """
+        Get kick privileges of a player in JSON format.
+
+        The format is: kick: {'avaliable': true, 'votes': 3, 'message': '3/5 players must agree. Pick a player to kick:'}
+
+        :param player: the player
+        """
+
+        kick_option = self.settings['Player kicking']
+
+        # Kicking disabled
+        if kick_option == 'Disabled' or len(self.players) < 2:
+            return {'avaliable': False, 'votes': 1, 'message': 'Kicking disabled.'}
+        # Only the host can kick
+        elif kick_option == 'Host only':
+            if player.get_id() == self.waiting_room.host_id:
+                return {'avaliable': True, 'votes': 1, 'message': 'As the game host, you have the privilege to kick players instantly. Choose a player to kick:'}
+            else:
+                return {'avaliable': False, 'votes': 1, 'message': 'Kicking locked to host.'}
+        # Anyone can kick anyone
+        elif kick_option == 'Singular vote':
+            return {'avaliable': True, 'votes': 1, 'message': 'Choose a player to kick:'}
+        # Kicks are based on votes
+        else:
+            num_votes = 1
+
+            if kick_option == 'Unanimous vote':
+                num_votes = len(self.players) - 1
+            elif kick_option == '>50% vote':
+                num_votes = math.ceil(len(self.players) / 2)
+                if len(self.players) == 2:
+                    num_votes = 1
+            else:
+                num_votes = 2
+                if len(self.players) == 2:
+                    num_votes = 1
+
+            return {'avaliable': True, 'votes': num_votes, 'message': str(num_votes) + '/' + str(len(self.players)) + ' players must agree. Choose a player to kick:'}
 
     def get_id(self):
         return self.game_id

@@ -89,7 +89,34 @@ class KickPopupMenu extends React.Component {
         }, "X");
 
         const header = $r('div', { key: '1', className: 'card-header', style: { height: dim.height * 0.1 + 'px', padding: '2%' } }, [title, close]);
-        const body = $r('div', { key: '2', className: 'card-body', style: { height: dim.height * 0.1 + 'px', padding: '2%' } }, "TODO");
+
+
+        // body elements
+        const bodyElements = [];
+
+        // message at the top
+        bodyElements.push($r('p', { key: '1' }, this.props.message));
+
+        let i = 1;
+
+        // add buttons
+        for (const player of this.props.players) {
+            const id = player.id;
+            const name = player.name;
+
+            bodyElements.push($r('button', {
+                key: i + "", className: 'btn btn-primary btn-block', onClick: () => {
+                    game.kickPlayer(id);
+                    gui.closePopup();
+                }
+            }, name))
+
+            i++;
+        }
+
+
+
+        const body = $r('div', { key: '2', className: 'card-body', style: { height: dim.height * 0.1 + 'px', padding: '2%' } }, bodyElements);
 
 
         // final creation
@@ -249,7 +276,7 @@ class QuestionPopup extends React.Component {
 
             const buttonScroller = $r('div', { key: '2', style: { width: '70%', height: cardHeight * 2 + 'px', overflowY: 'auto' } }, buttons);
 
-            body = $r('div', { key: '2', className: 'card-body', style: { padding: '2%'} }, [image, buttonScroller]);
+            body = $r('div', { key: '2', className: 'card-body', style: { padding: '2%' } }, [image, buttonScroller]);
         }
         // card selector
         else if (this.props.question["type"] == 'cards') {
