@@ -66,7 +66,7 @@ played_cards_to_show = 5
 session_inactivity_kick = 10
 
 # how long until a vote kick expires
-kick_request_expire = 20
+kick_request_expire = 60
 
 # kick players if they take too long
 default_turn_timer = 90

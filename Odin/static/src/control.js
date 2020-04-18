@@ -306,6 +306,10 @@ $(document).ready(() => {
         eventHandler.finishedEvent();
     });
 
+    socket.on('kick request', function(data) {
+        gui.openPopup(() => $r(KickRequestPopup, {id: data['id'], from: data['from']}), true);
+    });
+
     // recieve a chat message
     socket.on('chat', function (data) {
         game.recieveMessage(data);

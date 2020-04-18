@@ -678,10 +678,10 @@ class Game(AbstractGame):
                     # play cards
                     self.get_turn().auto_play_and_finish()
 
-        # kick request timeout
+        # delete old kick requests
         for player_id in self._kick_requests.copy().keys():
             self._kick_requests[player_id]['timeout'] -= 1
-            print(self._kick_requests[player_id]['timeout'])
+
             if self._kick_requests[player_id]['timeout'] == 0:
                 del self._kick_requests[player_id]
 
@@ -693,6 +693,8 @@ class Game(AbstractGame):
         :param player_id: id of the player to kick
         :return: None
         """
+        if self.get_player(player_id) is None:
+            return
 
         priveleges = self.get_kick_privileges(player)
 
@@ -706,11 +708,19 @@ class Game(AbstractGame):
         if player_id not in self._kick_requests:
             self._kick_requests[player_id] = {
                 'votes': [player.get_id()], 'timeout': settings.kick_request_expire}
+
+            if votes_required > 1:
+                # tell all players online to vote
+
+                for p in self.players:
+                    if p.get_id() != player.get_id() and p.get_id() != player_id:
+                        p.send_message("kick request", {
+                                       "from": player.get_id(), "id": player_id})
         elif player.get_id() not in self._kick_requests[player_id]['votes']:
             self._kick_requests[player_id]['votes'].append(player.get_id())
-        
+
         votes = len(self._kick_requests[player_id]['votes'])
-        
+
         if votes >= votes_required:
             # the number of votes is reached, kick them
 

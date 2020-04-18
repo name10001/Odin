@@ -12,40 +12,58 @@ class Popup extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { createComponent: props.popup.createPopup, canClose: props.popup.canClose, closeFunction: props.popup.closeFunction };
+        this.state = { popups: [] };
     }
 
     /**
      * Open a new popup
-     * @param {Function} createComponent prevent warnings by having key: '1'
-     * @param {Boolean} canClose 
      */
     openPopup(popup) {
-        this.setState({ createComponent: popup.createPopup, canClose: popup.canClose, closeFunction: popup.closeFunction });
+        this.state.popups.push(popup);
+        this.setState(this.state);
     }
 
     /**
-     * Close the popup
+     * Close the latest added popup
      */
     closePopup(doCloseFunction) {
-        if (this.state.closeFunction && doCloseFunction) {
-            this.state.closeFunction();
+        if (this.state.popups.length == 0) return;
+
+        const popup = this.state.popups[this.state.popups.length - 1];
+
+        if (popup.closeFunction && doCloseFunction) {
+            popup.closeFunction();
         }
-        this.setState({ createComponent: null, canClose: true, closeFunction: undefined });
+
+        this.state.popups.splice(this.state.popups.length - 1, this.state.popups.length);
+        this.setState(this.state);
+    }
+
+    /**
+     * Close all popups 
+     */
+    closeAllPopups(doCloseFunction) {
+        while (this.state.popups.length > 0) this.closePopup(doCloseFunction);
     }
 
     render() {
-        if (this.state.createComponent) {
+        if (this.state.popups.length > 0) {
             let backgroundDiv;
             // make a background that you can click on to exit
-            if (this.state.canClose) {
-                backgroundDiv = $r('div', { key: '2', onClick: () => { this.closePopup(true) }, style: { left: '0', top: '0', width: '100%', height: '100%', position: 'fixed', zIndex: '9998', backgroundColor: '#000', opacity: '0.5' } });
+            if (this.state.popups[this.state.popups.length - 1].canClose) {
+                backgroundDiv = $r('div', { key: '2', onClick: () => { this.closePopup(true) }, style: { left: '0', top: '0', width: '100%', height: '100%', position: 'fixed', zIndex: '9996', backgroundColor: '#000', opacity: '0.5' } });
             }
             // make a background that prevents you from clicking the background
             else {
-                backgroundDiv = $r('div', { key: '2', style: { left: '0', top: '0', width: '100%', height: '100%', position: 'fixed', zIndex: '9998', backgroundColor: '#000', opacity: '0.5' } });
+                backgroundDiv = $r('div', { key: '2', style: { left: '0', top: '0', width: '100%', height: '100%', position: 'fixed', zIndex: '9996', backgroundColor: '#000', opacity: '0.5' } });
             }
-            return [backgroundDiv, this.state.createComponent()];
+
+            const elements = [backgroundDiv];
+            for (const popup of this.state.popups) {
+                elements.push(popup.createComponent());
+            }
+
+            return elements;
         }
         else {
             return "";
@@ -57,9 +75,9 @@ class Popup extends React.Component {
  * Get the dimensions of the window given a ratio such that it fills 80% of the width or height
  * @param {Number} windowRatio 
  */
-function getPopupDimensions(windowRatio) {
-    const height1 = window.innerHeight * 0.8;
-    const height2 = window.innerWidth * 0.8 * windowRatio;
+function getPopupDimensions(windowRatio, windowSize = 0.8) {
+    const height1 = window.innerHeight * windowSize;
+    const height2 = window.innerWidth * windowSize * windowRatio;
 
     const height = Math.min(height1, height2);
     const width = height / windowRatio;
@@ -78,7 +96,7 @@ class KickPopupMenu extends React.Component {
 
     render() {
         // size calculations
-        const dim = getPopupDimensions(1);
+        const dim = getPopupDimensions(1, 0.5);
 
         // header
         const title = $r('span', { key: '1', style: { fontSize: dim.height * 0.05 + 'px', float: 'left' } }, "Kick a Player");
@@ -120,7 +138,50 @@ class KickPopupMenu extends React.Component {
 
 
         // final creation
-        return $r('div', { className: 'card', style: { left: dim.left + 'px', top: dim.top + 'px', width: dim.width + 'px', height: dim.height + 'px', position: 'fixed', zIndex: '9999' } }, [header, body]);
+        return $r('div', { className: 'card', style: { left: dim.left + 'px', top: dim.top + 'px', width: dim.width + 'px', height: dim.height + 'px', position: 'fixed', zIndex: '9997' } }, [header, body]);
+    }
+}
+
+class KickRequestPopup extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        // size calculations
+        const dim = getPopupDimensions(0.6, 0.5);
+
+        // header
+        const title = $r('span', { key: '1', style: { fontSize: dim.height * 0.12 + 'px', float: 'left' } }, "Kick Request");
+        const close = $r('button', {
+            key: '2', onClick: () => { gui.closePopup(false); }, className: 'btn btn-primary', style: {
+                display: 'inline-block', float: 'right', fontSize: dim.height * 0.07 + 'px', height: '100%', lineHeight: '100%'
+            }
+        }, "X");
+
+        const header = $r('div', { key: '1', className: 'card-header', style: { height: dim.height * 0.3 + 'px', padding: '2%' } }, [title, close]);
+
+
+        // body elements
+
+        // message at the top
+        const fromName = game.getPlayer(this.props.from).name;
+        const toName = game.getPlayer(this.props.id).name;
+
+        const msg = $r('p', { key: '1' }, fromName + " has requested to kick " + toName + ". Please vote to keep them in the game or kick them.");
+        const btn1 = $r('button', { key: '2', onClick: () => gui.closePopup(false), className: "btn btn-primary btn-block" }, "Keep them in the game.");
+        const btn2 = $r('button', {
+            key: '3', onClick: () => {
+                game.kickPlayer(this.props.id);
+                gui.closePopup(false);
+            }, className: "btn btn-primary btn-block"
+        }, "Kick them.");
+
+        const body = $r('div', { key: '2', className: 'card-body', style: { height: dim.height * 0.1 + 'px', padding: '2%' } }, [msg, btn1, btn2]);
+
+
+        // final creation
+        return $r('div', { className: 'card', style: { left: dim.left + 'px', top: dim.top + 'px', width: dim.width + 'px', height: dim.height + 'px', position: 'fixed', zIndex: '9997' } }, [header, body]);
     }
 }
 
@@ -160,7 +221,7 @@ class HelpPopup extends React.Component {
 
 
         // final creation
-        return $r('div', { className: 'card', style: { left: dim.left + 'px', top: dim.top + 'px', width: dim.width + 'px', height: dim.height + 'px', position: 'fixed', zIndex: '9999' } }, [header, body]);
+        return $r('div', { className: 'card', style: { left: dim.left + 'px', top: dim.top + 'px', width: dim.width + 'px', height: dim.height + 'px', position: 'fixed', zIndex: '9997' } }, [header, body]);
     }
 }
 
@@ -378,6 +439,6 @@ class QuestionPopup extends React.Component {
         }
 
         // final creation
-        return $r('div', { className: 'card', style: { left: dim.left + 'px', top: dim.top + 'px', width: dim.width + 'px', position: 'fixed', zIndex: '9999' } }, [header, body]);
+        return $r('div', { className: 'card', style: { left: dim.left + 'px', top: dim.top + 'px', width: dim.width + 'px', position: 'fixed', zIndex: '9997' } }, [header, body]);
     }
 }

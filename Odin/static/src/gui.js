@@ -749,7 +749,6 @@ class OdinGui extends React.Component {
         this.infoRef = React.createRef();
         this.playersRef = React.createRef();
         this.cardIndicatorRef = React.createRef();
-        this.popup = { createPopup: null, canClose: true };
 
         this.state = {
             width: 0,
@@ -1116,10 +1115,9 @@ class OdinGui extends React.Component {
      * Open a popup window
      * @param {*} createPopup 
      */
-    openPopup(createPopup, canClose, closeFunction) {
-        this.popup = { createPopup, canClose, closeFunction };
+    openPopup(createComponent, canClose, closeFunction) {
 
-        this.popupRef.current.openPopup(this.popup);
+        this.popupRef.current.openPopup({ createComponent, canClose, closeFunction });
     }
 
     /**
@@ -1161,7 +1159,7 @@ class OdinGui extends React.Component {
         const scroller = $r(CardScroller, { key: 'cs', cardStacks: this.state.game.yourStacks, yourTurn: this.state.game.yourTurn, guiScale: this.state.guiScale, ref: this.cardsRef });
 
         // popup
-        const popup = $r(Popup, { key: 'pop', ref: this.popupRef, popup: this.popup });
+        const popup = $r(Popup, { key: 'pop', ref: this.popupRef});
 
         // animation handler
         const animationHandler = $r(AnimationHandler, { key: 'ani', ref: this.animationHandler });
