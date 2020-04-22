@@ -16,7 +16,7 @@ const MAX_CARD_TRANSFER_TIME = 1500;
 
 const $r = React.createElement;
 
-var DEBUG = true;
+var DEBUG = false;
 
 /**
  * A list of functions to be performed in order. The function ends once eventHandler.finishedEvent() is called.
