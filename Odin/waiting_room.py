@@ -225,8 +225,6 @@ class WaitingRoom:
         if self.running:
             player = self.game.get_user(player_id)
 
-            print(player)
-
             self.game.remove_user(player, message)
 
             del self._player_names[player_id]

@@ -563,9 +563,7 @@ class Player(AbstractPlayer):
         """
 
         question = self._question
-
-        print(question)
-
+        
         n_to_pick = question["number to pick"]
         options = question["options"].keys()
 
