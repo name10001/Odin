@@ -112,9 +112,6 @@ class KickPopupMenu extends React.Component {
         // body elements
         const bodyElements = [];
 
-        // message at the top
-        bodyElements.push($r('p', { key: '1' }, this.props.message));
-
         let i = 1;
 
         // add buttons

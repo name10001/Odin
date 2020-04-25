@@ -423,7 +423,7 @@ class InfoPanel extends React.Component {
 
         const buttons = [];
 
-        if (game.kickAvaliable) {
+        if (game.isHost) {
 
             const players = game.players.filter((value, index, arr) => { return value.id != game.yourId });
 

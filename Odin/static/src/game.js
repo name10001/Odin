@@ -124,12 +124,10 @@ class Game {
         this.cantPlayReason = "";  // is empty if you are allowed to have your turn with the cards you have played
         this.playingAs = "";
         this.playerType = "Player";
-        this.kickAvaliable = false;
-        this.kickVoteAmount = 1;
-        this.kickMessage = "Kicking disabled.";
+        this.isHost = false;
 
         // chat messages
-        this.chat = [{'player': null, 'message': '-- Beginning of chat --'}];
+        this.chat = [{ 'player': null, 'message': '-- Beginning of chat --' }];
 
         // create list of all cards for the help system
         this.allCards = [];
@@ -222,10 +220,8 @@ class Game {
         }
 
         //kick privelege
-        if (update['kick']) {
-            this.kickAvaliable = update['kick']['avaliable'];
-            this.kickVoteAmount = update['kick']['votes'];
-            this.kickMessage = update['kick']['message'];
+        if (update['host'] != undefined) {
+            this.isHost = update['host'];
         }
 
         // UPDATE PLAYERS
@@ -310,8 +306,8 @@ class Game {
             console.log("Message from " + data["player"] + ": " + data["message"]);
         }
         this.chat.push(data);
-        
-        if(this.chat.length > 50) {
+
+        if (this.chat.length > 50) {
             this.chat.splice(0, 1);
         }
 

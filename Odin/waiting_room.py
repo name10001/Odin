@@ -24,11 +24,7 @@ class WaitingRoom:
         self.game_id = game_id
         self.last_modified = time()
         self.settings = [
-            BoolSetting('Lock settings to host', True),
-            BoolSetting('Allow joining mid-game', False),
-            BoolSetting('Allow spectating', True),
-            OptionSetting('Player kicking', 'Host only', [
-                          'Disabled', 'Host only', 'Unanimous vote', 'Singular vote', 'Double vote', '>50% vote']),
+            OptionSetting('Mid-game joining', 'Request the host', ['Lock', 'Spectate only', 'Request the host', 'Allow']),
             IntSetting('Turn timer', settings.default_turn_timer,
                        settings.min_turn_timer, settings.max_turn_timer),
             OptionSetting('Turn timer consequence', 'Auto play', [
@@ -94,22 +90,16 @@ class WaitingRoom:
                     return render_template("waiting room.html", waiting_room=self, theme=settings.get_theme())
             # not logged in - send login template if allowed
             else:
-                # when you're not allowed to join a game
-                if self.running and not self.chosen_settings['Allow joining mid-game'] and not self.chosen_settings['Allow spectating']:
-                    return render_template("index.html", message="This game has mid-game joining and spectating disabled.", theme=settings.get_theme())
-                # if a game is full and you can't spectate
-                if self.running and len(self.game.players) >= self.chosen_settings['Maximum players'] and not self.chosen_settings['Allow spectating']:
-                    return render_template("index.html", message="This game is full and does not allow spectators.", theme=settings.get_theme())
+                # don't allow login when a game is already running and these options are disabled
+                if self.running and self.chosen_settings['Mid-game joining'] == 'Lock':
+                    return render_template("index.html", message="You cannot join this game mid-game.", theme=settings.get_theme())
 
                 # login
                 return render_template("login.html", theme=settings.get_theme())
         elif request.method == 'POST':
             # don't allow login when a game is already running and these options are disabled
-            if self.running and not self.chosen_settings['Allow joining mid-game'] and not self.chosen_settings['Allow spectating']:
-                return render_template("index.html", message="This game has mid-game joining and spectating disabled.", theme=settings.get_theme())
-            # if a game is full and you can't spectate
-            if self.running and len(self.game.players) >= self.chosen_settings['Maximum players'] and not self.chosen_settings['Allow spectating']:
-                return render_template("index.html", message="This game is full and does not allow spectators.", theme=settings.get_theme())
+            if self.running and self.chosen_settings['Mid-game joining'] == 'Lock':
+                return render_template("index.html", message="You cannot join this game mid-game.", theme=settings.get_theme())
 
             # successful login
             name = request.form['player_name'][0:10]  # limit to 20 characters
@@ -126,8 +116,8 @@ class WaitingRoom:
                 with fs.app.app_context():
                     fs.socket_io.emit("user joined", name, room=self.game_id)
             else:
-                # mid-game join
-                if self.chosen_settings['Allow joining mid-game'] and len(self.game.players) < self.chosen_settings['Maximum players']:
+                # mid-game join - game must not be full AND Mid-game joining must be set to allow.
+                if self.chosen_settings['Mid-game joining'] == 'Allow' and len(self.game.players) < self.chosen_settings['Maximum players']:
                     self.game.add_new_player(name, player_id)
                 # spectate
                 else:
@@ -146,7 +136,7 @@ class WaitingRoom:
             return
 
         # check if host setting lock is enabled and the user is not the host
-        if self.chosen_settings['Lock settings to host'] and session['player_id'] != self.host_id:
+        if session['player_id'] != self.host_id:
             return
 
         index = data['index']
@@ -178,11 +168,6 @@ class WaitingRoom:
         fs.socket_io.emit("setting changed", {
                           'index': index, 'value': value}, room=self.game_id, include_self=False)
 
-        if setting.name == 'Lock settings to host':
-            for player_id, sesh in self._sessions.items():
-                fs.socket_io.emit(
-                    "setting lock", {'lock': value and player_id != self.host_id}, room=sesh['sid'])
-
     def _joined_waiting_room(self):
         """
         Sends them all the joined players. If new players join later it will also send them
@@ -198,7 +183,7 @@ class WaitingRoom:
             emit("setting changed", {
                  'index': index, 'value': self.chosen_settings[self.settings[index].name]})
             emit('setting lock', {
-                 'lock': self.chosen_settings['Lock settings to host'] and session['player_id'] != self.host_id})
+                 'lock': session['player_id'] != self.host_id})
 
         join_room(self.game_id)
 
@@ -264,7 +249,12 @@ class WaitingRoom:
             if len(self._player_names) == 0:
                 self.host_id = None
             else:
+                # new host - allow them to edit settings
                 self.host_id = list(self._player_names.keys())[0]
+
+                fs.socket_io.emit('setting lock', {
+                    'lock': False}, room=self._sessions[self.host_id]['sid'])
+
 
     def _start(self):
         """
@@ -272,7 +262,7 @@ class WaitingRoom:
         :return: None
         """
         # only the host can start the game in this instance
-        if self.host_id != session["player_id"] and self.chosen_settings['Lock settings to host']:
+        if self.host_id != session["player_id"]:
             return
 
         self.modify()
