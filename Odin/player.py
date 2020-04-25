@@ -563,14 +563,13 @@ class Player(AbstractPlayer):
         """
 
         question = self._question
-        
+
         n_to_pick = question["number to pick"]
         options = question["options"].keys()
 
         self.send_message("ask cancel", {})
 
         self.answer_question(random.sample(options, n_to_pick))
-
 
     def answer_question(self, question_answer):
         """
@@ -682,8 +681,9 @@ class Player(AbstractPlayer):
         :param data: data to send the client with the message. Can be None
         :return: None
         """
-        with fs.app.app_context():
-            fs.socket_io.emit(message_type, data, room=self.sid)
+        if self.sid == None:
+            return
+        fs.socket_io.emit(message_type, data, room=self.sid)
 
     def send_animation(self, data):
         """

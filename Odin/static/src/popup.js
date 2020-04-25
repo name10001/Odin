@@ -139,7 +139,7 @@ class KickPopupMenu extends React.Component {
     }
 }
 
-class KickRequestPopup extends React.Component {
+class JoinRequestPopup extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -149,7 +149,7 @@ class KickRequestPopup extends React.Component {
         const dim = getPopupDimensions(0.6, 0.5);
 
         // header
-        const title = $r('span', { key: '1', style: { fontSize: dim.height * 0.12 + 'px', float: 'left' } }, "Kick Request");
+        const title = $r('span', { key: '1', style: { fontSize: dim.height * 0.12 + 'px', float: 'left' } }, "Join Request");
         const close = $r('button', {
             key: '2', onClick: () => { gui.closePopup(false); }, className: 'btn btn-primary', style: {
                 display: 'inline-block', float: 'right', fontSize: dim.height * 0.07 + 'px', height: '100%', lineHeight: '100%'
@@ -162,17 +162,16 @@ class KickRequestPopup extends React.Component {
         // body elements
 
         // message at the top
-        const fromName = game.getPlayer(this.props.from).name;
-        const toName = game.getPlayer(this.props.id).name;
 
-        const msg = $r('p', { key: '1' }, fromName + " has requested to kick " + toName + ". Please vote to keep them in the game or kick them.");
-        const btn1 = $r('button', { key: '2', onClick: () => gui.closePopup(false), className: "btn btn-primary btn-block" }, "Keep them in the game.");
-        const btn2 = $r('button', {
-            key: '3', onClick: () => {
-                game.kickPlayer(this.props.id);
+        const msg = $r('p', { key: '1' }, this.props.name + " has requested to join the game.");
+        const btn1 = $r('button', {
+            key: '2', onClick: () => {
+                game.acceptNewPlayer(this.props.id);
                 gui.closePopup(false);
             }, className: "btn btn-primary btn-block"
-        }, "Kick them.");
+        }, "Add " + name + " to the game.");
+        const btn2 = $r('button', {
+            key: '3', onClick: () => gui.closePopup(false), className: "btn btn-primary btn-block"}, "Do not let them join.");
 
         const body = $r('div', { key: '2', className: 'card-body', style: { height: dim.height * 0.1 + 'px', padding: '2%' } }, [msg, btn1, btn2]);
 

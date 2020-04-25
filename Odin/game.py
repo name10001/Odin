@@ -378,15 +378,22 @@ class Game(AbstractGame):
             self.remove_user(player)
         elif message == "chat":
             self.send_chat_message(player.get_name(), data)
-        elif message == "kick":
-            self.request_kick(player, data['id'])
+        elif message == "kick" or message == 'accept player':
+            if player.get_id() != self.waiting_room.host_id:
+                return
+
+            if message == "kick":
+                self.kick(data['id'])
+            elif message == 'accept player':
+                self.observer_to_player(data['id'])
         else:
             # override player due to possession
             if player.playing_as is not None:
                 player = player.playing_as
 
             if player != self.get_turn():
-                print("got message from player, but it is not their turn.")
+                if settings.debug_enabled:
+                    print("got message from player, but it is not their turn.")
             elif message == "play cards":
                 self.play_cards(data)
             elif message == "finished turn":
@@ -396,7 +403,8 @@ class Game(AbstractGame):
             elif message == "undo all":
                 self.undo_all()
             else:
-                print("got unknown message from player:", message)
+                if settings.debug_enabled:
+                    print("got unknown message from player:", message)
 
     def send_chat_message(self, player_name, message):
         data = {"player": player_name, "message": message if len(
@@ -624,20 +632,25 @@ class Game(AbstractGame):
 
         self.send_to_all_users("refresh", None)
 
-    def add_new_player(self, name, player_id):
+    def add_new_player(self, name, player_id, sid=None):
         """
         Adds a player into the game
         :param name: The name of the player to add
         :param player_id: The ID of the player to add
-        :return: None
+        :return: The player
         """
 
         player = Player(self, name, player_id)
 
         player.pickup(self.starting_number_of_cards, False)
         self.add_player(player)
+        
+        if sid is not None:
+            player.set_sid(sid)
 
-        self.update_players()
+        self.update_users()
+
+        return player
 
     def add_observer(self, name, player_id):
         """
@@ -647,6 +660,28 @@ class Game(AbstractGame):
         :return: None
         """
         self.observers.append(Observer(self, name, player_id))
+
+        # if join requesting is enabled: send a request to the host
+        if len(self.players) < self.max_players and self.settings['Mid-game joining'] == 'Request the host':
+            self.get_player(self.waiting_room.host_id).send_message(
+                'join request', {'id': player_id, 'name': name})
+    
+    def observer_to_player(self, player_id):
+        """
+        Converts an observer into a player
+        :param player_id: id of the player to convert
+        """
+
+        if len(self.players) >= self.max_players:
+            return
+
+        user = self.get_user(player_id)
+        
+        if user is None:
+            return
+        
+        self.observers.remove(user)
+        self.add_new_player(user.get_name(), user.get_id(), user.sid)
 
     def turn_countdown(self):
         """
@@ -692,21 +727,16 @@ class Game(AbstractGame):
                     # play cards
                     self.get_turn().auto_play_and_finish()
 
-    def request_kick(self, player, player_id):
+    def kick(self, player_id):
         """
         When a player requests to kick a player by an id
 
-        :param player: player requesting
         :param player_id: id of the player to kick
         :return: None
         """
 
         kicked_player = self.get_player(player_id)
         if kicked_player is None:
-            return
-
-        # only the host can kick
-        if player.get_id() != self.waiting_room.host_id:
             return
 
         kicked_player.send_message("quit", None)

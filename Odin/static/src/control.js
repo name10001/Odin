@@ -306,8 +306,8 @@ $(document).ready(() => {
         eventHandler.finishedEvent();
     });
 
-    socket.on('kick request', function(data) {
-        gui.openPopup(() => $r(KickRequestPopup, {id: data['id'], from: data['from']}), true);
+    socket.on('join request', function(data) {
+        gui.openPopup(() => $r(JoinRequestPopup, {id: data['id'], name: data['name']}), true);
     });
 
     // recieve a chat message

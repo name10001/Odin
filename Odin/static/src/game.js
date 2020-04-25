@@ -434,6 +434,10 @@ class Game {
         socket.emit("game message", GAME_ID, "finished turn", null);
     }
 
+    acceptNewPlayer(playerId) {
+        socket.emit("game message", GAME_ID, "accept player", { "id": playerId });
+    }
+
     kickPlayer(playerId) {
         socket.emit("game message", GAME_ID, "kick", { "id": playerId });
     }
