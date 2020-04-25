@@ -1,0 +1,4 @@
+Spectate+Midgame
+Spectate
+Midgame
+None

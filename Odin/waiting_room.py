@@ -33,6 +33,8 @@ class WaitingRoom:
                        settings.min_turn_timer, settings.max_turn_timer),
             OptionSetting('Turn timer consequence', 'Auto play', [
                           'Nothing', 'Sound + Notification', 'Auto play', 'Kick']),
+            IntSetting('Maximum players', settings.default_max_players,
+                       settings.min_max_players, settings.max_max_players),
             IntSetting('Starting number of cards', settings.default_starting_cards,
                        settings.min_starting_cards, settings.max_card_limit),
             IntSetting('Maximum number of cards', settings.default_card_limit,
@@ -95,12 +97,19 @@ class WaitingRoom:
                 # when you're not allowed to join a game
                 if self.running and not self.chosen_settings['Allow joining mid-game'] and not self.chosen_settings['Allow spectating']:
                     return render_template("index.html", message="This game has mid-game joining and spectating disabled.", theme=settings.get_theme())
+                # if a game is full and you can't spectate
+                if self.running and len(self.game.players) >= self.chosen_settings['Maximum players'] and not self.chosen_settings['Allow spectating']:
+                    return render_template("index.html", message="This game is full and does not allow spectators.", theme=settings.get_theme())
+
                 # login
                 return render_template("login.html", theme=settings.get_theme())
         elif request.method == 'POST':
             # don't allow login when a game is already running and these options are disabled
             if self.running and not self.chosen_settings['Allow joining mid-game'] and not self.chosen_settings['Allow spectating']:
                 return render_template("index.html", message="This game has mid-game joining and spectating disabled.", theme=settings.get_theme())
+            # if a game is full and you can't spectate
+            if self.running and len(self.game.players) >= self.chosen_settings['Maximum players'] and not self.chosen_settings['Allow spectating']:
+                return render_template("index.html", message="This game is full and does not allow spectators.", theme=settings.get_theme())
 
             # successful login
             name = request.form['player_name'][0:10]  # limit to 20 characters
@@ -118,7 +127,7 @@ class WaitingRoom:
                     fs.socket_io.emit("user joined", name, room=self.game_id)
             else:
                 # mid-game join
-                if self.chosen_settings['Allow joining mid-game']:
+                if self.chosen_settings['Allow joining mid-game'] and len(self.game.players) < self.chosen_settings['Maximum players']:
                     self.game.add_new_player(name, player_id)
                 # spectate
                 else:
@@ -227,8 +236,7 @@ class WaitingRoom:
 
             self.game.remove_user(player, message)
 
-            del self._player_names[player_id]
-            del self._sessions[player_id]
+            self.remove_player(player_id)
 
         # let waiting room handle removing player
         else:
@@ -236,8 +244,11 @@ class WaitingRoom:
 
             fs.socket_io.emit("user quit", name, room=self.game_id)
 
-            del self._player_names[player_id]
-            del self._sessions[player_id]
+            self.remove_player(player_id)
+
+    def remove_player(self, player_id):
+        del self._player_names[player_id]
+        del self._sessions[player_id]
 
     def leave_room(self):
         player_id = session['player_id']
@@ -266,7 +277,7 @@ class WaitingRoom:
 
         self.modify()
         self.running = True
-        self.game = Game(self.game_id, self._player_names,
+        self.game = Game(self.game_id, self._player_names.copy(),
                          self, self.chosen_settings)
         with fs.app.app_context():
             fs.socket_io.emit("refresh", room=self.game_id)

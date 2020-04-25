@@ -2,6 +2,7 @@ import cards
 from player import Player, Observer
 from flask import *
 from flask_socketio import leave_room
+import flask_server as fs
 import random
 from time import time
 from cards.deck import AbstractDeck, WeightedDeck
@@ -261,10 +262,25 @@ class Game(AbstractGame):
         # setup players and turn system
         if len(players) < 2:
             print("WARNING: 2 or more players are needed to make the game work properly")
+
+        self.max_players = settings['Maximum players']
+        n_players = 0
+
         for player in players:
-            new_player = Player(self, players[player], player)
-            self.players.append(new_player)
-            new_player.pickup(self.starting_number_of_cards, show_pickup=False)
+            n_players += 1
+            
+            if n_players > self.max_players:
+                # players above the max player count go into spectate mode if avaliable
+                if settings['Allow spectating'] is True:
+                    self.add_observer(players[player], player)
+                else:
+                    self.waiting_room.remove_player(player)
+            else:
+                # add player
+                new_player = Player(self, players[player], player)
+                self.players.append(new_player)
+                new_player.pickup(self.starting_number_of_cards, show_pickup=False)
+        
         self.player_turn_index = random.randint(0, len(self.players) - 1)
 
         self.start_turn()
@@ -805,5 +821,6 @@ class Game(AbstractGame):
 
         self.waiting_room.set_sid()
         user = self.get_user(session['player_id'])
+
         if user is not None:
             user.initial_connection()

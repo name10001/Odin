@@ -76,5 +76,10 @@ min_turn_timer = 30
 # max number of chat messages
 max_chat_message = 50
 
+# max players
+min_max_players = 2
+default_max_players = 6
+max_max_players = 16
+
 
 debug_enabled = False
