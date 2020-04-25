@@ -73,5 +73,8 @@ default_turn_timer = 90
 max_turn_timer = 3600
 min_turn_timer = 30
 
+# max number of chat messages
+max_chat_message = 50
+
 
 debug_enabled = False

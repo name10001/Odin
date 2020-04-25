@@ -129,7 +129,7 @@ class Game {
         this.kickMessage = "Kicking disabled.";
 
         // chat messages
-        this.chat = [];
+        this.chat = [{'player': null, 'message': '-- Beginning of chat --'}];
 
         // create list of all cards for the help system
         this.allCards = [];
@@ -310,6 +310,11 @@ class Game {
             console.log("Message from " + data["player"] + ": " + data["message"]);
         }
         this.chat.push(data);
+        
+        if(this.chat.length > 50) {
+            this.chat.splice(0, 1);
+        }
+
         gui.updateChat(this.chat);
     }
 

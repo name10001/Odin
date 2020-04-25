@@ -389,7 +389,7 @@ class Game(AbstractGame):
             message) <= 256 else message[:256]}
         self.send_to_all_users("chat", data)
         self.chat.append(data)
-        if len(self.chat) > 100:
+        if len(self.chat) > settings.max_chat_message:
             self.chat.pop(0)
 
     def animate_card_transfer(self, cards, cards_from="deck", cards_to="deck"):
@@ -693,7 +693,9 @@ class Game(AbstractGame):
         :param player_id: id of the player to kick
         :return: None
         """
-        if self.get_player(player_id) is None:
+
+        kick_player = self.get_player(player_id)
+        if kick_player is None:
             return
 
         priveleges = self.get_kick_privileges(player)
@@ -718,8 +720,14 @@ class Game(AbstractGame):
                                        "from": player.get_id(), "id": player_id})
         elif player.get_id() not in self._kick_requests[player_id]['votes']:
             self._kick_requests[player_id]['votes'].append(player.get_id())
+        else:
+            return
 
         votes = len(self._kick_requests[player_id]['votes'])
+
+        # send message to chat saying who tryna kick
+        self.send_chat_message(None, player.get_name() + " has voted to kick " +
+                kick_player.get_name() + " " + str(votes) + "/" + str(votes_required))
 
         if votes >= votes_required:
             # the number of votes is reached, kick them

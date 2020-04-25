@@ -20,6 +20,11 @@
     font-weight: 'bold';
 }
 
+.chat-notif-colour {
+    color: #777;
+    font-weight: 'bold';
+}
+
 .btn-primary.focus, .btn-primary:focus {
     color: #fff;
     background-color: #165488;

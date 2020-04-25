@@ -698,13 +698,17 @@ class ChatWindow extends React.Component {
         // message dialog window
         const allMessages = [];
         let i = 0;
-        allMessages.push($r('p', { key: i++ + '', style: { color: '#999' } }, "-- Beginning of chat --"));
 
         for (const chat of this.state.chat) {
-            allMessages.push($r('p', { key: i++ + '' }, [
-                $r('span', { key: 'player', className: 'player-color' }, chat['player'] + ": "),
-                chat['message']
-            ]));
+            if(chat['player']) {
+                allMessages.push($r('p', { key: i++ + '' }, [
+                    $r('span', { key: 'player', className: 'player-color' }, chat['player'] + ": "),
+                    chat['message']
+                ]));
+            }
+            else {
+                allMessages.push($r('p', { key: i++ + '', className: 'chat-notif-colour' }, chat['message']));
+            }
         }
         allMessages.push($r('div', { key: i++ + '', ref: this.endOfChat }));
 
