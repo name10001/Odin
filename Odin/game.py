@@ -269,12 +269,12 @@ class Game(AbstractGame):
             if n_players > self.max_players:
                 # players above the max player count go into spectate mode if allowed
                 if settings['Mid-game joining'] != 'Lock':
-                    self.add_observer(players[player], player)
+                    self.add_observer(player.name, player.player_id)
                 else:
                     self.waiting_room.remove_player(player)
             else:
                 # add player
-                new_player = Player(self, players[player], player)
+                new_player = Player(self, player.name, player.player_id)
                 self.players.append(new_player)
                 new_player.pickup(
                     self.starting_number_of_cards, show_pickup=False)
@@ -624,10 +624,13 @@ class Game(AbstractGame):
         if winner is not None:
             self.send_to_all_users(
                 "popup message", winner.name + " has won!")
+            
+            self.waiting_room.add_player_win(winner.get_id())
         elif winners is not None:
             for winner in winners:
                 self.send_to_all_users(
                     "popup message", winner.name + " has won!")
+                self.waiting_room.add_player_win(winner.get_id())
 
         self.waiting_room.running = False
         self.waiting_room.game = None

@@ -494,15 +494,15 @@ class CardIndicator extends React.Component {
  * @param {*} props 
  */
 function PlayerPanel(props) {
-    const fontSize = props.height * 0.25;
+    const fontSize = props.height * 0.23;
     const smallFontSize = props.height * 0.18;
     const headingHeight = props.height * 0.5 + 'px';
     const bodyHeight = props.height * 0.5 - 4 + 'px';
     const imageSize = props.height * 0.25 + 'px';
 
     // heading contains the player name and number of cards
-    const name = $r('span', { key: 'l', style: { fontSize: fontSize + 'px', float: 'left', display: 'inline-block', verticalAlign: 'middle' } }, props.player.name + (props.isYou ? " (You)" : "") + (props.isHost ? " (Host)": ""));
-    const nCards = $r('span', { key: 'r', style: { fontSize: fontSize + 'px', float: 'right', display: 'inline-block', verticalAlign: 'middle' } }, props.player.nCards);
+    const name = $r('span', { key: 'l', style: { width: '80%', fontSize: fontSize + 'px', display: 'inline-block', verticalAlign: 'middle', overflow: 'hidden', whiteSpace: 'nowrap' } }, props.player.name + (props.isYou ? " (You)" : "") + (props.isHost ? " (Host)": ""));
+    const nCards = $r('span', { key: 'r', style: { width: '10%', marginLeft: '4%', fontSize: fontSize + 'px', display: 'inline-block', verticalAlign: 'middle' } }, props.player.nCards);
 
     // make the heading blue if the person is you
     const heading = $r('div', { key: '1', className: 'card-header' + (props.isYou ? ' btn-primary-color' : ''), style: { height: headingHeight, lineHeight: headingHeight, padding: '0 ' + fontSize + 'px' } }, [name, nCards]);
@@ -973,9 +973,7 @@ class OdinGui extends React.Component {
         let gap = (MAX_CARD_TRANSFER_TIME - MAX_CARD_TRANSFER_TIME * Math.exp(-0.1 * cards.length)) / cards.length;
 
         // generate unique id
-        while (this.getAnimationHandler().hasAnimation(id)) {
-            id += "_";
-        }
+        id = this.getAnimationHandler().getUniqueId(id);
 
         this.getAnimationHandler().playAnimation(id, () => $r(CardAnimation, {
             key: id, id, startPos, endPos, cardWidth, cardHeight, cards, travelTime, gap, reverse, sound, delay, finishEvent
@@ -1143,8 +1141,10 @@ class OdinGui extends React.Component {
      * @param {Number} time 
      */
     showPopupMessage(message, time, fadeIn = time * 0.1, fadeOut = time * 0.1) {
-        gui.getAnimationHandler().playAnimation('text',
-            () => $r(MessageAnimation, { key: 'text', id: 'text', message, time, fadeIn, fadeOut }),
+        let id = gui.getAnimationHandler().getUniqueId('text');
+
+        gui.getAnimationHandler().playAnimation(id,
+            () => $r(MessageAnimation, { key: id, id, message, time, fadeIn, fadeOut }),
             () => eventHandler.finishedEvent());
     }
 
@@ -1157,7 +1157,10 @@ class OdinGui extends React.Component {
     animateCommunism(cards) {
         playSound('/static/sounds/communist_card.mp3');
 
-        gui.getAnimationHandler().playAnimation('communism', () => $r(CommunistAnimation, { key: 'communism', id: 'communism', cards }), () => eventHandler.finishedEvent());
+        let id = gui.getAnimationHandler().getUniqueId('communism');
+
+
+        gui.getAnimationHandler().playAnimation(id, () => $r(CommunistAnimation, { key: id, id, cards }), () => eventHandler.finishedEvent());
     }
 
     /**

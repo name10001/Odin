@@ -5,11 +5,11 @@
 * Test on Safari?
 
 ## Lobby functionality
-* Show game states in the waiting room once a game is over
+* Spectator chat toggle
+* Card options
 
 #### Chat
 * Spam prevention
-* Limit number of chat messages in the front end
 * Option to turn off
 
 ## UI Design

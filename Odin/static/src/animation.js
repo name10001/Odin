@@ -47,6 +47,13 @@ class AnimationHandler extends React.Component {
         return id in this.state.animations;
     }
 
+    getUniqueId(id) {
+        while(id in this.state.animations) {
+            id += "_";
+        }
+        return id;
+    }
+
     /**
      * Render all animations
      */

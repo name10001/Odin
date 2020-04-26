@@ -129,7 +129,14 @@ $(document).ready(() => {
 
     // popup message
     socket.on('popup message', function (message) {
+        if(DEBUG) {
+            console.log("Got popup message: " + message);
+
+        }
         eventHandler.addEvent(() => {
+            if(DEBUG) {
+                console.log("Showing popup: " + message);
+            }
             gui.showPopupMessage(message, 3000);
         });
     });
@@ -150,8 +157,9 @@ $(document).ready(() => {
 
         if (DEBUG) {
             console.log("ANIMATING: " + data["type"]);
-
         }
+
+
         switch (data["type"]) {
             // ADD CARDS TO PLANNING PILE
             case "play cards":

@@ -9,6 +9,29 @@ from settings import IntSetting, BoolSetting, OptionSetting
 from util.extended_formatter import extended_formatter
 
 
+class LobbyPlayer:
+    """
+    Information about a player in a waiting room
+    """
+
+    def __init__(self, waiting_room, player_id, name):
+        self.waiting_room = waiting_room
+
+        self.player_id = player_id
+        self.name = name
+        self.wins = 0
+
+        self.sid = None
+        self.timeout = 0
+
+    def get_json(self, for_player_id):
+        """
+        Return Json to be used for the waiting player list
+        """
+
+        return {'name': self.name, 'id': self.player_id, 'wins': self.wins, 'is you': self.player_id == for_player_id, 'is host': self.waiting_room.host_id == self.player_id}
+
+
 class WaitingRoom:
     """
     This stores information about a waiting room
@@ -19,6 +42,13 @@ class WaitingRoom:
         self._player_names = {}
         # "player_id": {'sid', 'timeout'}
         self._sessions = {}
+
+        # players
+        self._player_ids = []
+
+        # dictionary of player_id: LobbyPlayer
+        self._players = {}
+
         self.running = False
         self.game = None
         self.game_id = game_id
@@ -57,7 +87,7 @@ class WaitingRoom:
         # check that the message is coming from a valid session
         if "player_id" not in session:
             return
-        if session['player_id'] not in self._player_names:
+        if session['player_id'] not in self._players:
             # this usually occurs when the player was kicked
             return
 
@@ -70,6 +100,10 @@ class WaitingRoom:
             self._handle_change_setting(data)
         elif message_type == "quit":
             self._left_waiting_room()
+        elif message_type == "kick":
+            self._host_kick(data['id'])
+        elif message_type == "make host":
+            self._make_host(data['id'])
         else:
             print("got unknown message:", message_type, data)
 
@@ -84,7 +118,7 @@ class WaitingRoom:
         if request.method == 'GET':
 
             # Already logged in
-            if "player_id" in session and session["player_id"] in self._player_names:
+            if "player_id" in session and session["player_id"] in self._players:
                 if self.running:
                     return self.game.render_game()
                 else:
@@ -105,11 +139,13 @@ class WaitingRoom:
             # successful login
             name = request.form['player_name'][0:10]  # limit to 20 characters
             player_id = self._make_player_id(name)
-            self._player_names[player_id] = name
+
+            self._player_ids.append(player_id)
+            self._players[player_id] = LobbyPlayer(self, player_id, name)
 
             # establish host if this is the first person
-            if len(self._player_names) == 1:
-                self.host_id = player_id
+            if len(self._players) == 1:
+                self.set_host(player_id)
 
             session['player_id'] = player_id
             # join waiting room
@@ -129,19 +165,16 @@ class WaitingRoom:
         Send a list of all users in the waiting room
         """
 
-        for player_id in self._sessions:
+        for for_player_id in self._player_ids:
             player_list = []
 
-            for player in self._player_names:
-                name = self._player_names[player]
-                if player == player_id:
-                    name += " (You)"
-                if player == self.host_id:
-                    name += " (Host)"
-                player_list.append(name)
+            for player_id in self._player_ids:
+                player_list.append(
+                    self._players[player_id].get_json(for_player_id))
 
             with fs.app.app_context():
-                fs.socket_io.emit("players", player_list, room=self._sessions[player_id]['sid'])
+                fs.socket_io.emit("players", {'is host': self.host_id == for_player_id, 'players': player_list},
+                                  room=self._players[for_player_id].sid)
 
     def _handle_change_setting(self, data):
         """
@@ -214,14 +247,44 @@ class WaitingRoom:
         """
         self.modify()
 
-        player_id = session['player_id']
-        name = self._player_names[player_id]
-
         self.leave_room()
 
         self._send_user_list()
 
         emit("quit")
+
+    def _host_kick(self, player_id):
+        """
+        When you try to kick a player in the waiting room
+        """
+        if session['player_id'] != self.host_id:
+            return
+        if player_id not in self._players:
+            return
+
+        fs.socket_io.emit("quit", room=self._players[player_id].sid)
+        self.kick_player(player_id)
+
+    def _make_host(self, player_id):
+        """
+        When you try to kick a player in the waiting room
+        """
+        if session['player_id'] != self.host_id:
+            return
+        if player_id not in self._players:
+            return
+
+        # update host
+        self.set_host(player_id)
+
+        # unlock settings
+        emit('setting lock', {
+            'lock': True})
+        fs.socket_io.emit(
+            "setting lock", {'lock': False}, room=self._players[player_id].sid)
+
+        # update player list
+        self._send_user_list()
 
     def kick_player(self, player_id, message=" has quit the game!"):
         """
@@ -241,9 +304,13 @@ class WaitingRoom:
 
             self._send_user_list()
 
+    def add_player_win(self, player_id):
+        player = self._players[player_id]
+        player.wins += 1
+
     def remove_player(self, player_id):
-        del self._player_names[player_id]
-        del self._sessions[player_id]
+        del self._players[player_id]
+        self._player_ids.remove(player_id)
 
     def leave_room(self):
         player_id = session['player_id']
@@ -251,19 +318,18 @@ class WaitingRoom:
         del session['player_id']
         leave_room(self.game_id)
 
-        del self._player_names[player_id]
-        del self._sessions[player_id]
+        self.remove_player(player_id)
 
         # if this is the host - determine the new host
         if player_id == self.host_id:
-            if len(self._player_names) == 0:
+            if len(self._players) == 0:
                 self.host_id = None
             else:
                 # new host - allow them to edit settings
-                self.host_id = list(self._player_names.keys())[0]
+                self.set_host(self._player_ids[0])
 
                 fs.socket_io.emit('setting lock', {
-                    'lock': False}, room=self._sessions[self.host_id]['sid'])
+                    'lock': False}, room=self._players[self.host_id].sid)
 
     def _start(self):
         """
@@ -276,7 +342,7 @@ class WaitingRoom:
 
         self.modify()
         self.running = True
-        self.game = Game(self.game_id, self._player_names.copy(),
+        self.game = Game(self.game_id, [self._players[player_id] for player_id in self._player_ids],
                          self, self.chosen_settings)
         with fs.app.app_context():
             fs.socket_io.emit("refresh", room=self.game_id)
@@ -289,9 +355,9 @@ class WaitingRoom:
             "{player_name!h}_player", player_name=player_name)
 
         # if its ID is already in use, add a number to it
-        if id_safe in self._player_names:
+        if id_safe in self._player_ids:
             num = 2
-            while id_safe + "_" + str(num) in self._player_names:
+            while id_safe + "_" + str(num) in self._player_ids:
                 num += 1
             id_safe += "_" + str(num)
 
@@ -303,31 +369,36 @@ class WaitingRoom:
         :param sessions: All active sessions
         """
 
-        for player_id in self.get_sessions().copy():
-            sid = self.get_sessions()[player_id]['sid']
+        for player_id in self._players.copy():
+            sid = self._players[player_id].sid
 
             if sid in sessions:
-                self.get_sessions()[player_id]['timeout'] = 0
+                self._players[player_id].timeout = 0
             else:
-                self.get_sessions()[player_id]['timeout'] += 1
+                self._players[player_id].timeout += 1
 
                 kick = settings.session_inactivity_kick - \
-                    self.get_sessions()[player_id]['timeout']
+                    self._players[player_id].timeout
 
                 if kick <= 0:
                     if settings.debug_enabled:
                         print("PLAYER KICKED", player_id)
                     self.kick_player(player_id)
 
+    def set_host(self, player_id):
+        self.host_id = player_id
+
+        # move host to front of the list
+        if self._player_ids[0] != player_id:
+            self._player_ids.remove(player_id)
+            self._player_ids.insert(0, player_id)
+
     def set_sid(self):
         """
         When a new session is established: create a new entry in the sessions dictionary with the session id
         """
-        self._sessions[session['player_id']] = {
-            'sid': request.sid, 'timeout': 0}
-
-    def get_sessions(self):
-        return self._sessions
+        self._players[session['player_id']].sid = request.sid
+        self._players[session['player_id']].timeout = 0
 
     def modify(self):
         self.last_modified = time()

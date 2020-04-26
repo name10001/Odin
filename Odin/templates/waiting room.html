@@ -25,25 +25,67 @@
         var GAME_ID = '{{ waiting_room.get_id() }}';
         var settings, playerList;
 
+        /**
+         * React component containing a singular player
+         * */
+        function PlayerListPanel(props) {
+
+            const nameTxt = $r('span', { key: '1' }, props.player['name'] + (props.player['is you'] ? ' (You)' : ""));
+
+            const hostIcon = $r('img', { key: '2', src: '/static/host_icon.png', style: { width: '1.3rem', height: '1rem' } });
+
+
+            const name = $r('span', { key: '1', className: 'card card-btn col-5', style: { display: 'inline-block' } }, props.player['is host'] ? [hostIcon, nameTxt] : nameTxt);
+            const wins = $r('span', { key: '2', className: 'card card-btn col-1', style: { display: 'inline-block' } }, props.player['wins']);
+
+            const elements = [name, wins];
+
+
+            if (props.isHost) {
+                if (!props.player['is you']) {
+                    elements.push($r('button', {
+                        key: '3', className: 'btn btn-primary col-2', style: { whiteSpace: 'nowrap', margin: '0 2px' },
+                        onClick: () => socket.emit('waiting room message', GAME_ID, 'kick', { 'id': props.player['id'] })
+                    }, 'Kick'));
+                    elements.push($r('button', {
+                        key: '4', className: 'btn btn-primary col-3', style: { whiteSpace: 'nowrap', margin: '0 2px' },
+                        onClick: () => socket.emit('waiting room message', GAME_ID, 'make host', { 'id': props.player['id'] })
+                    }, 'Make Host'));
+                }
+            }
+
+            elements.push($r('br', { key: '5' }));
+
+            return elements;
+        }
+
+        /**
+         * React component containing the playerlist
+         **/
         class PlayerList extends React.Component {
             constructor(props) {
                 super(props);
 
                 this.state = {
-                    players: []
+                    players: [],
+                    isHost: false
                 }
             }
 
-            updatePlayers(players) {
-                console.log(players);
-                this.setState({players});
+            updatePlayers(isHost, players) {
+                this.setState({ isHost, players });
             }
 
             render() {
                 const playerList = [];
-                let i = 0;
-                for(const player of this.state.players) {
-                    playerList.push($r('li', {key: i + '', className: 'list-group-item'}, player));
+
+                playerList.push($r('span', { key: 'name', className: 'col-5', style: { display: 'inline-block', whiteSpace: 'nowrap' } }, 'Player Name'));
+                playerList.push($r('span', { key: 'pnts', className: 'col-1', style: { display: 'inline-block', whiteSpace: 'nowrap' } }, 'Wins'));
+                playerList.push($r('br', { key: 'br' }));
+
+                let i = 1;
+                for (const player of this.state.players) {
+                    playerList.push($r(PlayerListPanel, { key: i + '', player, isHost: this.state.isHost }));
                     i++;
                 }
 
@@ -51,6 +93,9 @@
             }
         }
 
+        /**
+         * React component containing all settings
+         * */
         class Settings extends React.Component {
             constructor(props) {
                 super(props);
@@ -251,8 +296,8 @@
                 settings.lockSettings(data['lock']);
             });
             // update player list
-            socket.on('players', function(players) {
-                playerList.updatePlayers(players);
+            socket.on('players', function (data) {
+                playerList.updatePlayers(data['is host'], data['players']);
             });
             // a setting changed
             socket.on('setting changed', function (data) {
@@ -299,7 +344,7 @@
 <body>
     <audio src="{{ url_for('static', filename='lobby.mp3') }}" autoplay loop>Your browser does not support audio</audio>
 
-    <div class="col-sm-6 mx-auto" id="wrapper">
+    <div class="col-sm-8 mx-auto" id="wrapper">
         <h4>
             GAME ID
         </h4>
@@ -323,14 +368,12 @@
                 <h5>Waiting players</h5>
             </div>
 
-            <div class="card-body">
-                <ul id="list-of-players" class="list-group">
+            <div class="card-body" id="list-of-players">
 
-                </ul>
             </div>
 
             <div class="card-footer">
-                <button type="button" class="btn btn-primary", id="start-button"
+                <button type="button" class="btn btn-primary" , id="start-button"
                     onclick="socket.emit('waiting room message', GAME_ID, 'start', null)">
                     Start Game
                 </button>

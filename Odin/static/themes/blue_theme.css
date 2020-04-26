@@ -74,3 +74,12 @@ body {
 .toggle .toggle-off {
     background-color: #eee;
 }
+
+.card-btn {
+    line-height: 1.5;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    position: relative;
+    margin: 2px;
+    top: 2.5px;
+}
