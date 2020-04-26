@@ -702,7 +702,7 @@ class Elevator(AbstractCard):
     NAME = "Elevator"
     CARD_IMAGE_URL = 'elevator.png'
     CARD_COLOUR = "rainbow"
-    CARD_FREQUENCY = CardFrequency(2, starting=0, elevator=0)
+    CARD_FREQUENCY = CardFrequency(2, starting=0, elevator=0, max_cards=20)
     CARD_TYPE = "Elevator"
     EFFECT_DESCRIPTION = "Picks up a random card from the deck and plays it on top as if it was you."
     COMPATIBILITY_DESCRIPTION = "Can be played on any card."
@@ -730,7 +730,7 @@ class SwapCard(AbstractCard):
     CARD_IMAGE_URL = 'swap_card.png'
     CARD_COLOUR = "black"
     MULTI_COLOURED = False
-    CARD_FREQUENCY = CardFrequency(2.2, starting=0)
+    CARD_FREQUENCY = CardFrequency(2.2, starting=0, max_cards=10)
     CARD_TYPE = "Swap Card"
     EFFECT_DESCRIPTION = "Pick a card to give to a player of your choice. " \
                          "This is swapped with a random card from their hand."
