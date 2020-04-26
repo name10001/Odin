@@ -502,7 +502,7 @@ function PlayerPanel(props) {
 
     // heading contains the player name and number of cards
     const name = $r('span', { key: 'l', style: { width: '80%', fontSize: fontSize + 'px', display: 'inline-block', verticalAlign: 'middle', overflow: 'hidden', whiteSpace: 'nowrap' } }, props.player.name + (props.isYou ? " (You)" : "") + (props.isHost ? " (Host)": ""));
-    const nCards = $r('span', { key: 'r', style: { width: '10%', marginLeft: '4%', fontSize: fontSize + 'px', display: 'inline-block', verticalAlign: 'middle' } }, props.player.nCards);
+    const nCards = $r('span', { key: 'r', style: { width: '14%', marginLeft: '4%', fontSize: fontSize + 'px', display: 'inline-block', verticalAlign: 'middle', overflow: 'hidden', whiteSpace: 'nowrap' } }, props.player.nCards);
 
     // make the heading blue if the person is you
     const heading = $r('div', { key: '1', className: 'card-header' + (props.isYou ? ' btn-primary-color' : ''), style: { height: headingHeight, lineHeight: headingHeight, padding: '0 ' + fontSize + 'px' } }, [name, nCards]);
