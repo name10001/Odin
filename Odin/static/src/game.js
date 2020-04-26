@@ -124,7 +124,6 @@ class Game {
         this.cantPlayReason = "";  // is empty if you are allowed to have your turn with the cards you have played
         this.playingAs = "";
         this.playerType = "Player";
-        this.isHost = false;
 
         // chat messages
         this.chat = [{ 'player': null, 'message': '-- Beginning of chat --' }];
@@ -221,7 +220,7 @@ class Game {
 
         //kick privelege
         if (update['host'] != undefined) {
-            this.isHost = update['host'];
+            this.host = update['host'];
         }
 
         // UPDATE PLAYERS
@@ -444,6 +443,10 @@ class Game {
 
     quit() {
         socket.emit("game message", GAME_ID, "quit", null);
+    }
+
+    backToLobby() {
+        socket.emit("game message", GAME_ID, "return lobby", null);
     }
 
     sendChat(message) {

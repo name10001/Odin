@@ -378,7 +378,7 @@ class Game(AbstractGame):
             self.remove_user(player)
         elif message == "chat":
             self.send_chat_message(player.get_name(), data)
-        elif message == "kick" or message == 'accept player':
+        elif message in ['kick', 'return lobby', 'accept player']:
             if player.get_id() != self.waiting_room.host_id:
                 return
 
@@ -386,6 +386,8 @@ class Game(AbstractGame):
                 self.kick(data['id'])
             elif message == 'accept player':
                 self.observer_to_player(data['id'])
+            elif message == 'return lobby':
+                self.end_game()
         else:
             # override player due to possession
             if player.playing_as is not None:

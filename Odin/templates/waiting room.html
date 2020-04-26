@@ -23,7 +23,33 @@
     <script>
         const $r = React.createElement;
         var GAME_ID = '{{ waiting_room.get_id() }}';
-        var settings;
+        var settings, playerList;
+
+        class PlayerList extends React.Component {
+            constructor(props) {
+                super(props);
+
+                this.state = {
+                    players: []
+                }
+            }
+
+            updatePlayers(players) {
+                console.log(players);
+                this.setState({players});
+            }
+
+            render() {
+                const playerList = [];
+                let i = 0;
+                for(const player of this.state.players) {
+                    playerList.push($r('li', {key: i + '', className: 'list-group-item'}, player));
+                    i++;
+                }
+
+                return playerList;
+            }
+        }
 
         class Settings extends React.Component {
             constructor(props) {
@@ -210,6 +236,7 @@
             // create all settings
             socket.on('add settings', function (data) {
                 settings = ReactDOM.render($r(Settings, { settings: data }, null), document.getElementById("settings-panel"));
+                playerList = ReactDOM.render($r(PlayerList), document.getElementById("list-of-players"));
             });
             // debug message
             socket.on('message', function (data) {
@@ -223,23 +250,9 @@
             socket.on('setting lock', function (data) {
                 settings.lockSettings(data['lock']);
             });
-            // another player joined
-            socket.on('user joined', function (name) {
-                let name_node = document.createElement("LI");
-                name_node.classList.add("list-group-item");
-                let text_node = document.createTextNode(name);
-                name_node.appendChild(text_node);
-                document.getElementById("list-of-players").appendChild(name_node);
-            });
-            // a player left
-            socket.on('user quit', function (name) {
-                let playerList = document.getElementById("list-of-players");
-                for (let node of playerList.getElementsByTagName("LI")) {
-                    if (node.innerHTML == name) {
-                        playerList.removeChild(node);
-                        break;
-                    }
-                }
+            // update player list
+            socket.on('players', function(players) {
+                playerList.updatePlayers(players);
             });
             // a setting changed
             socket.on('setting changed', function (data) {

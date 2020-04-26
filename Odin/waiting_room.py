@@ -24,7 +24,8 @@ class WaitingRoom:
         self.game_id = game_id
         self.last_modified = time()
         self.settings = [
-            OptionSetting('Mid-game joining', 'Request the host', ['Lock', 'Spectate only', 'Request the host', 'Allow']),
+            OptionSetting('Mid-game joining', 'Request the host',
+                          ['Lock', 'Spectate only', 'Request the host', 'Allow']),
             IntSetting('Turn timer', settings.default_turn_timer,
                        settings.min_turn_timer, settings.max_turn_timer),
             OptionSetting('Turn timer consequence', 'Auto play', [
@@ -112,10 +113,7 @@ class WaitingRoom:
 
             session['player_id'] = player_id
             # join waiting room
-            if self.running is False:
-                with fs.app.app_context():
-                    fs.socket_io.emit("user joined", name, room=self.game_id)
-            else:
+            if self.running is True:
                 # mid-game join - game must not be full AND Mid-game joining must be set to allow.
                 if self.chosen_settings['Mid-game joining'] == 'Allow' and len(self.game.players) < self.chosen_settings['Maximum players']:
                     self.game.add_new_player(name, player_id)
@@ -125,6 +123,25 @@ class WaitingRoom:
             return redirect("/" + self.game_id)
         else:
             return "What the Fuck Did You Just Bring Upon This Cursed Land!"
+
+    def _send_user_list(self):
+        """
+        Send a list of all users in the waiting room
+        """
+
+        for player_id in self._sessions:
+            player_list = []
+
+            for player in self._player_names:
+                name = self._player_names[player]
+                if player == player_id:
+                    name += " (You)"
+                if player == self.host_id:
+                    name += " (Host)"
+                player_list.append(name)
+
+            with fs.app.app_context():
+                fs.socket_io.emit("players", player_list, room=self._sessions[player_id]['sid'])
 
     def _handle_change_setting(self, data):
         """
@@ -187,11 +204,7 @@ class WaitingRoom:
 
         join_room(self.game_id)
 
-        for player in self._player_names:
-            if player == session['player_id']:
-                emit("user joined", self._player_names[player] + " (You)")
-            else:
-                emit("user joined", self._player_names[player])
+        self._send_user_list()
 
     def _left_waiting_room(self):
         """
@@ -206,8 +219,7 @@ class WaitingRoom:
 
         self.leave_room()
 
-        with fs.app.app_context():
-            fs.socket_io.emit("user quit", name, room=self.game_id)
+        self._send_user_list()
 
         emit("quit")
 
@@ -225,11 +237,9 @@ class WaitingRoom:
 
         # let waiting room handle removing player
         else:
-            name = self._player_names[player_id]
-
-            fs.socket_io.emit("user quit", name, room=self.game_id)
-
             self.remove_player(player_id)
+
+            self._send_user_list()
 
     def remove_player(self, player_id):
         del self._player_names[player_id]
@@ -254,7 +264,6 @@ class WaitingRoom:
 
                 fs.socket_io.emit('setting lock', {
                     'lock': False}, room=self._sessions[self.host_id]['sid'])
-
 
     def _start(self):
         """

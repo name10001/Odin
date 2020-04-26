@@ -423,20 +423,25 @@ class InfoPanel extends React.Component {
 
         const buttons = [];
 
-        if (game.isHost) {
+        if (game.host == game.yourId) {
 
             const players = game.players.filter((value, index, arr) => { return value.id != game.yourId });
 
             buttons.push($r('button', {
-                key: '1', className: 'btn btn-primary', onClick: () => gui.openPopup(() => $r(KickPopupMenu, { message: game.kickMessage, nVotes: game.kickVoteAmount, players }), true), style: {
+                key: '3', className: 'btn btn-primary', onClick: () => gui.openPopup(() => $r(KickPopupMenu, { message: game.kickMessage, nVotes: game.kickVoteAmount, players }), true), style: {
                     padding: this.props.height * 0.02 + 'px ' + this.props.height * 0.1 + 'px', fontSize: this.props.fontSize, marginRight: this.props.height * 0.03 + 'px'
                 }
             }, 'Kick'));
+            buttons.push($r('button', {
+                key: '2', className: 'btn btn-primary', onClick: () => game.backToLobby(), style: {
+                    padding: this.props.height * 0.02 + 'px ' + this.props.height * 0.1 + 'px', fontSize: this.props.fontSize, marginRight: this.props.height * 0.03 + 'px'
+                }
+            }, 'Reset'));
 
         }
 
         buttons.push($r('button', {
-            key: '2', className: 'btn btn-primary', onClick: () => game.quit(), style: {
+            key: '1', className: 'btn btn-primary', onClick: () => game.quit(), style: {
                 padding: this.props.height * 0.02 + 'px ' + this.props.height * 0.1 + 'px', fontSize: this.props.fontSize
             }
         }, 'Quit'));
@@ -496,7 +501,7 @@ function PlayerPanel(props) {
     const imageSize = props.height * 0.25 + 'px';
 
     // heading contains the player name and number of cards
-    const name = $r('span', { key: 'l', style: { fontSize: fontSize + 'px', float: 'left', display: 'inline-block', verticalAlign: 'middle' } }, props.player.name + (props.isYou ? " (You)" : ""));
+    const name = $r('span', { key: 'l', style: { fontSize: fontSize + 'px', float: 'left', display: 'inline-block', verticalAlign: 'middle' } }, props.player.name + (props.isYou ? " (You)" : "") + (props.isHost ? " (Host)": ""));
     const nCards = $r('span', { key: 'r', style: { fontSize: fontSize + 'px', float: 'right', display: 'inline-block', verticalAlign: 'middle' } }, props.player.nCards);
 
     // make the heading blue if the person is you
@@ -556,6 +561,7 @@ class PlayerListPanel extends React.Component {
         this.state = {
             players: this.props.players,
             yourId: this.props.yourId,
+            hostId: this.props.hostId,
             direction: this.props.direction,
             turn: this.props.turn,
             skip: this.props.skip
@@ -570,9 +576,9 @@ class PlayerListPanel extends React.Component {
      * @param {*} turn current turn index
      * @param {*} skip number of players to skip
      */
-    update(players, yourId, direction, turn, skip) {
+    update(players, yourId, hostId, direction, turn, skip) {
         this.setState({
-            players, yourId, direction, turn, skip
+            players, yourId, hostId, direction, turn, skip
         });
     }
 
@@ -596,7 +602,7 @@ class PlayerListPanel extends React.Component {
 
             const panelWidth = (i == this.state.turn ? this.props.width : this.props.width * 0.9);
 
-            const playerPanel = $r(PlayerPanel, { player, width: panelWidth, height, isYou: player.id == this.state.yourId, skip: skip >= 0 && i != this.state.turn });
+            const playerPanel = $r(PlayerPanel, { player, width: panelWidth, height, isYou: player.id == this.state.yourId, isHost: player.id == this.state.hostId, skip: skip >= 0 && i != this.state.turn });
 
             const panelStyle = {
                 width: panelWidth + 'px', height: height + 'px', display: 'block', float: 'right', marginBottom: gap
@@ -1030,7 +1036,7 @@ class OdinGui extends React.Component {
         this.getPlanningPile().updateCards(game.planningCards.map((card) => card['url']));
         this.getCardScroller().updateStacks(game.yourStacks, game.yourTurn);
         this.getDiscardPile().updateCards(game.topCards);
-        this.getPlayerList().update(game.players, game.yourId, game.direction, game.turn, game.skip);
+        this.getPlayerList().update(game.players, game.yourId, game.host, game.direction, game.turn, game.skip);
         this.getButtons().update(game.getPlayButtonMessage(), game.playAvaliable(), game.undoAvaliable());
         this.getInfoPanel().update(game.turnString, game.pickupAmount);
 
@@ -1253,7 +1259,7 @@ class OdinGui extends React.Component {
         // player list
         const playerList = $r(PlayerListPanel, {
             width: colWidth, height: playerListHeight, guiScale: this.state.guiScale, players: this.state.game.players,
-            turn: this.state.game.turn, skip: this.state.game.skip, direction: this.state.game.direction, yourId: this.state.game.yourId, ref: this.playersRef
+            turn: this.state.game.turn, skip: this.state.game.skip, direction: this.state.game.direction, yourId: this.state.game.yourId, hostId: this.state.game.host, ref: this.playersRef
         });
         const playerListWrapper = $r('div', {
             key: 'plp', style: {

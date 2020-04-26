@@ -597,7 +597,7 @@ class Player(AbstractPlayer):
             "pickup size": self.game.pickup,
             "iteration": self.game.iterate_turn_by,
             "players": [],
-            "host": self.game.waiting_room.host_id == self.get_id(),
+            "host": self.game.waiting_room.host_id,
             "cant play reason": "",
             "player type": type(self).__name__
         }
