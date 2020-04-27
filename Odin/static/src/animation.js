@@ -32,7 +32,8 @@ class AnimationHandler extends React.Component {
      */
     endAnimation(id) {
         const animations = this.state.animations;
-        if (id in animations) {
+        
+        if(id in animations) {
             if (animations[id].endFunction) {
                 animations[id].endFunction();
             }
@@ -48,7 +49,7 @@ class AnimationHandler extends React.Component {
     }
 
     getUniqueId(id) {
-        while(id in this.state.animations) {
+        while (id in this.state.animations) {
             id += "_";
         }
         return id;
@@ -217,7 +218,7 @@ class MovingCard extends React.Component {
         }
 
         // has just ended moving - play sound if it exists
-         if (this.state.show && !state.show) {
+        if (this.state.show && !state.show) {
             if (this.props.sound !== undefined) {
                 playSound(this.props.sound);
             }
@@ -258,6 +259,9 @@ class CardAnimation extends AbsAnimation {
         let t = props.delay;
 
         for (const cardProps of props.cards) {
+            if (!cardProps['id'] || !cardProps['name'] || !cardProps['url']) {
+                continue;
+            }
 
             const card = { startTime: t, endTime: t + props.travelTime, id: cardProps['id'], name: cardProps['name'], url: cardProps['url'] };
             if (cardProps['startPos'] !== undefined) card.startPos = cardProps['startPos'];
@@ -269,7 +273,7 @@ class CardAnimation extends AbsAnimation {
                 i -= j;
 
                 card.ref = React.createRef();
-    
+
                 this.cards.push(card);
             }
             i++;
@@ -367,7 +371,7 @@ class CommunistAnimation extends AbsAnimation {
 
         if (t > this.initDelay + this.midDelay && this.state.stateIndex == 2) {
             gui.animatePickupFromDeck(this.pickupCards, this.getDeckPosition(), false);
-            
+
             for (const player of game.players) {
                 if (player.id != game.yourId) {
                     gui.animatePlayerPickup(player.id, this.pickupCards.length, this.getDeckPosition(), false);
@@ -376,7 +380,7 @@ class CommunistAnimation extends AbsAnimation {
             this.setState({ stateIndex: 3, cards: this.state.cards });
         }
         if (t > this.initDelay + this.midDelay + MAX_CARD_TRANSFER_TIME + REMOVE_TIME && this.state.stateIndex == 3) {
-            for(const card of this.pickupCards) {
+            for (const card of this.pickupCards) {
                 game.addCard(card.id, card.name, card.url, false);
             }
             gui.getCardScroller().updateStacks(game.yourStacks, game.yourTurn);
