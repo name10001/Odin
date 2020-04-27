@@ -5,7 +5,7 @@ from flask_socketio import leave_room
 import flask_server as fs
 import random
 from time import time
-from cards.deck import AbstractDeck, WeightedDeck
+from cards.deck import AbstractDeck, DynamicDeck
 from cards.card_collection import CardCollection
 import settings
 import math
@@ -250,7 +250,7 @@ class Game(AbstractGame):
         self.inactivity = 0
 
         # setting up cards
-        self.deck = WeightedDeck(self)
+        self.deck = DynamicDeck(self, settings['Deck frequencies'])
         top_card = self.deck.get_next_card(
             {"card collection": None, "elevator": None})(self)
 

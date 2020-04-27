@@ -1,6 +1,5 @@
 from cards.abstract_card import AbstractCard
 from cards import CopyCat
-from cards.card_frequency import CardFrequency
 from decimal import Decimal
 
 from flask import url_for
@@ -12,7 +11,6 @@ import math
 
 
 class Pickup2(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(2.75, 2.25, 1.2, 0.6, elevator=1, starting=0)
     CARD_TYPE = "+2"
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Begins, or continues a pickup chain by adding 2 to the pickup chain value."
@@ -73,7 +71,6 @@ class YellowPickup2(Pickup2):
 
 
 class Pickup10(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(3, 2, 1, 0.5, starting=0)
     CARD_TYPE = "+10"
     NAME = "Pickup 10"
     CARD_COLOUR = "black"
@@ -91,7 +88,6 @@ class Pickup10(AbstractCard):
 
 
 class Pickup100(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(0.1, 0.05, 0.05, 0.01, starting=0)
     CARD_TYPE = "+100"
     NAME = "Pickup 100"
     CARD_COLOUR = "black"
@@ -109,7 +105,6 @@ class Pickup100(AbstractCard):
 
 
 class Pickup4(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(6, 4, 2, 1, starting=0)
     CARD_TYPE = "+4"
     NAME = "Pickup 4"
     CARD_COLOUR = "black"
@@ -127,7 +122,6 @@ class Pickup4(AbstractCard):
 
 
 class PickupTimes2(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(4, 2, 1, 0.5, starting=0)
     CARD_TYPE = "x2"
     NAME = "Pickup x2"
     CARD_COLOUR = "black"
@@ -152,7 +146,6 @@ class PickupTimes2(AbstractCard):
 
 
 class PickupPower2(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(0.1, 0.05, 0.05, 0.01, starting=0)
     CARD_TYPE = "x Squared"
     NAME = "Pickup x Squared"
     CARD_COLOUR = "black"
@@ -181,7 +174,6 @@ class PickupPower2(AbstractCard):
 
 
 class PickupFactorial(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(0.01, 0.005, 0.005, 0.001, starting=0)
     CARD_TYPE = "Factorial"
     NAME = "Pickup Factorial"
     CARD_COLOUR = "black"
@@ -210,8 +202,6 @@ class PickupFactorial(AbstractCard):
 
 
 class AtomicBomb(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(
-        0, 0.5, 1, 1, starting=0, elevator=0, max_cards=1)
     NAME = "Atomic Bomb"
     CARD_TYPE = "Atomic Bomb"
     CARD_COLOUR = "black"
@@ -230,7 +220,6 @@ class Pawn(AbstractCard):
     NAME = "Pawn"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'pawn.png'
-    CARD_FREQUENCY = CardFrequency(0.5, starting=0, elevator=0, max_cards=1)
     CARD_TYPE = "Pawn"
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Ends a pickup chain and causes no one to pickup."
@@ -263,7 +252,6 @@ class Plus(AbstractCard):
     NAME = "Plus"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'plus_wild.png'
-    CARD_FREQUENCY = CardFrequency(0.75, 0.75, 0.5, 0.25, starting=0)
     CARD_TYPE = "Plus"
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False
@@ -320,7 +308,6 @@ class FuckYou(AbstractCard):
     NAME = "Fuck You"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'fuck_you.png'
-    CARD_FREQUENCY = CardFrequency(2, 1.5, 1, 0.15, starting=0)
     CARD_TYPE = "Fuck You"
     CAN_BE_ON_PICKUP = True
     MULTI_COLOURED = False

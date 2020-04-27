@@ -1,5 +1,4 @@
 from cards.abstract_card import AbstractCard
-from cards.card_frequency import CardFrequency
 from cards.effect import FireEffect
 import random
 import math
@@ -131,7 +130,6 @@ class EA(AbstractCard):
 
 
 class EA15(EA):
-    CARD_FREQUENCY = CardFrequency(0.7, 1.5, starting=0, elevator=0)
     EFFECT_DESCRIPTION = "Requires a fee to be able to play. You must pay the fee when you pay this card with " \
                          "any number cards such that they all add up to 15."
     NAME = "EA $15"
@@ -140,7 +138,6 @@ class EA15(EA):
 
 
 class EA20(EA):
-    CARD_FREQUENCY = CardFrequency(0.5, 0.7, 1, starting=0, elevator=0)
     EFFECT_DESCRIPTION = "Requires a fee to be able to play. You must pay the fee when you pay this card with " \
                          "any number cards such that they all add up to 20."
     NAME = "EA $20"
@@ -149,7 +146,6 @@ class EA20(EA):
 
 
 class EA30(EA):
-    CARD_FREQUENCY = CardFrequency(0.25, 0.5, 1, starting=0, elevator=0)
     EFFECT_DESCRIPTION = "Requires a fee to be able to play. You must pay the fee when you pay this card with " \
                          "any number cards such that they all add up to 30."
     NAME = "EA $30"
@@ -158,7 +154,6 @@ class EA30(EA):
 
 
 class EA100(EA):
-    CARD_FREQUENCY = CardFrequency(0, 0, 0.05, starting=0, elevator=0)
     EFFECT_DESCRIPTION = "Requires a fee to be able to play. You must pay the fee when you pay this card with " \
                          "any number cards such that they all add up to 100."
     NAME = "EA $100"
@@ -172,7 +167,6 @@ class EA100(EA):
 
 
 class TrashCard(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(1.2, 0.5, starting=0, max_cards=8)
     MULTI_COLOURED = True
     CARD_TYPE = "Trash"
     EFFECT_DESCRIPTION = "Choose any card to be removed from your hand. The effects of this card do not apply."
@@ -239,14 +233,12 @@ class YellowTrash(TrashCard):
 
 class BlackTrash(TrashCard):
     NUMBER_TO_REMOVE = 3
-    CARD_FREQUENCY = CardFrequency(1, starting=0, max_cards=8)
     NAME = "Black Trash"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = "trash_wild.png"
 
 
 class DoJustly(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(1.2, starting=0, max_cards=10)
     CARD_TYPE = "Do Justly"
     CARD_COLOUR = "black"
     MULTI_COLOURED = False
@@ -309,7 +301,6 @@ class DoJustly1(DoJustly):
 
 class DoJustly3(DoJustly):
     NAME = "Do Justly -3"
-    CARD_FREQUENCY = CardFrequency(0.7, starting=0, max_cards=10)
     NUMBER_TO_GIVE = 3
     EFFECT_DESCRIPTION = "Choose 3 cards from your hand to give to another player of your choice."
     CARD_IMAGE_URL = "do_justly_3.png"
@@ -324,8 +315,6 @@ class Communist(AbstractCard):
     NAME = "Communist"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'communist.png'
-    CARD_FREQUENCY = CardFrequency(
-        0, 0.8, 0.5, 0.1, starting=0, max_cards=1, elevator=1)
     CARD_TYPE = "Communist"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Equally distributes all cards each player has randomly. Remainders are discarded."
@@ -374,8 +363,6 @@ class Capitalist(AbstractCard):
     NAME = "Capitalist"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'capitalist.png'
-    CARD_FREQUENCY = CardFrequency(
-        0.8, 0.6, 0.3, 0, starting=0, max_cards=10, elevator=1)
     CARD_TYPE = "Capitalist"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "The player with the most cards has the amount of cards in their hand doubled."
@@ -405,7 +392,6 @@ class SwapHand(AbstractCard):
     NAME = "Swap Hand"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'swap_hand.png'
-    CARD_FREQUENCY = CardFrequency(0, 0.6, 0.3, starting=0, max_cards=1)
     CARD_TYPE = "Swap Hand"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a player and you will swap your entire hand with theirs upon play."
@@ -446,7 +432,6 @@ class FeelingBlue(AbstractCard):
     NAME = "Feeling Blue"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'feeling_blue.png'
-    CARD_FREQUENCY = CardFrequency(1.5, starting=0, max_cards=10)
     CARD_TYPE = "Feeling Blue"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon playing this card, you will be forced to pickup 5 cards."
@@ -468,7 +453,6 @@ class Genocide(AbstractCard):
     NAME = "Genocide"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'genocide.png'
-    CARD_FREQUENCY = CardFrequency(0.7, max_cards=8, starting=0)
     MULTI_COLOURED = False
     CARD_TYPE = "Genocide"
     EFFECT_DESCRIPTION = "Pick any colour or type of card to entirely removed from the game. " \
@@ -547,7 +531,6 @@ class Jesus(AbstractCard):
     NAME = "Jesus"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'jesus.png'
-    CARD_FREQUENCY = CardFrequency(1.2, 1, 0.5, 0.7, max_cards=4, starting=0)
     CARD_TYPE = "Jesus"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose any person (including yourself) to reset their entire hand " \
@@ -583,7 +566,6 @@ class Odin(AbstractCard):
     NAME = "Odin"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'back.png'
-    CARD_FREQUENCY = CardFrequency(1, max_cards=1, starting=0, elevator=0)
     CARD_TYPE = "Odin"
     MULTI_COLOURED = False
     COMPATIBILITY_DESCRIPTION = "Can only be played as your last card. When it becomes your last card, " \
@@ -604,7 +586,6 @@ class Thanos(AbstractCard):
     NAME = "Thanos"
     CARD_COLOUR = "purple"
     CARD_IMAGE_URL = 'thanos.png'
-    CARD_FREQUENCY = CardFrequency(0, 0.5, 1.2, 1.2, max_cards=4, starting=0)
     CARD_TYPE = "Thanos"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Upon play, half of the cards in your hand will randomly disappear."
@@ -637,8 +618,6 @@ class Thanos(AbstractCard):
 class CopyCat(AbstractCard):
     NAME = "Copy Cat"
     CARD_IMAGE_URL = 'copy_cat.png'
-    CARD_FREQUENCY = CardFrequency(
-        3.4, 1, 0.6, 0.5, max_cards=4, starting=0, elevator=0)
     MULTI_COLOURED = False
     CARD_COLOUR = "rainbow"
     CARD_TYPE = "Copy Cat"
@@ -702,7 +681,6 @@ class Elevator(AbstractCard):
     NAME = "Elevator"
     CARD_IMAGE_URL = 'elevator.png'
     CARD_COLOUR = "rainbow"
-    CARD_FREQUENCY = CardFrequency(2, starting=0, elevator=0, max_cards=20)
     CARD_TYPE = "Elevator"
     EFFECT_DESCRIPTION = "Picks up a random card from the deck and plays it on top as if it was you."
     COMPATIBILITY_DESCRIPTION = "Can be played on any card."
@@ -730,7 +708,6 @@ class SwapCard(AbstractCard):
     CARD_IMAGE_URL = 'swap_card.png'
     CARD_COLOUR = "black"
     MULTI_COLOURED = False
-    CARD_FREQUENCY = CardFrequency(2.2, starting=0, max_cards=10)
     CARD_TYPE = "Swap Card"
     EFFECT_DESCRIPTION = "Pick a card to give to a player of your choice. " \
                          "This is swapped with a random card from their hand."
@@ -784,7 +761,6 @@ class Possess(AbstractCard):
     NAME = "Possess"
     CARD_IMAGE_URL = 'possess.png'
     CARD_COLOUR = "black"
-    CARD_FREQUENCY = CardFrequency(1.5, 1, 0.5, 0.3, max_cards=4, starting=0)
     CARD_TYPE = "Possess"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a player. On their next turn you get to decide what card(s) they must play from their hand, or force them to pick up."
@@ -825,7 +801,6 @@ class Steal(AbstractCard):
     NAME = "Steal"
     CARD_IMAGE_URL = 'steal.png'
     CARD_COLOUR = "black"
-    CARD_FREQUENCY = CardFrequency(1.7, 1.5, 1, 0.8, starting=0)
     CARD_TYPE = "Steal"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a card to steal from a player of your choice's hand."
@@ -872,7 +847,6 @@ class Fire(AbstractCard):
     NAME = "Fire"
     CARD_IMAGE_URL = 'fire.png'
     CARD_COLOUR = "black"
-    CARD_FREQUENCY = CardFrequency(3, 1, starting=0)
     CARD_TYPE = "Fire"
     MULTI_COLOURED = False
     EFFECT_DESCRIPTION = "Choose a player to set on fire for 3 turns. While on fire, they will be forced to pick up 3 cards at the beginning of their turn."

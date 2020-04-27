@@ -1,5 +1,4 @@
 from cards.abstract_card import AbstractCard
-from cards.card_frequency import CardFrequency
 
 # ~~~~~~~~~~~~~~
 #    Blank
@@ -8,7 +7,6 @@ from cards.card_frequency import CardFrequency
 
 class BlankBro(AbstractCard):
     NAME = "Just A Blank Bro"
-    CARD_FREQUENCY = CardFrequency(4,4,6,12)
     CARD_TYPE = "Just A Blank Bro"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'black.png'
@@ -17,7 +15,6 @@ class BlankBro(AbstractCard):
 
 class Happiness(AbstractCard):
     NAME = "Happiness"
-    CARD_FREQUENCY = CardFrequency(4,4,6,12)
     CARD_TYPE = "Happiness"
     CARD_COLOUR = "white"
     CARD_IMAGE_URL = 'white.png'
@@ -30,7 +27,6 @@ class Happiness(AbstractCard):
 
 
 class Fuck(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(1.2, 0.5)
     CARD_TYPE = "Fuckin' M8"
     CARD_COLOUR = "Abstract"
     COMPATIBILITY_DESCRIPTION = "This card is only compatible with other {cls.CARD_COLOUR} cards or " \

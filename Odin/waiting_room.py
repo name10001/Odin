@@ -72,6 +72,8 @@ class WaitingRoom:
         self.host_id = None
         self.chosen_settings = {
             setting.name: setting.default_value for setting in self.settings}
+        
+        self.chosen_settings["Deck frequencies"] = settings.default_dynamic_deck
 
     def _settings_json(self):
         return [setting.to_json(index) for index, setting in enumerate(self.settings)]
@@ -342,6 +344,7 @@ class WaitingRoom:
 
         self.modify()
         self.running = True
+
         self.game = Game(self.game_id, [self._players[player_id] for player_id in self._player_ids],
                          self, self.chosen_settings)
         with fs.app.app_context():

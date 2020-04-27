@@ -1,4 +1,4 @@
-from cards.card_frequency import CardFrequency
+from cards.card_frequency import DynamicFrequency
 import cards
 import random
 
@@ -16,7 +16,7 @@ class AbstractDeck:
         :param flags: any information on how the card was obtained in a dictionary, this can be used to blacklist certain cards from appearing or alter how often certain cards appear.
         """
         return None
-    
+
     def ban_colour(self, card_colour):
         pass
 
@@ -39,7 +39,7 @@ class AbstractDeck:
         return {}
 
 
-class WeightedDeck(AbstractDeck):
+class DynamicDeck(AbstractDeck):
     """
     A weighted deck will pick the next card based on a weight given to each card.
     The weight adjusts based on the cards that the player is already holding.
@@ -47,9 +47,19 @@ class WeightedDeck(AbstractDeck):
     TODO make the flag a private field and update it
     """
 
-    def __init__(self, game):
+    def __init__(self, game, frequencies):
+        """
+        Create a new dynamic deck.
+
+        :param game: The game
+        :param frequencies: All card frequencies as Json
+        """
         self.game = game
         self.cards = []
+
+        self.frequencies = {}
+        self._set_frequencies(frequencies)
+
         # dictionaries with all types/colours that are not banned as keys and the values being
         # a set of indexes pointing to the locations of all the cards of that type/color in self.cards
         # e.g. {"blue": {1, 5, 6}, "green", {0, 4, 10}}
@@ -70,6 +80,22 @@ class WeightedDeck(AbstractDeck):
         }
 
         self._update_cards()
+
+    def _set_frequencies(self, frequencies):
+        """
+        Create DynamicFrequency and add to the dictionary of frequencies
+
+        :param frequency_json: all frequencies as json
+        """
+
+        # just checking here that i did all of them
+        for json in frequencies:
+            name = json['name']
+
+            self.frequencies[name] = DynamicFrequency(json['small'], json['medium'] if 'medium' in json else None, json['large'] if 'large' in json else None,
+                                                      json['massive'] if 'massive' in json else None, json[
+                                                          'starting'] if 'starting' in json else None, json['elevator'] if 'elevator' in json else None,
+                                                      json['max'] if 'max' in json else None)
 
     def _update_cards(self):
         """
@@ -156,13 +182,13 @@ class WeightedDeck(AbstractDeck):
         """
         if card_collection is None:
             if elevator is True:
-                return card.CARD_FREQUENCY.get_elevator_weight()
+                return self.frequencies[card.NAME].get_elevator_weight()
             else:
-                return card.CARD_FREQUENCY.get_starting_weight()
+                return self.frequencies[card.NAME].get_starting_weight()
         else:
             n_cards = len(card_collection)
             n_this_type = card_collection.number_of_type(card.CARD_TYPE)
-            return card.CARD_FREQUENCY.get_weight(n_cards, n_this_type, ignore_limit=ignore_limit)
+            return self.frequencies[card.NAME].get_weight(n_cards, n_this_type, ignore_limit=ignore_limit)
 
     def ban_colour(self, card_colour):
         """

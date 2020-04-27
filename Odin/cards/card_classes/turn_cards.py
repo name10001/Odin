@@ -1,5 +1,4 @@
 from cards.abstract_card import AbstractCard
-from cards.card_frequency import CardFrequency
 from flask import url_for
 from cards.effect import FreeTurnEffect, FreezeEffect
 
@@ -9,7 +8,6 @@ from cards.effect import FreeTurnEffect, FreezeEffect
 
 
 class Reverse(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(2.2, 2, elevator=1, starting=0)
     CARD_COLOUR = "blue"
     CARD_TYPE = "Reverse"
     CAN_BE_ON_PICKUP = True
@@ -74,7 +72,6 @@ class YellowReverse(Reverse):
 
 
 class Skip(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(2.2, 2, elevator=1, starting=0)
     CARD_TYPE = "Skip"
     CAN_BE_ON_PICKUP = True
     EFFECT_DESCRIPTION = "Skips the next person's turn."
@@ -121,7 +118,6 @@ class BlackSkip(Skip):
     NAME = "Black Skip"
     CARD_COLOUR = "black"
     CARD_IMAGE_URL = 'skip_wild.png'
-    NUMBER_IN_DECK = 1
 
 
 class YellowSkip(Skip):
@@ -131,7 +127,6 @@ class YellowSkip(Skip):
 
 
 class FreeTurn(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(5, 3, 1, 0.8, max_cards=5, starting=0)
     CARD_TYPE = "Free Turn"
     NAME = "Free Turn"
     CARD_COLOUR = "black"
@@ -160,7 +155,6 @@ class FreeTurn(AbstractCard):
             player.remove_effect(effect)
 
 class Freeze(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(1.4, 0.9, 0.5, 0.2, max_cards=4, starting=0)
     CARD_TYPE = "Freeze"
     NAME = "Freeze"
     CARD_COLOUR = "white"

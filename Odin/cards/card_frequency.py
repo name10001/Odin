@@ -1,7 +1,7 @@
 import cards
 
 
-class CardFrequency:
+class DynamicFrequency:
     SMALL_HAND = 10  # Hand size between 0 - SMALL_HAND has frequency small_hand
     MEDIUM_HAND = 40  # Hand size between SMALL_HAND+1 - MEDIUM_HAND has frequency medium_hand
     LARGE_HAND = 120  # Hand size between MEDIUM_HAND+1 - LARGE_HAND has frequency large_hand
@@ -75,11 +75,11 @@ class CardFrequency:
         if ignore_limit is False and self.max_cards is not None and n_this_type >= self.max_cards:
             return 0
 
-        if n_cards <= CardFrequency.SMALL_HAND:
+        if n_cards <= DynamicFrequency.SMALL_HAND:
             return self.small_hand
-        elif n_cards <= CardFrequency.MEDIUM_HAND:
+        elif n_cards <= DynamicFrequency.MEDIUM_HAND:
             return self.medium_hand
-        elif n_cards <= CardFrequency.LARGE_HAND:
+        elif n_cards <= DynamicFrequency.LARGE_HAND:
             return self.large_hand
         else:
             return self.massive_hand

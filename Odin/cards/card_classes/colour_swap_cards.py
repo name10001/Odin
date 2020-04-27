@@ -1,12 +1,10 @@
 from cards.abstract_card import AbstractCard
-from cards.card_frequency import CardFrequency
 
 
 class ColourChooser(AbstractCard):
     NAME = "Colour Chooser"
     CARD_IMAGE_URL = 'color_swapper.png'
     CARD_COLOUR = "black"
-    CARD_FREQUENCY = CardFrequency(2, max_cards=4, starting=0)
     CARD_TYPE = "Colour Chooser"
     EFFECT_DESCRIPTION = "Allows you to change the colour to any of the 4 given colours: red, green, yellow or blue."
     COMPATIBILITY_DESCRIPTION = "Before play: Regular black card, compatible with any black, red, green, blue or " \
@@ -62,7 +60,6 @@ class ColourSwapper(AbstractCard):
     """
     Abstract double-colour swapper card
     """
-    CARD_FREQUENCY = CardFrequency(0.8, starting=0, elevator=0.4)
     CARD_TYPE = "Colour Swapper"
     COLOUR_1 = "black"
     COLOUR_2 = "black"
@@ -185,7 +182,6 @@ class YellowGreenSwapper(ColourSwapper):
 
 class BlackWhiteSwapper(ColourSwapper):
     NAME = "Black/White Colour Swapper"
-    CARD_FREQUENCY = CardFrequency(1.2, starting=0, elevator=0.6)
     CARD_IMAGE_URL = 'black_white.png'
     COLOUR_1 = "black"
     COLOUR_2 = "white"

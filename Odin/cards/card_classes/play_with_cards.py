@@ -1,5 +1,4 @@
 from cards.abstract_card import AbstractCard
-from cards.card_frequency import CardFrequency
 
 
 # ~~~~~~~~~~~~~~
@@ -8,7 +7,6 @@ from cards.card_frequency import CardFrequency
 
 
 class AllOfSameColour(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(1, max_cards=1, starting=0, elevator=0)
     MULTI_COLOURED = False
     PICK_NUMBERS = True  # False for filthy sharon cause no numbers
 
@@ -86,7 +84,6 @@ class FilthySharon(AllOfSameColour):
 
 
 class BlackHole(AbstractCard):
-    CARD_FREQUENCY = CardFrequency(0.03, starting=0, elevator=0, max_cards=1)
     NAME = "Black Hole"
     CARD_TYPE = "Black Hole"
     CARD_COLOUR = "black"
@@ -115,8 +112,7 @@ class PlayOne(AbstractCard):
     CARD_IMAGE_URL = "play_1.png"
     MUTLI_COLOURED = False
     EFFECT_DESCRIPTION = "Allows you to play any card from your hand with this, reguardless of compatibility rules."
-    CARD_FREQUENCY = CardFrequency(1, 0.5, 0.2, starting=0, max_cards=8, elevator=0)
-
+    
     NUM_TO_PLAY = 1
 
     def can_play_with(self, player, card, is_first_card):
@@ -142,7 +138,5 @@ class PlayOne(AbstractCard):
 class PlayThree(PlayOne):
     NAME = "Play Three"
     CARD_IMAGE_URL = "play_3.png"
-    EFFECT_DESCRIPTION = "Allows you to play any 3 cards from your hand with this, reguardless of compatibility rules."
-    CARD_FREQUENCY = CardFrequency(0.7, 0.3, 0.08, starting=0, max_cards=8, elevator=0)
-
+    
     NUM_TO_PLAY = 3
